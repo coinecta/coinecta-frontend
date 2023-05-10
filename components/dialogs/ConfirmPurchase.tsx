@@ -26,7 +26,6 @@ import {
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { ApiContext, IApiContext } from "@contexts/ApiContext";
-import { getErgoWalletContext } from "@components/wallet/AddWallet";
 import { WalletContext } from '@contexts/WalletContext';
 import Link from '@components/Link';
 
@@ -151,21 +150,22 @@ const ConfirmPurchase: FC<IConfirmPurchaseProps> = ({ open, setOpen, saleId, pac
   const submit = async () => {
     setSubmitting('submitting');
     try {
-      const order = buildOrder()
-      console.log(order)
-      if (order.requests.length > 0) {
-        const tx = await getPurchaseTx(order);
-        const context = await getErgoWalletContext();
-        const signedtx = await context.sign_tx(tx);
-        const ok = await context.submit_tx(signedtx);
-        apiContext.api.ok(`Submitted Transaction: ${ok}`);
-        setSuccessTx(ok)
-        setSubmitting('success')
-      }
-      else {
-        apiContext.api.error('Not built correctly');
-        setSubmitting('failed')
-      }
+      // const order = buildOrder()
+      // console.log(order)
+      // if (order.requests.length > 0) {
+      //   const tx = await getPurchaseTx(order);
+      //   const context = await getErgoWalletContext();
+      //   const signedtx = await context.sign_tx(tx);
+      //   const ok = await context.submit_tx(signedtx);
+      //   apiContext.api.ok(`Submitted Transaction: ${ok}`);
+      //   setSuccessTx(ok)
+      //   setSubmitting('success')
+      // }
+      // else {
+      //   apiContext.api.error('Not built correctly');
+      //   setSubmitting('failed')
+      // }
+      console.log('submitted')
     } catch (e: any) {
       apiContext.api.error(e);
       setSubmitting('failed')
