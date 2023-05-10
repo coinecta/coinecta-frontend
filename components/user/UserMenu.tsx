@@ -7,7 +7,6 @@ import {
 } from '@mui/material'
 import { WalletContext } from '@contexts/WalletContext';
 import { useRouter } from 'next/router';
-import AddWallet from '@components/wallet/AddWallet';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -158,7 +157,6 @@ const UserMenu: FC<IUserMenuProps> = ({ }) => {
           </Icon>
         </IconButton>
       )}
-      <AddWallet />
     </>
   );
 };
