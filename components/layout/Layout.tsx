@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Header from "@components/layout/Header";
 import Footer from "@components/layout/Footer";
-import { calcLength, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import {
   Grid,
@@ -54,16 +53,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         }} />
       </Box>
       <Header />
-      {/* <motion.main
-        variants={variants}
-        initial="hidden"
-        animate="enter"
-        exit="exit"
-        transition={{ type: "linear" }}
-        className=""
-        key={router.route}
-      > */}
-
       <Box
         sx={{
           display: 'flex',
@@ -77,7 +66,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </Box>
         <Footer />
       </Box>
-      {/* </motion.main> */}
     </>
   );
 };

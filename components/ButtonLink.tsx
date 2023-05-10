@@ -37,7 +37,7 @@ const ButtonLink: FC<
       replace={replace}
       scroll={scroll}
       shallow={shallow}
-    >
+      legacyBehavior>
       {/* <a {...rest}> */}
       <Button
         classes={classes}

@@ -1,81 +1,69 @@
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
+import localFont from 'next/font/local'
+
+declare module '@mui/material/styles' {
+  interface TypeBackground {
+    transparent?: string;
+  }
+}
+
+export const anek = localFont({ src: './fonts/AnekKannada.woff2', declarations: [{ prop: 'ascent-override', value: '110%' }] })
 
 const mainTheme = [{
   typography: {
+    fontFamily: anek.style.fontFamily,
     h1: {
-      fontSize: "4.5rem",
-      fontWeight: "800",
-      lineHeight: 1.167,
-      marginBottom: "12px",
-      fontFamily: '"Playfair Display", serif',
-      textShadow: "0px 2px 2px rgba(0, 0, 0, 0.6)",
-      overflowWrap: "break-word",
-      hyphens: "manual",
-    },
-    h2: {
-      fontSize: "3rem",
-      fontWeight: "800",
-      lineHeight: 1.167,
-      marginBottom: "1.25rem",
-      fontFamily: '"Playfair Display", serif',
-      // textShadow: "0px 2px 2px rgba(0, 0, 0, 0.6)",
-      overflowWrap: "break-word",
-      hyphens: "manual",
-    },
-    h3: {
-      fontSize: "3rem",
-      fontWeight: "800",
-      lineHeight: 1.167,
-      marginBottom: "1rem",
-      fontFamily: '"Inter", sans-serif',
-      textShadow: "0px 2px 2px rgba(0, 0, 0, 0.6)",
-      overflowWrap: "break-word",
-      hyphens: "manual",
-    },
-    h4: {
-      fontSize: "2rem",
-      fontWeight: "700",
-      lineHeight: 1.235,
-      marginBottom: "0.5rem",
-      fontFamily: '"Inter", sans-serif',
-      // textShadow: "0px 2px 2px rgba(0, 0, 0, 0.6)",
-      overflowWrap: "break-word",
-      hyphens: "manual",
-    },
-    h5: {
-      fontSize: "1.5rem",
-      fontWeight: "700",
-      lineHeight: 1.6,
-      letterSpacing: "0.0075em",
-      marginBottom: "0.5rem",
-      fontFamily: '"Inter", sans-serif',
-      // textShadow: "0px 2px 2px rgba(0, 0, 0, 0.6)",
-      overflowWrap: "break-word",
-      hyphens: "manual",
-    },
-    h6: {
-      fontSize: "1.2rem",
       fontWeight: "600",
-      lineHeight: 1.3,
-      letterSpacing: "0.0075em",
-      marginBottom: "0",
-      fontFamily: '"Inter", sans-serif',
-      // textShadow: "0px 2px 2px rgba(0, 0, 0, 0.6)",
-      overflowWrap: "break-word",
-      hyphens: "manual",
     },
-    overline: {
-      textTransform: 'uppercase',
-      fontSize: '0.75rem',
-      display: 'inline-block',
-      fontFamily: '"Inter", sans-serif',
-      // textShadow: "0px 2px 2px rgba(0, 0, 0, 0.6)",
+    // h2: {
+    //   fontWeight: "600",
+    // },
+    // h3: {
+    //   fontSize: "3rem",
+    //   fontWeight: "800",
+    //   lineHeight: 1.167,
+    //   marginBottom: "1rem",
+    //   overflowWrap: "break-word",
+    //   hyphens: "manual",
+    // },
+    // h4: {
+    //   fontSize: "2rem",
+    //   fontWeight: "700",
+    //   lineHeight: 1.235,
+    //   marginBottom: "0.5rem",
+    //   overflowWrap: "break-word",
+    //   hyphens: "manual",
+    // },
+    // h5: {
+    //   fontSize: "1.5rem",
+    //   fontWeight: "700",
+    //   lineHeight: 1.6,
+    //   letterSpacing: "0.0075em",
+    //   marginBottom: "0.5rem",
+    //   overflowWrap: "break-word",
+    //   hyphens: "manual",
+    // },
+    // h6: {
+    //   fontSize: "1.2rem",
+    //   fontWeight: "600",
+    //   lineHeight: 1.3,
+    //   letterSpacing: "0.0075em",
+    //   marginBottom: "0",
+    //   overflowWrap: "break-word",
+    //   hyphens: "manual",
+    // },
+    // overline: {
+    //   textTransform: 'uppercase',
+    //   fontSize: '0.75rem',
+    //   display: 'inline-block',
+    // },
+    body1: {
+      
     },
     body2: {
-      fontFamily: '"Inter", sans-serif',
+      fontSize: '1.1667rem',
+      lineHeight: '1.5',
       marginBottom: '24px',
-      fontSize: '1rem',
-      lineHeight: '1.75',
     },
   },
   components: {
@@ -108,19 +96,18 @@ const mainTheme = [{
       styleOverrides: {
         root: {
           borderRadius: '6px',
-          fontWeight: '700',
-          textTransform: 'none',
+          verticalAlign: 'top'
         },
       },
     },
     MuiPaper: {
       defaultProps: {
-        variant: 'outlined'
+        elevation: 0, 
       },
       styleOverrides: {
         root: {
           borderRadius: '6px',
-        },
+        }
       },
     },
     MuiFilledInput: {
@@ -262,21 +249,25 @@ const mainTheme = [{
 let lightTheme = createTheme({
   palette: {
     background: {
-      default: "rgba(250,250,255,1)",
-      paper: 'rgba(240,240,244,1)',
+      default: "rgba(255,255,255,1)",
+      paper: 'rgba(247,249,248)',
+      transparent: 'rgba(247,249,248,0.5)',
     },
     text: {
       primary: 'rgba(23,21,21,1)',
       secondary: 'rgba(51,51,51,1)',
     },
     primary: {
-      main: "rgba(252,70,96,1)",
+      // main: "#FF2147",
+      main: 'rgb(255, 120, 68)',
     },
     secondary: {
-      main: "#00868F",
+      main: "#3D8AB9",
     },
   },
   typography: {
+    fontFamily: anek.style.fontFamily,
+    fontSize: 16,
     body2: {
       color: 'rgba(51,51,51,1)',
     }
@@ -327,34 +318,41 @@ let darkTheme = createTheme({
   palette: {
     mode: "dark",
     background: {
-      default: 'rgba(22,28,36,1)',
-      paper: 'rgba(38,42,52,1)'
-      // color for text area #242932
+      default: 'rgb(8,8,16)',
+      paper: 'rgba(16,19,30)',
+      transparent: 'rgba(12,15,27,0.5)'
     },
     text: {
       primary: 'rgba(244,244,244,1)',
       secondary: 'rgba(228,228,228,1)',
     },
     primary: {
-      main: "#9FD2DB",
+      // main: "#FF2147",
+      main: 'rgb(255, 120, 68)',
     },
     secondary: {
-      main: "rgba(252,70,96,1)",
+      main: "#3D8AB9",
     },
+    contrastThreshold: 4.5,
   },
   typography: {
+    fontFamily: anek.style.fontFamily,
+    fontSize: 16,
     body2: {
       color: 'rgba(228,228,228,1)',
+    },
+    button: {
+      
     }
   },
   components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          background: 'rgba(20,24,28,1)',
-        },
-      },
-    },
+    // MuiPaper: {
+    //   styleOverrides: {
+    //     root: {
+    //       border: 'none'
+    //     },
+    //   },
+    // },
     MuiLink: {
       styleOverrides: {
         root: {

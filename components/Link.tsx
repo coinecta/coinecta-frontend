@@ -28,16 +28,17 @@ const NextLinkComposed = React.forwardRef<HTMLAnchorElement, INextLinkComposedPr
     ...other
   } = props;
   return (
-    <NextLink
+    (<NextLink
       href={to}
       passHref
       replace={replace}
       scroll={scroll}
       shallow={shallow}
       prefetch={prefetch}
-    >
-      <a ref={ref} {...other} />
-    </NextLink>
+      ref={ref}
+      {...other}>
+
+    </NextLink>)
   );
 });
 

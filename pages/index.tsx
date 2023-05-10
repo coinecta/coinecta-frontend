@@ -1,512 +1,207 @@
-import React, { FC } from 'react';
+import React, { FC, useRef } from 'react';
 import type { NextPage } from 'next'
 import {
-  Grid,
   Container,
   Typography,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Avatar,
   useTheme,
   useMediaQuery,
-  SvgIcon
+  Grid,
+  Button,
+  Card,
+  CardActions,
+  CardHeader,
+  CardContent,
+  CardMedia,
+  Box,
+  Stack,
+  IconButton
 } from '@mui/material'
-import NextLink from 'next/link'
-import Link from '@components/Link'
-import Logo from '@components/svgs/Logo'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ButtonLink from '@components/ButtonLink'
-import { DarkTheme } from '@styles/theme';
-import Image from 'next/image';
-import DiamondIcon from '@components/svgs/DiamondIcon'
-
-const features = [
-  {
-    icon: <DiamondIcon sx={{ fontSize: '48px' }} />,
-    title: 'Feature 1',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a, risus nec condimen tum volutpat accumsan.',
-  },
-  {
-    icon: <DiamondIcon sx={{ fontSize: '48px' }} />,
-    title: 'Feature 2',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a, risus nec condimen tum volutpat accumsan.',
-  },
-  {
-    icon: <DiamondIcon sx={{ fontSize: '48px' }} />,
-    title: 'Feature 3',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a, risus nec condimen tum volutpat accumsan.',
-  },
-  {
-    title: 'Feature 4',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a, risus nec condimen tum volutpat accumsan.',
-  },
-]
+import ErgopadLogo from '@components/svgs/ErgopadLogo';
+import BlockheadsLogo from '@components/svgs/BlockheadsLogo';
+import TeddyswapLogo from '@components/svgs/TeddyswapLogo';
+import PaideiaLogo from '@components/svgs/PaideiaLogo';
+import { v4 as uuidv4 } from 'uuid';
+import Projects from '@components/landing/Projects';
 
 const Home: NextPage = () => {
   const theme = useTheme()
-  const upSm = useMediaQuery(theme.breakpoints.up('sm'))
+  const upMd = useMediaQuery(theme.breakpoints.up('md'))
+
   return (
     <>
-
-      {/* HERO SECTION */}
-      <Container sx={{ mb: '100px' }}>
-        <Grid
-          container
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
-          columnSpacing={5}
-        >
-          <Grid item md={6} xs={12}
-            sx={{
-              // pr: { xs: 0, md: '24px' },
-              py: '24px',
-            }}
+      {/* Hero section */}
+      <Container
+        sx={{
+          pt: '20vh',
+          minHeight: '100vh',
+          // mb: 12
+        }}
+      >
+        <Box maxWidth="md" sx={{ mx: 'auto' }}>
+          <Typography
+            variant="h2"
+            fontWeight={600}
+            align="center"
+            gutterBottom
           >
-            <Box
-              sx={{
-                height: { xs: 'calc(100vh - 120px)', md: '100%' },
-                position: 'relative',
-              }}
+            Unlock the Cardano Community's Full Potential
+          </Typography>
+          <Typography variant="h6" align="center" color="text.secondary" paragraph>
+            We believe the community is one of Cardano&apos;s greatest strengths. Working together, we can grow the ecosystem to provide inclusive financial services to the entire globe.
+          </Typography>
+          <Stack
+            sx={{ pt: 3 }}
+            direction="row"
+            spacing={2}
+            justifyContent="center"
+          >
+            <Button variant="contained">Support an IDO</Button>
+            <Button variant="outlined">Read the docs</Button>
+          </Stack>
+          <Typography variant="body1" sx={{ pt: 12, textTransform: 'uppercase' }} align="center" color="text.secondary" paragraph>
+            In partnership with:
+          </Typography>
+        </Box>
+        <Box maxWidth='lg' sx={{ mx: 'auto' }}>
+          <Grid container alignItems="center" justifyContent="space-between">
+            <Grid item>
+              <TeddyswapLogo sx={{ fontSize: '160px', height: '100px' }} />
+            </Grid>
+            <Grid item>
+              <ErgopadLogo sx={{ fontSize: '160px', height: '100px' }} />
+            </Grid>
+            <Grid item>
+              <PaideiaLogo sx={{ fontSize: '140px', height: '100px' }} />
+            </Grid>
+            <Grid item>
+              <BlockheadsLogo sx={{ fontSize: '160px', height: '100px' }} />
+            </Grid>
+          </Grid>
+        </Box>
+      </Container>
+      {/* End hero section */}
+
+
+      {/* How it works */}
+      <Container sx={{ mb: 24 }}>
+        <Grid container sx={{ mb: 3 }}>
+          <Grid item md={1}></Grid>
+          <Grid item md={5}>
+            <Typography
+              variant="h2"
+              fontWeight={600}
+
+              gutterBottom
             >
-              <Box
-                sx={{
-                  position: { xs: 'absolute', md: 'relative' },
-                  bottom: 0,
-                }}
-              >
-                <Typography variant="h1">
-                  Utility-Driven Token Marketplace
-                </Typography>
-                <Typography variant="body2" sx={{ mb: '32px' }}>
-                  We focus on more than just art. Browse utility tokens, game tokens, audio NFTs, and more.
-                </Typography>
-                <Button href="/marketplace" variant="contained" endIcon={<ArrowForwardIcon />} sx={{ mb: '24px' }}>
-                  Explore Marketplace
-                </Button>
-              </Box>
-            </Box>
-            <Grid
-              container
-              justifyContent="space-between"
-              direction={{ xs: 'column', md: 'row' }}
-              alignItems="center"
-              spacing={{ xs: 4, md: 0 }}
-              sx={{
-                textAlign: { xs: 'center', md: 'left' },
-                py: { xs: '120px', md: '0' },
-                pr: { xs: '0', md: '48px' }
-              }}
-            >
-              <Grid
-                item
-                sx={{
-                  // borderLeft: '1px solid rgba(144,144,144,0.5)',
-                  flex: '1 1 auto',
-                  position: 'relative',
-                  textAlign: 'left'
-                }}
-              >
-                <Box sx={{
-                  textAlign: { xs: 'center', md: 'left' },
-                  display: 'inline-block',
-                }}>
-                  <Typography
-                    sx={{
-                      fontFamily: '"Inter", sans-serif',
-                      fontSize: '3.5rem',
-                      fontWeight: 'bold',
-                      mb: { xs: '-12px', md: '-16px' },
-                    }}
-                  >
-                    2
-                  </Typography>
-                  <Typography>
-                    Collections
-                  </Typography>
-                </Box>
+              How it works
+            </Typography>
+          </Grid>
+          <Grid item md={6}></Grid>
+        </Grid>
+        <Grid container sx={{ mb: 6 }}>
+          <Grid item md={2}></Grid>
+          <Grid item md={5}>
+            <Typography variant="h4" fontWeight={600}>Crowd-funding With Benefits</Typography>
+            <Typography variant="subtitle1">Rather than being backed by a few VCs, we believe blockchain projects should be funded by the community, and the community should profit from their successes. By investing in IDOs, you get in before the token is listed and receive preferential pricing as appreciation for your faith in the project. </Typography>
+          </Grid>
+          <Grid item md={5}></Grid>
+        </Grid>
+        <Grid container>
+          <Grid item md={3}></Grid>
+          <Grid item md={8}>
+            <Grid container spacing={6}>
+              <Grid item md={6}>
+                <Typography variant="h5" fontWeight={600}>1. Stake The Token</Typography>
+                <Typography variant="body2">To participate, first you have to get the Coinnecta Finance token and stake it to reach a staking tier. Your tier will represent your pool weight in IDOs. </Typography>
+                <Grid container spacing={3}>
+                  <Grid item>
+                    <Button variant="contained" color="secondary">Get CNCT</Button>
+                  </Grid>
+                  <Grid item>
+                    <Button variant="outlined" color="secondary">Stake Now</Button>
+                  </Grid>
+                </Grid>
               </Grid>
-              <Grid
-                item
-                sx={{
-                  '&::before, ::after ': {
-                    content: '""',
-                    position: 'absolute',
-                    left: 0,
-                    top: '50%',
-                    mt: '-10%',
-                    height: '60%',
-                    width: '1px',
-                    background: { xs: 'none', md: 'rgba(144,144,144,0.2)' },
-                  },
-                  flex: '1 1 auto',
-                  position: 'relative',
-                  textAlign: 'center'
-                }}
-              >
-                <Box sx={{
-                  textAlign: { xs: 'center', md: 'left' },
-                  display: 'inline-block',
-                }}>
-                  <Typography
-                    sx={{
-                      fontFamily: '"Inter", sans-serif',
-                      fontSize: '3.5rem',
-                      fontWeight: 'bold',
-                      mb: { xs: '-12px', md: '-16px' },
-                    }}
-                  >
-                    3566
-                  </Typography>
-                  <Typography>
-                    NFTs
-                  </Typography>
-                </Box>
+              <Grid item md={6}>
+                <Typography variant="h5" fontWeight={600}>2. Whitelist For IDOs</Typography>
+                <Typography variant="body2">Keep an eye out for IDOs you like, and whitelist to invest. You will be approved for a specific number of tokens based on your staking tier weight. </Typography>
+                <Button variant="contained" color="secondary">View Projects</Button>
               </Grid>
-              <Grid
-                item
-                sx={{
-                  '&::before, ::after ': {
-                    content: '""',
-                    position: 'absolute',
-                    left: 0,
-                    top: '50%',
-                    mt: '-10%',
-                    height: '60%',
-                    width: '1px',
-                    background: { xs: 'none', md: 'rgba(144,144,144,0.2)' },
-                  },
-                  flex: '1 1 auto',
-                  position: 'relative',
-                  textAlign: 'right'
-                }}
-              >
-                <Box sx={{
-                  textAlign: { xs: 'center', md: 'left' },
-                  display: 'inline-block',
-                }}>
-                  <Typography
-                    sx={{
-                      fontFamily: '"Inter", sans-serif',
-                      fontSize: '3.5rem',
-                      fontWeight: 'bold',
-                      mb: { xs: '-12px', md: '-16px' },
-                    }}
-                  >
-                    60k+
-                  </Typography>
-                  <Typography>
-                    Active Users
-                  </Typography>
-                </Box>
+              <Grid item md={6}>
+                <Typography variant="h5" fontWeight={600}>3. Contribute</Typography>
+                <Typography variant="body2">You will receive whitelist tokens in your wallet and can use those to contribute to the project. Send ADA or DJED to the Vesting Contract to receive your vesting key which will unlock tokens over time</Typography>
+                <Button variant="contained" color="secondary">Learn More</Button>
+              </Grid>
+              <Grid item md={6}>
+                <Typography variant="h5" fontWeight={600}>4. Redeem</Typography>
+                <Typography variant="body2">Each seed round will have a specific vesting period, depending on how deep the discount is. You can redeem your tokens as they unlock on the Redeem panel. </Typography>
+                <Button variant="contained" color="secondary">Redeem Now</Button>
               </Grid>
             </Grid>
           </Grid>
-          <Grid
-            item
-            md={6}
-            xs={12}
-            sx={{
-              height: upSm ? '800px' : '600px'
-            }}>
-            <Box
-              sx={{
-                position: 'relative',
-                height: '100%',
-                background: '#000',
-                borderRadius: '0 0 16px 16px'
-              }}
-            >
-              <Image
-                src="/images/cube1.png"
-                layout="fill"
-                objectFit="contain"
-                alt="cube"
-              />
-              <Card
-                sx={{
-                  position: 'absolute',
-                  bottom: '48px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  background: 'rgba(255,255,255,0.1)',
-                  backdropFilter: 'blur(6px)',
-                  color: DarkTheme.palette.text.primary,
-                  borderRadius: '16px',
-                  width: '400px',
-                  maxWidth: '80vw',
-                }}
-              >
-                <CardContent sx={{ p: '24px' }}>
-                  <Grid container spacing={1} sx={{ mb: '16px' }}>
-                    <Grid item>
-                      <Avatar>
-                        <Logo
-                          sx={{
-                            color: theme.palette.text.primary,
-                            fontSize: '16px',
-                          }}
-                        />
-                      </Avatar>
-                    </Grid>
-                    <Grid item>
-                      <Typography sx={{ fontWeight: '600' }}>
-                        Genesis
-                      </Typography>
-                      <Typography>
-                        by Ergopad
-                      </Typography>
-                    </Grid>
-                  </Grid>
-
-                  <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <Typography>
-                        Price
-                      </Typography>
-                      <Typography sx={{ fontWeight: '600' }}>
-                        10 Erg
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography>
-                        Remaining
-                      </Typography>
-                      <Typography sx={{ fontWeight: '600' }}>
-                        153 cubes left
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Button
-                        variant="contained"
-                        sx={{
-                          backgroundColor: '#000',
-                          color: '#fff',
-                          '&:hover': {
-                            backgroundColor: '#111',
-                          },
-                          width: '100%',
-                        }}
-                      >
-                        Buy Cube
-                      </Button>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Button
-                        variant="contained"
-                        sx={{
-                          fontSize: '14px',
-                          backgroundColor: '#fff',
-                          color: '#000',
-                          '&:hover': {
-                            backgroundColor: '#eee',
-                          },
-                          width: '100%',
-                        }}
-                      >
-                        View Collection
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Box>
-          </Grid>
+          <Grid item md={1}></Grid>
         </Grid>
-      </Container >
-
-      <Container sx={{ mb: '100px' }}>
-        {/* PARTNER LOGOS */}
-        <Typography variant="h2" sx={{mb: 6}}>Our Partners </Typography>
-        <Box sx={{ width: '280px', display: { xs: 'block', md: 'inline-block' }, verticalAlign: 'middle', m: { xs: '0 auto 24px', md: '0 0 24px 60px' } }}>
-          <Link href="https://ergopad.io">
-            <Image src="/images/partner-logos/ergopad.png" alt="Ergopad" height={287} width={1357} />
-          </Link>
-        </Box>
-        <Box sx={{ width: '248px', display: { xs: 'block', md: 'inline-block' }, verticalAlign: 'middle', m: { xs: '0 auto 24px', md: '0 0 24px 60px' } }}>
-          <Link href="https://ergoplatform.org/en/community/#Foundation">
-            <Image src="/images/partner-logos/ergo-foundation.png" alt="Ergo Foundation" height={248} width={934} />
-          </Link>
-        </Box>
-        <Box sx={{ width: '220px', display: { xs: 'block', md: 'inline-block' }, verticalAlign: 'middle', m: { xs: '0 auto 24px', md: '0 0 24px 60px' } }}>
-          <Link href="https://paideia.im">
-            <Image src="/images/partner-logos/paideia.png" alt="Paideia" height={184} width={662} />
-          </Link>
-        </Box>
-        <Box sx={{ width: '340px', display: { xs: 'block', md: 'inline-block' }, verticalAlign: 'middle', m: { xs: '0 auto 24px', md: '0 0 24px 60px' } }}>
-          <Link href="https://saturnlabs.org/">
-            <Image src="/images/partner-logos/saturnlabs.png" alt="Saturn Labs" height={84} width={717} />
-          </Link>
-        </Box>
       </Container>
+      {/* END How it works */}
 
+      <Projects />
 
-      {/* ABOUT SECTION */}
-      {/* <Container sx={{ mb: '100px' }}>
-        <Grid
-          container
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
-          columnSpacing={5}
-          sx={{ mb: '100px' }}
+      {/* Whos it for? */}
+      <Container sx={{ mb: 14 }}>
+        <Typography
+          variant="h5"
+          fontWeight={600}
+          align="center"
+          gutterBottom
+          color="primary"
+          textTransform="uppercase"
+          sx={{ mb: 0, lineHeight: 1 }}
         >
-          <Grid
-            item
-            md={6}
-            xs={12}
-            sx={{
-              height: '600px'
-            }}
-          >
-            <Box
-              sx={{
-                position: 'relative',
-                background: '#000',
-                height: '100%',
-                borderRadius: '16px'
-              }}
-            >
-              <Image
-                src="/images/cube2.png"
-                layout="fill"
-                objectFit="contain"
-                alt="cube"
-              />
-            </Box>
-          </Grid>
-          <Grid item md={6} xs={12}
-            sx={{
-              pr: { xs: 0, md: '24px' },
-              py: '24px',
-            }}
-          >
-            <Box
-              sx={{
-                height: '100%',
-                position: 'relative',
-              }}
-            >
-              <Typography variant="h1">
-                Featured Collection: Blockheads
-              </Typography>
-              <Typography variant="body2" sx={{ mb: '32px' }}>
-                Blockheads have tons of fun utilities built in! Explore the cross-chain breeding opportunities, collectable features, and airdrop potential. 
-              </Typography>
-              <Button variant="contained" endIcon={<ArrowForwardIcon />} sx={{ mb: '24px' }}>
-                Learn More
-              </Button>
-            </Box>
-          </Grid>
-        </Grid>
-        <Grid container spacing={2} sx={{ mb: '50px' }}>
-          {features.map(({ icon, title, content }, i) => {
-            return (
-              <Grid item xs={12} sm={6} md={3} key={i} sx={{ mb: '50px' }}>
-                {icon ? icon : <DiamondIcon sx={{ fontSize: '48px' }} />}
-                <Typography variant="h5">
-                  {title}
-                </Typography>
-                <Typography variant="body2">
-                  {content}
-                </Typography>
-              </Grid>
-            )
-          })}
-        </Grid>
-      </Container> */}
-
-      {/* RECENT NFTS */}
-      {/* <Box sx={{ mb: '100px' }}>
-        <CardSlider uniqueId="recent-nfts" buttonTop addMargin={24} header={
-          <Typography variant="h4">
-            Recent NFTs
+          Who&apos;s It For
+        </Typography>
+        <Box maxWidth="md" sx={{ margin: 'auto', textAlign: 'center', mb: 6 }}>
+          <Typography variant="h3" fontWeight={600}>
+            We connect investors and creators to fuel ecosystem growth and deliver innovative new dApps
           </Typography>
-        }>
-          {recentNfts.map((props, i) => {
-            return (
-              <NftCard
-                key={i}
-                link={props.link}
-                imgUrl={props.imgUrl}
-                name={props.name}
-                price={props.price}
-                rarity={props.rarity}
-                time={props.time}
-                collection={props.collection}
-                collectionLink={props.collectionLink}
-                artist={props.artist}
-                artistLink={props.artistLink}
-                artistLogo={props.artistLogo}
-              />
-            )
-          })}
-        </CardSlider>
-      </Box> */}
+        </Box>
 
-      {/* MINT YOUR OWN */}
-      <Container>
-        <Grid
-          container
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
-          columnSpacing={5}
-          sx={{ mb: '100px' }}
-        >
-
-          <Grid
-            item
-            md={6}
-            xs={12}
-            sx={{
-              height: '600px'
-            }}
-          >
-            <Box
-              sx={{
-                position: 'relative',
-                background: '#000',
-                height: '100%',
-                borderRadius: '16px'
-              }}
-            >
-              <Image
-                src="/images/nft-cube.png"
-                layout="fill"
-                objectFit="contain"
-                alt="cube"
-              />
-            </Box>
+        <Grid container spacing={12} sx={{ mb: 3, mx: 'auto' }} maxWidth="lg">
+          <Grid item md={6}>
+            <Typography variant="h4">
+              Investors
+            </Typography>
+            <Typography variant="body2">
+              We believe that when a team raises funds for their project, there should be a great deal of accountability to their community. We use smart contracts to help enforce transparency, honesty, and add rugpull resistance.
+            </Typography>
+            <Typography variant="body2">
+              Vested tokens are locked on-chain and released based on the schedule set at the outset. All the details are outlined clearly, so that investors can make informed decisions.
+            </Typography>
+            <Typography variant="body2">
+              Teams are encouraged to use their tokens for governance, and operate as a DAO when possible, to give the community an opportunity to vote on expendatures.
+            </Typography>
+            <Typography variant="body2">
+              In addition, we will draw on our own experience to vet projects before approving them to IDO on Coinecta. We encourage teams to put together a roadmap that clearly outlines their goals and gives consideration to the amount of funds needed to achieve them. 
+            </Typography>
+            <Grid container spacing={3}>
+              <Grid item>
+                <Button variant="contained" color="secondary">Get Started</Button>
+              </Grid>
+              <Grid item>
+                <Button variant="outlined" color="secondary">Read the Docs</Button>
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item md={6} xs={12}
-            sx={{
-              pr: { xs: 0, md: '24px' },
-              py: '24px',
-            }}
-          >
-            <Box
-              sx={{
-                height: '100%',
-                position: 'relative',
-              }}
-            >
-              <Box
-
-              >
-                <Typography variant="h1">
-                  Launch Your Project
-                </Typography>
-                <Typography variant="body2" sx={{ mb: '32px' }}>
-                  Mass mint your own NFT collection, create fungible tokens packs open for unique NFTs, and create a sales portal. You can even host your sale at your own domain with your own branding and graphics.
-                </Typography>
-                <Button href="/mint" variant="contained" endIcon={<ArrowForwardIcon />} sx={{ mb: '24px' }}>
-                  Mint Now
-                </Button>
-              </Box>
-            </Box>
+          <Grid item md={6}>
+            <Typography variant="h4">
+              Teams
+            </Typography>
+            <Typography variant="body2">
+              We help secure funding to turn your aspirations into achievements. Our dedicated efforts ensure you receive the necessary resources to manifest your vision successfully.
+            </Typography>
+            <Typography variant="body2">
+              When needed, we can offer consultation on project management and tokenomics design. Through our community connections, we can often help fill in the gaps in team structure. 
+            </Typography>
+            <Button variant="contained" color="secondary">Apply for IDO</Button>
           </Grid>
         </Grid>
       </Container>
@@ -515,3 +210,5 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+

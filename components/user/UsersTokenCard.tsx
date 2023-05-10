@@ -246,21 +246,20 @@ const UsersTokenCard: FC<IUsersTokenCard> = ({
                   />
                 )}
               </Box>
-              {nftData.price && setSelected === undefined && (
+              {nftData.qty && nftData.qty > 1 && (
                 <Box
                   sx={{
                     position: 'absolute',
-                    top: '16px',
-                    right: '16px',
-                    p: '8px',
-                    background: 'rgba(255,255,255,0.1)',
-                    backdropFilter: 'blur(6px)',
-                    color: '#fff',
-                    borderRadius: '6px',
+                    top: '12px',
+                    left: '0',
+                    p: '3px 6px',
+                    background: theme.palette.background.default,
+                    border: `1px solid ${theme.palette.divider}`,
+                    borderRadius: '0 6px 6px 0',
                   }}
                 >
                   <Typography sx={{ fontWeight: '700', }}>
-                    {nftData.price + ' ' + nftData.currency}
+                    {nftData.qty}
                   </Typography>
                 </Box>
               )}
@@ -276,7 +275,7 @@ const UsersTokenCard: FC<IUsersTokenCard> = ({
                 />
               )}
               <CardContent sx={{ position: 'relative' }}>
-                {nftData.saleType && setSelected === undefined && (
+                {nftData.type && nftData.type !== "OTHER" && 
                   <Box
                     sx={{
                       position: 'absolute',
@@ -284,16 +283,18 @@ const UsersTokenCard: FC<IUsersTokenCard> = ({
                       right: '16px',
                       height: '28px',
                       p: '2px 8px',
-                      background: theme.palette.primary.main,
+                      background: theme.palette.secondary.main,
                       color: theme.palette.background.default,
                       borderRadius: '50px',
                     }}
                   >
                     <Typography sx={{ fontWeight: '700', }}>
-                      {SaleTypeSwitch(nftData.saleType)}
+                      {nftData.type !== "PICTURE" 
+                      ? nftData.type.charAt(0).toUpperCase() + nftData.type.slice(1).toLowerCase()
+                      : "Image"}
                     </Typography>
                   </Box>
-                )}
+                }
                 <Typography
                   sx={{
                     fontWeight: '600',
@@ -350,9 +351,6 @@ const UsersTokenCard: FC<IUsersTokenCard> = ({
               <Grid2>
                 <Skeleton variant="text" sx={{ fontSize: '0.8rem' }} />
               </Grid2>
-              <Grid2>
-                <Skeleton variant="text" sx={{ fontSize: '0.8rem' }} />
-              </Grid2>
             </Grid2>
           ) : (
             <Grid2
@@ -373,7 +371,7 @@ const UsersTokenCard: FC<IUsersTokenCard> = ({
                     textOverflow: 'ellipsis'
                   }}
                 >
-                  {nftData.collectionLink ? (
+                  {/* {nftData.collectionLink ? (
                     <Link
                       href={nftData.collectionLink}
                       sx={{
@@ -389,7 +387,7 @@ const UsersTokenCard: FC<IUsersTokenCard> = ({
                   ) : (
                     nftData.collection
                   )}
-                  {' '}
+                  {' '} */}
                   {showArtist && (
                     <Typography
                       sx={{

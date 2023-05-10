@@ -31,7 +31,6 @@ export interface IUsersTokenListProps {
 
 const searchAndFilterAndSortData = (filteredData: any[], search: string, searchKey: string, sortBy: string) => {
   let newData = filteredData
-  console.log(filteredData)
   if (search) {
     newData = filteredData.filter(
       (item) => item[searchKey].toLowerCase().indexOf(search.toLowerCase()) > -1
@@ -94,7 +93,7 @@ const UsersTokenList: FC<IUsersTokenListProps> = ({ nftListArray, notFullWidth, 
         name: item.name,
         link: '/marketplace/token/' + item.tokenId,
         tokenId: item.tokenId,
-        qty: item.amount,
+        qty: item.decimals !== 0 ? item.amount / Math.pow(10, item.decimals) : item.amount,
         loading: true
       }
     })

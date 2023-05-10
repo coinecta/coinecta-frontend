@@ -23,12 +23,12 @@ const pages = [
     link: "/",
   },
   {
-    name: "Collections",
-    link: "/collections",
+    name: "Linktree",
+    link: "/linktree",
   },
   {
-    name: "Marketplace",
-    link: "/marketplace",
+    name: "Whitepaper",
+    link: "/whitepaper",
   },
 ];
 
@@ -64,11 +64,15 @@ const Header: FC<IHeaderProps> = ({ }) => {
         <Box
           sx={{
             display: 'inline-block',
+            position: 'relative',
             "&::after": {
               content: '""',
+              position: 'absolute',
+              bottom: '-6px',
               display: 'block',
-              mt: '4px',
-              height: '2px',
+              mt: '0',
+              borderRadius: '10px',
+              height: '3px',
               background: router.pathname === page.link ? theme.palette.primary.main : '',
               width: '100%',
             },
@@ -93,8 +97,7 @@ const Header: FC<IHeaderProps> = ({ }) => {
                 sx={{
                   color: router.pathname === page.link ? theme.palette.primary.main : theme.palette.text.primary,
                   fontWeight: '700',
-                  fontFamily: '"Inter", sans-serif',
-                  fontSize: '14px',
+                  fontSize: '16px',
                   textDecoration: "none",
                   px: '8px',
                   "&:hover": {
@@ -120,34 +123,29 @@ const Header: FC<IHeaderProps> = ({ }) => {
     <>
       <AppBar
         position="fixed"
-        // color="transparent"
         elevation={0}
         sx={{
           zIndex: "101",
           border: 'none',
-          borderBottom: `1px solid ${theme.palette.divider}`,
-          backdropFilter: "blur(25px)",
+          borderBottom: trigger ? `1px solid ${theme.palette.divider}` : 'none',
+          // backdropFilter: "blur(25px)",
           borderRadius: '0px',
-          background: theme.palette.background.paper,
+          background: theme.palette.background.default,
         }}
       >
-        <Container sx={{ px: "24px" }}>
+        <Container>
           <Grid
             container
             justifyContent="space-between"
             alignItems="center"
             sx={{
-              height: trigger ? "59px" : "89px",
+              height: "70px",
               transition: 'height 200ms linear'
             }}
           >
             <Grid
               item
               alignItems="center"
-              sx={{
-                // height: { xs: "32px", md: "40px" },
-                // width: { xs: "32px", md: "40px" },
-              }}
             >
               <Link
                 href="/"
@@ -160,24 +158,24 @@ const Header: FC<IHeaderProps> = ({ }) => {
                   }
                 }}
               >
-                <Logo
+                {/* <Logo
                   sx={{
                     mt: '6px',
                     display: 'inline-block'
                   }}
-                />
+                /> */}
                 <Typography
                   component="span"
                   sx={{
-                    fontFamily: '"Koulen", sans-serif',
                     color: theme.palette.text.primary,
-                    fontSize: '1.7rem',
+                    fontSize: '2rem!important',
+                    fontWeight: '700',
+                    lineHeight: 1,
                     display: 'inline-block',
-                    verticalAlign: '25%',
-
+                    verticalAlign: 'text-top'
                   }}
                 >
-                  BLOCK ART
+                  Coinnecta Finance
                 </Typography>
               </Link>
             </Grid>
@@ -269,7 +267,7 @@ const Header: FC<IHeaderProps> = ({ }) => {
             position: "fixed",
             width: "26px",
             height: "40px",
-            top: trigger ? "11px" : "25px",
+            top: "25px",
             right: "26px",
             color: theme.palette.text.primary,
           }}
