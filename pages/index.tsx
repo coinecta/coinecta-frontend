@@ -165,8 +165,9 @@ const Home: NextPage = () => {
           </Typography>
         </Box>
 
-        <Grid container spacing={12} sx={{ mb: 3, mx: 'auto' }} maxWidth="lg">
-          <Grid item md={6}>
+        <Grid container spacing={12} sx={{ mb: 3 }}>
+          <Grid item md={1}></Grid>
+          <Grid item md={5}>
             <Typography variant="h4">
               Investors
             </Typography>
@@ -191,7 +192,7 @@ const Home: NextPage = () => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item md={6}>
+          <Grid item md={5}>
             <Typography variant="h4">
               Teams
             </Typography>
@@ -203,6 +204,7 @@ const Home: NextPage = () => {
             </Typography>
             <Button variant="contained" color="secondary">Apply for IDO</Button>
           </Grid>
+          <Grid item md={1}></Grid>
         </Grid>
       </Container>
     </>
