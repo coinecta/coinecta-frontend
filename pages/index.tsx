@@ -44,7 +44,7 @@ const Home: NextPage = () => {
             align="center"
             gutterBottom
           >
-            Unlock the Cardano Community's Full Potential
+            Unlock the Cardano Community&apos;s Full Potential
           </Typography>
           <Typography variant="h6" align="center" color="text.secondary" paragraph>
             We believe the community is one of Cardano&apos;s greatest strengths. Working together, we can grow the ecosystem to provide inclusive financial services to the entire globe.

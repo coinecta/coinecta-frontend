@@ -91,7 +91,7 @@ const fourthPages = {
   ],
 };
 
-const linkList: FC<IPageLinkList> = ({ title, links }) => {
+const LinkList: FC<IPageLinkList> = ({ title, links }) => {
   const theme = useTheme()
   return (
     <Grid item xs={6} md={3} sx={{}} zeroMinWidth>
@@ -152,9 +152,9 @@ const Footer: FC = () => {
         </Grid>
         <Grid item xs={12} md={7}>
           <Grid container direction="row" justifyContent="flex-end" spacing={4} sx={{ flexWrap: 'wrap' }}>
-            {firstPages.links.length != 0 && linkList(firstPages)}
-            {secondPages.links.length != 0 && linkList(secondPages)}
-            {thirdPages.links.length != 0 && linkList(thirdPages)}
+            {firstPages.links.length != 0 && LinkList(firstPages)}
+            {secondPages.links.length != 0 && LinkList(secondPages)}
+            {thirdPages.links.length != 0 && LinkList(thirdPages)}
             <Grid item xs={6} md={3} sx={{}} zeroMinWidth>
               <Typography sx={titleFont}>Socials</Typography>
               <Grid
