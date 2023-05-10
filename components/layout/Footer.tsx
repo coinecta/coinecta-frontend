@@ -146,7 +146,7 @@ const Footer: FC = () => {
                 display: 'inline-block',
               }}
             >
-              Coinnecta Finance
+              Coinecta Finance
             </Typography>
           </Link>
         </Grid>
@@ -180,7 +180,7 @@ const Footer: FC = () => {
       <Grid container direction={upMd ? 'row' : 'column-reverse'} justifyContent="space-between" sx={{ py: 2 }} spacing={1}>
         <Grid item xs={12} md sx={{ textAlign: { xs: 'center', md: 'left' } }}>
           <Typography>
-            &copy; 2022 Coinnecta Finance. All rights reserved.
+            &copy; 2022 Coinecta Finance. All rights reserved.
           </Typography>
         </Grid>
         <Grid item xs={12} md sx={{ textAlign: { xs: 'center', md: 'right' } }}>
