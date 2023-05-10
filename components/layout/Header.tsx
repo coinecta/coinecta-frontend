@@ -175,7 +175,7 @@ const Header: FC<IHeaderProps> = ({ }) => {
                     verticalAlign: 'text-top'
                   }}
                 >
-                  Coinnecta Finance
+                  Coinecta Finance
                 </Typography>
               </Link>
             </Grid>

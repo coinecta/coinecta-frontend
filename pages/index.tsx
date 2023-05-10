@@ -112,7 +112,7 @@ const Home: NextPage = () => {
             <Grid container spacing={6}>
               <Grid item md={6}>
                 <Typography variant="h5" fontWeight={600}>1. Stake The Token</Typography>
-                <Typography variant="body2">To participate, first you have to get the Coinnecta Finance token and stake it to reach a staking tier. Your tier will represent your pool weight in IDOs. </Typography>
+                <Typography variant="body2">To participate, first you have to get the Coinecta Finance token and stake it to reach a staking tier. Your tier will represent your pool weight in IDOs. </Typography>
                 <Grid container spacing={3}>
                   <Grid item>
                     <Button variant="contained" color="secondary">Get CNCT</Button>

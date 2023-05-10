@@ -28,7 +28,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <>
       <Head>
         <link rel="icon" href="/favicon.ico" />
-        <title>Template</title>
+        <title>Coinecta Finance</title>
       </Head>
       <Box
         sx={{
