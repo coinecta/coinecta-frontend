@@ -250,8 +250,8 @@ let lightTheme = createTheme({
   palette: {
     background: {
       default: "rgba(255,255,255,1)",
-      paper: 'rgba(247,249,248)',
-      transparent: 'rgba(247,249,248,0.5)',
+      paper: 'rgba(237,239,238)',
+      transparent: 'rgba(237,239,238,0.5)',
     },
     text: {
       primary: 'rgba(23,21,21,1)',
@@ -331,7 +331,7 @@ let darkTheme = createTheme({
       main: 'rgb(255, 120, 68)',
     },
     secondary: {
-      main: "#3D8AB9",
+      main: "#29b6f6",
     },
     contrastThreshold: 4.5,
   },

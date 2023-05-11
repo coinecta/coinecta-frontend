@@ -13,7 +13,8 @@ import {
   CardContent,
   CardMedia,
   Box,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material'
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Autoplay, Navigation, Pagination, Grid } from 'swiper';
@@ -39,7 +40,7 @@ const projectsList = [
     imageUrl: '/projects/ergopad.jpg',
     category: 'Launchpad',
     status: 'In Progress', // 'In Progress', 'Complete'
-    blockchains: ['Cardano']
+    blockchains: ['Ergo']
   },
   {
     title: 'Paideia',
@@ -55,7 +56,7 @@ const projectsList = [
     imageUrl: '/projects/cyberverse.png',
     category: 'Game',
     status: 'Complete', // 'In Progress', 'Complete'
-    blockchains: ['Cardano', 'Ergo']
+    blockchains: ['Cardano']
   },
 ]
 
@@ -203,19 +204,29 @@ const ProjectCard: FC<IProjectCard> = ({
         alt={`${title} Banner`}
         sx={{ height: '240px' }}
       />
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <CardContent sx={{ flex: '1 0 auto' }}>
+      <CardContent sx={{ flex: '1 0 auto' }}>
+        <Box sx={{ position: 'relative' }}>
+          
+          
           <Typography
             component="h5"
             variant="h5"
           >
             {title}
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary" component="div">
-            {tagline}
-          </Typography>
-        </CardContent>
-      </Box>
+          <Chip label={status} sx={{ position: 'absolute', top: '-32px', right: '6px' }} color="secondary" />
+        </Box>
+
+        <Typography variant="subtitle2" color="text.secondary" component="div" sx={{ mb: 2 }}>
+          {tagline}
+        </Typography>
+        <Box>
+          {blockchains.map((item, i) => {
+            const key = uuidv4()
+            return <Chip variant="outlined" label={item} key={key} sx={{ mr: 1 }} />
+          })}
+          </Box>
+      </CardContent>
     </Card>
   )
 }
