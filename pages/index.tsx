@@ -30,6 +30,7 @@ import DiscordIcon from '@components/svgs/DiscordIcon';
 import TelegramIcon from '@components/svgs/TelegramIcon';
 import { useInView } from 'react-intersection-observer';
 import wideBg from "../public/wide.jpg";
+import bottomBg from "../public/bottom.jpg";
 
 const inViewOptions = {
   threshold: 1,
@@ -50,57 +51,44 @@ const Home: NextPage = () => {
   return (
     <>
       {/* Hero section */}
-<Box sx={{
-  backgroundColor: 'rgba(255,255,255,1)',
-  color: 'rgba(23,21,21,1)',
-}}>
+      <Box sx={{
+        backgroundColor: 'rgba(255,255,255,1)',
+        color: 'rgba(23,21,21,1)',
+        display: 'flex'
+      }}>
+        <Container
+          sx={{
+            pt: '20vh',
+            // minHeight: '100vh',
+            // mb: 12
+            position: 'relative',
+            zIndex: 2
+          }}
+        >
+          <Box maxWidth="md" sx={{ mx: 'auto' }}>
+            <Typography
+              variant="h2"
+              fontWeight={600}
+              align="center"
+              gutterBottom
+            >
+              Unlock the Cardano Community&apos;s Full Potential
+            </Typography>
+            <Typography variant="h6" align="center" sx={{ color: 'rgba(23,21,21,1)' }} paragraph>
+              We believe the community is one of Cardano&apos;s greatest strengths. Working together, we can grow the ecosystem to provide inclusive financial services to the entire globe.
+            </Typography>
+            <Stack
+              sx={{ pt: 3 }}
+              direction="row"
+              spacing={2}
+              justifyContent="center"
+            >
+              <Button variant="contained">Support an IDO</Button>
+              <Button variant="outlined">Read the docs</Button>
+            </Stack>
 
-
-      <Container
-        sx={{
-          pt: '20vh',
-          // minHeight: '100vh',
-          // mb: 12
-          position: 'relative',
-          zIndex: 2
-        }}
-      >
-        {/* <Box sx={{
-          background: `url(${wideBg.src})`,
-          backgroundPosition: 'bottom',
-          backgroundRepeat: 'no-repeat',
-          position: 'absolute',
-          bottom: '-200px',
-          width: '100vw', 
-          height: '400px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: -1
-        }}></Box> */}
-        <Box maxWidth="md" sx={{ mx: 'auto' }}>
-          <Typography
-            variant="h2"
-            fontWeight={600}
-            align="center"
-            gutterBottom
-          >
-            Unlock the Cardano Community&apos;s Full Potential
-          </Typography>
-          <Typography variant="h6" align="center" sx={{ color: 'rgba(23,21,21,1)' }} paragraph>
-            We believe the community is one of Cardano&apos;s greatest strengths. Working together, we can grow the ecosystem to provide inclusive financial services to the entire globe.
-          </Typography>
-          <Stack
-            sx={{ pt: 3 }}
-            direction="row"
-            spacing={2}
-            justifyContent="center"
-          >
-            <Button variant="contained">Support an IDO</Button>
-            <Button variant="outlined">Read the docs</Button>
-          </Stack>
-
-        </Box>
-        <Box maxWidth='lg' sx={{ mx: 'auto' }}>
+          </Box>
+          <Box maxWidth='lg' sx={{ mx: 'auto' }}>
             <Typography variant="body1" sx={{ pt: 12, textTransform: 'uppercase', color: 'rgba(23,21,21,1)' }} align="center" color="text.secondary" paragraph>
               In partnership with:
             </Typography>
@@ -119,7 +107,7 @@ const Home: NextPage = () => {
               </Grid>
             </Grid>
           </Box>
-      </Container>
+        </Container>
       </Box>
       {/* End hero section */}
 
@@ -139,13 +127,26 @@ const Home: NextPage = () => {
           top: '-300px',
         },
         backgroundColor: 'rgb(8,8,16)',
-        pb: 12,
-        mb: 24,
+        pb: 0,
+        mb: theme.palette.mode === 'dark' ? 0 : 12,
         color: 'rgba(244,244,244,1)',
-        zIndex: 1
+        zIndex: 1,
+        '&:after': {
+          content: '""',
+          display: 'inline-block',
+          width: '3440px',
+          height: '219px',
+          backgroundImage: theme.palette.mode === 'dark' ? 'none' : `url(${bottomBg.src})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          position: 'relative',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          bottom: '-50px',
+        },
       }}>
         <Container sx={{ mt: '-250px' }}>
-          
+
           <Grid container sx={{ mb: 3 }} >
             <Grid item md={1}></Grid>
             <Grid item md={5}>
