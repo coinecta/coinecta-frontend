@@ -130,25 +130,43 @@ const Footer: FC = () => {
         }}
       >
         <Grid item xs={12} md={5}>
-          <Link href="/" sx={{
+        <Link
+                href="/"
+                sx={{
                   display: 'block',
                   '&:hover': {
                     '& span': {
                       color: theme.palette.primary.main
+                    },
+                    '& .MuiSvgIcon-root': {
+                      color: theme.palette.primary.main
                     }
                   }
-                }}>
-            <Typography
-              component="span"
-              sx={{
-                color: theme.palette.text.primary,
-                fontSize: '1.7rem',
-                display: 'inline-block',
-              }}
-            >
-              Coinecta Finance
-            </Typography>
-          </Link>
+                }}
+              >
+                <Logo
+                  sx={{
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
+                    mr: '3px',
+                    fontSize: '30px',
+                    color: theme.palette.text.primary,
+                  }}
+                />
+                <Typography
+                  component="span"
+                  sx={{
+                    color: theme.palette.text.primary,
+                    fontSize: '1.7rem!important',
+                    fontWeight: '700',
+                    lineHeight: 1,
+                    display: 'inline-block',
+                    verticalAlign: 'text-top'
+                  }}
+                >
+                  Coinecta
+                </Typography>
+              </Link>
         </Grid>
         <Grid item xs={12} md={7}>
           <Grid container direction="row" justifyContent="flex-end" spacing={4} sx={{ flexWrap: 'wrap' }}>
@@ -180,7 +198,7 @@ const Footer: FC = () => {
       <Grid container direction={upMd ? 'row' : 'column-reverse'} justifyContent="space-between" sx={{ py: 2 }} spacing={1}>
         <Grid item xs={12} md sx={{ textAlign: { xs: 'center', md: 'left' } }}>
           <Typography>
-            &copy; 2022 Coinecta Finance. All rights reserved.
+            &copy; 2023 Coinecta Finance. All rights reserved.
           </Typography>
         </Grid>
         <Grid item xs={12} md sx={{ textAlign: { xs: 'center', md: 'right' } }}>

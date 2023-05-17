@@ -58,7 +58,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           display: 'flex',
           flexDirection: 'column',
           minHeight: '100vh',
-          pt: '90px', // give space for floating navbar
+          pt: '70px', // give space for floating navbar
         }}
       >
         <Box sx={{ flexGrow: '1', height: '100%' }}>

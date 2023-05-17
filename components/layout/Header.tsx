@@ -154,16 +154,22 @@ const Header: FC<IHeaderProps> = ({ }) => {
                   '&:hover': {
                     '& span': {
                       color: theme.palette.primary.main
+                    },
+                    '& .MuiSvgIcon-root': {
+                      color: theme.palette.primary.main
                     }
                   }
                 }}
               >
-                {/* <Logo
+                <Logo
                   sx={{
-                    mt: '6px',
-                    display: 'inline-block'
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
+                    mr: '3px',
+                    fontSize: '34px',
+                    color: theme.palette.text.primary,
                   }}
-                /> */}
+                />
                 <Typography
                   component="span"
                   sx={{
@@ -175,7 +181,7 @@ const Header: FC<IHeaderProps> = ({ }) => {
                     verticalAlign: 'text-top'
                   }}
                 >
-                  Coinecta Finance
+                  Coinecta
                 </Typography>
               </Link>
             </Grid>
