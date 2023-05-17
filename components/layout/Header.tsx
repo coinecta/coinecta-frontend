@@ -125,7 +125,7 @@ const Header: FC<IHeaderProps> = ({ }) => {
         position="fixed"
         elevation={0}
         sx={{
-          zIndex: "101",
+          zIndex: 101,
           border: 'none',
           borderBottom: trigger ? `1px solid ${theme.palette.divider}` : 'none',
           // backdropFilter: "blur(25px)",

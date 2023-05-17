@@ -31,6 +31,8 @@ import TelegramIcon from '@components/svgs/TelegramIcon';
 import { useInView } from 'react-intersection-observer';
 import wideBg from "../public/wide.jpg";
 import bottomBg from "../public/bottom.jpg";
+import HarmonicLabsLogo from '@components/svgs/HarmonicLabsLogo';
+import Link from '@components/Link'
 
 const inViewOptions = {
   threshold: 1,
@@ -47,6 +49,16 @@ const Home: NextPage = () => {
   const [ref4, inView4] = useInView({ ...inViewOptions, threshold: 0.5 });
   const [ref5, inView5] = useInView(inViewOptions);
   const [ref6, inView6] = useInView({ ...inViewOptions, threshold: 0.3 });
+
+  const logoLinkSx = {
+    display: 'block',
+    color: 'rgba(23,21,21,1)',
+    '&:hover': {
+      '& .MuiSvgIcon-root': {
+        color: theme.palette.primary.main,
+      }
+    }
+  }
 
   return (
     <>
@@ -94,16 +106,44 @@ const Home: NextPage = () => {
             </Typography>
             <Grid container alignItems="center" justifyContent="space-around">
               <Grid item>
-                <TeddyswapLogo sx={{ fontSize: '160px', height: '100px' }} />
+                <Link
+                  href="https://teddyswap.org"
+                  sx={logoLinkSx}
+                >
+                  <TeddyswapLogo sx={{ fontSize: '160px', height: '100px' }} />
+                </Link>
               </Grid>
               <Grid item>
-                <ErgopadLogo sx={{ fontSize: '160px', height: '100px' }} />
+                <Link
+                  href="https://www.harmoniclabs.tech"
+                  sx={logoLinkSx}
+                >
+                  <HarmonicLabsLogo sx={{ fontSize: '190px', height: '100px' }} />
+                </Link>
               </Grid>
               <Grid item>
-                <PaideiaLogo sx={{ fontSize: '140px', height: '100px' }} />
+                <Link
+                  href="https://www.ergopad.io"
+                  sx={logoLinkSx}
+                >
+                  <ErgopadLogo sx={{ fontSize: '160px', height: '100px' }} />
+                </Link>
               </Grid>
               <Grid item>
-                <BlockheadsLogo sx={{ fontSize: '160px', height: '100px' }} />
+                <Link
+                  href="https://www.paideia.im"
+                  sx={logoLinkSx}
+                >
+                  <PaideiaLogo sx={{ fontSize: '140px', height: '100px' }} />
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link
+                  href="https://www.blockheads.one"
+                  sx={logoLinkSx}
+                >
+                  <BlockheadsLogo sx={{ fontSize: '160px', height: '100px' }} />
+                </Link>
               </Grid>
             </Grid>
           </Box>
