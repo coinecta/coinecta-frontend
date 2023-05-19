@@ -1,4 +1,4 @@
-import React, { FC, useRef } from 'react';
+import React, { FC, useRef, useState, useEffect } from 'react';
 import type { NextPage } from 'next'
 import {
   Container,
@@ -14,7 +14,7 @@ import {
   CardMedia,
   Box,
   IconButton,
-  Chip
+  Chip,
 } from '@mui/material'
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Autoplay, Navigation, Pagination, Grid } from 'swiper';
@@ -24,41 +24,8 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { v4 as uuidv4 } from 'uuid';
-
-const projectsList = [
-  {
-    title: 'Blockheads',
-    tagline: 'Tagline about blockheads, they are so cool.',
-    imageUrl: '/projects/blockheads.png',
-    category: 'NFT',
-    status: 'Upcoming', // 'In Progress', 'Complete'
-    blockchains: ['Cardano', 'Ergo']
-  },
-  {
-    title: 'Ergopad',
-    tagline: 'A great launchpad on Ergo',
-    imageUrl: '/projects/ergopad.jpg',
-    category: 'Launchpad',
-    status: 'In Progress', // 'In Progress', 'Complete'
-    blockchains: ['Ergo']
-  },
-  {
-    title: 'Paideia',
-    tagline: 'DAO Management software suite',
-    imageUrl: '/projects/paideia.png',
-    category: 'DAO Software',
-    status: 'Complete', // 'In Progress', 'Complete'
-    blockchains: ['Cardano', 'Ergo']
-  },
-  {
-    title: 'CyberVerse',
-    tagline: 'Home of the cyberpixels',
-    imageUrl: '/projects/cyberverse.png',
-    category: 'Game',
-    status: 'Complete', // 'In Progress', 'Complete'
-    blockchains: ['Cardano']
-  },
-]
+import axios from "axios";
+import { IProject } from '@pages/projects/[project_id]';
 
 interface IProjectCard {
   title: string;
@@ -67,9 +34,8 @@ interface IProjectCard {
   category: string;
   status: string;
   blockchains: string[];
+  link: string;
 }
-
-
 
 SwiperCore.use([Navigation]);
 
@@ -85,6 +51,20 @@ const Projects: FC<IProjectsProps> = ({ }) => {
   const theme = useTheme()
   const upMd = useMediaQuery(theme.breakpoints.up('md'))
   const swiperRef = useRef<ExtendedSwiperRef | null>(null);
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    const getProjects = async () => {
+      try {
+        const res = await axios.get(`${process.env.API_URL}/projects/`);
+        setProjects(res.data.filter((project: IProject) => project.name.toLowerCase().startsWith('cardano-')))
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    getProjects();
+  }, []);
 
   const handlePrev = () => {
     if (swiperRef.current) {
@@ -162,11 +142,28 @@ const Projects: FC<IProjectsProps> = ({ }) => {
                   modules={[Grid, Pagination, Navigation, Autoplay]}
                   className="mySwiper"
                 >
-                  {projectsList.map((item, i) => {
+                  {projects.map((item: IProject, i) => {
                     const uuid = uuidv4()
+                    const projectName = item.name.replace(/cardano-(x-)?/, "")
+                    const category = item.fundsRaised === 9090
+                      ? "Launchpad"
+                      : "IDO"
+                    const details = {
+                      title: projectName,
+                      tagline: item.shortDescription,
+                      imageUrl: item.bannerImgUrl,
+                      category: category,
+                      status: item.isLaunched
+                        ? "Complete"
+                        : "Upcoming", // 'In Progress', 'Complete'
+                      blockchains: item.name.includes("cardano-x-")
+                        ? ['Cardano', 'Ergo']
+                        : ['Cardano']
+                    }
+
                     return (
                       <SwiperSlide key={uuid}>
-                        <ProjectCard {...item} />
+                        <ProjectCard {...details} link={`/projects/${projectName.toLowerCase().replace(/[\s-]/g, "")}`} />
                       </SwiperSlide>
                     )
                   })}
@@ -194,7 +191,8 @@ const ProjectCard: FC<IProjectCard> = ({
   imageUrl,
   category,
   status,
-  blockchains
+  blockchains,
+  link
 }) => {
   return (
     <Card>
@@ -206,8 +204,8 @@ const ProjectCard: FC<IProjectCard> = ({
       />
       <CardContent sx={{ flex: '1 0 auto' }}>
         <Box sx={{ position: 'relative' }}>
-          
-          
+
+
           <Typography
             component="h5"
             variant="h5"
@@ -220,12 +218,19 @@ const ProjectCard: FC<IProjectCard> = ({
         <Typography variant="subtitle2" color="text.secondary" component="div" sx={{ mb: 2 }}>
           {tagline}
         </Typography>
-        <Box>
+        <MuiGrid container justifyContent="space-between" alignItems="center">
+          <MuiGrid item>
           {blockchains.map((item, i) => {
             const key = uuidv4()
             return <Chip variant="outlined" label={item} key={key} sx={{ mr: 1 }} />
           })}
-          </Box>
+          </MuiGrid>
+          <MuiGrid item>
+            <Button href={link} variant="contained" color="secondary" size="small">
+              Learn More
+            </Button>
+          </MuiGrid>
+        </MuiGrid>
       </CardContent>
     </Card>
   )
