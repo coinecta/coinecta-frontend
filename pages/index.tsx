@@ -7,11 +7,6 @@ import {
   useMediaQuery,
   Grid,
   Button,
-  Card,
-  CardActions,
-  CardHeader,
-  CardContent,
-  CardMedia,
   Box,
   Stack,
   IconButton,
@@ -95,8 +90,8 @@ const Home: NextPage = () => {
               spacing={2}
               justifyContent="center"
             >
-              <Button variant="contained">Support an IDO</Button>
-              <Button variant="outlined">Read the docs</Button>
+              <Button variant="contained" href="/projects">Support an IDO</Button>
+              <Button variant="outlined" disabled>Read the docs</Button>
             </Stack>
 
           </Box>
@@ -242,7 +237,7 @@ const Home: NextPage = () => {
                   <Grid item md={6}>
                     <Typography variant="h5" fontWeight={600}>2. Whitelist For IDOs</Typography>
                     <Typography variant="body2" sx={{ color: 'rgba(244,244,244,1)' }}>Keep an eye out for IDOs you like, and whitelist to invest. You will be approved for a specific number of tokens based on your staking tier weight. </Typography>
-                    <Button variant="contained" color="secondary">View Projects</Button>
+                    <Button variant="contained" color="secondary" href="/projects">View Projects</Button>
                   </Grid>
                 </Grow>
                 <Grow

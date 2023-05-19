@@ -203,7 +203,7 @@ const Footer: FC = () => {
         </Grid>
         <Grid item xs={12} md sx={{ textAlign: { xs: 'center', md: 'right' } }}>
           <Link
-            href="/"
+            href="/terms"
             sx={{
               color: theme.palette.text.primary,
               textDecoration: 'none',
@@ -212,7 +212,7 @@ const Footer: FC = () => {
               },
             }}
           >
-            Terms
+            Terms of Service
           </Link>{" "}
           ·{" "}
           <Link

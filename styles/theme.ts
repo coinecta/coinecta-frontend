@@ -58,7 +58,7 @@ const mainTheme = [{
     //   display: 'inline-block',
     // },
     body1: {
-      
+
     },
     body2: {
       fontSize: '1.1667rem',
