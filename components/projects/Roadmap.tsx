@@ -7,15 +7,15 @@ import TimelineDot from '@mui/lab/TimelineDot';
 import Typography from '@mui/material/Typography';
 import Icon from '@mui/material/Icon';
 
-const Roadmap = ({ data }) => {
+const Roadmap = ( data: any ) => {
   const timelineItems = data
-    ? data.map((roadmap) => {
+    ? data.map((roadmap: any) => {
         return { ...roadmap, date: Date.parse(roadmap.date) };
       })
     : [];
   return (
     <Timeline>
-      {timelineItems.map((item) => {
+      {timelineItems.map((item: any) => {
         const itemTime = new Date(item?.date).toISOString();
         return (
           <TimelineItem
@@ -37,10 +37,10 @@ const Roadmap = ({ data }) => {
               <Typography variant="h5" sx={{ mt: '-3px' }}>
                 {item?.name}
               </Typography>
-              <Typography variant="p" sx={{ mb: 1 }}>
+              <Typography variant="body1" sx={{ mb: 1 }}>
                 {itemTime.slice(0, 10) + ', ' + itemTime.slice(11, 16) + ' UTC'}
               </Typography>
-              <Typography variant="p" sx={{ fontSize: '1rem', mb: 1 }}>
+              <Typography variant="body1" sx={{ fontSize: '1rem', mb: 1 }}>
                 {item?.description}
               </Typography>
             </TimelineContent>

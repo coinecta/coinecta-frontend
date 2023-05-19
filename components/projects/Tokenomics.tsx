@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import React from 'react';
 
-function LinearProgressWithLabel(props) {
+function LinearProgressWithLabel(props: any) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Box sx={{ width: '100%', mr: 1 }}>
@@ -18,10 +18,10 @@ function LinearProgressWithLabel(props) {
   );
 }
 
-const Distribution = ({ data }) => {
+const Distribution = ( data: any ) => {
   const tokenomics = data ? data : [];
-  const total = tokenomics.reduce((a, data) => a + data.amount, 0);
-  const tokenSections = tokenomics.map((data) => {
+  const total = tokenomics.reduce((a: any, data: any) => a + data.amount, 0);
+  const tokenSections = tokenomics.map((data: any) => {
     return {
       name: data.name,
       percent: (data.amount * 100) / total,
@@ -30,13 +30,13 @@ const Distribution = ({ data }) => {
 
   return (
     <Box width="90%" sx={{ mx: 'auto' }}>
-      {tokenSections.map(({ name, percent }) => (
-        <React.Fragment key={name}>
+      {tokenSections.map(( item: any, i: number ) => (
+        <React.Fragment key={item.name}>
           <Box sx={{ width: '100%', mb: 1 }}>
             <Typography color="text.secondary" sx={{ fontWeight: '500' }}>
-              {name}
+              {item.name}
             </Typography>
-            <LinearProgressWithLabel value={percent} />
+            <LinearProgressWithLabel value={item.percent} />
           </Box>
         </React.Fragment>
       ))}

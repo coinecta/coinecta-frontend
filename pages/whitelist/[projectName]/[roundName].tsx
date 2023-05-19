@@ -637,7 +637,7 @@ const Whitelist = () => {
               </Grid>
             </>
           ) : (
-            <Typography>Looks like the whitelist event you are looking for doesn't exist.</Typography>
+            <Typography>Looks like the whitelist event you are looking for doesn&apos;t exist.</Typography>
           )}
         </>
       )}

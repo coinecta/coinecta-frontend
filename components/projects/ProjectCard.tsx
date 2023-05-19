@@ -15,7 +15,7 @@ import Link from "@components/Link";
 import { Grid, IconButton, Typography } from "@mui/material";
 import CopyToClipboard from "@components/CopyToClipboard";
 
-export const ProjectCard = ({ project }) => {
+export const ProjectCard = ( project: any ) => {
   const router = useRouter();
 
   return (
@@ -57,9 +57,8 @@ export const ProjectCard = ({ project }) => {
               sx={{ display: "flex", justifyContent: "center" }}
               href={project.socials.discord}
               aria-label="discord"
-              title="Discord"
-              rel="noreferrer"
-              target="_blank"
+              
+              
             >
               <IconButton aria-label="discord">
                 <DiscordIcon />
@@ -71,9 +70,7 @@ export const ProjectCard = ({ project }) => {
               sx={{ display: "flex", justifyContent: "center" }}
               href={project.socials.github}
               aria-label="github"
-              title="GitHub"
-              rel="noreferrer"
-              target="_blank"
+              
             >
               <IconButton aria-label="github">
                 <GitHubIcon />
@@ -85,9 +82,7 @@ export const ProjectCard = ({ project }) => {
               sx={{ display: "flex", justifyContent: "center" }}
               href={project.socials.telegram}
               aria-label="Telegram"
-              title="Telegram"
-              rel="noreferrer"
-              target="_blank"
+              
             >
               <IconButton aria-label="telegram">
                 <TelegramIcon />
@@ -99,9 +94,7 @@ export const ProjectCard = ({ project }) => {
               sx={{ display: "flex", justifyContent: "center" }}
               href={project.socials.twitter}
               aria-label="twitter"
-              title="Twitter"
-              rel="noreferrer"
-              target="_blank"
+              
             >
               <IconButton aria-label="twitter">
                 <TwitterIcon />
@@ -113,34 +106,14 @@ export const ProjectCard = ({ project }) => {
               sx={{ display: "flex", justifyContent: "center" }}
               href={project.socials.website}
               aria-label="website"
-              title="Web"
-              rel="noreferrer"
-              target="_blank"
+             
             >
               <IconButton aria-label="website">
                 <PublicIcon />
               </IconButton>
             </Link>
           ) : null}
-          <CopyToClipboard>
-            {({ copy }) => (
-              <IconButton
-                aria-label="share"
-                onClick={() =>
-                  copy(
-                    window.location +
-                      "/" +
-                      project.name
-                        .toLowerCase()
-                        .replaceAll(" ", "")
-                        .replaceAll(/[^a-zA-Z0-9]/g, "")
-                  )
-                }
-              >
-                <ShareIcon />
-              </IconButton>
-            )}
-          </CopyToClipboard>
+          
         </CardActions>
       </Card>
     </Grid>
