@@ -28,15 +28,15 @@ const CoinectaTermsOfService = () => {
         </Typography>
 
         <Typography variant="body2">
-          1.1 These Terms of Service (hereinafter referred to as "Terms") govern the use and conditions of the website located
+          1.1 These Terms of Service (hereinafter referred to as &quot;Terms&quot;) govern the use and conditions of the website located
           at{' '}
           <Typography component="a" href="https://coinecta.finance" target="_blank" rel="noopener">
             https://coinecta.finance
           </Typography>{' '}
-          (hereinafter referred to as the "Website") and the services provided by Benevolent SA de CV (hereinafter referred
-          to as the "Company" or "We" or "Us"), a corporation registered in El Salvador. These Terms constitute a binding and
+          (hereinafter referred to as the &quot;Website&quot;) and the services provided by Benevolent SA de CV (hereinafter referred
+          to as the &quot;Company&quot; or &quot;We&quot; or &quot;Us&quot;), a corporation registered in El Salvador. These Terms constitute a binding and
           enforceable legal contract between the Company and its affiliates and subsidiaries worldwide, and you, an end user
-          of the Services (hereinafter referred to as "You" or "User") in relation to the Services. By accessing,
+          of the Services (hereinafter referred to as &quot;You&quot; or &quot;User&quot;) in relation to the Services. By accessing,
           registering, using, or clicking on the Services and information made available by the Company via the Website, you
           hereby accept and agree to all the Terms set forth herein. If you do not agree to these Terms, you may not access
           or use the Website and the Services.
@@ -49,28 +49,28 @@ const CoinectaTermsOfService = () => {
         <List sx={listStyle}>
           <ListItem>
             <Typography>
-              "Affiliate" means, in relation to a person, any company or other entity, whether or not with legal personality,
+              &quot;Affiliate&quot; means, in relation to a person, any company or other entity, whether or not with legal personality,
               which directly or indirectly controls, is controlled by, or is under joint control with that person.
             </Typography>
           </ListItem>
           <ListItem>
             <Typography>
-              "Applicable Laws" refers to acts, statutes, regulations, ordinances, treaties, guidelines, and policies issued by
+              &quot;Applicable Laws&quot; refers to acts, statutes, regulations, ordinances, treaties, guidelines, and policies issued by
               governmental organizations or regulatory bodies relevant to a certain party.
             </Typography>
           </ListItem>
           <ListItem>
-            <Typography>"Company" refers to Benevolent SA de CV.</Typography>
+            <Typography>&quot;Company&quot; refers to Benevolent SA de CV.</Typography>
           </ListItem>
           <ListItem>
-            <Typography>"Platform" refers to Coinecta Finance, the online platform operated by the Company.</Typography>
+            <Typography>&quot;Platform&quot; refers to Coinecta Finance, the online platform operated by the Company.</Typography>
           </ListItem>
           <ListItem>
-            <Typography>"Project" refers to Projects launched on the Platform.</Typography>
+            <Typography>&quot;Project&quot; refers to Projects launched on the Platform.</Typography>
           </ListItem>
           <ListItem>
             <Typography>
-              "Services" refers to the features, functionalities, and offerings provided by the Company through the Website.
+              &quot;Services&quot; refers to the features, functionalities, and offerings provided by the Company through the Website.
               These may include but are not limited to access to the online platform, the exchange or trading of
               cryptocurrencies or tokens, participation in token sales or staking activities, access to information, and any
               other services made available by the Company through the Website.
@@ -78,16 +78,16 @@ const CoinectaTermsOfService = () => {
           </ListItem>
           <ListItem>
             <Typography>
-              "Tokens" refers to Coinecta Tokens (CNCT) and other Project Tokens available on the Platform.
+              &quot;Tokens&quot; refers to Coinecta Tokens (CNCT) and other Project Tokens available on the Platform.
             </Typography>
           </ListItem>
           <ListItem>
             <Typography>
-              "User(s)" refers to individuals or entities accessing and using the Company Services.
+              &quot;User(s)&quot; refers to individuals or entities accessing and using the Company Services.
             </Typography>
           </ListItem>
           <ListItem>
-            <Typography>"Website" refers to the website associated with the Platform.</Typography>
+            <Typography>&quot;Website&quot; refers to the website associated with the Platform.</Typography>
           </ListItem>
         </List>
 
@@ -117,7 +117,7 @@ const CoinectaTermsOfService = () => {
 
         <Typography variant="body2">
           3.4 Links to and from the Website: You may gain access from the Website to third-party services operated or made
-          available by persons other than us ("Third-Party Services"). Such hyperlinks are provided for your convenience,
+          available by persons other than us (&quot;Third-Party Services&quot;). Such hyperlinks are provided for your convenience,
           and the Company has no control over the content of these sites or resources. The Company accepts no responsibility
           for them or for any loss or damage that may arise from your use of them.
         </Typography>

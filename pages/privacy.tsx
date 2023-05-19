@@ -179,7 +179,7 @@ const PrivacyPolicy = () => {
         </List>
 
         <Typography variant="h4" component="h2" gutterBottom>
-          7. Children's Privacy
+          7. Children&apos;s Privacy
         </Typography>
 
         <Typography variant="body2">
