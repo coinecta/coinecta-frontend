@@ -216,7 +216,7 @@ const Footer: FC = () => {
           </Link>{" "}
           ·{" "}
           <Link
-            href="/"
+            href="/privacy"
             sx={{
               color: theme.palette.text.primary,
               textDecoration: 'none',
