@@ -93,7 +93,7 @@ const Projects: FC<IProjectsProps> = ({ }) => {
                 Projects
               </Typography>
               <Typography variant="subtitle1" sx={{ mb: 3 }}>Check out the upcoming and past IDOs</Typography>
-              <Button variant="contained" color="secondary">
+              <Button variant="contained" color="secondary" href="/projects">
                 All Projects
               </Button>
             </MuiGrid>

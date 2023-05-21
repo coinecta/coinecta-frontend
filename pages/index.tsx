@@ -28,6 +28,7 @@ import wideBg from "../public/wide.jpg";
 import bottomBg from "../public/bottom.jpg";
 import HarmonicLabsLogo from '@components/svgs/HarmonicLabsLogo';
 import Link from '@components/Link'
+import bannerBg from '../public/banner.jpg'
 
 const inViewOptions = {
   threshold: 1,
@@ -91,7 +92,7 @@ const Home: NextPage = () => {
               justifyContent="center"
             >
               <Button variant="contained" href="/projects">Support an IDO</Button>
-              <Button variant="outlined" disabled>Read the docs</Button>
+              <Button variant="outlined" href="https://docs.coinecta.fi">Read the docs</Button>
             </Stack>
 
           </Box>
@@ -221,10 +222,32 @@ const Home: NextPage = () => {
                     <Typography variant="body2" sx={{ color: 'rgba(244,244,244,1)' }}>To participate, first you have to get the Coinecta Finance token and stake it to reach a staking tier. Your tier will represent your pool weight in IDOs. </Typography>
                     <Grid container spacing={3}>
                       <Grid item>
-                        <Button variant="contained" color="secondary">Get CNCT</Button>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          disabled
+                          sx={{
+                            color: 'rgba(255, 255, 255, 0.3)!important',
+                            boxShadow: 'none!important',
+                            backgroundColor: 'rgba(255, 255, 255, 0.12)!important'
+
+                          }}
+                        >
+                          Get CNCT
+                        </Button>
                       </Grid>
                       <Grid item>
-                        <Button variant="outlined" color="secondary">Stake Now</Button>
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          disabled
+                          sx={{
+                            color: 'rgba(255, 255, 255, 0.3)!important',
+                            border: '1px solid rgba(255, 255, 255, 0.12)!important'
+                          }}
+                        >
+                          Stake Now
+                        </Button>
                       </Grid>
                     </Grid>
                   </Grid>
@@ -247,7 +270,7 @@ const Home: NextPage = () => {
                   <Grid item md={6} ref={ref3}>
                     <Typography variant="h5" fontWeight={600}>3. Contribute</Typography>
                     <Typography variant="body2" sx={{ color: 'rgba(244,244,244,1)' }}>You will receive whitelist tokens in your wallet and can use those to contribute to the project. Send ADA or DJED to the Vesting Contract to receive your vesting key which will unlock tokens over time</Typography>
-                    <Button variant="contained" color="secondary">Learn More</Button>
+                    <Button variant="contained" color="secondary" href="https://docs.coinecta.fi/launchpad/contributing">Learn More</Button>
                   </Grid>
                 </Grow>
                 <Grow
@@ -258,14 +281,26 @@ const Home: NextPage = () => {
                   <Grid item md={6}>
                     <Typography variant="h5" fontWeight={600}>4. Redeem</Typography>
                     <Typography variant="body2" sx={{ color: 'rgba(244,244,244,1)' }}>Each seed round will have a specific vesting period, depending on how deep the discount is. You can redeem your tokens as they unlock on the Redeem panel. </Typography>
-                    <Button variant="contained" color="secondary">Redeem Now</Button>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      disabled
+                      sx={{
+                        color: 'rgba(255, 255, 255, 0.3)!important',
+                        boxShadow: 'none!important',
+                        backgroundColor: 'rgba(255, 255, 255, 0.12)!important'
+
+                      }}
+                    >
+                      Redeem Now
+                    </Button>
                   </Grid>
                 </Grow>
               </Grid>
             </Grid>
             <Grid item md={1}></Grid>
           </Grid>
-        </Container>
+        </Container >
       </Box >
       {/* END How it works */}
 
@@ -319,10 +354,10 @@ const Home: NextPage = () => {
               </Typography>
               <Grid container spacing={3}>
                 <Grid item>
-                  <Button variant="contained" color="secondary">Get Started</Button>
+                  <Button variant="contained" color="secondary" disabled>Get Started</Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="outlined" color="secondary">Read the Docs</Button>
+                  <Button variant="outlined" color="secondary" href="https://docs.coinecta.fi">Read the Docs</Button>
                 </Grid>
               </Grid>
             </Grid>
@@ -359,11 +394,13 @@ const Home: NextPage = () => {
             justifyContent: 'center',
             flexDirection: 'column',
             minHeight: '160px',
+            backgroundImage: `url(${bannerBg.src})`
           }}
         >
           <Typography
             sx={{
               fontSize: '1.6rem!important',
+              color: 'rgba(23,21,21,1)',
               lineHeight: 1.2,
               fontWeight: "600",
               mb: "12px",
@@ -372,7 +409,7 @@ const Home: NextPage = () => {
             Any other questions? Join the community!
           </Typography>
           <Box>
-            <IconButton
+            {/* <IconButton
               href="/"
               //target="_blank"
               sx={{
@@ -385,9 +422,9 @@ const Home: NextPage = () => {
               }}
             >
               <DiscordIcon />
-            </IconButton>
+            </IconButton> */}
             <IconButton
-              href="/"
+              href="https://t.me/coinecta"
               //target="_blank"
               sx={{
                 color: theme.palette.background.default,

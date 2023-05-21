@@ -23,13 +23,13 @@ const pages = [
     link: "/",
   },
   {
-    name: "Linktree",
-    link: "/linktree",
+    name: "Projects",
+    link: "/projects",
   },
   {
     name: "Whitepaper",
-    link: "/whitepaper",
-  },
+    link: "https://docs.coinecta.fi",
+  }
 ];
 
 interface INavItemProps {

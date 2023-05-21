@@ -251,7 +251,7 @@ let lightTheme = createTheme({
     background: {
       default: "rgba(255,255,255,1)",
       paper: 'rgba(237,239,238)',
-      transparent: 'rgba(237,239,238,0.5)',
+      transparent: 'rgba(210,210,210,0.5)',
     },
     text: {
       primary: 'rgba(23,21,21,1)',

@@ -32,6 +32,14 @@ interface IMenuItemProps {
   index: number;
 }
 
+interface IImportMenuItem {
+  txType: string;
+  txId: string;
+  success: string;
+  time: string;
+  unread: boolean;
+}
+
 const NotificationsMenu: FC = ({ }) => {
   const theme = useTheme()
 
@@ -54,7 +62,7 @@ const NotificationsMenu: FC = ({ }) => {
   const open = Boolean(anchorEl);
   const id = open ? 'notification-menu' : undefined;
 
-  const [currentMenuItems, setCurrentMenuItems] = useState(sampleMenuItems)
+  const [currentMenuItems, setCurrentMenuItems] = useState<IImportMenuItem[]>(sampleMenuItems)
   const [numberUnread, setNumberUnread] = useState(0)
 
   useEffect(() => {
@@ -105,7 +113,7 @@ const NotificationsMenu: FC = ({ }) => {
     return (
       <MenuItem
         onClick={() => setRead(index)}
-        sx={{ background: unread ? 'rgba(255,255,255,0.05)' : 'none' }}
+        sx={{ background: unread ? theme.palette.background.transparent : 'none' }}
       >
         <ListItemIcon>
           {icon}
@@ -167,21 +175,32 @@ const NotificationsMenu: FC = ({ }) => {
           }}
         >
           <MenuList sx={{ py: 0 }}>
-            {currentMenuItems.map((item, i) => {
-              return (
-                <CustomMenuItem
-                  txType={item.txType}
-                  txId={item.txId}
-                  success={item.success}
-                  icon={item.icon}
-                  time={item.time}
-                  unread={item.unread}
-                  key={i}
-                  index={i}
-                />
-              )
-            })}
+            {currentMenuItems.length > 0
+              ? currentMenuItems.map((item, i) => {
+                const icon = item.success.includes('confirmed')
+                  ? <CheckCircleIcon fontSize="small" color="success" />
+                  : item.success.includes('failed')
+                    ? <CancelIcon fontSize="small" color="error" />
+                    : <ErrorIcon fontSize="small" color="warning" />
+                return (
+                  <CustomMenuItem
+                    txType={item.txType}
+                    txId={item.txId}
+                    success={item.success}
+                    icon={icon}
+                    time={item.time}
+                    unread={item.unread}
+                    key={item.txId}
+                    index={i}
+                  />
+                )
+              })
+              : <MenuItem>
+
+              </MenuItem>
+            }
           </MenuList>
+
         </Box>
         <Box
           sx={{
@@ -284,7 +303,6 @@ export default NotificationsMenu;
 
 const sampleMenuItems = [
   {
-    icon: <CheckCircleIcon fontSize="small" color="success" />,
     txType: 'Purchase transaction',
     txId: 'xyzjdfkkals',
     success: 'confirmed',
@@ -292,7 +310,6 @@ const sampleMenuItems = [
     unread: true
   },
   {
-    icon: <ErrorIcon fontSize="small" color="warning" />,
     txType: 'Purchase transaction',
     txId: 'xyzjdfkkals',
     success: 'submitted to mempool',
@@ -300,7 +317,6 @@ const sampleMenuItems = [
     unread: true
   },
   {
-    icon: <CancelIcon fontSize="small" color="error" />,
     txType: 'Purchase transaction',
     txId: 'abcdalkdsjflkjasdf',
     success: 'failed',
@@ -308,7 +324,6 @@ const sampleMenuItems = [
     unread: false
   },
   {
-    icon: <CheckCircleIcon fontSize="small" color="success" />,
     txType: 'Purchase transaction',
     txId: 'xyzjdfkkals',
     success: 'confirmed',
@@ -316,7 +331,6 @@ const sampleMenuItems = [
     unread: true
   },
   {
-    icon: <ErrorIcon fontSize="small" color="warning" />,
     txType: 'Purchase transaction',
     txId: 'xyzjdfkkals',
     success: 'submitted to mempool',
@@ -324,7 +338,6 @@ const sampleMenuItems = [
     unread: true
   },
   {
-    icon: <CancelIcon fontSize="small" color="error" />,
     txType: 'Purchase transaction',
     txId: 'abcdalkdsjflkjasdf',
     success: 'failed',
@@ -332,7 +345,6 @@ const sampleMenuItems = [
     unread: false
   },
   {
-    icon: <CheckCircleIcon fontSize="small" color="success" />,
     txType: 'Purchase transaction',
     txId: 'xyzjdfkkals',
     success: 'confirmed',
@@ -340,7 +352,6 @@ const sampleMenuItems = [
     unread: true
   },
   {
-    icon: <ErrorIcon fontSize="small" color="warning" />,
     txType: 'Purchase transaction',
     txId: 'xyzjdfkkals',
     success: 'submitted to mempool',
@@ -348,7 +359,6 @@ const sampleMenuItems = [
     unread: true
   },
   {
-    icon: <CancelIcon fontSize="small" color="error" />,
     txType: 'Purchase transaction',
     txId: 'abcdalkdsjflkjasdf',
     success: 'failed',
@@ -356,7 +366,6 @@ const sampleMenuItems = [
     unread: false
   },
   {
-    icon: <CheckCircleIcon fontSize="small" color="success" />,
     txType: 'Purchase transaction',
     txId: 'xyzjdfkkals',
     success: 'confirmed',
@@ -364,7 +373,6 @@ const sampleMenuItems = [
     unread: true
   },
   {
-    icon: <ErrorIcon fontSize="small" color="warning" />,
     txType: 'Purchase transaction',
     txId: 'xyzjdfkkals',
     success: 'submitted to mempool',
@@ -372,7 +380,6 @@ const sampleMenuItems = [
     unread: true
   },
   {
-    icon: <CancelIcon fontSize="small" color="error" />,
     txType: 'Purchase transaction',
     txId: 'abcdalkdsjflkjasdf',
     success: 'failed',
@@ -380,53 +387,12 @@ const sampleMenuItems = [
     unread: false
   },
   {
-    icon: <CheckCircleIcon fontSize="small" color="success" />,
     txType: 'Purchase transaction',
     txId: 'xyzjdfkkals',
     success: 'confirmed',
     time: '8 minutes',
     unread: true
-  },
-  {
-    icon: <ErrorIcon fontSize="small" color="warning" />,
-    txType: 'Purchase transaction',
-    txId: 'xyzjdfkkals',
-    success: 'submitted to mempool',
-    time: '12 minutes',
-    unread: true
-  },
-  {
-    icon: <CancelIcon fontSize="small" color="error" />,
-    txType: 'Purchase transaction',
-    txId: 'abcdalkdsjflkjasdf',
-    success: 'failed',
-    time: '2 hours',
-    unread: false
-  },
-  {
-    icon: <CheckCircleIcon fontSize="small" color="success" />,
-    txType: 'Purchase transaction',
-    txId: 'xyzjdfkkals',
-    success: 'confirmed',
-    time: '8 minutes',
-    unread: true
-  },
-  {
-    icon: <ErrorIcon fontSize="small" color="warning" />,
-    txType: 'Purchase transaction',
-    txId: 'xyzjdfkkals',
-    success: 'submitted to mempool',
-    time: '12 minutes',
-    unread: true
-  },
-  {
-    icon: <CancelIcon fontSize="small" color="error" />,
-    txType: 'Purchase transaction',
-    txId: 'abcdalkdsjflkjasdf',
-    success: 'failed',
-    time: '2 hours',
-    unread: false
-  },
+  }
 ]
 
 ////////////////////////////////

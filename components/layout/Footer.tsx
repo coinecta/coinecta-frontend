@@ -28,20 +28,9 @@ interface IPageLinkList {
 }
 
 const firstPages = {
-  title: 'Company',
+  title: '',
   links: [
-    {
-      name: "Apply for IDO",
-      link: "/",
-    },
-    {
-      name: "Whitepaper",
-      link: "/about",
-    },
-    {
-      name: "Linktree",
-      link: "/blog",
-    },
+    
   ],
 };
 
@@ -49,12 +38,12 @@ const secondPages = {
   title: 'Support',
   links: [
     {
-      name: "FAQ",
+      name: "Apply for IDO",
       link: "/",
     },
     {
-      name: "Guides",
-      link: "/about",
+      name: "Documentation",
+      link: "https://docs.coinecta.fi",
     }
   ],
 };
@@ -67,10 +56,6 @@ const thirdPages = {
       link: "/stake",
     },
     {
-      name: "Whitelist",
-      link: "/whitelist",
-    },
-    {
       name: "Contribute",
       link: "/contribute",
     },
@@ -81,15 +66,15 @@ const thirdPages = {
   ],
 };
 
-const fourthPages = {
-  title: 'Fourth',
-  links: [
-    {
-      name: "Hello",
-      link: "/",
-    },
-  ],
-};
+// const fourthPages = {
+//   title: 'Fourth',
+//   links: [
+//     {
+//       name: "Hello",
+//       link: "/",
+//     },
+//   ],
+// };
 
 const LinkList: FC<IPageLinkList> = ({ title, links }) => {
   const theme = useTheme()
@@ -184,11 +169,10 @@ const Footer: FC = () => {
                 }}
               >
                 <SocialGrid
-                  telegram="/"
-                  discord="/"
-                  twitter="/"
-                  youtube="/"
-                  medium="/"
+                  telegram="https://t.me/coinecta"
+                  // discord="/"
+                  twitter="https://twitter.com/CoinectaFinance"
+                  medium="https://coinecta.medium.com/"
                 />
               </Grid>
             </Grid>
