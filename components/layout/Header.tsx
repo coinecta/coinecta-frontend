@@ -209,8 +209,8 @@ const Header: FC<IHeaderProps> = ({ }) => {
                   <IconButton onClick={toggleTheme} sx={{ color: theme.palette.text.primary }}>
                     {(theme === DarkTheme) ? <Brightness7Icon /> : <Brightness4Icon />}
                   </IconButton>
-                  <NotificationsMenu />
-                  <UserMenu />
+                  {/* <NotificationsMenu />
+                  <UserMenu /> */}
                 </Grid>
                 <Grid item sx={{ display: { xs: "flex", md: "none" } }}>
                   <Box
