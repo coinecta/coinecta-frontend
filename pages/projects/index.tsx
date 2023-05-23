@@ -131,7 +131,7 @@ const Projects = () => {
             <Grid container spacing={3} alignItems="center" sx={{ mb: 6 }}>
               {upcomingProjects.map((item: IProjectDetails) => {
                 return (
-                  <Grid item xs={12} md={6} lg={4}>
+                  <Grid item xs={12} md={6} lg={4} key={item.title}>
                     <ProjectCard {...item} link={`/projects/${item.title}`} />
                   </Grid>
                 )
@@ -147,7 +147,9 @@ const Projects = () => {
             <Grid container spacing={3} alignItems="center" sx={{ mb: 6 }}>
               {launchedProjects.map((item: IProjectDetails) => {
                 return (
-                  <ProjectCard {...item} link={`/projects/${item.title}`} />
+                  <Grid item xs={12} md={6} lg={4} key={item.title}>
+                    <ProjectCard {...item} link={`/projects/${item.title}`} />
+                  </Grid>
                 )
               })}
             </Grid>
