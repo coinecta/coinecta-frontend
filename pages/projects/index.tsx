@@ -132,7 +132,7 @@ const Projects = () => {
               {upcomingProjects.map((item: IProjectDetails) => {
                 return (
                   <Grid item xs={12} md={6} lg={4} key={item.title}>
-                    <ProjectCard {...item} link={`/projects/${item.title}`} />
+                    <ProjectCard {...item} link={`/projects/${item.title.toLowerCase().replace(/[\s-]/g, "")}`} />
                   </Grid>
                 )
               })}
@@ -148,7 +148,7 @@ const Projects = () => {
               {launchedProjects.map((item: IProjectDetails) => {
                 return (
                   <Grid item xs={12} md={6} lg={4} key={item.title}>
-                    <ProjectCard {...item} link={`/projects/${item.title}`} />
+                    <ProjectCard {...item} link={`/projects/${item.title.toLowerCase().replace(/[\s-]/g, "")}`} />
                   </Grid>
                 )
               })}
