@@ -8,6 +8,7 @@ import DiscordIcon from "@components/svgs/DiscordIcon";
 import RedditIcon from "@components/svgs/RedditIcon";
 import LinkedinIcon from "@components/svgs/LinkedinIcon";
 import { ThemeContext } from "@contexts/ThemeContext";
+import GithubIcon from "@components/svgs/GithubIcon";
 
 interface Props {
   hoverColor?: string;
@@ -19,6 +20,7 @@ interface Props {
   telegram?: string;
   twitter?: string;
   youtube?: string;
+  github?: string;
 }
 
 const SocialGrid: FC<Props> = (props) => {
@@ -31,7 +33,8 @@ const SocialGrid: FC<Props> = (props) => {
     medium,
     telegram,
     twitter,
-    youtube
+    youtube,
+    github
    } = props;
   const { theme } = useContext(ThemeContext);
   const iconLinkStyles = {
@@ -82,6 +85,16 @@ const SocialGrid: FC<Props> = (props) => {
           rel="noreferrer"
         >
           <YoutubeIcon sx={{ fontSize: "inherit" }} />
+        </Link>
+      </Grid>}
+      {github && <Grid item>
+        <Link
+          href={medium}
+          target="_blank"
+          sx={iconLinkStyles}
+          rel="noreferrer"
+        >
+          <GithubIcon sx={{ fontSize: "inherit" }} />
         </Link>
       </Grid>}
       {medium && <Grid item>

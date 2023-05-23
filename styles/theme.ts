@@ -255,7 +255,7 @@ let lightTheme = createTheme({
     },
     text: {
       primary: 'rgba(23,21,21,1)',
-      secondary: 'rgba(51,51,51,1)',
+      secondary: 'rgba(160,160,160,1)',
     },
     primary: {
       // main: "#FF2147",
@@ -324,7 +324,7 @@ let darkTheme = createTheme({
     },
     text: {
       primary: 'rgba(244,244,244,1)',
-      secondary: 'rgba(228,228,228,1)',
+      secondary: 'rgba(160,160,160,1)',
     },
     primary: {
       // main: "#FF2147",
@@ -333,6 +333,7 @@ let darkTheme = createTheme({
     secondary: {
       main: "#29b6f6",
     },
+    divider: 'rgba(120,150,150,0.25)',
     contrastThreshold: 4.5,
   },
   typography: {
