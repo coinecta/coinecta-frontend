@@ -409,9 +409,9 @@ const Home: NextPage = () => {
             Any other questions? Join the community!
           </Typography>
           <Box>
-            {/* <IconButton
-              href="/"
-              //target="_blank"
+            <IconButton
+              href="https://discord.gg/euVqKMKu"
+              target="_blank"
               sx={{
                 color: theme.palette.background.default,
                 background: theme.palette.secondary.main,
@@ -422,10 +422,10 @@ const Home: NextPage = () => {
               }}
             >
               <DiscordIcon />
-            </IconButton> */}
+            </IconButton>
             <IconButton
               href="https://t.me/coinecta"
-              //target="_blank"
+              target="_blank"
               sx={{
                 color: theme.palette.background.default,
                 background: theme.palette.secondary.main,

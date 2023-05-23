@@ -170,7 +170,7 @@ const Footer: FC = () => {
               >
                 <SocialGrid
                   telegram="https://t.me/coinecta"
-                  // discord="/"
+                  discord="https://discord.gg/euVqKMKu"
                   github="https://github.com/coinecta"
                   twitter="https://twitter.com/CoinectaFinance"
                   medium="https://coinecta.medium.com/"
