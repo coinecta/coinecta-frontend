@@ -89,7 +89,7 @@ const SocialGrid: FC<Props> = (props) => {
       </Grid>}
       {github && <Grid item>
         <Link
-          href={medium}
+          href={github}
           target="_blank"
           sx={iconLinkStyles}
           rel="noreferrer"
