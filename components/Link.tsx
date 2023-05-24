@@ -28,7 +28,7 @@ const NextLinkComposed = React.forwardRef<HTMLAnchorElement, INextLinkComposedPr
     ...other
   } = props;
   return (
-    (<NextLink
+    <NextLink
       href={to}
       passHref
       replace={replace}
@@ -36,9 +36,7 @@ const NextLinkComposed = React.forwardRef<HTMLAnchorElement, INextLinkComposedPr
       shallow={shallow}
       prefetch={prefetch}
       ref={ref}
-      {...other}>
-
-    </NextLink>)
+      {...other} />
   );
 });
 

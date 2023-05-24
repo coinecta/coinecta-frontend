@@ -39,7 +39,7 @@ const secondPages = {
   links: [
     {
       name: "Apply for IDO",
-      link: "/",
+      link: "/apply",
     },
     {
       name: "Documentation",
@@ -146,7 +146,7 @@ const Footer: FC = () => {
                     fontWeight: '700',
                     lineHeight: 1,
                     display: 'inline-block',
-                    verticalAlign: 'text-top'
+                    verticalAlign: 'bottom'
                   }}
                 >
                   Coinecta

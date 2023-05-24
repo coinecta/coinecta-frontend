@@ -1,3 +1,4 @@
+import { ThemeContext } from "@emotion/react";
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 import localFont from 'next/font/local'
 
@@ -144,7 +145,7 @@ const mainTheme = [{
     MuiLink: {
       styleOverrides: {
         root: {
-          fontFamily: '"Inter", sans-serif',
+          // fontFamily: '"Inter", sans-serif',
           textDecoration: 'none',
           '&:hover': {
             textDecoration: 'none',
@@ -246,6 +247,7 @@ const mainTheme = [{
   }
 }];
 
+const lightPrimaryMain = 'rgb(255, 120, 68)'
 let lightTheme = createTheme({
   palette: {
     background: {
@@ -259,7 +261,7 @@ let lightTheme = createTheme({
     },
     primary: {
       // main: "#FF2147",
-      main: 'rgb(255, 120, 68)',
+      main: lightPrimaryMain,
     },
     secondary: {
       main: "#3D8AB9",
@@ -276,6 +278,7 @@ let lightTheme = createTheme({
     MuiLink: {
       styleOverrides: {
         root: {
+          color: lightPrimaryMain,
           '&:hover': {
             color: '#000',
           }
@@ -354,15 +357,15 @@ let darkTheme = createTheme({
     //     },
     //   },
     // },
-    MuiLink: {
-      styleOverrides: {
-        root: {
-          '&:hover': {
-            color: 'rgba(244,244,244,1)',
-          }
-        }
-      }
-    },
+    // MuiLink: {
+    //   styleOverrides: {
+    //     root: {
+    //       '&:hover': {
+    //         color: 'rgba(244,244,244,1)',
+    //       }
+    //     }
+    //   }
+    // },
     MuiSwitch: {
       styleOverrides: {
         root: {
