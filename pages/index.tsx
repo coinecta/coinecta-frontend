@@ -376,7 +376,7 @@ const Home: NextPage = () => {
               <Typography variant="body2">
                 If you have some experience building blockchain projects, and have an idea that is somewhat developed, we can help you get funding. If you already have taken some steps towards an MVP and have promoted the idea to your community, we are here to help you raise the necessary funds to turn your project into a complete product. Feel free to apply at any stage of development and we can go over the next steps.
               </Typography>
-              <Button variant="contained" color="secondary">Apply for IDO</Button>
+              <Button href="/apply" variant="contained" color="secondary">Apply for IDO</Button>
             </Grid>
           </Slide>
           <Grid item md={1}></Grid>

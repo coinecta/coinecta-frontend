@@ -9,7 +9,9 @@ import {
 	FormControlLabel,
 	Checkbox,
 	useTheme,
-	Alert
+	Container,
+	Alert,
+	Divider
 } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
@@ -34,34 +36,24 @@ const initialFormErrors = {
 	description: false,
 	projectValue: false,
 	name: false,
-	email: false,
-	telegramHandle: false,
-	telegramGroup: false
+	email: false
 }
 
 const emailRegex = /\S+@\S+\.\S+/;
 
 const Apply = () => {
   const theme = useTheme()
-
-	// form data is all strings
 	const [formData, updateFormData] = useState(initialFormData);
-
 	// form error object, all booleans
 	const [formErrors, setFormErrors] = useState(initialFormErrors)
-
 	// loading spinner for submit button
 	const [isLoading, setLoading] = useState(false);
-
 	// set true to disable submit button
 	const [buttonDisabled, setbuttonDisabled] = useState(false)
-
 	// open error snackbar 
 	const [openError, setOpenError] = useState(false);
-
 	// open success modal
 	const [openSuccess, setOpenSuccess] = useState(false);
-
 	// change error message for error snackbar
 	const [errorMessage, setErrorMessage] = useState('Please eliminate form errors and try again')
 
@@ -109,7 +101,7 @@ const Apply = () => {
 			...formData,
 
 			// Trimming any whitespace
-			[e.target.name]: (e.target.name === 'accelerator') ? e.target.checked : e.target.value.trim()
+			[e.target.name]: e.target.name === 'projectName' ? 'Coinecta ' + e.target.value.trim() : e.target.value.trim()
 		});
 	};
 
@@ -194,16 +186,14 @@ const Apply = () => {
 	};
 
 	return (
-		<>
-
-			
-			<Grid container maxWidth='lg' sx={{ mx: 'auto', flexDirection: 'row-reverse', px: { xs: 2, md: 3 } }}>
-
-				<Grid item md={8}>
+		<Container maxWidth="md" sx={{ py: 12 }}>
+        <Typography variant="h2" component="h1" sx={{ fontWeight: '600' }}>
+          IDO Application Form
+        </Typography>
+				<Typography variant="body1" sx={{ mb: 4 }}>
+					Please fill out as much of the form as you can. Even if you don&apos;t have everything finished, feel free to apply and we can consult with you to prepare for an IDO. 
+				</Typography>
 					<Box component="form" noValidate onSubmit={handleSubmit}>
-						<Typography variant="h4" sx={{ mb: 4, fontWeight: '700' }}>
-							IDO Application form:
-						</Typography>
 						<Grid container spacing={2}>
 							<Grid item xs={12}>
 								<TextField
@@ -221,9 +211,6 @@ const Apply = () => {
 								/>
 							</Grid>
 							<Grid item xs={12}>
-								<Typography color="text.secondary" sx={{ mb: 1 }}>
-									Please describe what your project hopes to accomplish, and how far along you are. Give us some details about your team composition including everyone&apos;s roles and specialties. Provide as much detail as you can about what you need from us and how much progress you&apos;ve made already.
-								</Typography>
 								<TextField
 									InputProps={{ disableUnderline: true }}
 									required
@@ -319,40 +306,24 @@ const Apply = () => {
 							<Grid item xs={12} sm={6}>
 								<TextField
 									InputProps={{ disableUnderline: true }}
-									required
 									fullWidth
 									id="telegramHandle"
-									label="Your Telegram handle"
+									label="Telegram or Discord handle"
 									name="telegramHandle"
 									variant="filled"
 									onChange={handleChange}
-									error={formErrors.telegramHandle}
-									helperText={formErrors.telegramHandle && 'Enter your Telegram handle'}
 								/>
 							</Grid>
 							<Grid item xs={12} sm={6}>
 								<TextField
 									InputProps={{ disableUnderline: true }}
 									fullWidth
-									required
 									name="telegramGroup"
-									label="Project's Telegram group link"
+									label="Telegram or Discord Group"
 									id="telegramGroup"
 									variant="filled"
 									onChange={handleChange}
-									error={formErrors.telegramGroup}
-									helperText={formErrors.telegramGroup && 'Enter your project\'s Telegram group'}
 								/>
-							</Grid>
-							<Grid item xs={12}>
-								<FormGroup sx={{ color: theme.palette.text.secondary }}>
-									<FormControlLabel
-										control={<Checkbox onChange={handleChange} />}
-										label="Apply for the Ergodex/Ergopad project accelerator program"
-										name="accelerator"
-										id="accelerator"
-									/>
-								</FormGroup>
 							</Grid>
 						</Grid>
 
@@ -380,85 +351,7 @@ const Apply = () => {
 							)}
 						</Box>
 					</Box>
-				</Grid>
 
-				<Grid item md={4} sx={{ flexGrow: 1 }}>
-					<Box sx={{ mr: { md: 12, xs: 0 }, mt: { md: 0, xs: 4 } }}>
-						<Typography variant="h4" sx={{ fontWeight: '700', lineHeight: '1.2' }}>
-							What is the Ergodex/Ergopad Accelerator Program?
-						</Typography>
-
-						<Typography variant="body1" sx={{ fontSize: '1rem', mb: 3 }}>
-							The accelerator program will submit your project to our partners at ErgoDEX and if accepted, will provide various additional channels for you to market your project. 
-						</Typography>
-
-						<Typography variant="body1" sx={{ fontSize: '1rem', mb: 3 }}>
-							The ErgoPad and ErgoDEX teams will assist projects in creating relationships with investors, agencies and investment platforms relevant to their projects.
-						</Typography>
-
-						<Typography variant="body1" sx={{ fontSize: '1rem', mb: 3 }}>
-							ErgoDEX will provide the liquidity farming platform to projects launching through ErgoPad, which will encourage users to provide liquidity to the DEX, increasing the TVL of the platform and extending a projects marketing campaign beyond their IDO.
-						</Typography>
-
-						<Typography variant="h4" sx={{ fontWeight: '700', lineHeight: '1.2' }}>
-							Not ready to apply?
-						</Typography>
-
-						<Typography variant="body1" sx={{ fontSize: '1rem', mb: 3 }}>
-							You can find the team on these social platforms:
-						</Typography>
-
-						<Box>
-							<a href="https://t.me/ergopad_chat" target="_blank" rel="noreferrer">
-								<Button
-									variant="contained"
-									sx={{
-										color: '#fff',
-										fontSize: '1rem',
-										py: '0.6rem',
-										px: '1.2rem',
-										mr: '1.7rem',
-										textTransform: 'none',
-										backgroundColor: theme.palette.primary.main,
-										'&:hover': {
-											backgroundColor: theme.palette.primary.light,
-											boxShadow: 'none',
-										},
-										'&:active': {
-											backgroundColor: theme.palette.primary.dark,
-										},
-									}}
-								>
-									Telegram
-								</Button>
-							</a>
-
-							<a href="https://discord.gg/E8cHp6ThuZ" target="_blank" rel="noreferrer">
-								<Button
-									variant="contained"
-									sx={{
-										color: '#fff',
-										fontSize: '1rem',
-										py: '0.6rem',
-										px: '1.2rem',
-										textTransform: 'none',
-										backgroundColor: theme.palette.secondary.main,
-										'&:hover': {
-											backgroundColor: theme.palette.secondary.light,
-											boxShadow: 'none',
-										},
-										'&:active': {
-											backgroundColor: theme.palette.secondary.dark,
-										},
-
-									}}
-								>
-									Discord
-								</Button>
-							</a>
-						</Box>
-					</Box>
-				</Grid>
 
 				<Snackbar open={openError} autoHideDuration={6000} onClose={handleCloseError}>
 					<Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
@@ -471,10 +364,7 @@ const Apply = () => {
 					</Alert>
 				</Snackbar>
 
-
-
-			</Grid>
-		</>
+		</Container>
 	);
 };
 
