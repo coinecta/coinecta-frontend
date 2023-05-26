@@ -92,7 +92,7 @@ const Home: NextPage = () => {
               justifyContent="center"
             >
               <Button variant="contained" href="/projects">Support an IDO</Button>
-              <Button variant="outlined" href="https://docs.coinecta.fi">Read the docs</Button>
+              <Button variant="outlined" href="https://medium.com/@coinecta/coinecta-litepaper-11ac0da89bfe">Read the Litepaper</Button>
             </Stack>
 
           </Box>
@@ -270,7 +270,19 @@ const Home: NextPage = () => {
                   <Grid item md={6} ref={ref3}>
                     <Typography variant="h5" fontWeight={600}>3. Contribute</Typography>
                     <Typography variant="body2" sx={{ color: 'rgba(244,244,244,1)' }}>You will receive whitelist tokens in your wallet and can use those to contribute to the project. Send ADA or DJED to the Vesting Contract to receive your vesting key which will unlock tokens over time</Typography>
-                    <Button variant="contained" color="secondary" href="https://docs.coinecta.fi/launchpad/contributing">Learn More</Button>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      href="https://docs.coinecta.fi/launchpad/contributing"
+                      disabled
+                      sx={{
+                        color: 'rgba(255, 255, 255, 0.3)!important',
+                        boxShadow: 'none!important',
+                        backgroundColor: 'rgba(255, 255, 255, 0.12)!important'
+                      }}
+                    >
+                      Learn More
+                    </Button>
                   </Grid>
                 </Grow>
                 <Grow
@@ -357,7 +369,7 @@ const Home: NextPage = () => {
                   <Button variant="contained" color="secondary" disabled>Get Started</Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="outlined" color="secondary" href="https://docs.coinecta.fi">Read the Docs</Button>
+                  <Button variant="outlined" color="secondary" href="https://medium.com/@coinecta/coinecta-litepaper-11ac0da89bfe">Read the Litepaper</Button>
                 </Grid>
               </Grid>
             </Grid>

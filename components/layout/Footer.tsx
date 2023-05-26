@@ -42,8 +42,8 @@ const secondPages = {
       link: "/apply",
     },
     {
-      name: "Documentation",
-      link: "https://docs.coinecta.fi",
+      name: "Litepaper",
+      link: "https://medium.com/@coinecta/coinecta-litepaper-11ac0da89bfe",
     }
   ],
 };
