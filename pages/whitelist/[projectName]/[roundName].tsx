@@ -388,7 +388,7 @@ const Whitelist = () => {
                         </Button>
                       </a>
                       <a
-                        href="https://discord.gg/E8cHp6ThuZ"
+                        href="https://discord.gg/EuFdWye8yw"
                         target="_blank"
                         rel="noreferrer"
                       >

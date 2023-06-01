@@ -376,7 +376,7 @@ const Header: FC<IHeaderProps> = ({ }) => {
               <Grid container direction="row" spacing={3} sx={{ fontSize: '26px' }}>
                 <SocialGrid
                   telegram="https://t.me/coinecta"
-                  discord="https://discord.gg/euVqKMKu"
+                  discord="https://discord.gg/EuFdWye8yw"
                   github="https://github.com/coinecta"
                   twitter="https://twitter.com/CoinectaFinance"
                   medium="https://coinecta.medium.com/"

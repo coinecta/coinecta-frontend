@@ -422,7 +422,7 @@ const Home: NextPage = () => {
           </Typography>
           <Box>
             <IconButton
-              href="https://discord.gg/euVqKMKu"
+              href="https://discord.gg/EuFdWye8yw"
               target="_blank"
               sx={{
                 color: theme.palette.background.default,
