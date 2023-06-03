@@ -181,203 +181,203 @@ const Project = () => {
 
   return (
     <>
-      {isLoading && (
-        <Container sx={{ mb: "3rem" }}>
-          <CircularProgress
-            size={24}
-            sx={{
-              position: "relative",
-              left: "50%",
-              marginLeft: "-12px",
-              marginTop: "400px",
-            }}
-          />
+      {isLoading
+        ? <Container sx={{ mb: "3rem" }}>
+          <CircularProgress color="inherit" sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)"
+          }} />
         </Container>
-      )}
-      {!isLoading && project !== undefined ? (
-        <Container maxWidth="lg" sx={{ pt: 6 }}>
-          <Grid container spacing={2} direction={upMd ? 'row' : 'column'} alignItems="center" sx={{ mb: 2 }}>
-            <Grid item md='auto' sx={{ textAlign: 'center' }}>
-              <Avatar
-                src={project.socials.linkedin}
-                alt={project.name.replace(/cardano-(x-)?/, "")}
-                sx={{ width: 200, height: 200, display: "flex" }}
-              />
-            </Grid>
-            <Grid item md>
-              <Typography variant="h2" fontWeight={600}>{project.name.replace(/cardano-(x-)?/, "")}</Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>{project.shortDescription}</Typography>
-              <Box sx={{ display: "flex", justifyContent: "left", mb: 2 }}>
-                {project.socials.website ? (
-                  <Link
-                    sx={{ display: "flex", justifyContent: "center" }}
-                    href={project.socials.website}
-                    aria-label={`${project.name.replace(/cardano-(x-)?/, "")} website`}
-                  >
-                    <WebIcon />
-                  </Link>
-                ) : null}
-                {project.socials.discord ? (
-                  <Link
-                    href={project.socials.discord}
-                    aria-label="discord"
-                  >
-                    <DiscordIcon />
-                  </Link>
-                ) : null}
-                {project.socials.github ? (
-                  <Link
-                    href={project.socials.github}
-                    aria-label="github"
-                  >
-                    <GithubIcon />
-                  </Link>
-                ) : null}
-                {project.socials.telegram ? (
-                  <Link
-                    href={project.socials.telegram}
-                    aria-label="Telegram"
-                  >
-                    <TelegramIcon />
-                  </Link>
-                ) : null}
-                {project.socials.twitter ? (
-                  <Link
-                    sx={{ display: "flex", justifyContent: "center" }}
-                    href={project.socials.twitter}
-                    aria-label="twitter"
-                  >
-                    <TwitterIcon />
-                  </Link>
-                ) : null}
-              </Box>
-            </Grid>
-          </Grid>
-
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            scrollButtons="auto"
-            variant="scrollable"
-            sx={{
-              '& .MuiTabs-flexContainer': {
-                justifyContent: upMd ? 'center' : null
-              },
-            }}
-          >
-            <Tab label="Summary" value={0}></Tab>
-            <Tab label="IDO Schedule" value={1}></Tab>
-            <Tab label="Tokenomics" value={2}></Tab>
-          </Tabs>
-          <Box sx={{ mb: 12, mt: "2rem" }}>
-            {(tabValue === 0) &&
-              <>
-                <Box sx={{ mb: "2rem" }}>
-                  <Typography variant="h4" fontWeight="700">
-                    Description
-                  </Typography>
-                  <MarkdownRender description={project.description} />
+        : project !== undefined
+          ? <Container maxWidth="lg" sx={{ pt: 6 }}>
+            <Grid container spacing={2} direction={upMd ? 'row' : 'column'} alignItems="center" sx={{ mb: 2 }}>
+              <Grid item md='auto' sx={{ textAlign: 'center' }}>
+                <Avatar
+                  src={project.socials.linkedin}
+                  alt={project.name.replace(/cardano-(x-)?/, "")}
+                  sx={{ width: 200, height: 200, display: "flex" }}
+                />
+              </Grid>
+              <Grid item md>
+                <Typography variant="h2" fontWeight={600}>{project.name.replace(/cardano-(x-)?/, "")}</Typography>
+                <Typography variant="body1" sx={{ mb: 1 }}>{project.shortDescription}</Typography>
+                <Box sx={{ display: "flex", justifyContent: "left", mb: 2 }}>
+                  {project.socials.website &&
+                    <Link
+                      sx={{ mr: 1 }}
+                      href={project.socials.website}
+                      aria-label={`${project.name.replace(/cardano-(x-)?/, "")} website`}
+                    >
+                      <WebIcon />
+                    </Link>
+                  }
+                  {project.socials.discord &&
+                    <Link
+                      sx={{ mr: 1 }}
+                      href={project.socials.discord}
+                      aria-label="discord"
+                    >
+                      <DiscordIcon />
+                    </Link>
+                  }
+                  {project.socials.github &&
+                    <Link
+                      sx={{ mr: 1 }}
+                      href={project.socials.github}
+                      aria-label="github"
+                    >
+                      <GithubIcon />
+                    </Link>
+                  }
+                  {project.socials.telegram &&
+                    <Link
+                      sx={{ mr: 1 }}
+                      href={project.socials.telegram}
+                      aria-label="Telegram"
+                    >
+                      <TelegramIcon />
+                    </Link>
+                  }
+                  {project.socials.twitter &&
+                    <Link
+                      sx={{ display: "flex", justifyContent: "center" }}
+                      href={project.socials.twitter}
+                      aria-label="twitter"
+                    >
+                      <TwitterIcon />
+                    </Link>
+                  }
                 </Box>
-                {project.team.team.length > 0 &&
+              </Grid>
+            </Grid>
+
+            <Tabs
+              value={tabValue}
+              onChange={handleTabChange}
+              scrollButtons="auto"
+              variant="scrollable"
+              sx={{
+                '& .MuiTabs-flexContainer': {
+                  justifyContent: upMd ? 'center' : null
+                },
+              }}
+            >
+              <Tab label="Summary" value={0}></Tab>
+              <Tab label="IDO Schedule" value={1}></Tab>
+              <Tab label="Tokenomics" value={2}></Tab>
+            </Tabs>
+            <Box sx={{ mb: 12, mt: "2rem" }}>
+              {(tabValue === 0) &&
+                <>
                   <Box sx={{ mb: "2rem" }}>
-                    <Typography variant="h4">
-                      Team
+                    <Typography variant="h4" fontWeight="700">
+                      Description
                     </Typography>
-                    <Team data={project.team.team} />
+                    <MarkdownRender description={project.description} />
                   </Box>
-                }
-              </>
-            }
+                  {project.team.team.length > 0 &&
+                    <Box sx={{ mb: "2rem" }}>
+                      <Typography variant="h4">
+                        Team
+                      </Typography>
+                      <Team data={project.team.team} />
+                    </Box>
+                  }
+                </>
+              }
 
-            {tabValue === 1 &&
-              <>
-                <Box sx={{ mb: "2rem" }}>
-                  <Typography variant="h4" fontWeight="700">
-                    IDO Schedule
-                  </Typography>
-                  {project.roadmap.roadmap.length > 0 ? (
-                    <Roadmap data={project?.roadmap?.roadmap} />
-                  ) : <Typography>Schedule coming soon</Typography>}
-                </Box>
+              {tabValue === 1 &&
+                <>
+                  <Box sx={{ mb: "2rem" }}>
+                    <Typography variant="h4" fontWeight="700">
+                      IDO Schedule
+                    </Typography>
+                    {project.roadmap.roadmap.length > 0 ? (
+                      <Roadmap data={project?.roadmap?.roadmap} />
+                    ) : <Typography>Schedule coming soon</Typography>}
+                  </Box>
 
-              </>}
+                </>}
 
-            {tabValue === 2 && <>
-              <Typography variant="h4" fontWeight="700">
+              {tabValue === 2 && <>
+                <Typography variant="h4" fontWeight="700">
                   Tokenomics
                 </Typography>
-              <Box sx={{ mb: 2 }}>
-                <Typography color="text.secondary">
-                  Token Name:
-                  <Typography
-                    component="span"
-                    color="text.primary"
-                    sx={{ fontWeight: '700' }}
-                  >
-                    {' '}
-                    {project.tokenomics.tokenName}
+                <Box sx={{ mb: 2 }}>
+                  <Typography color="text.secondary">
+                    Token Name:
+                    <Typography
+                      component="span"
+                      color="text.primary"
+                      sx={{ fontWeight: '700' }}
+                    >
+                      {' '}
+                      {project.tokenomics.tokenName}
+                    </Typography>
                   </Typography>
-                </Typography>
-                <Typography color="text.secondary">
-                  Token Ticker:
-                  <Typography
-                    component="span"
-                    color="text.primary"
-                    sx={{ fontWeight: '700' }}
-                  >
-                    {' '}
-                    {project.tokenomics.tokenTicker}
+                  <Typography color="text.secondary">
+                    Token Ticker:
+                    <Typography
+                      component="span"
+                      color="text.primary"
+                      sx={{ fontWeight: '700' }}
+                    >
+                      {' '}
+                      {project.tokenomics.tokenTicker}
+                    </Typography>
                   </Typography>
-                </Typography>
-                <Typography color="text.secondary">
-                  Max Supply:
-                  <Typography
-                    component="span"
-                    color="text.primary"
-                    sx={{ fontWeight: '700' }}
-                  >
-                    {' '}
-                    {project.tokenomics.totalTokens.toLocaleString(navigator.language, {
-                      maximumFractionDigits: 0,
-                    })}
+                  <Typography color="text.secondary">
+                    Max Supply:
+                    <Typography
+                      component="span"
+                      color="text.primary"
+                      sx={{ fontWeight: '700' }}
+                    >
+                      {' '}
+                      {project.tokenomics.totalTokens.toLocaleString(navigator.language, {
+                        maximumFractionDigits: 0,
+                      })}
+                    </Typography>
                   </Typography>
-                </Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="h5">
-                  Visual Breakdown
-                </Typography>
-                {project.tokenomics.tokenomics.length > 0 ? (
-                  <Tokenomics data={project?.tokenomics?.tokenomics} />
-                ) : <Typography>Coming soon</Typography>}
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="h5">
-                  Vesting Schedule
-                </Typography>
-                {project.tokenomics.tokenomics.length > 0 ? (
-                  <Distribution
-                    data={project.tokenomics.tokenomics}
-                  />
-                ) : <Typography>Coming soon</Typography>}
-              </Box>
-            </>}
-          </Box>
-        </Container >
-      ) : <Container sx={{ textAlign: 'center', py: '20vh' }}>
-        <Typography variant="h1">
-          404
-        </Typography>
-        <Typography variant="body1" sx={{ mb: '24px' }}>
-          This Project Could Not Be Found
-        </Typography>
-        <Typography variant="body1">
-          The project you are looking for does not exist, has been removed, name changed, or is temporarily unavailable.
-        </Typography>
-        <Link href="/projects">
-          Back to projects page
-        </Link>
-      </Container>}
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="h5">
+                    Visual Breakdown
+                  </Typography>
+                  {project.tokenomics.tokenomics.length > 0 ? (
+                    <Tokenomics data={project?.tokenomics?.tokenomics} />
+                  ) : <Typography>Coming soon</Typography>}
+                </Box>
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="h5">
+                    Vesting Schedule
+                  </Typography>
+                  {project.tokenomics.tokenomics.length > 0 ? (
+                    <Distribution
+                      data={project.tokenomics.tokenomics}
+                    />
+                  ) : <Typography>Coming soon</Typography>}
+                </Box>
+              </>}
+            </Box>
+          </Container >
+          : <Container sx={{ textAlign: 'center', py: '20vh' }}>
+            <Typography variant="h1">
+              404
+            </Typography>
+            <Typography variant="body1" sx={{ mb: '24px' }}>
+              This Project Could Not Be Found
+            </Typography>
+            <Typography variant="body1">
+              The project you are looking for does not exist, has been removed, name changed, or is temporarily unavailable.
+            </Typography>
+            <Link href="/projects">
+              Back to projects page
+            </Link>
+          </Container>
+      }
     </>
   );
 };

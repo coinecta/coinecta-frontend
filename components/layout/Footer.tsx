@@ -30,7 +30,7 @@ interface IPageLinkList {
 const firstPages = {
   title: '',
   links: [
-    
+
   ],
 };
 
@@ -42,8 +42,8 @@ const secondPages = {
       link: "/apply",
     },
     {
-      name: "Litepaper",
-      link: "https://medium.com/@coinecta/coinecta-litepaper-11ac0da89bfe",
+      name: "Documentation",
+      link: "https://docs.coinecta.fi",
     }
   ],
 };
@@ -115,43 +115,43 @@ const Footer: FC = () => {
         }}
       >
         <Grid item xs={12} md={5}>
-        <Link
-                href="/"
-                sx={{
-                  display: 'block',
-                  '&:hover': {
-                    '& span': {
-                      color: theme.palette.primary.main
-                    },
-                    '& .MuiSvgIcon-root': {
-                      color: theme.palette.primary.main
-                    }
-                  }
-                }}
-              >
-                <Logo
-                  sx={{
-                    display: 'inline-block',
-                    verticalAlign: 'middle',
-                    mr: '3px',
-                    fontSize: '30px',
-                    color: theme.palette.text.primary,
-                  }}
-                />
-                <Typography
-                  component="span"
-                  sx={{
-                    color: theme.palette.text.primary,
-                    fontSize: '1.7rem!important',
-                    fontWeight: '700',
-                    lineHeight: 1,
-                    display: 'inline-block',
-                    verticalAlign: 'bottom'
-                  }}
-                >
-                  Coinecta
-                </Typography>
-              </Link>
+          <Link
+            href="/"
+            sx={{
+              display: 'block',
+              '&:hover': {
+                '& span': {
+                  color: theme.palette.primary.main
+                },
+                '& .MuiSvgIcon-root': {
+                  color: theme.palette.primary.main
+                }
+              }
+            }}
+          >
+            <Logo
+              sx={{
+                display: 'inline-block',
+                verticalAlign: 'middle',
+                mr: '3px',
+                fontSize: '30px',
+                color: theme.palette.text.primary,
+              }}
+            />
+            <Typography
+              component="span"
+              sx={{
+                color: theme.palette.text.primary,
+                fontSize: '1.7rem!important',
+                fontWeight: '700',
+                lineHeight: 1,
+                display: 'inline-block',
+                verticalAlign: 'bottom'
+              }}
+            >
+              Coinecta
+            </Typography>
+          </Link>
         </Grid>
         <Grid item xs={12} md={7}>
           <Grid container direction="row" justifyContent="flex-end" spacing={4} sx={{ flexWrap: 'wrap' }}>

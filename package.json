@@ -19,6 +19,7 @@
     "@mui/x-data-grid": "^6.0.2",
     "@mui/x-date-pickers": "^5.0.6",
     "@nautilus-wallet/ergo-ts": "^0.3.3",
+    "@sumsub/websdk-react": "^1.4.0",
     "@types/react-transition-group": "^4.4.5",
     "@types/uuid": "^8.3.4",
     "axios": "^0.27.2",

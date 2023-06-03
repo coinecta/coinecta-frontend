@@ -42,7 +42,7 @@ const initialFormErrors = {
 const emailRegex = /\S+@\S+\.\S+/;
 
 const Apply = () => {
-  const theme = useTheme()
+	const theme = useTheme()
 	const [formData, updateFormData] = useState(initialFormData);
 	// form error object, all booleans
 	const [formErrors, setFormErrors] = useState(initialFormErrors)
@@ -187,182 +187,182 @@ const Apply = () => {
 
 	return (
 		<Container maxWidth="md" sx={{ py: 12 }}>
-        <Typography variant="h2" component="h1" sx={{ fontWeight: '600' }}>
-          IDO Application Form
-        </Typography>
-				<Typography variant="body1" sx={{ mb: 4 }}>
-					Please fill out as much of the form as you can. Even if you don&apos;t have everything finished, feel free to apply and we can consult with you to prepare for an IDO. 
-				</Typography>
-					<Box component="form" noValidate onSubmit={handleSubmit}>
-						<Grid container spacing={2}>
-							<Grid item xs={12}>
-								<TextField
-									InputProps={{ disableUnderline: true }}
-									name="projectName"
-									required
-									fullWidth
-									id="projectName"
-									label="Project Name"
-									autoFocus
-									variant="filled"
-									onChange={handleChange}
-									error={formErrors.projectName}
-									helperText={formErrors.projectName && 'Enter the project name'}
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									InputProps={{ disableUnderline: true }}
-									required
-									fullWidth
-									multiline
-									id="description"
-									label="Project Description"
-									name="description"
-									variant="filled"
-									onChange={handleChange}
-									error={formErrors.description}
-									helperText={formErrors.description && 'Enter the project description'}
-									rows={6}
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									InputProps={{ disableUnderline: true }}
-									required
-									fullWidth
-									name="projectValue"
-									label="Estimated USD needed to fund your project"
-									id="project-value"
-									variant="filled"
-									onChange={handleChange}
-									error={formErrors.projectValue}
-									helperText={formErrors.projectValue && 'Please provide an estimation, even if it may change later'}
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									InputProps={{ disableUnderline: true }}
-									fullWidth
-									name="competitors"
-									label="List your known competitors"
-									id="competitors"
-									variant="filled"
-									onChange={handleChange}
-								/>
-							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									InputProps={{ disableUnderline: true }}
-									fullWidth
-									name="pitchDeck"
-									label="Link your pitch deck"
-									id="pitch-deck"
-									variant="filled"
-									onChange={handleChange}
-								/>
-							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									InputProps={{ disableUnderline: true }}
-									fullWidth
-									name="whitePaper"
-									label="Link your whitepaper"
-									id="white-paper"
-									variant="filled"
-									onChange={handleChange}
-								/>
-							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									InputProps={{ disableUnderline: true }}
-									required
-									fullWidth
-									id="name"
-									label="Your Name"
-									name="name"
-									type="name"
-									variant="filled"
-									onChange={handleChange}
-									error={formErrors.name}
-									helperText={formErrors.name && 'Enter your name'}
-								/>
-							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									InputProps={{ disableUnderline: true }}
-									fullWidth
-									required
-									name="email"
-									label="Your Email"
-									type="email"
-									id="email"
-									variant="filled"
-									onChange={handleChange}
-									error={formErrors.email}
-									helperText={formErrors.email && 'Enter a valid email address'}
-								/>
-							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									InputProps={{ disableUnderline: true }}
-									fullWidth
-									id="telegramHandle"
-									label="Telegram or Discord handle"
-									name="telegramHandle"
-									variant="filled"
-									onChange={handleChange}
-								/>
-							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									InputProps={{ disableUnderline: true }}
-									fullWidth
-									name="telegramGroup"
-									label="Telegram or Discord Group"
-									id="telegramGroup"
-									variant="filled"
-									onChange={handleChange}
-								/>
-							</Grid>
-						</Grid>
+			<Typography variant="h2" component="h1" sx={{ fontWeight: '600' }}>
+				IDO Application Form
+			</Typography>
+			<Typography variant="body1" sx={{ mb: 4 }}>
+				Please fill out as much of the form as you can. Even if you don&apos;t have everything finished, feel free to apply and we can consult with you to prepare for an IDO.
+			</Typography>
+			<Box component="form" noValidate onSubmit={handleSubmit}>
+				<Grid container spacing={2}>
+					<Grid item xs={12}>
+						<TextField
+							InputProps={{ disableUnderline: true }}
+							name="projectName"
+							required
+							fullWidth
+							id="projectName"
+							label="Project Name"
+							autoFocus
+							variant="filled"
+							onChange={handleChange}
+							error={formErrors.projectName}
+							helperText={formErrors.projectName && 'Enter the project name'}
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<TextField
+							InputProps={{ disableUnderline: true }}
+							required
+							fullWidth
+							multiline
+							id="description"
+							label="Project Description"
+							name="description"
+							variant="filled"
+							onChange={handleChange}
+							error={formErrors.description}
+							helperText={formErrors.description && 'Enter the project description'}
+							rows={6}
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<TextField
+							InputProps={{ disableUnderline: true }}
+							required
+							fullWidth
+							name="projectValue"
+							label="Estimated USD needed to fund your project"
+							id="project-value"
+							variant="filled"
+							onChange={handleChange}
+							error={formErrors.projectValue}
+							helperText={formErrors.projectValue && 'Please provide an estimation, even if it may change later'}
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<TextField
+							InputProps={{ disableUnderline: true }}
+							fullWidth
+							name="competitors"
+							label="List your known competitors"
+							id="competitors"
+							variant="filled"
+							onChange={handleChange}
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							InputProps={{ disableUnderline: true }}
+							fullWidth
+							name="pitchDeck"
+							label="Link your pitch deck"
+							id="pitch-deck"
+							variant="filled"
+							onChange={handleChange}
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							InputProps={{ disableUnderline: true }}
+							fullWidth
+							name="whitePaper"
+							label="Link your whitepaper"
+							id="white-paper"
+							variant="filled"
+							onChange={handleChange}
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							InputProps={{ disableUnderline: true }}
+							required
+							fullWidth
+							id="name"
+							label="Your Name"
+							name="name"
+							type="name"
+							variant="filled"
+							onChange={handleChange}
+							error={formErrors.name}
+							helperText={formErrors.name && 'Enter your name'}
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							InputProps={{ disableUnderline: true }}
+							fullWidth
+							required
+							name="email"
+							label="Your Email"
+							type="email"
+							id="email"
+							variant="filled"
+							onChange={handleChange}
+							error={formErrors.email}
+							helperText={formErrors.email && 'Enter a valid email address'}
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							InputProps={{ disableUnderline: true }}
+							fullWidth
+							id="telegramHandle"
+							label="Telegram or Discord handle"
+							name="telegramHandle"
+							variant="filled"
+							onChange={handleChange}
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							InputProps={{ disableUnderline: true }}
+							fullWidth
+							name="telegramGroup"
+							label="Telegram or Discord Group"
+							id="telegramGroup"
+							variant="filled"
+							onChange={handleChange}
+						/>
+					</Grid>
+				</Grid>
 
-						<Box sx={{ position: 'relative' }}>
-							<Button
-								type="submit"
-								fullWidth
-								disabled={buttonDisabled}
-								variant="contained"
-								sx={{ mt: 3, mb: 2 }}
-							>
-								Submit
-							</Button>
-							{isLoading && (
-								<CircularProgress
-									size={24}
-									sx={{
-										position: 'absolute',
-										top: '50%',
-										left: '50%',
-										marginTop: '-9px',
-										marginLeft: '-12px',
-									}}
-								/>
-							)}
-						</Box>
-					</Box>
+				<Box sx={{ position: 'relative' }}>
+					<Button
+						type="submit"
+						fullWidth
+						disabled={buttonDisabled}
+						variant="contained"
+						sx={{ mt: 3, mb: 2 }}
+					>
+						Submit
+					</Button>
+					{isLoading && (
+						<CircularProgress
+							size={24}
+							sx={{
+								position: 'absolute',
+								top: '50%',
+								left: '50%',
+								marginTop: '-9px',
+								marginLeft: '-12px',
+							}}
+						/>
+					)}
+				</Box>
+			</Box>
 
 
-				<Snackbar open={openError} autoHideDuration={6000} onClose={handleCloseError}>
-					<Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
-						{errorMessage}
-					</Alert>
-				</Snackbar>
-				<Snackbar open={openSuccess} autoHideDuration={6000} onClose={handleCloseSuccess}>
-					<Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-						Your form has been submmitted. We will get back to you shortly.
-					</Alert>
-				</Snackbar>
+			<Snackbar open={openError} autoHideDuration={6000} onClose={handleCloseError}>
+				<Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+					{errorMessage}
+				</Alert>
+			</Snackbar>
+			<Snackbar open={openSuccess} autoHideDuration={6000} onClose={handleCloseSuccess}>
+				<Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+					Your form has been submmitted. We will get back to you shortly.
+				</Alert>
+			</Snackbar>
 
 		</Container>
 	);

@@ -92,7 +92,7 @@ const Home: NextPage = () => {
               justifyContent="center"
             >
               <Button variant="contained" href="/projects">Support an IDO</Button>
-              <Button variant="outlined" href="https://medium.com/@coinecta/coinecta-litepaper-11ac0da89bfe">Read the Litepaper</Button>
+              <Button variant="outlined" href="https://docs.coinecta.fi">Read the Whitepaper</Button>
             </Stack>
 
           </Box>
@@ -273,15 +273,9 @@ const Home: NextPage = () => {
                     <Button
                       variant="contained"
                       color="secondary"
-                      href="https://docs.coinecta.fi/launchpad/contributing"
-                      disabled
-                      sx={{
-                        color: 'rgba(255, 255, 255, 0.3)!important',
-                        boxShadow: 'none!important',
-                        backgroundColor: 'rgba(255, 255, 255, 0.12)!important'
-                      }}
+                      href="https://docs.coinecta.fi/launchpad/redeeming"
                     >
-                      Learn More
+                      Learn About Vesting
                     </Button>
                   </Grid>
                 </Grow>
@@ -369,7 +363,7 @@ const Home: NextPage = () => {
                   <Button variant="contained" color="secondary" disabled>Get Started</Button>
                 </Grid>
                 <Grid item>
-                  <Button variant="outlined" color="secondary" href="https://medium.com/@coinecta/coinecta-litepaper-11ac0da89bfe">Read the Litepaper</Button>
+                  <Button variant="outlined" color="secondary" href="https://docs.coinecta.fi">Read the Whitepaper</Button>
                 </Grid>
               </Grid>
             </Grid>

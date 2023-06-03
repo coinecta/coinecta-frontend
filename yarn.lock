@@ -719,6 +719,11 @@
   resolved "https://registry.npmjs.org/@rushstack/eslint-patch/-/eslint-patch-1.1.4.tgz"
   integrity sha512-LwzQKA4vzIct1zNZzBmRKI9QuNpLgTQMEjsQLf3BXuGYb3QPTP4Yjf6mkdX+X1mYttZ808QpOwAzZjv28kq7DA==
 
+"@sumsub/websdk-react@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@sumsub/websdk-react/-/websdk-react-1.4.0.tgz#daea4423ceffc8d57db63e22525d2842216db493"
+  integrity sha512-cydHjQmdkXGsj0COFaukmBHz8NzkrbeSU6ZeNbrlI83KoTkaKbuBkkkOaxY9p80L0LyMwMp1F3B1yRZr4gpLBw==
+
 "@swc/helpers@0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.5.1.tgz#e9031491aa3f26bfcc974a67f48bd456c8a5357a"
