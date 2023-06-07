@@ -9,7 +9,7 @@ import Icon from '@mui/material/Icon';
 
 const Roadmap = ( data: any ) => {
   const timelineItems = data
-    ? data.map((roadmap: any) => {
+    ? data.data.map((roadmap: any) => {
         return { ...roadmap, date: Date.parse(roadmap.date) };
       })
     : [];

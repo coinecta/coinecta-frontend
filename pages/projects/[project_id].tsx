@@ -179,6 +179,14 @@ const Project = () => {
     if (project_id) getProject();
   }, [project_id]);
 
+  const socialButtonSx = { 
+    mr: 1, 
+    color: theme.palette.text.primary,
+    '&:hover': {
+      color: theme.palette.primary.main
+    }
+  }
+
   return (
     <>
       {isLoading
@@ -206,7 +214,7 @@ const Project = () => {
                 <Box sx={{ display: "flex", justifyContent: "left", mb: 2 }}>
                   {project.socials.website &&
                     <Link
-                      sx={{ mr: 1 }}
+                      sx={socialButtonSx}
                       href={project.socials.website}
                       aria-label={`${project.name.replace(/cardano-(x-)?/, "")} website`}
                     >
@@ -215,7 +223,7 @@ const Project = () => {
                   }
                   {project.socials.discord &&
                     <Link
-                      sx={{ mr: 1 }}
+                      sx={socialButtonSx}
                       href={project.socials.discord}
                       aria-label="discord"
                     >
@@ -224,7 +232,7 @@ const Project = () => {
                   }
                   {project.socials.github &&
                     <Link
-                      sx={{ mr: 1 }}
+                      sx={socialButtonSx}
                       href={project.socials.github}
                       aria-label="github"
                     >
@@ -233,7 +241,7 @@ const Project = () => {
                   }
                   {project.socials.telegram &&
                     <Link
-                      sx={{ mr: 1 }}
+                      sx={socialButtonSx}
                       href={project.socials.telegram}
                       aria-label="Telegram"
                     >
@@ -242,7 +250,7 @@ const Project = () => {
                   }
                   {project.socials.twitter &&
                     <Link
-                      sx={{ display: "flex", justifyContent: "center" }}
+                      sx={socialButtonSx}
                       href={project.socials.twitter}
                       aria-label="twitter"
                     >
