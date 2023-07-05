@@ -45,3 +45,8 @@ a {
   border: 3px solid transparent;
   background-clip: content-box;
 }
+
+::-webkit-scrollbar-track-piece
+{
+   display:none;
+}
