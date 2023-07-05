@@ -180,8 +180,8 @@ const Project = () => {
     if (project_id) getProject();
   }, [project_id]);
 
-  const socialButtonSx = { 
-    mr: 1, 
+  const socialButtonSx = {
+    mr: 1,
     color: theme.palette.text.primary,
     '&:hover': {
       color: theme.palette.primary.main
@@ -306,7 +306,7 @@ const Project = () => {
                     {project.roadmap.roadmap.length > 0 ? (
                       <Roadmap data={project?.roadmap?.roadmap} />
                     ) : <Typography>Schedule coming soon</Typography>}
-                    <ActiveRounds project={project} isLoading={isLoading} />
+                    {/* <ActiveRounds project={project} isLoading={isLoading} /> */}
                   </Box>
 
                 </>}
