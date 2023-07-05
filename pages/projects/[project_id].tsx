@@ -28,6 +28,7 @@ import TwitterIcon from "@components/svgs/TwitterIcon";
 import TelegramIcon from "@components/svgs/TelegramIcon";
 import WebIcon from "@components/svgs/WebIcon";
 import GithubIcon from "@components/svgs/GithubIcon";
+import ActiveRounds from '@components/ActiveRounds';
 
 export interface ITokenomic {
   name: string;
@@ -305,6 +306,7 @@ const Project = () => {
                     {project.roadmap.roadmap.length > 0 ? (
                       <Roadmap data={project?.roadmap?.roadmap} />
                     ) : <Typography>Schedule coming soon</Typography>}
+                    <ActiveRounds project={project} isLoading={isLoading} />
                   </Box>
 
                 </>}

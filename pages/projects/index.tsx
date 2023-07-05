@@ -99,30 +99,38 @@ const Projects = () => {
             }}
           />
         )}
-        {contributionProjectsActive?.length !== 0 ||
-          whiteListProjectsActive?.length !== 0 ? (
-          <>
-            <Typography variant="h4" sx={{ fontWeight: "800", mb: 4 }}>
-              Active Rounds
-            </Typography>
-            <Grid container spacing={3} alignItems="stretch" sx={{ mb: 6 }}>
-              {contributionProjectsActive?.map((project: any) => (
-                <ActiveProjectCard
-                  key={project.id}
-                  type="contribution"
-                  project={project}
-                />
-              ))}
-              {whiteListProjectsActive?.map((project: any) => (
-                <ActiveProjectCard
-                  key={project.id}
-                  type="whitelist"
-                  project={project}
-                />
-              ))}
-            </Grid>
-          </>
-        ) : null}
+        {/* {(!contributionProjectsIsLoading && contributionProjectsActive.length !== 0) ||
+          (!whiteListProjectsIsLoading && whiteListProjectsActive.length !== 0) && (
+            <>
+              <Typography variant="h4" sx={{ fontWeight: "800", mb: 4 }}>
+                Active Rounds
+              </Typography>
+              <Grid container spacing={3} alignItems="stretch" sx={{ mb: 6 }}>
+                {contributionProjectsActive?.map((project: any) => {
+                  if (project !== undefined && project.id !== undefined) {
+                    return (
+                      <ActiveProjectCard
+                        key={project.id}
+                        type="contribution"
+                        project={project}
+                      />
+                    )
+                  }
+                })}
+                {whiteListProjectsActive?.map((project: any) => {
+                  if (project !== undefined && project.id !== undefined) {
+                    return (
+                      <ActiveProjectCard
+                        key={project.id}
+                        type="whitelist"
+                        project={project}
+                      />
+                    )
+                  }
+                })}
+              </Grid>
+            </>
+          )} */}
         {upcomingProjects.length > 0 &&
           <>
             <Typography variant="h4" sx={{ fontWeight: "800", mb: 4 }}>

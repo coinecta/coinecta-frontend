@@ -16,7 +16,7 @@ import { Grid, IconButton, Typography, Button } from "@mui/material";
 import CopyToClipboard from "@components/CopyToClipboard";
 import { useProjectInfo } from "../../hooks/useProjectInfo";
 
-export const ActiveProjectCard = ( project: any, type: any ) => {
+export const ActiveProjectCard = ({ project, type }: { project: any, type: any }) => {
   const router = useRouter();
   const { projectInfo, isLoading } = useProjectInfo(project.projectName);
 

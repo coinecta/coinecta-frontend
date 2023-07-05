@@ -16,7 +16,8 @@ const Roadmap = ( data: any ) => {
   return (
     <Timeline>
       {timelineItems.map((item: any) => {
-        const itemTime = new Date(item?.date).toISOString();
+        const itemTime = new Date(item?.date).toLocaleString(undefined, { timeZoneName: 'short' });
+        const endTime = new Date(item?.description).toLocaleString(undefined, { timeZoneName: 'short' })
         return (
           <TimelineItem
             key={item?.name}
@@ -38,10 +39,10 @@ const Roadmap = ( data: any ) => {
                 {item?.name}
               </Typography>
               <Typography variant="body1" sx={{ mb: 1 }}>
-                {itemTime.slice(0, 10) + ', ' + itemTime.slice(11, 16) + ' UTC'}
+                {itemTime}
               </Typography>
               <Typography variant="body1" sx={{ fontSize: '1rem', mb: 1 }}>
-                {item?.description}
+                {!endTime.includes('Invalid Date') && endTime}
               </Typography>
             </TimelineContent>
           </TimelineItem>
