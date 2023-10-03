@@ -7,24 +7,16 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Layout from "@components/layout/Layout";
 import Head from "next/head";
 import { ThemeContext } from "@contexts/ThemeContext";
-import { WalletContext } from "@contexts/WalletContext";
 import { UserContext } from "@contexts/UserContext";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import AlertWrapper, { IAlertMessages } from "@components/AlertWrapper";
 import { ApiContext } from "@contexts/ApiContext";
 import AppApi from "@utils/api";
+import { MeshProvider } from "@meshsdk/react";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [theme, setTheme] = useState(LightTheme);
-  const [walletAddress, setWalletAddress] = useState("");
-  const [dAppWallet, setDAppWallet] = useState({
-    connected: false,
-    name: "",
-    addresses: [""],
-  });
-  const [expanded, setExpanded] = useState<string | false>(false);
-  const [addWalletModalOpen, setAddWalletModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({ address: "" });
   const [alert, setAlert] = useState<IAlertMessages[]>([]);
 
@@ -48,24 +40,13 @@ function MyApp({ Component, pageProps }: AppProps) {
       >
         <ThemeProvider theme={theme}>
           <ThemeContext.Provider value={{ theme, setTheme }}>
-            <WalletContext.Provider
-              value={{
-                walletAddress,
-                setWalletAddress,
-                dAppWallet,
-                setDAppWallet,
-                addWalletModalOpen,
-                setAddWalletModalOpen,
-                expanded,
-                setExpanded,
-              }}
-            >
+            <MeshProvider>
               <UserContext.Provider value={{ userInfo, setUserInfo }}>
                 <ApiContext.Provider value={{ api: new AppApi(setAlert) }}>
                   <CssBaseline enableColorScheme />
-                    <Layout>
-                      <Component {...pageProps} />
-                    </Layout>
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
                   <AlertWrapper
                     alerts={alert}
                     close={(i: number) => {
@@ -76,7 +57,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                   />
                 </ApiContext.Provider>
               </UserContext.Provider>
-            </WalletContext.Provider>
+            </MeshProvider>
           </ThemeContext.Provider>
         </ThemeProvider>
       </LocalizationProvider>

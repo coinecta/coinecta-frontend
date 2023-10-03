@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node server.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -12,6 +12,8 @@
     "@babel/core": "^7.0.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@meshsdk/core": "^1.5.4",
+    "@meshsdk/react": "^1.1.7",
     "@mui/icons-material": "^5.8.4",
     "@mui/lab": "^5.0.0-alpha.100",
     "@mui/material": "^5.11.8",
@@ -19,7 +21,7 @@
     "@mui/x-data-grid": "^6.0.2",
     "@mui/x-date-pickers": "^5.0.6",
     "@nautilus-wallet/ergo-ts": "^0.3.3",
-    "@sumsub/websdk-react": "^1.4.0",
+    "@sumsub/websdk-react": "^2.0.1",
     "@types/react-transition-group": "^4.4.5",
     "@types/uuid": "^8.3.4",
     "axios": "^0.27.2",
@@ -43,6 +45,7 @@
     "@types/react-dom": "18.0.6",
     "eslint": "8.21.0",
     "eslint-config-next": "12.2.4",
+    "ts-node": "^10.9.1",
     "typescript": "4.7.4"
   }
 }

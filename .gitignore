@@ -36,3 +36,11 @@ yarn-error.log*
 next-env.d.ts
 
 /public/uploads
+
+localhost.crt
+localhost.key
+
+/.yarn
+.yarnrc.yml
+
+server.js

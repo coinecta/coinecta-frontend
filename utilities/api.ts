@@ -4,6 +4,7 @@
  * All api config goes here - other files
  * must use these methods only
  */
+// "dev": "next dev",
 
 import { IAlertMessages, ValidAlert } from "@components/AlertWrapper";
 import axios from "axios";
@@ -12,7 +13,7 @@ import axios from "axios";
  * AppApi Impl
  */
 export default class AppApi {
-  setAlert: (val: IAlertMessages[]) => void = () => {};
+  setAlert: (val: IAlertMessages[]) => void = () => { };
 
   constructor(setAlert: (val: IAlertMessages[]) => void) {
     this.setAlert = setAlert;
@@ -44,14 +45,14 @@ export default class AppApi {
       typeof e === "string"
         ? e
         : e?.message
-        ? e?.message
-        : e?.info
-        ? e?.info
-        : e.response.status === 401
-        ? "Error " + e.response.status + ": " + e.response.statusText
-        : e.response.data
-        ? e.response.data
-        : "Oops :( Some unknown error may have occurred";
+          ? e?.message
+          : e?.info
+            ? e?.info
+            : e.response.status === 401
+              ? "Error " + e.response.status + ": " + e.response.statusText
+              : e.response.data
+                ? e.response.data
+                : "Oops :( Some unknown error may have occurred";
     if (this !== undefined)
       this.alert(
         typeof message === "string" ? message : JSON.stringify(message),

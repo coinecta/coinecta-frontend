@@ -24,6 +24,8 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import DiscordIcon from '@components/svgs/DiscordIcon';
 import MarkdownRender from '@components/MarkdownRender';
 import axios from 'axios';
+import SumsubWebSdk from '@sumsub/websdk-react';
+import { v4 as uuidv4 } from 'uuid';
 
 // states
 const NOT_STARTED = 'NOT_STARTED';
@@ -370,6 +372,45 @@ const Whitelist = () => {
 
   const theme = useTheme()
 
+
+  // SUMSUB STUFF
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const userId = '1234abcd'
+
+  useEffect(() => {
+    // Fetch the access token from your API when the component mounts
+    fetch(`/api/getAccessToken?userId=${userId}`) // Replace 'yourUserId' with the actual user ID
+      .then(response => response.json())
+      .then(data => setAccessToken(data.token))
+      .catch(error => console.error('Error fetching access token:', error));
+  }, []);
+
+  const expirationHandler = async () => {
+    // Fetch a new access token from your API when the current token has expired
+    const response = await fetch(`/api/getAccessToken?userId=${userId}`); // Replace 'yourUserId' with the actual user ID
+    const data = await response.json();
+    setAccessToken(data.token);
+    return data.token;
+  }
+
+  const config = {
+    // Configuration settings for the SDK
+  };
+
+  const options = {
+    // Options for the SDK
+  };
+
+  const messageHandler = (message: any) => {
+    // Handle messages from the SDK
+    console.log("Received message from SDK:", message);
+  }
+
+  const errorHandler = (error: any) => {
+    // Handle errors from the SDK
+    console.error("Received error from SDK:", error);
+  }
+
   return (
     <>
       {whitelistLoading ? (
@@ -388,9 +429,9 @@ const Whitelist = () => {
         </>
       ) : (
         <>
-          {whitelistData !== undefined ? (
-            <>
-              <Container maxWidth="md" sx={{ py: 12 }}>
+          <Container maxWidth="md" sx={{ py: 12 }}>
+            {whitelistData !== undefined ? (
+              <>
                 <Typography variant="h3" component="h1" sx={{ fontWeight: '600' }}>
                   {whitelistData.title} Whitelist Form
                 </Typography>
@@ -398,13 +439,15 @@ const Whitelist = () => {
                   {whitelistData.subtitle}
                 </Typography>
 
+
+
                 <Box component="form" noValidate onSubmit={handleSubmit}>
-                  <Typography sx={{ mb: 3 }}>
+                  {/* <Typography sx={{ mb: 3 }}>
                     {whitelistData.additionalDetails.min_stake != 0 && `You must have at least ${whitelistData.additionalDetails.min_stake} $CNCT tokens staked from the signup address to get early access. `}
                     You have {totalStaked} $CNCT tokens staked from this address.
-                  </Typography>
+                  </Typography> */}
 
-                  <Grid container spacing={2}>
+                  <Grid container spacing={2} sx={{ mb: '50px' }}>
                     <Grid item xs={12} md={6}>
                       <TextField
                         sx={{ mt: 1 }}
@@ -519,6 +562,23 @@ const Whitelist = () => {
                       </FormControl>
                     </Grid>
                   </Grid>
+                  {accessToken ? (
+                    <Box sx={{}}>
+                      <Typography variant="h4">
+                        KYC Approval
+                      </Typography>
+                      <SumsubWebSdk
+                        accessToken={accessToken}
+                        expirationHandler={expirationHandler}
+                        config={config}
+                        options={options}
+                        onMessage={messageHandler}
+                        onError={errorHandler}
+                      />
+                    </Box>
+                  ) : (
+                    <Box sx={{ mb: 3 }}>No access token</Box>
+                  )}
                   <FormControl required error={checkboxError}>
                     <FormGroup sx={{ mt: 2 }}>
                       {checkboxState.map((checkbox: any, index: number) => (
@@ -551,7 +611,7 @@ const Whitelist = () => {
                       disabled={buttonDisabled}
                       // disabled={true}
                       variant="contained"
-                      sx={{ mt: 3, mb: 2 }}
+                      sx={{ mb: 2 }}
                     >
                       Submit
                     </Button>
@@ -570,7 +630,7 @@ const Whitelist = () => {
                   </Box>
                   <Typography sx={{ color: theme.palette.text.secondary }}>
                     {whitelistState === ROUND_END &&
-                      'We apologize for the inconvenience, the round is sold out.'}
+                      'We apologize for the inconvenience, the signup form has closed.'}
                   </Typography>
                   <Typography sx={{ color: theme.palette.text.secondary }}>
                     {whitelistState === NOT_STARTED &&
@@ -614,11 +674,12 @@ const Whitelist = () => {
                     </Alert>
                   </Snackbar>
                 </Box>
-              </Container>
-            </>
-          ) : (
-            <Typography>Looks like the whitelist event you are looking for doesn&apos;t exist.</Typography>
-          )}
+
+              </>
+            ) : (
+              <Typography>Looks like the whitelist event you are looking for doesn&apos;t exist.</Typography>
+            )}
+          </Container>
         </>
       )}
     </>
