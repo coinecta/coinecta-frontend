@@ -15,9 +15,6 @@ import Divider from '@mui/material/Divider';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import RedeemIcon from '@mui/icons-material/Redeem';
-import SellIcon from '@mui/icons-material/Sell';
-import EditIcon from '@mui/icons-material/Edit';
 import AddWallet from '@components/user/AddWallet';
 import { useWallet, useWalletList, useAddress } from '@meshsdk/react';
 import { getShortAddress } from '@utils/general';
@@ -36,7 +33,7 @@ interface IUserMenuProps {
   sx?: SxProps;
 }
 
-const UserMenu: FC<IUserMenuProps> = React.memo(({ sx }) => {
+const UserMenu: FC<IUserMenuProps> = ({ sx }) => {
   const theme = useTheme()
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false)
@@ -166,6 +163,6 @@ const UserMenu: FC<IUserMenuProps> = React.memo(({ sx }) => {
       <AddWallet open={modalOpen} setOpen={setModalOpen} />
     </>
   );
-});
+}
 
 export default UserMenu;

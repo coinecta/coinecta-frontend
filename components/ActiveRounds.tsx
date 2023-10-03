@@ -2,15 +2,10 @@ import React, { useState, useEffect, FC } from 'react';
 import {
   Grid,
   Typography,
-  Divider,
-  Button,
-  CircularProgress,
-  Box,
-  Paper
+  Button
 } from '@mui/material';
 import { useWhitelistProjects } from "@hooks/useWhitelistProjects";
 import { useContributionProjects } from "@hooks/useContributionProjects";
-import Image from 'next/image';
 import Link from '@components/Link';
 import { IProject } from '@pages/projects/[project_id]';
 
@@ -117,16 +112,16 @@ const CheckButtonType: React.FC<ICheckButtonType> = ({ itemName, activeRounds, p
   const roundTypes = ['seed', 'staker', 'strategic', 'public', 'presale'];
   const roundActions = ['whitelist', 'contribution'];
 
-  const button = activeRounds.map(round => {
+  const button = activeRounds.map((round, i) => {
     if (hasMatchingWord(removePrefix(round.projectName).toLowerCase(), cleanedProjectName.toLowerCase())) {
       if (lowerCaseItemName.includes('ido')) {
-        return <ButtonNextLink itemName={itemName} projectName="" link="https://app.spectrum.fi/ergo/swap" />;
+        return <ButtonNextLink key={i} itemName={itemName} projectName="" link="https://app.spectrum.fi/ergo/swap" />;
       }
       else if (round.title.includes('coinecta-wl-')) {
-        return <ButtonNextLink roundName={round.roundName} roundType={'whitelist'} itemName={itemName} projectName={transformedProjectName} />;
+        return <ButtonNextLink key={i} roundName={round.roundName} roundType={'whitelist'} itemName={itemName} projectName={transformedProjectName} />;
       }
       else if (round.title.includes('coinecta-ctr-')) {
-        return <ButtonNextLink roundName={round.roundName} roundType={'contribution'} itemName={itemName} projectName={transformedProjectName} />;
+        return <ButtonNextLink key={i} roundName={round.roundName} roundType={'contribution'} itemName={itemName} projectName={transformedProjectName} />;
       }
     }
     return null

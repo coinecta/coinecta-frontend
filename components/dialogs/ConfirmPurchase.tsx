@@ -103,9 +103,7 @@ const ConfirmPurchase: FC<IConfirmPurchaseProps> = ({ open, setOpen, saleId, pac
   const [bidPrice, setBidPrice] = useState(price + (price * 0.1))
   const [error, setError] = useState(false)
   const {
-    walletAddress,
-    setAddWalletModalOpen,
-    dAppWallet
+    walletAddress
   } = useContext(WalletContext);
   const apiContext = useContext<IApiContext>(ApiContext);
   const [successTx, setSuccessTx] = useState('')
@@ -116,36 +114,36 @@ const ConfirmPurchase: FC<IConfirmPurchaseProps> = ({ open, setOpen, saleId, pac
     else setError(false)
   }
 
-  const buildOrder = (): IOrder => {
-    let walletArray = []
-    if (dAppWallet.connected === true) {
-      walletArray = dAppWallet.addresses
-    }
-    else walletArray = [walletAddress]
-    return {
-      targetAddress: walletArray[0],
-      userWallet: walletArray,
-      txType: "EIP-12",
-      requests: [{
-        saleId: saleId,
-        packRequests: [
-          {
-            packId: packId,
-            count: qty
-          }]
-      }]
-    }
-  }
+  // const buildOrder = (): IOrder => {
+  //   let walletArray = []
+  //   // if (dAppWallet.connected === true) {
+  //   //   walletArray = dAppWallet.addresses
+  //   // }
+  //   walletArray = [walletAddress]
+  //   return {
+  //     targetAddress: walletArray[0],
+  //     userWallet: walletArray,
+  //     txType: "EIP-12",
+  //     requests: [{
+  //       saleId: saleId,
+  //       packRequests: [
+  //         {
+  //           packId: packId,
+  //           count: qty
+  //         }]
+  //     }]
+  //   }
+  // }
 
-  const getPurchaseTx = async (order: IOrder) => {
-    try {
-      const res = await apiContext.api.post(`/order`, order);
-      apiContext.api.ok("Open order sent");
-      return res.data;
-    } catch (e: any) {
-      apiContext.api.error(e);
-    }
-  };
+  // const getPurchaseTx = async (order: IOrder) => {
+  //   try {
+  //     const res = await apiContext.api.post(`/order`, order);
+  //     apiContext.api.ok("Open order sent");
+  //     return res.data;
+  //   } catch (e: any) {
+  //     apiContext.api.error(e);
+  //   }
+  // };
 
   const submit = async () => {
     setSubmitting('submitting');
@@ -228,7 +226,7 @@ const ConfirmPurchase: FC<IConfirmPurchaseProps> = ({ open, setOpen, saleId, pac
               Transaction succeeded.
             </Typography>
             <Typography>
-            View on explorer:
+              View on explorer:
             </Typography>
             <Box sx={{
               overflow: 'hidden',
@@ -236,8 +234,8 @@ const ConfirmPurchase: FC<IConfirmPurchaseProps> = ({ open, setOpen, saleId, pac
               textOverflow: 'ellipsis',
             }}>
               <Link href={'https://explorer.ergoplatform.com/en/transactions/' + successTx}>
-              {successTx}
-            </Link>
+                {successTx}
+              </Link>
             </Box>
           </Box>
         )
