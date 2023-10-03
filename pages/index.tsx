@@ -17,7 +17,6 @@ import {
 } from '@mui/material'
 import ErgopadLogo from '@components/svgs/ErgopadLogo';
 import BlockheadsLogo from '@components/svgs/BlockheadsLogo';
-import TeddyswapLogo from '@components/svgs/TeddyswapLogo';
 import PaideiaLogo from '@components/svgs/PaideiaLogo';
 import { v4 as uuidv4 } from 'uuid';
 import Projects from '@components/landing/Projects';
@@ -101,14 +100,6 @@ const Home: NextPage = () => {
               In partnership with:
             </Typography>
             <Grid container alignItems="center" justifyContent="space-around">
-              <Grid item>
-                <Link
-                  href="https://teddyswap.org"
-                  sx={logoLinkSx}
-                >
-                  <TeddyswapLogo sx={{ fontSize: '160px', height: '100px' }} />
-                </Link>
-              </Grid>
               <Grid item>
                 <Link
                   href="https://www.harmoniclabs.tech"
