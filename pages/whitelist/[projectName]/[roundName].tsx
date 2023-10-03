@@ -374,42 +374,42 @@ const Whitelist = () => {
 
 
   // SUMSUB STUFF
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const userId = '1234abcd'
+  // const [accessToken, setAccessToken] = useState<string | null>(null);
+  // const userId = '1234abcd'
 
-  useEffect(() => {
-    // Fetch the access token from your API when the component mounts
-    fetch(`/api/getAccessToken?userId=${userId}`) // Replace 'yourUserId' with the actual user ID
-      .then(response => response.json())
-      .then(data => setAccessToken(data.token))
-      .catch(error => console.error('Error fetching access token:', error));
-  }, []);
+  // useEffect(() => {
+  //   // Fetch the access token from your API when the component mounts
+  //   fetch(`/api/getAccessToken?userId=${userId}`) // Replace 'yourUserId' with the actual user ID
+  //     .then(response => response.json())
+  //     .then(data => setAccessToken(data.token))
+  //     .catch(error => console.error('Error fetching access token:', error));
+  // }, []);
 
-  const expirationHandler = async () => {
-    // Fetch a new access token from your API when the current token has expired
-    const response = await fetch(`/api/getAccessToken?userId=${userId}`); // Replace 'yourUserId' with the actual user ID
-    const data = await response.json();
-    setAccessToken(data.token);
-    return data.token;
-  }
+  // const expirationHandler = async () => {
+  //   // Fetch a new access token from your API when the current token has expired
+  //   const response = await fetch(`/api/getAccessToken?userId=${userId}`); // Replace 'yourUserId' with the actual user ID
+  //   const data = await response.json();
+  //   setAccessToken(data.token);
+  //   return data.token;
+  // }
 
-  const config = {
-    // Configuration settings for the SDK
-  };
+  // const config = {
+  //   // Configuration settings for the SDK
+  // };
 
-  const options = {
-    // Options for the SDK
-  };
+  // const options = {
+  //   // Options for the SDK
+  // };
 
-  const messageHandler = (message: any) => {
-    // Handle messages from the SDK
-    console.log("Received message from SDK:", message);
-  }
+  // const messageHandler = (message: any) => {
+  //   // Handle messages from the SDK
+  //   console.log("Received message from SDK:", message);
+  // }
 
-  const errorHandler = (error: any) => {
-    // Handle errors from the SDK
-    console.error("Received error from SDK:", error);
-  }
+  // const errorHandler = (error: any) => {
+  //   // Handle errors from the SDK
+  //   console.error("Received error from SDK:", error);
+  // }
 
   return (
     <>
@@ -562,7 +562,7 @@ const Whitelist = () => {
                       </FormControl>
                     </Grid>
                   </Grid>
-                  {accessToken ? (
+                  {/* {accessToken ? (
                     <Box sx={{}}>
                       <Typography variant="h4">
                         KYC Approval
@@ -578,7 +578,7 @@ const Whitelist = () => {
                     </Box>
                   ) : (
                     <Box sx={{ mb: 3 }}>No access token</Box>
-                  )}
+                  )} */}
                   <FormControl required error={checkboxError}>
                     <FormGroup sx={{ mt: 2 }}>
                       {checkboxState.map((checkbox: any, index: number) => (
