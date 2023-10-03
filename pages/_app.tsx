@@ -15,7 +15,7 @@ import { ApiContext } from "@contexts/ApiContext";
 import AppApi from "@utils/api";
 import { MeshProvider } from "@meshsdk/react";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component: PageComponent, pageProps }: AppProps) {
   const [theme, setTheme] = useState(LightTheme);
   const [userInfo, setUserInfo] = useState({ address: "" });
   const [alert, setAlert] = useState<IAlertMessages[]>([]);
@@ -45,7 +45,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <ApiContext.Provider value={{ api: new AppApi(setAlert) }}>
                   <CssBaseline enableColorScheme />
                   <Layout>
-                    <Component {...pageProps} />
+                    <PageComponent  {...pageProps} />
                   </Layout>
                   <AlertWrapper
                     alerts={alert}
