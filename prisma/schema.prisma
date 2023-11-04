@@ -1,0 +1,363 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  walletType   String?
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id             String             @id @default(cuid())
+  created_at     DateTime           @default(now())
+  updated_at     DateTime           @updatedAt
+  name           String?
+  status         String?
+  isAdmin        Boolean            @default(false) @map("is_admin")
+  defaultAddress String?            @unique @map("default_address")
+  rewardAddress  String?            @unique @map("reward_address")
+  walletType     String?
+  nonce          String?
+  email          String?            @unique
+  emailVerified  DateTime?          @map("email_verified")
+  image          String?
+  sumsubId       String?            @map("sumsub_id")
+  sumsubType     String?            @map("sumsub_type")
+  sumsubResult   Json?              @map("sumsub_result")
+  sumsubStatus   String?            @map("sumsub_status")
+  whitelists     WhitelistSignup[]
+  accounts       Account[]
+  sessions       Session[]
+  transactions   Transaction[]
+  wallets        Wallet[]
+  stakeHistory   UserStakeHistory[]
+
+  @@map("users")
+}
+
+model UserStakeHistory {
+  id                  Int    @id @default(autoincrement())
+  active_epoch        Int
+  amount              String
+  pool_id             String
+  user_reward_address String
+  user                User   @relation(fields: [user_reward_address], references: [rewardAddress], onDelete: Cascade)
+
+  @@unique([active_epoch, user_reward_address, pool_id])
+  @@index([active_epoch, user_reward_address, pool_id])
+  @@map("user_stake_history")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+model Wallet {
+  id              Int      @id @default(autoincrement())
+  type            String
+  rewardAddress   String   @unique @map("reward_address")
+  changeAddress   String   @unique @map("change_address")
+  unusedAddresses String[] @map("unused_addresses")
+  usedAddresses   String[] @map("used_addresses")
+  user_id         String
+  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("wallets")
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  description String
+  amount      String
+  currency    String
+  address     String
+  completed   Boolean  @default(false)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  user_id     String
+  user        User     @relation(fields: [user_id], references: [id])
+
+  @@map("transactions")
+}
+
+// PROJECT /////////////////////////////////////////////////
+
+model Project {
+  id               Int         @id @default(autoincrement())
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+  name             String      @unique
+  slug             String      @unique
+  shortDescription String      @map("short_description")
+  whitepaperLink   String?     @map("whitepaper_link")
+  description      String
+  blockchains      String[]
+  fundsRaised      Int?        @map("funds_raised")
+  bannerImgUrl     String      @map("banner_img_url")
+  avatarImgUrl     String      @map("avatar_img_url")
+  isLaunched       Boolean     @default(false) @map("is_launched")
+  isDraft          Boolean     @default(true) @map("is_draft")
+  frontPage        Boolean     @default(false) @map("front_page")
+  socials          Socials?
+  roadmap          Roadmap[]
+  team             Team[]
+  tokenomics       Tokenomics?
+  whitelists       Whitelist[]
+  fisos            Fiso[]
+
+  @@map("projects")
+}
+
+model Socials {
+  id           Int     @id @default(autoincrement())
+  telegram     String?
+  twitter      String?
+  discord      String?
+  github       String?
+  website      String?
+  project      Project @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
+  project_slug String  @unique
+
+  @@map("project_socials")
+}
+
+model Roadmap {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String
+  date         DateTime
+  project      Project  @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
+  project_slug String
+
+  @@map("project_roadmaps")
+}
+
+model Team {
+  id            Int     @id @default(autoincrement())
+  name          String
+  description   String
+  profileImgUrl String? @map("profile_img_url")
+  twitter       String?
+  linkedin      String?
+  project       Project @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
+  project_slug  String
+
+  @@map("project_team")
+}
+
+model Tokenomics {
+  id           Int         @id @default(autoincrement())
+  tokenName    String      @map("token_name")
+  totalTokens  Int         @map("total_tokens")
+  tokenTicker  String      @map("token_ticker")
+  tokenomics   Tokenomic[]
+  project      Project     @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
+  project_slug String      @unique
+
+  @@map("project_tokenomics")
+}
+
+model Tokenomic {
+  id           Int        @id @default(autoincrement())
+  name         String
+  amount       Int
+  value        String?
+  tge          String?
+  freq         String?
+  length       String?
+  lockup       String?
+  tokenomics   Tokenomics @relation(fields: [tokenomicsId], references: [id], onDelete: Cascade)
+  tokenomicsId Int
+
+  @@map("project_tokenomics_items")
+}
+
+// WHITELIST //////////////////////////////////////////////
+
+model Whitelist {
+  id            String            @id @default(cuid())
+  created_at    DateTime          @default(now())
+  updated_at    DateTime          @updatedAt
+  name          String
+  slug          String            @unique
+  startDateTime DateTime          @map("start_date_time")
+  endDateTime   DateTime          @map("end_date_time")
+  maxPerSignup  Int?              @map("max_per_signup")
+  hardCap       Int?              @map("hard_cap")
+  externalLink  String?           @map("external_link")
+  project       Project           @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
+  project_slug  String
+  signups       WhitelistSignup[]
+
+  @@map("whitelists")
+}
+
+model WhitelistSignup {
+  id              String    @id @default(cuid())
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  amountRequested String    @map("amount_requested")
+  amountApproved  String?   @map("amount_approved")
+  status          String?
+  notes           String?
+  whitelist       Whitelist @relation(fields: [whitelist_slug], references: [slug], onDelete: Cascade)
+  whitelist_slug  String
+  user            User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id         String
+
+  @@map("whitelist_signups")
+}
+
+// STAKEPOOL, ISPO, AND FISO STUFF /////////////////////////////////////
+
+model Fiso {
+  id                 Int                     @id @default(autoincrement())
+  tokenAmount        Int                     @map("token_amount")
+  tokenName          String                  @map("token_name")
+  tokenTicker        String                  @map("token_ticker")
+  startEpoch         Int                     @map("start_epoch")
+  endEpoch           Int                     @map("end_epoch")
+  projectSlug        String                  @map("project_slug")
+  project            Project                 @relation(fields: [projectSlug], references: [slug])
+  approvedStakepools FisoApprovedStakePool[]
+  totalStakeEpoch    Json?                   @map("total_stake_epoch")
+  spoSignups         SpoSignups[]
+
+  @@map("fisos")
+}
+
+model FisoApprovedStakePool {
+  id         Int       @id @default(autoincrement())
+  startEpoch Int       @map("start_epoch")
+  endEpoch   Int       @map("end_epoch")
+  fisoId     Int       @map("fiso_id")
+  fiso       Fiso      @relation(fields: [fisoId], references: [id], onDelete: Cascade)
+  poolId     String    @map("pool_id")
+  stakepool  Stakepool @relation(fields: [poolId], references: [pool_id], onDelete: Cascade)
+
+  @@map("fiso_approved_stake_pools")
+}
+
+model SpoSignups {
+  id               Int       @id @default(autoincrement())
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+  poolId           String    @unique @map("pool_id")
+  stakepool        Stakepool @relation(fields: [poolId], references: [pool_id], onDelete: Cascade)
+  fisos            Fiso[]
+  operatorName     String?   @map("operator_name")
+  operatorEmail    String?   @map("operator_email")
+  operatorTwitter  String?   @map("operator_twitter")
+  operatorDiscord  String?   @map("operator_discord")
+  operatorTelegram String?   @map("operator_telegram")
+
+  @@map("spo_signups")
+}
+
+model Stakepool {
+  id          Int                     @id @default(autoincrement())
+  pool_id     String                  @unique
+  hex         String?
+  url         String?
+  hash        String?
+  ticker      String?
+  name        String?
+  description String?
+  homepage    String?
+  stats       StakepoolStats?
+  history     StakepoolHistory[]
+  fisoPools   FisoApprovedStakePool[]
+  spoSignups  SpoSignups?
+
+  @@map("stakepools")
+}
+
+model StakepoolStats {
+  id              Int       @id @default(autoincrement())
+  pool_id         String    @unique
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  hex             String
+  vrf_key         String
+  blocks_minted   Int
+  blocks_epoch    Int
+  live_stake      String
+  live_size       Float
+  live_saturation Float
+  live_delegators Int
+  active_stake    String
+  active_size     Float
+  declared_pledge String
+  live_pledge     String
+  margin_cost     Float
+  fixed_cost      String
+  reward_account  String
+  owners          String[]
+  registration    String[]
+  retirement      String[]
+  stakepool       Stakepool @relation(fields: [pool_id], references: [pool_id], onDelete: Cascade)
+
+  @@map("stakepool_stats")
+}
+
+model StakepoolDataCache {
+  id         Int      @id @default(autoincrement())
+  spoListKey String   @unique
+  data       Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("stakepool_cache")
+}
+
+model StakepoolHistory {
+  id               Int       @id @default(autoincrement())
+  epoch            Int
+  blocks           Int
+  active_stake     String
+  active_size      Float
+  delegators_count Int
+  rewards          String
+  fees             String
+  stakepool        Stakepool @relation(fields: [pool_id], references: [pool_id], onDelete: Cascade)
+  pool_id          String
+
+  @@unique([epoch, pool_id])
+  @@index([epoch, pool_id])
+  @@map("stakepool_history")
+}
