@@ -171,7 +171,7 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
                   Your current staked amount:
                 </Typography>
                 <Typography variant="h6" sx={{ lineHeight: '24px', fontSize: '1.2rem !important' }}>
-                  {sessionStatus === 'authenticated'
+                  {sessionStatus === 'authenticated' && fisoUserInfoQuery.data.userCurrentStakedAmount
                     ? `${(Number(fisoUserInfoQuery.data.userCurrentStakedAmount) * 0.000001).toLocaleString(undefined, { maximumFractionDigits: 2 })} ₳`
                     : '-'}
                 </Typography>
@@ -209,8 +209,8 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
                 })}
               </Grid>
             </Box>
-            : <Box sx={{ mb: 1 }}>
-              No ISPO info to display...
+            : <Box sx={{ mb: 1, textAlign: 'center' }}>
+              No FISO info to display currently.
             </Box>
       }
     </Box>
