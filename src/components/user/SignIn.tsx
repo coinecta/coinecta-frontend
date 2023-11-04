@@ -151,7 +151,7 @@ export const SignIn: FC<ISignIn> = ({ open, setOpen, setLoading }) => {
         endIcon={<Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 3 }}>
           {mobile && <Box>
             <Typography sx={{ fontSize: '0.9rem !important', color: theme.palette.text.secondary }}>
-              {name !== 'VESPR' ? 'Mobile supported' : 'Awaiting software update'}
+              Mobile supported
             </Typography>
           </Box>}
           {link && <OpenInNewIcon sx={{ height: '16px', width: '16px' }} />}
@@ -172,7 +172,7 @@ export const SignIn: FC<ISignIn> = ({ open, setOpen, setLoading }) => {
           </Box>
         </Box>}
         sx={{
-          background: name !== 'VESPR' ? theme.palette.background.paper : theme.palette.divider,
+          background: theme.palette.background.paper,
           border: `1px solid ${theme.palette.divider}`,
           borderRadius: '6px',
           mb: 1,
@@ -185,7 +185,6 @@ export const SignIn: FC<ISignIn> = ({ open, setOpen, setLoading }) => {
           },
           color: theme.palette.text.secondary
         }}
-        // disabled={name === 'VESPR'}
         fullWidth
         onClick={
           link

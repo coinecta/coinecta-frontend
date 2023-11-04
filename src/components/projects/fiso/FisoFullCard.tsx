@@ -1,7 +1,7 @@
 
 
 import React, { FC, ReactNode, useEffect, useState } from 'react';
-import { Box, Paper, TextField, FilledInput, Chip, Button } from '@mui/material';
+import { Box, Paper, TextField, FilledInput, Chip, Button, Link, useTheme } from '@mui/material';
 import { formatNumber, roundToTwo } from '@lib/utils/general';
 import { Transaction } from '@meshsdk/core';
 import { useWalletContext } from '@contexts/WalletContext';
@@ -10,6 +10,7 @@ import Typography, { TypographyProps } from '@mui/material/Typography';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useAlert } from '@contexts/AlertContext';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 type FisoFullCardProps = {
   stakepoolData: TStakePoolWithStats;
@@ -37,6 +38,7 @@ const SmParagraph: FC<SmParagraphProps> = (props) => {
 const FisoFullCard: FC<FisoFullCardProps> = ({ stakepoolData, projectSlug, epochInfo, currentEpoch }) => {
   const { addAlert } = useAlert()
   const { wallet } = useWallet()
+  const theme = useTheme()
 
   const thisEpoch = epochInfo?.find(epoch => epoch.poolId === stakepoolData.pool_id)
 
@@ -81,18 +83,43 @@ const FisoFullCard: FC<FisoFullCardProps> = ({ stakepoolData, projectSlug, epoch
 
 
   const isActive: boolean = !!currentEpoch && !!thisEpoch && (thisEpoch.startEpoch <= currentEpoch && thisEpoch.endEpoch >= currentEpoch)
+  const showStakeNowButton: boolean = !!currentEpoch && !!thisEpoch && (thisEpoch.startEpoch - 3 <= currentEpoch && thisEpoch.endEpoch >= currentEpoch)
 
   return (
     <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <Typography variant="h6">
-          {stakepoolData.ticker}
-        </Typography>
+        {stakepoolData.homepage
+          ? <Link
+            variant="h6"
+            sx={{
+              color: theme.palette.text.primary,
+              textDecoration: 'underline',
+              '&:hover': {
+                textDecoration: 'none'
+              }
+            }}
+            href={stakepoolData.homepage} target="_blank">
+            {stakepoolData.ticker}
+          </Link>
+          : <Typography variant="h6">
+            {stakepoolData.ticker}
+          </Typography>
+        }
+
         {isActive && (
           <Chip
             icon={<CheckCircleIcon />}
             label="Active"
             color="success"
+            size="small"
+            variant="outlined"
+          />
+        )}
+        {!isActive && showStakeNowButton && (
+          <Chip
+            icon={<InfoOutlinedIcon />}
+            label="Active soon"
+            color="info"
             size="small"
             variant="outlined"
           />
@@ -121,8 +148,11 @@ const FisoFullCard: FC<FisoFullCardProps> = ({ stakepoolData, projectSlug, epoch
       <SmParagraph>
         Saturation: {roundToTwo(stakepoolData.stats.live_saturation * 100)}%
       </SmParagraph>
+      <SmParagraph>
+        Live Pledge: {formatNumber(Number(stakepoolData.stats.live_pledge) * 0.000001)} ₳
+      </SmParagraph>
       <Box sx={{ width: '100%', textAlign: 'center', mt: 1 }}>
-        {isActive && (
+        {showStakeNowButton && (
           <Button
             onClick={delegateStake}
             startIcon={<AccountBalanceWalletIcon />}
