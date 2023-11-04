@@ -113,31 +113,25 @@ const fetchUserStakeHistory = async (userStakeAddress: string, startEpoch: numbe
     }
   }
 
-  // Prepare the data for database insertion
-  const dbEntries: {
-    active_epoch: number;
-    amount: string;
-    pool_id: string;
-    user_reward_address: string;
-  }[] = [];
+  const dbEntries = [];
+  const returnedEntries = [];
 
-  for (let epoch = startEpoch; epoch <= endEpoch; epoch++) {
+  // Add database entries for all historyEntries before currentEpoch (including empty entries)
+  for (let epoch = currentEpoch - 100; epoch < currentEpoch; epoch++) {
     const historyEntry = allStakeHistory.find(entry => entry.active_epoch === epoch);
-    if (historyEntry) {
-      dbEntries.push({
-        active_epoch: epoch,
-        amount: historyEntry.amount,
-        pool_id: historyEntry.pool_id,
-        user_reward_address: userStakeAddress,
-      });
-    } else {
-      // Insert an empty entry for epochs where the user has no stake history
-      dbEntries.push({
-        active_epoch: epoch,
-        amount: '',
-        pool_id: '',
-        user_reward_address: userStakeAddress,
-      });
+
+    let dbEntry = {
+      active_epoch: epoch,
+      amount: historyEntry ? historyEntry.amount : '',
+      pool_id: historyEntry ? historyEntry.pool_id : '',
+      user_reward_address: userStakeAddress,
+    };
+
+    dbEntries.push(dbEntry);
+
+    // Additionally, check if the epoch is within the return range
+    if (epoch >= startEpoch && epoch <= endEpoch) {
+      returnedEntries.push(dbEntry);
     }
   }
 
@@ -147,7 +141,8 @@ const fetchUserStakeHistory = async (userStakeAddress: string, startEpoch: numbe
     skipDuplicates: true, // This ensures that we only insert new records and skip any duplicates
   });
 
-  return dbEntries;
+  // Only return entries within the specified range (startEpoch to the lesser of currentEpoch or endEpoch)
+  return returnedEntries;
 };
 
 
