@@ -20,6 +20,7 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
     successfulStakePools: [],
     errors: []
   })
+  const [userStakepoolData, setUserStakepoolData] = useState<TStakePoolWithStats | undefined>(undefined)
 
   // current epoch stuff
   const currentEpochQuery = trpc.stakepool.getCurrentEpoch.useQuery()
@@ -45,11 +46,24 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
       enabled: !!fisos[0].id,
     })
 
+  const userStakingInfoQuery = trpc.stakepool.getUserCurrentStake.useQuery(
+    undefined,
+    {
+      enabled: sessionStatus === 'authenticated'
+    }
+  )
+
   useEffect(() => {
     if (sessionData?.user?.id) {
       fisoUserInfoQuery.refetch();
     }
   }, [sessionData?.user?.id]);
+
+  useEffect(() => {
+    if (userStakingInfoQuery.data?.pool_id) {
+      getUserStakepoolData(userStakingInfoQuery.data?.pool_id)
+    }
+  }, [userStakingInfoQuery.data])
 
   useEffect(() => {
     if (fisos[0] && fisos[0].approvedStakepools && fisos[0].approvedStakepools.length > 0) {
@@ -62,8 +76,18 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
   const getStakepoolData = async (fisoPoolIds: string[]) => {
     try {
       const response = await stakepoolInfo.mutateAsync({ stakepoolIds: fisoPoolIds });
-      console.log(response);
+      // console.log(response);
       setStakepoolData(response);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const getUserStakepoolData = async (poolId: string) => {
+    try {
+      const response = await stakepoolInfo.mutateAsync({ stakepoolIds: [poolId] });
+      console.log(response)
+      setUserStakepoolData(response.successfulStakePools[0])
     } catch (error) {
       console.error(error);
     }
@@ -163,17 +187,22 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
                   Your current stakepool:
                 </Typography>
                 <Typography variant="h5" sx={{ mb: 1 }}>
-                  {sessionStatus === 'authenticated'
-                    ? userStakepoolInfo.poolTicker || '-'
-                    : '-'}
+                  {sessionStatus === 'authenticated' && userStakepoolData?.ticker
+                    ? userStakepoolData?.ticker
+                    : userStakepoolInfo.poolTicker
+                      ? userStakepoolInfo.poolTicker
+                      : '-'}
                 </Typography>
                 <Typography sx={{ mb: 0, fontSize: '1rem !important' }}>
                   Your current staked amount:
                 </Typography>
                 <Typography variant="h6" sx={{ lineHeight: '24px', fontSize: '1.2rem !important' }}>
-                  {sessionStatus === 'authenticated' && fisoUserInfoQuery.data.userCurrentStakedAmount
-                    ? `${(Number(fisoUserInfoQuery.data.userCurrentStakedAmount) * 0.000001).toLocaleString(undefined, { maximumFractionDigits: 2 })} ₳`
-                    : '-'}
+                  {sessionStatus === 'authenticated' &&
+                    userStakingInfoQuery.data?.controlled_amount
+                    ? `${(Number(userStakingInfoQuery.data?.controlled_amount) * 0.000001).toLocaleString(undefined, { maximumFractionDigits: 2 })} ₳`
+                    : fisoUserInfoQuery.data.userCurrentStakedAmount
+                      ? `${(Number(fisoUserInfoQuery.data.userCurrentStakedAmount) * 0.000001).toLocaleString(undefined, { maximumFractionDigits: 2 })} ₳`
+                      : '-'}
                 </Typography>
               </>
             )
