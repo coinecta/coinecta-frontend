@@ -108,7 +108,7 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
             {fisoUserInfoQuery.status === 'success' && currentEpoch ? (
               <>
                 <Typography sx={{ mb: 0 }}>
-                  Total FISO stake:
+                  Total FISO active stake:
                 </Typography>
                 <Typography variant="h5" sx={{ mb: 1 }}>
                   {(fisoUserInfoQuery.data.currentTotalStake * 0.000001).toLocaleString(undefined, { maximumFractionDigits: 2 })} ₳
