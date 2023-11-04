@@ -1,9 +1,24 @@
 import { prisma } from '@server/prisma';
 import { blockfrostAPI } from '@server/utils/blockfrostApi';
 import { fetchAndUpdateStakepoolData } from '@server/utils/fetchAndUpdateStakepoolData';
+import { TRPCError } from '@trpc/server';
+import axios from 'axios';
 import crypto from 'crypto';
 import { z } from 'zod';
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+
+type UserAddressQuery = {
+  stake_address: string,
+  active: boolean,
+  active_epoch: number,
+  controlled_amount: string,
+  rewards_sum: string,
+  withdrawals_sum: string,
+  reserves_sum: string,
+  treasury_sum: string,
+  withdrawable_amount: string,
+  pool_id: string
+}
 
 export type TStakepoolInfoReturn = {
   successfulStakePools: TStakePoolWithStats[];
@@ -104,5 +119,48 @@ export const stakepoolRouter = createTRPCRouter({
       const { data: currentEpochData } = await blockfrostAPI.get(`/epochs/latest`);
       if (!currentEpochData) throw new Error("Unable to retrieve epoch data")
       return currentEpochData
-    })
+    }),
+  getUserCurrentStake: protectedProcedure
+    .query(async ({ ctx }) => {
+      try {
+        const userId = ctx.session.user.id;
+        const user = await prisma.user.findFirst({
+          where: {
+            id: userId
+          }
+        });
+
+        if (!user) {
+          throw new TRPCError({
+            message: 'Unable to find user',
+            code: 'NOT_FOUND'
+          });
+        }
+
+        const response = await blockfrostAPI.get(`/accounts/${user.rewardAddress}`);
+
+        const data: UserAddressQuery = response.data
+        return data;
+      } catch (error) {
+        console.error(error);
+        if (axios.isAxiosError(error)) {
+
+          throw new TRPCError({
+            message: `Failed to fetch data for user: ${error.message}`,
+            code: 'INTERNAL_SERVER_ERROR'
+          });
+        }
+
+        // For errors thrown by TRPCError directly
+        if (error instanceof TRPCError) {
+          throw error; // rethrow TRPCError errors directly
+        }
+
+        // Handle all other errors that may not have been caught by the above blocks
+        throw new TRPCError({
+          message: 'An unexpected error occurred',
+          code: 'INTERNAL_SERVER_ERROR'
+        });
+      }
+    }),
 });

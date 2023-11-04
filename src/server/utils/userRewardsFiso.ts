@@ -117,7 +117,7 @@ const fetchUserStakeHistory = async (userStakeAddress: string, startEpoch: numbe
   const returnedEntries = [];
 
   // Add database entries for all historyEntries before currentEpoch (including empty entries)
-  for (let epoch = currentEpoch - 100; epoch < currentEpoch; epoch++) {
+  for (let epoch = currentEpoch - 100; epoch <= currentEpoch; epoch++) {
     const historyEntry = allStakeHistory.find(entry => entry.active_epoch === epoch);
 
     let dbEntry = {
@@ -144,41 +144,6 @@ const fetchUserStakeHistory = async (userStakeAddress: string, startEpoch: numbe
   // Only return entries within the specified range (startEpoch to the lesser of currentEpoch or endEpoch)
   return returnedEntries;
 };
-
-
-// const fetchUserStakeHistory = async (userStakeAddress: string, startEpoch: number, endEpoch: number, currentEpoch: number) => {
-//   let allStakeHistory: TUserStakeHistory[] = [];
-
-//   const [startPage, endPage] = calculatePageRange(startEpoch, endEpoch, currentEpoch);
-
-//   for (let currentPage = startPage; currentPage <= endPage; currentPage++) {
-//     const response = await blockfrostAPI.get(`/accounts/${userStakeAddress}/history`, {
-//       params: { page: currentPage, order: 'desc' } // 'desc' because we are counting backwards
-//     });
-//     const data: TUserStakeHistory[] = response.data;
-
-//     allStakeHistory.push(...data);
-//   }
-
-//   // Prepare the data for database insertion
-//   const dbEntries = allStakeHistory.map(entry => ({
-//     active_epoch: entry.active_epoch,
-//     amount: entry.amount,
-//     pool_id: entry.pool_id,
-//     user_reward_address: userStakeAddress,
-//   }));
-
-//   // Insert the fetched data into the database
-//   await prisma.userStakeHistory.createMany({
-//     data: dbEntries,
-//     skipDuplicates: true, // This ensures that we only insert new records and skip any duplicates
-//   });
-
-//   const relevantData = allStakeHistory.filter(entry =>
-//     entry.active_epoch >= startEpoch && entry.active_epoch <= endEpoch
-//   );
-//   return relevantData;
-// };
 
 const isTotalStakePerEpochArray = (data: any): data is TotalStakePerEpoch[] => {
   return Array.isArray(data) && data.every(item =>
