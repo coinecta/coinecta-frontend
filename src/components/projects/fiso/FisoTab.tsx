@@ -229,6 +229,7 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
                     <Grid xs={12} sm={6} md={3} key={`ispo-card-${item.hex}`}>
                       <FisoFullCard
                         stakepoolData={item}
+                        userStakepoolData={userStakingInfoQuery.data}
                         projectSlug={projectSlug}
                         epochInfo={fisos[0].approvedStakepools}
                         currentEpoch={currentEpoch}

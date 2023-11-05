@@ -21,6 +21,7 @@ type FisoFullCardProps = {
     poolId: string;
   }[];
   currentEpoch?: number;
+  userStakepoolData?: TUserAddressQuery;
 }
 
 interface SmParagraphProps extends TypographyProps {
@@ -35,7 +36,7 @@ const SmParagraph: FC<SmParagraphProps> = (props) => {
   )
 }
 
-const FisoFullCard: FC<FisoFullCardProps> = ({ stakepoolData, projectSlug, epochInfo, currentEpoch }) => {
+const FisoFullCard: FC<FisoFullCardProps> = ({ stakepoolData, projectSlug, epochInfo, currentEpoch, userStakepoolData }) => {
   const { addAlert } = useAlert()
   const { wallet } = useWallet()
   const theme = useTheme()
@@ -56,7 +57,7 @@ const FisoFullCard: FC<FisoFullCardProps> = ({ stakepoolData, projectSlug, epoch
       const tx = new Transaction({ initiator: wallet });
 
       // Register the stake with the first reward address
-      tx.registerStake(rewardAddresses[0]);
+      if (!userStakepoolData?.active) tx.registerStake(rewardAddresses[0]);
 
       // Delegate the stake
       tx.delegateStake(rewardAddresses[0], stakepoolData.pool_id);
@@ -152,7 +153,7 @@ const FisoFullCard: FC<FisoFullCardProps> = ({ stakepoolData, projectSlug, epoch
         Live Pledge: {formatNumber(Number(stakepoolData.stats.live_pledge) * 0.000001)} ₳
       </SmParagraph>
       <Box sx={{ width: '100%', textAlign: 'center', mt: 1 }}>
-        {showStakeNowButton && (
+        {showStakeNowButton && userStakepoolData && (
           <Button
             onClick={delegateStake}
             startIcon={<AccountBalanceWalletIcon />}
