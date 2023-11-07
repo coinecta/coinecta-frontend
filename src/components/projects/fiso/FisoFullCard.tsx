@@ -87,84 +87,90 @@ const FisoFullCard: FC<FisoFullCardProps> = ({ stakepoolData, projectSlug, epoch
   const showStakeNowButton: boolean = !!currentEpoch && !!thisEpoch && (thisEpoch.startEpoch - 3 <= currentEpoch && thisEpoch.endEpoch >= currentEpoch)
 
   return (
-    <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
-      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        {stakepoolData.homepage
-          ? <Link
-            variant="h6"
-            sx={{
-              color: theme.palette.text.primary,
-              textDecoration: 'underline',
-              '&:hover': {
-                textDecoration: 'none'
-              }
-            }}
-            href={stakepoolData.homepage} target="_blank">
-            {stakepoolData.ticker}
-          </Link>
-          : <Typography variant="h6">
-            {stakepoolData.ticker}
-          </Typography>
-        }
+    <Paper variant="outlined" sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <Box>
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          {stakepoolData.homepage
+            ? <Link
+              variant="h6"
+              sx={{
+                color: theme.palette.text.primary,
+                textDecoration: 'underline',
+                '&:hover': {
+                  textDecoration: 'none'
+                }
+              }}
+              href={stakepoolData.homepage} target="_blank">
+              {stakepoolData.ticker}
+            </Link>
+            : <Typography variant="h6">
+              {stakepoolData.ticker}
+            </Typography>
+          }
 
-        {isActive && (
-          <Chip
-            icon={<CheckCircleIcon />}
-            label="Active"
-            color="success"
-            size="small"
-            variant="outlined"
-          />
-        )}
-        {!isActive && showStakeNowButton && (
-          <Chip
-            icon={<InfoOutlinedIcon />}
-            label="Active soon"
-            color="info"
-            size="small"
-            variant="outlined"
-          />
-        )}
-      </Box>
-      <Typography color="text.secondary" sx={{ mb: 1 }}>
-        {stakepoolData.name}
-      </Typography>
-      {thisEpoch && (
-        <Typography sx={{ mb: 1 }}>
-          Active epochs: {thisEpoch.startEpoch} - {thisEpoch.endEpoch}
+          {isActive && (
+            <Chip
+              icon={<CheckCircleIcon />}
+              label="Active"
+              color="success"
+              size="small"
+              variant="outlined"
+            />
+          )}
+          {!isActive && showStakeNowButton && (
+            <Chip
+              icon={<InfoOutlinedIcon />}
+              label="Active soon"
+              color="info"
+              size="small"
+              variant="outlined"
+            />
+          )}
+        </Box>
+        <Typography color="text.secondary" sx={{ mb: 1 }}>
+          {stakepoolData.name}
         </Typography>
-      )}
-      <SmParagraph>
-        Live stake: {formatNumber(Number(stakepoolData.stats.live_stake) * 0.000001)} ₳
-      </SmParagraph>
-      <SmParagraph>
-        Fixed Fee: {Number(stakepoolData.stats.fixed_cost) * 0.000001} ₳
-      </SmParagraph>
-      <SmParagraph>
-        Margin cost: {roundToTwo(stakepoolData.stats.margin_cost * 100)}%
-      </SmParagraph>
-      <SmParagraph>
-        Delegators: {stakepoolData.stats.live_delegators}
-      </SmParagraph>
-      <SmParagraph>
-        Saturation: {roundToTwo(stakepoolData.stats.live_saturation * 100)}%
-      </SmParagraph>
-      <SmParagraph>
-        Live Pledge: {formatNumber(Number(stakepoolData.stats.live_pledge) * 0.000001)} ₳
-      </SmParagraph>
-      <Box sx={{ width: '100%', textAlign: 'center', mt: 1 }}>
-        {showStakeNowButton && userStakepoolData && (
-          <Button
-            onClick={delegateStake}
-            startIcon={<AccountBalanceWalletIcon />}
-            variant="contained"
-            color="secondary"
-            size="small"
-            sx={{ textTransform: 'none' }}
-          >
-            Stake now
-          </Button>
+      </Box>
+      <Box>
+        {thisEpoch && (
+          <Typography sx={{ mb: 1 }}>
+            Active epochs: {thisEpoch.startEpoch} - {thisEpoch.endEpoch}
+          </Typography>
         )}
+        <SmParagraph>
+          Live stake: {formatNumber(Number(stakepoolData.stats.live_stake) * 0.000001)} ₳
+        </SmParagraph>
+        <SmParagraph>
+          Fixed Fee: {Number(stakepoolData.stats.fixed_cost) * 0.000001} ₳
+        </SmParagraph>
+        <SmParagraph>
+          Margin cost: {roundToTwo(stakepoolData.stats.margin_cost * 100)}%
+        </SmParagraph>
+        <SmParagraph>
+          Delegators: {stakepoolData.stats.live_delegators}
+        </SmParagraph>
+        <SmParagraph>
+          Saturation: {roundToTwo(stakepoolData.stats.live_saturation * 100)}%
+        </SmParagraph>
+        <SmParagraph>
+          Live Pledge: {formatNumber(Number(stakepoolData.stats.live_pledge) * 0.000001)} ₳
+        </SmParagraph>
+
+
+        <Box sx={{ width: '100%', textAlign: 'center', mt: 1 }}>
+          {showStakeNowButton && userStakepoolData && (
+            <Button
+              onClick={delegateStake}
+              startIcon={<AccountBalanceWalletIcon />}
+              variant="contained"
+              color="secondary"
+              size="small"
+              sx={{ textTransform: 'none' }}
+            >
+              Stake now
+            </Button>
+          )}
+        </Box>
       </Box>
     </Paper>
   );

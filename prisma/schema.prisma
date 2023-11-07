@@ -38,29 +38,29 @@ model Session {
 }
 
 model User {
-  id             String             @id @default(cuid())
-  created_at     DateTime           @default(now())
-  updated_at     DateTime           @updatedAt
+  id             String            @id @default(cuid())
+  created_at     DateTime          @default(now())
+  updated_at     DateTime          @updatedAt
   name           String?
   status         String?
-  isAdmin        Boolean            @default(false) @map("is_admin")
-  defaultAddress String?            @unique @map("default_address")
-  rewardAddress  String?            @unique @map("reward_address")
+  isAdmin        Boolean           @default(false) @map("is_admin")
+  defaultAddress String?           @unique @map("default_address")
+  rewardAddress  String?           @unique @map("reward_address")
   walletType     String?
   nonce          String?
-  email          String?            @unique
-  emailVerified  DateTime?          @map("email_verified")
+  email          String?           @unique
+  emailVerified  DateTime?         @map("email_verified")
   image          String?
-  sumsubId       String?            @map("sumsub_id")
-  sumsubType     String?            @map("sumsub_type")
-  sumsubResult   Json?              @map("sumsub_result")
-  sumsubStatus   String?            @map("sumsub_status")
+  sumsubId       String?           @map("sumsub_id")
+  sumsubType     String?           @map("sumsub_type")
+  sumsubResult   Json?             @map("sumsub_result")
+  sumsubStatus   String?           @map("sumsub_status")
   whitelists     WhitelistSignup[]
   accounts       Account[]
   sessions       Session[]
   transactions   Transaction[]
   wallets        Wallet[]
-  stakeHistory   UserStakeHistory[]
+  // stakeHistory   UserStakeHistory[]
 
   @@map("users")
 }
@@ -71,7 +71,7 @@ model UserStakeHistory {
   amount              String
   pool_id             String
   user_reward_address String
-  user                User   @relation(fields: [user_reward_address], references: [rewardAddress], onDelete: Cascade)
+  // user                User   @relation(fields: [user_reward_address], references: [rewardAddress], onDelete: Cascade)
 
   @@unique([active_epoch, user_reward_address, pool_id])
   @@index([active_epoch, user_reward_address, pool_id])

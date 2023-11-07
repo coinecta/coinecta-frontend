@@ -58,8 +58,8 @@ const ContributeTab: FC<ContributeTabProps> = () => {
       </ContainedTabs>
       <Box sx={{ my: 2 }}>
 
-        {tabValue === 0 && <Box sx={{ p: 3 }}>Coming soon</Box>
-          // <ProRataForm />
+        {tabValue === 0 && <Box sx={{ p: 3 }}>
+          <ProRataForm /></Box>
         }
         {tabValue === 1 && <Box sx={{ p: 3 }}>Coming soon</Box>}
       </Box>

@@ -39,6 +39,7 @@ const initialFormData: TProject = {
   blockchains: ['Cardano'],
   isLaunched: false,
   isDraft: false,
+  frontPage: true,
   socials: {
     telegram: '',
     discord: '',
@@ -90,6 +91,7 @@ const ProjectForm: FC<ProjectFormProps> = ({ project, edit }) => {
   useEffect(() => {
     if (project) {
       updateFormData(project)
+      // console.log(project)
     }
   }, [project])
 
@@ -174,7 +176,7 @@ const ProjectForm: FC<ProjectFormProps> = ({ project, edit }) => {
       updateFormData({
         ...formData,
         [e.target.name]:
-          ['isLaunched', 'isDraft'].includes(e.target.name) ? e.target.checked : e.target.value,
+          ['isLaunched', 'isDraft', 'frontPage'].includes(e.target.name) ? e.target.checked : e.target.value,
       });
     }
   };
@@ -268,10 +270,10 @@ const ProjectForm: FC<ProjectFormProps> = ({ project, edit }) => {
       const serializedData = JSON.stringify(data);
       localStorage.setItem('myFormData', serializedData);
       const sanitizedData = convertStringsInObject(data)
-      console.log(sanitizedData)
+      // console.log(sanitizedData)
       try {
         const response = await submitProject.mutateAsync(sanitizedData);
-        console.log(response)
+        // console.log(response)
         addAlert(
           'success',
           'Successfully submitted'
@@ -688,22 +690,33 @@ const ProjectForm: FC<ProjectFormProps> = ({ project, edit }) => {
         control={
           <Checkbox
             name="isLaunched"
-            value={formData.isLaunched}
+            checked={formData.isLaunched}
             onChange={handleChange}
           />
         }
-        label="Launched?"
+        label="Launched"
         sx={{ color: theme.palette.text.secondary, mb: 3, mr: 3 }}
       />
       <FormControlLabel
         control={
           <Checkbox
             name="isDraft"
-            value={formData.isDraft}
+            checked={formData.isDraft}
             onChange={handleChange}
           />
         }
-        label="Draft?"
+        label="Draft"
+        sx={{ color: theme.palette.text.secondary, mb: 3 }}
+      />
+      <FormControlLabel
+        control={
+          <Checkbox
+            name="frontPage"
+            checked={formData.frontPage}
+            onChange={handleChange}
+          />
+        }
+        label="Show on front page"
         sx={{ color: theme.palette.text.secondary, mb: 3 }}
       />
       <Box sx={{ position: 'relative' }}>

@@ -213,6 +213,15 @@ export const fisoRouter = createTRPCRouter({
         }
       }
 
+      await prisma.fiso.update({
+        where: {
+          id: fisoId
+        },
+        data: {
+          totalStakeEpoch: null as any
+        }
+      })
+
       return { message: `${count} stakepools edited`, status: 'success' };
     }),
   getByProjectSlug: publicProcedure
@@ -259,7 +268,7 @@ export const fisoRouter = createTRPCRouter({
   getFisoUserInfo: publicProcedure
     .input(z.object({
       fisoId: z.number(),
-      // userStakeAddress: z.string().optional(),
+      rewardAddress: z.string().optional(),
       currentEpochProvided: z.number().optional()
     }))
     .query(async ({ input, ctx }) => {
@@ -268,7 +277,10 @@ export const fisoRouter = createTRPCRouter({
 
       let address: string | undefined = undefined
 
-      if (ctx.session) {
+      if (input.rewardAddress) {
+        address = input.rewardAddress
+      }
+      else if (ctx.session) {
         const addressFetch = await prisma.user.findUnique({
           where: {
             id: ctx.session.user.id
@@ -286,6 +298,11 @@ export const fisoRouter = createTRPCRouter({
         }
 
         address = addressFetch.rewardAddress
+      } else {
+        throw new TRPCError({
+          message: 'No stake address provided',
+          code: "BAD_REQUEST"
+        })
       }
 
       try {
@@ -298,6 +315,47 @@ export const fisoRouter = createTRPCRouter({
           });
         } else {
           return result as FisoRewardsReturn;
+        }
+      } catch (error) {
+        throw new TRPCError({
+          message: error instanceof Error ? error.message : 'An unknown error occurred',
+          code: "INTERNAL_SERVER_ERROR"
+        });
+      }
+    }),
+  getFisoTotalStake: publicProcedure
+    .input(z.object({
+      fisoId: z.number(),
+      currentEpoch: z.number()
+    }))
+    .query(async ({ input }) => {
+      const fisoId = input.fisoId;
+      const epoch = input.currentEpoch;
+
+      try {
+        const result = await prisma.fiso.findFirst({
+          where: {
+            id: fisoId
+          },
+          select: {
+            totalStakeEpoch: true
+          }
+        })
+
+        if (!result) {
+          throw new TRPCError({
+            message: 'FISO not found in database',
+            code: "NOT_FOUND"
+          });
+        }
+
+        if (!!result?.totalStakeEpoch) {
+          const object: TotalStakePerEpoch[] = result.totalStakeEpoch as TotalStakePerEpoch[]
+
+          // can only grab the previous epoch, current epoch data is not available until epoch concludes 
+          const epochData = object.find((entry: any) => entry.epoch === (epoch - 1))
+
+          return epochData
         }
       } catch (error) {
         throw new TRPCError({

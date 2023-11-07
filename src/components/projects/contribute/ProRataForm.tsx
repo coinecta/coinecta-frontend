@@ -101,7 +101,7 @@ const ProRataForm: FC<ProRataFormProps> = () => {
           >
             <Box>
               <Typography variant="overline">
-                Price
+                Price (flip)
               </Typography>
               <Typography variant="h6" sx={{ mt: -1 }}>
                 1 {api.tokenTicker} = {api.price} {api.currencySymbol}

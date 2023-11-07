@@ -24,6 +24,7 @@ import FisoListItem from '@components/admin/fiso-management/FisoListItem';
 import UnlabelledTextField from '@components/styled-components/UnlabelledTextField';
 import { TStakepoolInfoReturn } from '@server/routers/stakepools'
 import CSVDownloadButton from '@components/CSVDownloadButton';
+import { resolveEpochNo } from '@meshsdk/core';
 
 const FisoManagementPage: FC = () => {
   const theme = useTheme()
@@ -67,14 +68,7 @@ const FisoManagementPage: FC = () => {
   const [shouldResetData, setShouldResetData] = useState(false);
   const [dataLoading, setDataLoading] = useState(false)
 
-
-  // current epoch stuff
-  const currentEpochQuery = trpc.stakepool.getCurrentEpoch.useQuery()
-  const [currentEpoch, setCurrentEpoch] = useState<number>(450)
-  useEffect(() => {
-    if (currentEpochQuery.status === 'success') setCurrentEpoch(currentEpochQuery.data.epoch)
-  }, [currentEpochQuery.status])
-  ////
+  const currentEpoch = resolveEpochNo('mainnet');
 
   const resetData = async () => {
     if (

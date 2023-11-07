@@ -57,28 +57,16 @@ export const authOptions = (
   async function signUser(user: User, credentials: Credentials): Promise<User | null> {
     const walletParse: ParsedWallet = JSON.parse(credentials.wallet)
     const signatureParse = JSON.parse(credentials.signature)
-    console.log('Signed Message: ' + signatureParse.signedMessage)
-    console.log('Proof: ' + signatureParse.proof)
-    console.log('Signature: ' + signatureParse)
-    console.log('Wallet: ' + walletParse)
 
-    // const signedMessageSplit = signatureParse.signedMessage.split(";");
-    // const nonce = signedMessageSplit[0];
-    // const url = signedMessageSplit[1];
-    // // console.log('\x1b[32m', 'Nonce: ', '\x1b[0m', nonce);
-    // // console.log('\x1b[32m', 'URL: ', '\x1b[0m', url);
+    // console.log('\x1b[32m', 'Nonce: ', '\x1b[0m', nonce);
+
     if (!user.nonce) {
       console.error(`No nonce available`)
       throw new Error(`No nonce available`)
     }
 
     const result = checkSignature(user.nonce, walletParse.rewardAddress, signatureParse);
-    // console.log('\x1b[32m', 'Wallet info', '\x1b[0m', walletParse);
-    // console.log('\x1b[32m', 'User Nonce', '\x1b[0m', user.nonce);
-    // console.log('Address signed in with: ' + walletParse.defaultAddress)
-    // console.log('Signed Message: ' + signatureParse.signedMessage)
-    // console.log('Proof: ' + signatureParse.proof)
-    // console.log(result)
+
     if (result) {
       // set a new nonce for the user to make sure an attacker can't reuse this one
       const newNonce = generateNonce()
@@ -215,8 +203,6 @@ export const authOptions = (
 
             const { nonce, userId, signature, wallet } =
               credentials as Credentials
-
-            // console.log('User ID: ' + userId)
 
             if (!nonce || !userId || !signature || !wallet) {
               return null

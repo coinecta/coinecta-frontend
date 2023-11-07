@@ -103,6 +103,7 @@ export const mapFullProjectFromDb = (projectDb: ProjectWithRelations | null): z.
     avatarImgUrl: projectDb.avatarImgUrl,
     isLaunched: projectDb.isLaunched,
     isDraft: projectDb.isDraft,
+    frontPage: projectDb.frontPage,
     socials: socials,
     roadmap: roadmaps,
     team: teams,

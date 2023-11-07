@@ -96,7 +96,8 @@ const mainTheme = [{
       styleOverrides: {
         root: {
           borderRadius: '6px',
-          verticalAlign: 'top'
+          verticalAlign: 'top',
+          textTransform: 'none'
         },
       },
     },
