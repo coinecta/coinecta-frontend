@@ -29,3 +29,9 @@ type TUserAddressQuery = {
   withdrawable_amount: string,
   pool_id: string
 }
+
+type TotalStakePerEpoch = {
+  epoch: number;
+  totalStake: number;
+  totalDelegators: number;
+}

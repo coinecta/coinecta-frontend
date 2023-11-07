@@ -6,12 +6,6 @@ import { blockfrostAPI } from './blockfrostApi';
 
 const EPOCHS_PER_PAGE = 100; // blockfrost api max
 
-type TotalStakePerEpoch = {
-  epoch: number;
-  totalStake: number;
-  totalDelegators: number;
-}
-
 type Fiso = ({
   approvedStakepools: {
     id: number;

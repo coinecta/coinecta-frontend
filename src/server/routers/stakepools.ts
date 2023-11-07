@@ -5,7 +5,7 @@ import { TRPCError } from '@trpc/server';
 import axios from 'axios';
 import crypto from 'crypto';
 import { z } from 'zod';
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export type TStakepoolInfoReturn = {
   successfulStakePools: TStakePoolWithStats[];
@@ -101,33 +101,54 @@ export const stakepoolRouter = createTRPCRouter({
 
       return stakepools;
     }),
-  getCurrentEpoch: publicProcedure
-    .query(async () => {
-      const { data: currentEpochData } = await blockfrostAPI.get(`/epochs/latest`);
-      if (!currentEpochData) throw new Error("Unable to retrieve epoch data")
-      return currentEpochData
-    }),
-  getUserCurrentStake: protectedProcedure
-    .query(async ({ ctx }) => {
+  // getCurrentEpoch: publicProcedure
+  //   .query(async () => {
+  //     const { data: currentEpochData } = await blockfrostAPI.get(`/epochs/latest`);
+  //     if (!currentEpochData) throw new Error("Unable to retrieve epoch data")
+  //     return currentEpochData
+  //   }),
+  getCurrentStake: publicProcedure
+    .input(z.object({
+      rewardAddress: z.string().optional()
+    }))
+    .query(async ({ input, ctx }) => {
       try {
-        const userId = ctx.session.user.id;
-        const user = await prisma.user.findFirst({
-          where: {
-            id: userId
-          }
-        });
+        let response = undefined
 
-        if (!user) {
-          throw new TRPCError({
-            message: 'Unable to find user',
-            code: 'NOT_FOUND'
-          });
+        if (input.rewardAddress) {
+          response = await blockfrostAPI.get(`/accounts/${input.rewardAddress}`);
+        } else {
+          const userId = ctx?.session?.user.id;
+
+          if (!userId) {
+            throw new TRPCError({
+              message: 'No user account and no reward address provided.',
+              code: 'BAD_REQUEST'
+            });
+          }
+
+          if (userId) {
+            const user = await prisma.user.findFirst({
+              where: {
+                id: userId
+              }
+            });
+
+            if (!user) {
+              throw new TRPCError({
+                message: 'Connected user account not found. ',
+                code: 'NOT_FOUND'
+              });
+            }
+
+            response = await blockfrostAPI.get(`/accounts/${user.rewardAddress}`);
+          }
         }
 
-        const response = await blockfrostAPI.get(`/accounts/${user.rewardAddress}`);
-
-        const data: TUserAddressQuery = response.data
-        return data;
+        if (response) {
+          const data: TUserAddressQuery = response.data
+          return data;
+        }
       } catch (error) {
         console.error(error);
         if (axios.isAxiosError(error)) {

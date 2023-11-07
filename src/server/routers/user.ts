@@ -2,7 +2,6 @@ import { prisma } from '@server/prisma';
 import { checkAddressAvailability } from '@server/utils/checkAddress';
 import { deleteEmptyUser } from '@server/utils/deleteEmptyUser';
 import { generateNonceForLogin } from '@server/utils/nonce';
-import { nanoid } from 'nanoid';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -31,7 +30,7 @@ export const userRouter = createTRPCRouter({
       const { rewardAddress } = input;
 
       if (!rewardAddress) {
-        return { nonce: null }; // Return a default value or error if the input is not defined
+        return { nonce: null };
       }
 
       const nonce = await generateNonceForLogin(rewardAddress);
@@ -40,20 +39,6 @@ export const userRouter = createTRPCRouter({
         throw new Error('Address already in use by another user account')
       }
 
-      return { nonce };
-    }),
-  getNonceProtected: protectedProcedure
-    .query(async ({ ctx }) => {
-      const { session } = ctx;
-      const nonce = nanoid();
-      // Update the user's nonce in the database
-      const updatedUser = await prisma.user.update({
-        where: { id: session.user.id },
-        data: { nonce },
-      });
-      if (!updatedUser) {
-        throw new Error('Unable to generate nonce')
-      }
       return { nonce };
     }),
   checkAddressAvailable: publicProcedure

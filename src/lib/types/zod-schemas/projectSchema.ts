@@ -88,6 +88,7 @@ const TProject = z.object({
   avatarImgUrl: z.string(),
   isLaunched: z.boolean(),
   isDraft: z.boolean(),
+  frontPage: z.boolean(),
   socials: TSocials,
   roadmap: z.array(TRoadmap),
   team: z.array(TTeam),

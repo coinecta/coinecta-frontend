@@ -27,6 +27,7 @@ const initialFormData: TProject = {
   blockchains: ['Cardano'],
   isLaunched: false,
   isDraft: false,
+  frontPage: false,
   socials: {
     telegram: '',
     discord: '',

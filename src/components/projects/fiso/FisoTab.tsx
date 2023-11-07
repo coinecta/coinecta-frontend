@@ -1,12 +1,16 @@
 
 
 import React, { FC, useEffect, useState } from 'react';
-import { Box, Typography, Paper, CircularProgress } from '@mui/material';
+import { Box, Typography, Paper, CircularProgress, Button, TextField } from '@mui/material';
 import { trpc } from '@lib/utils/trpc';
 import { useWalletContext } from '@contexts/WalletContext';
 import FisoFullCard from './FisoFullCard';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import { TStakepoolInfoReturn } from '@server/routers/stakepools';
+import { resolveEpochNo, resolveRewardAddress, resolveStakeKeyHash } from '@meshsdk/core';
+import { fetchData } from 'next-auth/client/_utils';
+import { useAlert } from '@contexts/AlertContext';
+import UnlabelledTextField from '@components/styled-components/UnlabelledTextField';
 
 type FisoTabProps = {
   fisos: TFiso[]
@@ -15,20 +19,17 @@ type FisoTabProps = {
 
 const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
   const { sessionStatus, sessionData } = useWalletContext()
+  const { addAlert } = useAlert()
   const stakepoolInfo = trpc.stakepool.stakepoolInfo.useMutation()
   const [stakepoolData, setStakepoolData] = useState<TStakepoolInfoReturn>({
     successfulStakePools: [],
     errors: []
   })
   const [userStakepoolData, setUserStakepoolData] = useState<TStakePoolWithStats | undefined>(undefined)
+  const [customRewardAddress, setCustomRewardAddress] = useState<string | undefined>(undefined)
+  const [customAddressText, setCustomAddressText] = useState('')
+  const currentEpoch = resolveEpochNo('mainnet');
 
-  // current epoch stuff
-  const currentEpochQuery = trpc.stakepool.getCurrentEpoch.useQuery()
-  const [currentEpoch, setCurrentEpoch] = useState<number | undefined>(undefined)
-  useEffect(() => {
-    if (currentEpochQuery.status === 'success') setCurrentEpoch(currentEpochQuery.data.epoch)
-  }, [currentEpochQuery.status])
-  ////
 
   // {
   //   userEarned: number;
@@ -40,24 +41,37 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
   const fisoUserInfoQuery = trpc.fisos.getFisoUserInfo.useQuery(
     {
       fisoId: fisos[0].id!,
+      rewardAddress: customRewardAddress,
       currentEpochProvided: currentEpoch
     },
     {
-      enabled: !!fisos[0].id,
+      enabled: !!fisos[0].id && (!!customRewardAddress || sessionStatus === 'authenticated'),
     })
 
-  const userStakingInfoQuery = trpc.stakepool.getUserCurrentStake.useQuery(
-    undefined,
+  const userStakingInfoQuery = trpc.stakepool.getCurrentStake.useQuery(
     {
-      enabled: sessionStatus === 'authenticated'
+      rewardAddress: customRewardAddress
+    },
+    {
+      enabled: !!customRewardAddress || sessionStatus === 'authenticated',
+    }
+  )
+
+  const fisoCurrentStake = trpc.fisos.getFisoTotalStake.useQuery(
+    {
+      fisoId: fisos[0].id!,
+      currentEpoch: currentEpoch || 0
+    },
+    {
+      enabled: !!currentEpoch && !!fisos[0].id,
     }
   )
 
   useEffect(() => {
-    if (sessionData?.user?.id) {
+    if (sessionData?.user?.id || !!customRewardAddress) {
       fisoUserInfoQuery.refetch();
     }
-  }, [sessionData?.user?.id]);
+  }, [sessionData?.user?.id, customRewardAddress]);
 
   useEffect(() => {
     if (userStakingInfoQuery.data?.pool_id) {
@@ -68,7 +82,6 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
   useEffect(() => {
     if (fisos[0] && fisos[0].approvedStakepools && fisos[0].approvedStakepools.length > 0) {
       const stakepoolIds = fisos[0].approvedStakepools.map(pool => pool.poolId)
-
       getStakepoolData(stakepoolIds)
     }
   }, [fisos])
@@ -76,7 +89,6 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
   const getStakepoolData = async (fisoPoolIds: string[]) => {
     try {
       const response = await stakepoolInfo.mutateAsync({ stakepoolIds: fisoPoolIds });
-      // console.log(response);
       setStakepoolData(response);
     } catch (error) {
       console.error(error);
@@ -86,7 +98,7 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
   const getUserStakepoolData = async (poolId: string) => {
     try {
       const response = await stakepoolInfo.mutateAsync({ stakepoolIds: [poolId] });
-      console.log(response)
+      // console.log(response)
       setUserStakepoolData(response.successfulStakePools[0])
     } catch (error) {
       console.error(error);
@@ -110,6 +122,32 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
     }
   }, [fisoUserInfoQuery.data, stakepoolData.successfulStakePools])
 
+  const handleChangeCustomAddress = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCustomAddressText(e.target.value)
+  }
+  const deriveCustomRewardAddress = (address: string) => {
+    if (address === '') {
+      setCustomRewardAddress(undefined)
+      return
+    }
+    try {
+      const rewardAddress = resolveRewardAddress(address);
+      if (rewardAddress) {
+        setCustomRewardAddress(rewardAddress);
+      }
+    } catch (error) {
+      try {
+        const rewardAddress = resolveStakeKeyHash(address);
+        if (rewardAddress) {
+          setCustomRewardAddress(address);
+        }
+      } catch (innerError) {
+        setCustomRewardAddress(undefined);
+        addAlert('error', 'Please enter a valid Cardano address');
+      }
+    }
+  };
+  const loadingCheck = fisoUserInfoQuery.status === 'loading' && !!fisos[0].id && (!!customRewardAddress || sessionStatus === 'authenticated')
   return (
     <Box sx={{ mb: 2 }}>
       <Box sx={{ width: '100%', textAlign: 'center', mb: 2 }}>
@@ -120,6 +158,36 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
           Start epoch: {fisos[0].startEpoch} - End epoch: {fisos[0].endEpoch}
         </Typography>
       </Box>
+      <Grid container sx={{ mb: 2 }} spacing={2} alignItems="center">
+        <Grid xs>
+          <UnlabelledTextField
+            id="wallet-address"
+            variant="filled"
+            value={customAddressText}
+            onChange={handleChangeCustomAddress}
+            fullWidth
+            placeholder="Paste an address to see the rewards"
+          />
+        </Grid>
+        <Grid xs="auto">
+          <Button
+            variant="contained"
+            onClick={() => deriveCustomRewardAddress(customAddressText)}>
+            Submit
+          </Button>
+        </Grid>
+        <Grid xs="auto">
+          <Button variant="outlined"
+            onClick={() => {
+              setUserStakepoolData(undefined)
+              setCustomAddressText('')
+              deriveCustomRewardAddress('')
+            }}
+          >
+            Clear
+          </Button>
+        </Grid>
+      </Grid>
 
       <Grid container spacing={2} sx={{ mb: 3, textAlign: 'center' }} alignItems="stretch">
         <Grid xs={12} sm={6} md={4}>
@@ -129,23 +197,26 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
             }}
           >
-            {fisoUserInfoQuery.status === 'success' && currentEpoch ? (
-              <>
-                <Typography sx={{ mb: 0 }}>
-                  Total FISO active stake:
-                </Typography>
-                <Typography variant="h5" sx={{ mb: 1 }}>
-                  {(fisoUserInfoQuery.data.currentTotalStake * 0.000001).toLocaleString(undefined, { maximumFractionDigits: 2 })} ₳
-                </Typography>
-                <Typography sx={{ mb: 0, fontSize: '1rem !important' }}>
-                  Total delegators:
-                </Typography>
-                <Typography variant="h6" sx={{ lineHeight: '24px', fontSize: '1.2rem !important' }}>
-                  {(fisoUserInfoQuery.data.currentTotalDelegators).toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                </Typography>
-              </>
-            )
-              : <CircularProgress />}
+            <Typography sx={{ mb: 0 }}>
+              Total FISO active stake:
+            </Typography>
+            <Typography variant="h5" sx={{ mb: 1 }}>
+              {fisoCurrentStake.data
+                ? `${(fisoCurrentStake.data.totalStake * 0.000001).toLocaleString(undefined, { maximumFractionDigits: 2 })} ₳`
+                : fisoUserInfoQuery.data
+                  ? `${(fisoUserInfoQuery.data.currentTotalStake * 0.000001).toLocaleString(undefined, { maximumFractionDigits: 2 })} ₳`
+                  : '-'}
+            </Typography>
+            <Typography sx={{ mb: 0, fontSize: '1rem !important' }}>
+              Total delegators:
+            </Typography>
+            <Typography variant="h6" sx={{ lineHeight: '24px', fontSize: '1.2rem !important' }}>
+              {fisoCurrentStake.data
+                ? fisoCurrentStake.data.totalDelegators.toLocaleString(undefined, { maximumFractionDigits: 2 })
+                : fisoUserInfoQuery.data
+                  ? (fisoUserInfoQuery.data.currentTotalDelegators).toLocaleString(undefined, { maximumFractionDigits: 2 })
+                  : '-'}
+            </Typography>
           </Paper>
         </Grid>
         <Grid xs={12} sm={6} md={4}>
@@ -155,14 +226,15 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
             }}
           >
-            {fisoUserInfoQuery.status === 'success' && currentEpoch
-              ? (
+            {loadingCheck
+              ? <CircularProgress />
+              : (
                 <>
                   <Typography>
-                    Your current rewards:
+                    Your current estimated rewards:
                   </Typography>
                   <Typography variant="h5">
-                    {sessionStatus === 'authenticated'
+                    {fisoUserInfoQuery.data
                       ? `${fisoUserInfoQuery.data.userEarned.toLocaleString(
                         undefined,
                         { maximumFractionDigits: 2 }
@@ -171,7 +243,7 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
                   </Typography>
                 </>
               )
-              : <CircularProgress />}
+            }
           </Paper>
         </Grid>
         <Grid xs={12} sm={6} md={4}>
@@ -181,63 +253,68 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
             }}
           >
-            {fisoUserInfoQuery.status === 'success' && currentEpoch ? (
-              <>
-                <Typography sx={{ mb: 0 }}>
-                  Your current stakepool:
-                </Typography>
-                <Typography variant="h5" sx={{ mb: 1 }}>
-                  {sessionStatus === 'authenticated' && userStakepoolData?.ticker
-                    ? userStakepoolData?.ticker
-                    : userStakepoolInfo.poolTicker
-                      ? userStakepoolInfo.poolTicker
-                      : '-'}
-                </Typography>
-                <Typography sx={{ mb: 0, fontSize: '1rem !important' }}>
-                  Your current staked amount:
-                </Typography>
-                <Typography variant="h6" sx={{ lineHeight: '24px', fontSize: '1.2rem !important' }}>
-                  {sessionStatus === 'authenticated' &&
-                    userStakingInfoQuery.data?.controlled_amount
-                    ? `${(Number(userStakingInfoQuery.data?.controlled_amount) * 0.000001).toLocaleString(undefined, { maximumFractionDigits: 2 })} ₳`
-                    : fisoUserInfoQuery.data.userCurrentStakedAmount
-                      ? `${(Number(fisoUserInfoQuery.data.userCurrentStakedAmount) * 0.000001).toLocaleString(undefined, { maximumFractionDigits: 2 })} ₳`
-                      : '-'}
-                </Typography>
-              </>
-            )
-              : <CircularProgress />}
+            {loadingCheck
+              ? <CircularProgress />
+              : (
+                <>
+                  <Typography sx={{ mb: 0 }}>
+                    Your current stakepool:
+                  </Typography>
+                  <Typography variant="h5" sx={{ mb: 1 }}>
+                    {userStakingInfoQuery.isFetching
+                      ? <CircularProgress size={18} />
+                      : userStakepoolData?.ticker
+                        ? userStakepoolData?.ticker
+                        : userStakepoolInfo.poolTicker
+                          ? userStakepoolInfo.poolTicker
+                          : '-'}
+                  </Typography>
+                  <Typography sx={{ mb: 0, fontSize: '1rem !important' }}>
+                    Your current staked amount:
+                  </Typography>
+                  <Typography variant="h6" sx={{ lineHeight: '24px', fontSize: '1.2rem !important' }}>
+                    {userStakingInfoQuery.isFetching
+                      ? <CircularProgress size={18} />
+                      : userStakingInfoQuery.data?.controlled_amount
+                        ? `${(Number(userStakingInfoQuery.data?.controlled_amount) * 0.000001).toLocaleString(undefined, { maximumFractionDigits: 2 })} ₳`
+                        : fisoUserInfoQuery.data && fisoUserInfoQuery.data.userCurrentStakedAmount
+                          ? `${(Number(fisoUserInfoQuery.data.userCurrentStakedAmount) * 0.000001).toLocaleString(undefined, { maximumFractionDigits: 2 })} ₳`
+                          : '-'}
+                  </Typography>
+                </>
+              )
+            }
           </Paper>
         </Grid>
       </Grid>
-      {stakepoolInfo.isLoading
-        ? <Box sx={{ mb: 1 }}>
-          Loading...
+      {stakepoolData.successfulStakePools?.length > 0
+        ? <Box>
+          <Typography variant="h4" sx={{ mb: 2 }}>
+            Approved Stakepools
+          </Typography>
+          <Grid container spacing={2} alignItems="stretch">
+            {stakepoolData.successfulStakePools.map((item: TStakePoolWithStats, i: number) => {
+              return (
+                <Grid xs={12} sm={6} md={3} key={`ispo-card-${item.hex}`}>
+                  <FisoFullCard
+                    stakepoolData={item}
+                    userStakepoolData={userStakingInfoQuery.data}
+                    projectSlug={projectSlug}
+                    epochInfo={fisos[0].approvedStakepools}
+                    currentEpoch={currentEpoch}
+                  />
+                </Grid>
+              )
+            })}
+          </Grid>
         </Box>
-        : stakepoolInfo.isError
+        : stakepoolInfo.isLoading
           ? <Box sx={{ mb: 1 }}>
-            Error fetching stakepool info
+            Loading...
           </Box>
-          : stakepoolData.successfulStakePools?.length > 0
-            ? <Box>
-              <Typography variant="h4" sx={{ mb: 2 }}>
-                Approved Stakepools
-              </Typography>
-              <Grid container spacing={2} alignItems="stretch">
-                {stakepoolData.successfulStakePools.map((item: TStakePoolWithStats, i: number) => {
-                  return (
-                    <Grid xs={12} sm={6} md={3} key={`ispo-card-${item.hex}`}>
-                      <FisoFullCard
-                        stakepoolData={item}
-                        userStakepoolData={userStakingInfoQuery.data}
-                        projectSlug={projectSlug}
-                        epochInfo={fisos[0].approvedStakepools}
-                        currentEpoch={currentEpoch}
-                      />
-                    </Grid>
-                  )
-                })}
-              </Grid>
+          : stakepoolInfo.isError
+            ? <Box sx={{ mb: 1 }}>
+              Error fetching stakepool info
             </Box>
             : <Box sx={{ mb: 1, textAlign: 'center' }}>
               No FISO info to display currently.

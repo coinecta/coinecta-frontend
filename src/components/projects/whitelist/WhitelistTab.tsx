@@ -21,8 +21,8 @@ type WhitelistTabProps = {
 
 const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
   const { sessionStatus } = useWalletContext()
-  const [sumsubStatus, setSumsubStatus] = useState<string | undefined>(undefined)
-  const checkVerificationResult = trpc.user.getSumsubResult.useQuery()
+  // const [sumsubStatus, setSumsubStatus] = useState<string | undefined>(undefined)
+  // const checkVerificationResult = trpc.user.getSumsubResult.useQuery()
 
   return (
     <>

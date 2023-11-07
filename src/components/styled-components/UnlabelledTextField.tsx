@@ -24,8 +24,9 @@ const UnlabelledTextField: FC<TUnlabelledTextFieldProps> = (props) => {
           background: theme.palette.mode === 'dark'
             ? 'radial-gradient(at right top, rgba(16,20,34,0.4), rgba(1, 4, 10, 0.4))'
             : 'radial-gradient(at right top, rgba(16,20,34,0.05), rgba(1, 4, 10, 0.05))',
-          boxShadow: '2px 2px 5px 3px rgba(0,0,0,0.1)',
+          boxShadow: '2px 2px 5px 3px rgba(0,0,0,0.03)',
           fontFamily: 'sans-serif',
+          fontSize: '1rem',
           '& input': {
             py: '3px',
             px: '9px',

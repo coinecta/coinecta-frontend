@@ -7,26 +7,13 @@ export async function generateNonceForLogin(rewardAddress: string) {
     where: { rewardAddress },
   });
 
-  // If no user exists with the rewardAddress, then check using the getUserIdByAddress function
   if (!user) {
-    const wallet = await prisma.wallet.findUnique({
-      where: {
-        rewardAddress
+    user = await prisma.user.create({
+      data: {
+        rewardAddress,
+        status: 'pending'
       },
-      select: { id: true, user_id: true }
-    })
-    if (wallet) {
-      user = await prisma.user.findUnique({
-        where: { id: wallet.user_id },
-      });
-    } else {
-      user = await prisma.user.create({
-        data: {
-          rewardAddress,
-          status: 'pending'
-        },
-      });
-    }
+    });
   }
 
   if (!user) {
@@ -42,20 +29,4 @@ export async function generateNonceForLogin(rewardAddress: string) {
   });
 
   return { nonce, userId: user.id };
-}
-
-export async function generateNonceForAddWallet(userId: string) {
-  const nonce = generateNonce();
-
-  // Update the user's nonce in the database
-  const user = await prisma.user.update({
-    where: { id: userId },
-    data: { nonce },
-  });
-
-  if (!user) {
-    throw new Error("User doesn't exist")
-  }
-
-  return nonce;
 }

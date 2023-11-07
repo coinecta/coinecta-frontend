@@ -4,6 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { formatDateForInput } from '@lib/utils/daytime';
 import { trpc } from '@lib/utils/trpc';
+import { resolveEpochNo } from '@meshsdk/core';
 
 interface IFisoInputProps {
   data: TFiso[];
@@ -11,11 +12,7 @@ interface IFisoInputProps {
 }
 
 const FisoInput: FC<IFisoInputProps> = ({ data, setData }) => {
-  const currentEpochQuery = trpc.stakepool.getCurrentEpoch.useQuery()
-  const [currentEpoch, setCurrentEpoch] = useState<number>(450)
-  useEffect(() => {
-    if (currentEpochQuery.status === 'success') setCurrentEpoch(currentEpochQuery.data.epoch)
-  }, [currentEpochQuery.status])
+  const currentEpoch = resolveEpochNo('mainnet');
 
   const handleChange = (e: any, index: number) => {
     const updatedData = data.map((elem, i) => {
