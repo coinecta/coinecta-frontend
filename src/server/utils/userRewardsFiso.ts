@@ -94,6 +94,7 @@ const fetchUserStakeHistory = async (userStakeAddress: string, startEpoch: numbe
       const response = await blockfrostAPI.get(`/accounts/${userStakeAddress}/history`, {
         params: { page: currentPage, order: 'desc' } // 'desc' because we are counting backwards
       });
+      console.log(response)
       const data: TUserStakeHistory[] = response.data;
       allStakeHistory.push(...data);
     } catch (error) {
@@ -109,6 +110,19 @@ const fetchUserStakeHistory = async (userStakeAddress: string, startEpoch: numbe
 
   const dbEntries = [];
   const returnedEntries = [];
+
+  // The crazy nonsense below is because storing empty entries in theory is cheaper than doing
+  // a blockfrost call every time someone hits this function to find out that they don't have
+  // stake history for that time period. 
+
+  // Notice that the function that calls this one is checking if we have database entries for 
+  // all the required epochs for a given user, and so if there are some missing, it'll call
+  // this function and do a blockfrost call. That's why we're adding empty entries into the db
+  // Blockfrost calls are limited to 50,000 per day for the free tier so just to be as efficient
+  // as possible, this was selected for now. 
+
+  // We may purge older entries manually, or change this later to only enter FISO related epochs 
+  // into the database, or upgrade the blockfrost account to not be so miserly if it makes sense. 
 
   // Add database entries for all historyEntries before currentEpoch (including empty entries)
   for (let epoch = currentEpoch - 100; epoch <= currentEpoch; epoch++) {
@@ -324,7 +338,7 @@ export const calculateFisoRewards = async (
       amount: number;
     }[] = []
 
-    if (userStakeAddress) {
+    if (userStakeAddress && epochsToFetch > 0) {
       // Fetch the user's stake history within the FISO's period
       const userStakeHistories = await prisma.userStakeHistory.findMany({
         where: {
@@ -336,10 +350,13 @@ export const calculateFisoRewards = async (
         },
       });
 
+      // console.log('\x1b[36m%s\x1b[0m', 'userStakeHistories:', userStakeHistories); // Cyan
+      // console.log('\x1b[33m%s\x1b[0m', 'epochsToFetch:', epochsToFetch); // Yellow
+
       if (userStakeHistories.length === epochsToFetch) {
         userStakeDetails = userStakeHistories.map(history => ({ poolId: history.pool_id, epoch: history.active_epoch, amount: Number(history.amount) }));
       } else {
-        console.log(`Database missing ${epochsToFetch - userStakeHistories.length} epochs for user history`)
+        console.log('\x1b[36m%s\x1b[0m', `Database missing ${epochsToFetch - userStakeHistories.length} epochs for user history`)
         const confirmedUserStakeHistories = await fetchUserStakeHistory(userStakeAddress, fisoStartEpoch, fisoEndEpoch, currentEpoch)
         userStakeDetails = confirmedUserStakeHistories.map(history => ({ poolId: history.pool_id, epoch: history.active_epoch, amount: Number(history.amount) }));
       }
