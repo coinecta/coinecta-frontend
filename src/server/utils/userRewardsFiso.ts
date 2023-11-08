@@ -94,7 +94,6 @@ const fetchUserStakeHistory = async (userStakeAddress: string, startEpoch: numbe
       const response = await blockfrostAPI.get(`/accounts/${userStakeAddress}/history`, {
         params: { page: currentPage, order: 'desc' } // 'desc' because we are counting backwards
       });
-      console.log(response)
       const data: TUserStakeHistory[] = response.data;
       allStakeHistory.push(...data);
     } catch (error) {
