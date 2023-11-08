@@ -107,21 +107,7 @@ const fetchUserStakeHistory = async (userStakeAddress: string, startEpoch: numbe
     }
   }
 
-  const dbEntries = [];
   const returnedEntries = [];
-
-  // The crazy nonsense below is because storing empty entries in theory is cheaper than doing
-  // a blockfrost call every time someone hits this function to find out that they don't have
-  // stake history for that time period. 
-
-  // Notice that the function that calls this one is checking if we have database entries for 
-  // all the required epochs for a given user, and so if there are some missing, it'll call
-  // this function and do a blockfrost call. That's why we're adding empty entries into the db
-  // Blockfrost calls are limited to 50,000 per day for the free tier so just to be as efficient
-  // as possible, this was selected for now. 
-
-  // We may purge older entries manually, or change this later to only enter FISO related epochs 
-  // into the database, or upgrade the blockfrost account to not be so miserly if it makes sense. 
 
   // Add database entries for all historyEntries before currentEpoch (including empty entries)
   for (let epoch = currentEpoch - 100; epoch <= currentEpoch; epoch++) {
@@ -134,18 +120,15 @@ const fetchUserStakeHistory = async (userStakeAddress: string, startEpoch: numbe
       user_reward_address: userStakeAddress,
     };
 
-    dbEntries.push(dbEntry);
-
     // Additionally, check if the epoch is within the return range
     if (epoch >= startEpoch && epoch <= endEpoch) {
       returnedEntries.push(dbEntry);
     }
   }
 
-  // Insert the fetched data into the database
   await prisma.userStakeHistory.createMany({
-    data: dbEntries,
-    skipDuplicates: true, // This ensures that we only insert new records and skip any duplicates
+    data: returnedEntries,
+    skipDuplicates: true,
   });
 
   // Only return entries within the specified range (startEpoch to the lesser of currentEpoch or endEpoch)
