@@ -46,6 +46,7 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
     },
     {
       enabled: !!fisos[0].id && (!!customRewardAddress || sessionStatus === 'authenticated'),
+      refetchOnWindowFocus: false
     })
 
   const userStakingInfoQuery = trpc.stakepool.getCurrentStake.useQuery(
@@ -54,6 +55,7 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
     },
     {
       enabled: !!customRewardAddress || sessionStatus === 'authenticated',
+      refetchOnWindowFocus: false
     }
   )
 
@@ -64,6 +66,7 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
     },
     {
       enabled: !!currentEpoch && !!fisos[0].id,
+      refetchOnWindowFocus: false
     }
   )
 
