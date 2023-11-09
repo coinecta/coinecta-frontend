@@ -59,11 +59,12 @@ const Home: NextPage = () => {
   }
 
   return (
-    <>
+    <Box sx={{ overflowX: 'hidden' }}>
       {/* Hero section */}
       <Box sx={{
         backgroundColor: 'rgba(255,255,255,1)',
         color: 'rgba(23,21,21,1)',
+
       }}>
         <Box sx={{ position: 'relative' }}>
           <Box sx={{ position: 'relative' }}>
@@ -159,7 +160,7 @@ const Home: NextPage = () => {
       </Box>
       {/* End hero section */}
 
-      < Grow in={inView4} {...(inView4 ? { timeout: 250 } : {})}>
+      <Grow in={inView4} {...(inView4 ? { timeout: 250 } : {})}>
         <Box ref={ref4}>
           <Projects />
         </Box>
@@ -405,11 +406,9 @@ const Home: NextPage = () => {
               <TelegramIcon />
             </IconButton>
           </Box>
-
-
         </Paper>
       </Container>
-    </>
+    </Box>
   )
 }
 
