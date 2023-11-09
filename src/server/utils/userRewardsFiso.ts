@@ -217,6 +217,8 @@ const checkTotalStake = async (
     for (const missingEpoch of missingEpochs) {
       let totalStakeForEpoch = 0;
       let totalDelegatorsForEpoch = 0;
+      let totalActivePoolsForEpoch = 0;
+      let totalStakePerPoolForEpoch: { [poolId: string]: number } = {};
 
       for (const fisoStakePool of approvedFisoStakePools) {
         const poolId = fisoStakePool.poolId;
@@ -231,13 +233,15 @@ const checkTotalStake = async (
           if (epochData) {
             totalStakeForEpoch += parseInt(epochData.active_stake, 10);
             totalDelegatorsForEpoch += epochData.delegators_count;
+            totalActivePoolsForEpoch += 1;
+            totalStakePerPoolForEpoch[poolId] = parseInt(epochData.active_stake, 10);
           }
         }
       }
 
       // Add the data for the missing epoch
       if (totalStakeForEpoch > 0) {
-        epochStakes.push({ epoch: missingEpoch, totalStake: totalStakeForEpoch, totalDelegators: totalDelegatorsForEpoch });
+        epochStakes.push({ epoch: missingEpoch, totalStake: totalStakeForEpoch, totalDelegators: totalDelegatorsForEpoch, totalActivePools: totalActivePoolsForEpoch, totalStakePerPool: totalStakePerPoolForEpoch });
       }
     }
 
@@ -352,12 +356,12 @@ export const calculateFisoRewards = async (
         // Check if the stakepool was active during this epoch
         if (epoch >= stakepool!.startEpoch && epoch <= stakepool!.endEpoch && epoch < currentEpoch) {
           // Get the total stake for this epoch
-          const epochTotalStake = totalStakePerEpoch.find(stake => stake.epoch === epoch)?.totalStake || 0;
+          const epochTotals = totalStakePerEpoch.find(stake => stake.epoch === epoch);
 
           // Calculate rewards for this epoch
-          const tokensPerEpoch = totalTokens / (fisoEndEpoch - fisoStartEpoch + 1);
-          if (epochTotalStake !== 0) {
-            const userRewardForEpoch = (amount / epochTotalStake) * tokensPerEpoch;
+          if ((epochTotals?.totalStake || 0) !== 0) {
+            const tokensPerEpochPerPool = (totalTokens / (fisoEndEpoch - fisoStartEpoch + 1)) / epochTotals!.totalActivePools;
+            const userRewardForEpoch = (amount / epochTotals!.totalStakePerPool[poolId]) * tokensPerEpochPerPool;
             totalEarned += userRewardForEpoch;
           }
         }
