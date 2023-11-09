@@ -30,6 +30,8 @@ import Link from '@components/Link'
 import bannerBg from '@public/banner.jpg'
 import HeroSlider from '@components/landing/HeroSlider';
 import CrciLogo from '@components/svgs/CrciLogo';
+import XerberusLogo from '@components/svgs/XerberusLogo';
+import DexhunterLogo from '@components/svgs/DexhunterLogo';
 
 const inViewOptions = {
   threshold: 1,
@@ -110,31 +112,23 @@ const Home: NextPage = () => {
                 In partnership with:
               </Typography>
               <Grid container alignItems="center" justifyContent="space-around" spacing={2} sx={{ px: 2, mb: 4 }}>
-                <Grid item xs={12} sm={6} md>
+                <Grid item xs={12} sm={6} md={3}>
                   <Link
-                    href="https://www.harmoniclabs.tech"
+                    href="https://www.xerberus.io/"
                     sx={logoLinkSx}
                   >
-                    <HarmonicLabsLogo sx={{ fontSize: '190px', height: '80px' }} />
+                    <XerberusLogo sx={{ fontSize: '160px', height: '80px' }} />
                   </Link>
                 </Grid>
-                <Grid item xs={12} sm={6} md>
+                <Grid item xs={12} sm={6} md={3}>
                   <Link
-                    href="https://www.ergopad.io"
+                    href="https://www.dexhunter.io/"
                     sx={logoLinkSx}
                   >
-                    <ErgopadLogo sx={{ fontSize: '160px', height: '80px' }} />
+                    <DexhunterLogo sx={{ fontSize: '160px', height: '80px' }} />
                   </Link>
                 </Grid>
-                <Grid item xs={12} sm={6} md>
-                  <Link
-                    href="https://www.paideia.im"
-                    sx={logoLinkSx}
-                  >
-                    <PaideiaLogo sx={{ fontSize: '140px', height: '80px' }} />
-                  </Link>
-                </Grid>
-                <Grid item xs={12} sm={6} md>
+                <Grid item xs={12} sm={6} md={3}>
                   <Link
                     href="https://www.crci.review/"
                     sx={logoLinkSx}
@@ -142,6 +136,32 @@ const Home: NextPage = () => {
                     <CrciLogo sx={{ fontSize: '160px', height: '80px' }} />
                   </Link>
                 </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Link
+                    href="https://www.harmoniclabs.tech"
+                    sx={logoLinkSx}
+                  >
+                    <HarmonicLabsLogo sx={{ fontSize: '190px', height: '80px' }} />
+                  </Link>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Link
+                    href="https://www.ergopad.io"
+                    sx={logoLinkSx}
+                  >
+                    <ErgopadLogo sx={{ fontSize: '160px', height: '80px' }} />
+                  </Link>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <Link
+                    href="https://www.paideia.im"
+                    sx={logoLinkSx}
+                  >
+                    <PaideiaLogo sx={{ fontSize: '140px', height: '80px' }} />
+                  </Link>
+                </Grid>
+
+
               </Grid>
               <Box sx={{
                 display: theme.palette.mode === 'dark' ? 'none' : 'block',
