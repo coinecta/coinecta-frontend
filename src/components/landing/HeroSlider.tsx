@@ -7,7 +7,8 @@ import {
   Button,
   Box,
   IconButton,
-  Stack
+  Stack,
+  Paper
 } from '@mui/material'
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from 'swiper';
@@ -21,6 +22,8 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import ProjectCard from '@components/projects/ProjectCard';
 import { trpc } from '@lib/utils/trpc';
 import { slugify } from '@lib/utils/general';
+import ButtonLink from '@components/ButtonLink';
+import Image from 'next/image';
 
 SwiperCore.use([Navigation]);
 
@@ -31,10 +34,9 @@ type ExtendedSwiperRef = typeof Swiper & {
 type HeroSlide = {
   title: string;
   subtitle: string;
-  button1title: string;
-  button1link: string;
-  button2title?: string;
-  button2link?: string;
+  image?: string;
+  buttonTitle: string;
+  buttonLink: string;
 }
 
 interface IHeroSliderProps {
@@ -45,22 +47,29 @@ const slides: HeroSlide[] = [
   {
     title: 'Unlock the Cardano Community\'s Full Potential',
     subtitle: 'We believe the community is one of Cardano\'s greatest strengths. Working together, we can grow the ecosystem to provide inclusive financial services to the entire globe.',
-    button1title: 'Support an IDO',
-    button1link: '/projects',
-    button2title: 'Read the Whitepaper',
-    button2link: 'https://docs.coinecta.fi'
+    buttonTitle: 'Read the Whitepaper',
+    buttonLink: 'https://docs.coinecta.fi'
   },
   {
-    title: 'Read about the Coinecta FISO',
+    title: 'Coinecta FISO: Details & FAQ',
     subtitle: 'This article covers all the FISO details including dates, instructions on how to participate, and FAQs. ',
-    button1title: 'Read the article',
-    button1link: '/projects',
-  },
+    image: '/testimage.jpg',
+    buttonTitle: 'Read now',
+    buttonLink: 'https://coinecta.medium.com/coinecta-fiso-details-faq-bd3b5a03991c',
+  }
+  // {
+  //   title: 'Coinecta whitelist is open',
+  //   subtitle: 'Coinecta whitelists are open until November 23rd. This article covers all the FISO details including dates, instructions on how to participate, and FAQs. ',
+  //   image: '/sticker.png',
+  //   buttonTitle: 'Sign up',
+  //   buttonLink: '/projects/coinecta?tab=whitelist',
+  // },
 ]
 
 const HeroSlider: FC<IHeroSliderProps> = ({ }) => {
   const theme = useTheme()
   const upMd = useMediaQuery(theme.breakpoints.up('md'))
+  const upSm = useMediaQuery(theme.breakpoints.up('sm'))
   const swiperRef = useRef<ExtendedSwiperRef | null>(null);
   const [projects, setProjects] = useState<IProjectDetails[]>([]);
   const { data: projectList } = trpc.project.getProjectList.useQuery({});
@@ -96,9 +105,9 @@ const HeroSlider: FC<IHeroSliderProps> = ({ }) => {
     }
   };
   return (
-    <>
-      <Box sx={{ display: upMd ? 'flex' : 'none', width: '3%', position: 'relative' }}>
-        <IconButton onClick={handlePrev} sx={{ position: 'absolute', top: '45%', transform: 'translateY(-45%)' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+      <Box sx={{ display: upMd ? 'flex' : 'none' }}>
+        <IconButton onClick={handlePrev}>
           <KeyboardArrowLeftIcon />
         </IconButton>
       </Box>
@@ -107,8 +116,21 @@ const HeroSlider: FC<IHeroSliderProps> = ({ }) => {
           sx={{
             position: 'relative',
             display: 'block',
+            '& .swiper': {
+              // height: '100%',
+            },
+            '& .swiper-wrapper': {
+              // pt: '70px',
+              alignItems: 'center', // Align slides vertically in the middle
+              height: 'calc(100vh - 70px)', // Ensure wrapper is full height to center correctly
+              maxHeight: '630px',
+              minHeight: '450px'
+            },
             '& .swiper-slide': {
-              pb: 6
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              pb: '60px',
             },
             '& .swiper-button-next, .swiper-button-prev': {
               color: theme.palette.divider,
@@ -149,42 +171,132 @@ const HeroSlider: FC<IHeroSliderProps> = ({ }) => {
           >
             {slides.map((item) => {
               const slug = slugify(item.title)
-              return (
-                <SwiperSlide key={slug}>
-                  <Box maxWidth="md" sx={{ mx: 'auto' }}>
+              const Content: FC = () => {
+                return (
+                  <>
                     <Typography
                       variant="h2"
                       fontWeight={600}
-                      align="center"
                       gutterBottom
                     >
                       {item.title}
                     </Typography>
-                    <Typography variant="h6" align="center" sx={{ color: 'rgba(23,21,21,1)' }} paragraph>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        color: 'rgba(23,21,21,1)',
+                        fontWeight: 500,
+                        mb: 3
+                      }}
+                      paragraph
+                    >
                       {item.subtitle}
                     </Typography>
-                    <Stack
-                      sx={{ pt: 3 }}
-                      direction="row"
-                      spacing={2}
-                      justifyContent="center"
+                    <ButtonLink
+                      variant="contained"
+                      sx={{ fontSize: '18px' }}
+                      href={item.buttonLink}
                     >
-                      <Button variant="contained" href={item.button1link}>{item.button1title}</Button>
-                      <Button variant="outlined" href={item.button2link}>{item.button2title}</Button>
-                    </Stack>
-                  </Box>
+                      {item.buttonTitle}
+                    </ButtonLink>
+                  </>
+                )
+              }
+              const ImageComponent: FC<{ maxHeight?: number }> = ({ maxHeight }) => {
+                const imageStyle: React.CSSProperties = {
+                  height: '100%', // Make height of the image fill the Box
+                  maxWidth: '100%', // Make sure the image is not wider than the Box
+                  width: 'auto', // Adjust width automatically
+                  display: 'block', // Display block to avoid inline extra space
+                  borderRadius: '8px', // Apply border radius if needed for the image itself
+                  objectFit: 'contain', // Ensures the aspect ratio is maintained without cropping
+                };
+
+                if (item.image) return (
+                  <Paper
+                    sx={{
+                      maxWidth: '80%',
+                      display: 'inline-flex',
+                      borderRadius: '8px',
+                      // p: 1,
+                      mx: 'auto',
+                      overflow: 'hidden',
+                      lineHeight: 0,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        maxHeight: maxHeight ? `${maxHeight}px` : 'none',
+                        width: 'auto',
+                        height: 'auto',
+                      }}
+                    >
+                      <img
+                        src={item.image}
+                        alt={`${item.title} image`}
+                        style={{
+                          maxHeight: maxHeight ? `${maxHeight}px` : 'none',
+                          maxWidth: '100%',
+                          width: 'auto',
+                          height: 'auto',
+                        }}
+                      />
+                    </Box>
+                  </Paper>
+                )
+                else return null
+              }
+              return (
+                <SwiperSlide key={slug}>
+                  {item.image
+                    ? upMd
+                      ? <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          p: 4
+                        }}
+                      >
+                        <Box sx={{ textAlign: 'left', width: '50%' }}>
+                          <Content />
+                        </Box>
+                        <Box
+                          sx={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            display: 'flex',
+                            width: '50%'
+                          }}
+                        >
+                          <ImageComponent />
+                        </Box>
+                      </Box>
+                      : <Box maxWidth="md" sx={{ mx: 'auto', textAlign: 'center' }}>
+                        <Box sx={{ mb: 2 }}>
+                          <ImageComponent maxHeight={220} />
+                        </Box>
+                        <Content />
+                      </Box>
+                    : <Box maxWidth="md" sx={{ mx: 'auto', textAlign: 'center' }}>
+                      <Content />
+                    </Box>
+                  }
                 </SwiperSlide>
               )
             })}
           </Swiper>
         </Box>
       </Box>
-      <Box sx={{ display: upMd ? 'flex' : 'none', width: '3%', position: 'relative' }}>
-        <IconButton onClick={handleNext} sx={{ position: 'absolute', top: '45%', transform: 'translateY(-45%)' }}>
+      <Box sx={{ display: upMd ? 'flex' : 'none' }}>
+        <IconButton onClick={handleNext}>
           <KeyboardArrowRightIcon />
         </IconButton>
       </Box>
-    </>
+    </Box >
   );
 };
 

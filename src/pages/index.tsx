@@ -28,6 +28,8 @@ import bottomBg from "@public/bottom.jpg";
 import HarmonicLabsLogo from '@components/svgs/HarmonicLabsLogo';
 import Link from '@components/Link'
 import bannerBg from '@public/banner.jpg'
+import HeroSlider from '@components/landing/HeroSlider';
+import CrciLogo from '@components/svgs/CrciLogo';
 
 const inViewOptions = {
   threshold: 1,
@@ -47,7 +49,8 @@ const Home: NextPage = () => {
 
   const logoLinkSx = {
     display: 'block',
-    color: 'rgba(23,21,21,1)',
+    textAlign: 'center',
+    color: 'rgba(244,244,244,1)',
     '&:hover': {
       '& .MuiSvgIcon-root': {
         color: theme.palette.primary.main,
@@ -61,126 +64,118 @@ const Home: NextPage = () => {
       <Box sx={{
         backgroundColor: 'rgba(255,255,255,1)',
         color: 'rgba(23,21,21,1)',
-        display: 'flex'
       }}>
-        <Container
-          sx={{
-            pt: '20vh',
-            // minHeight: '100vh',
-            // mb: 12
-            position: 'relative',
-            zIndex: 2
-          }}
-        >
-          <Box maxWidth="md" sx={{ mx: 'auto' }}>
-            <Typography
-              variant="h2"
-              fontWeight={600}
-              align="center"
-              gutterBottom
-            >
-              Unlock the Cardano Community&apos;s Full Potential
-            </Typography>
-            <Typography variant="h6" align="center" sx={{ color: 'rgba(23,21,21,1)' }} paragraph>
-              We believe the community is one of Cardano&apos;s greatest strengths. Working together, we can grow the ecosystem to provide inclusive financial services to the entire globe.
-            </Typography>
-            <Stack
-              sx={{ pt: 3 }}
-              direction="row"
-              spacing={2}
-              justifyContent="center"
-            >
-              <Button variant="contained" href="/projects">Support an IDO</Button>
-              <Button variant="outlined" href="https://docs.coinecta.fi">Read the Whitepaper</Button>
-            </Stack>
-
+        <Box sx={{ position: 'relative' }}>
+          <Box sx={{ position: 'relative' }}>
+            <Container>
+              <Box sx={{
+                zIndex: 5,
+                position: 'relative',
+                pb: 6
+              }}>
+                <HeroSlider />
+              </Box>
+            </Container>
+            <Box sx={{
+              width: '3440px',
+              height: '430px',
+              backgroundImage: `url(${wideBg.src})`,
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              position: 'absolute',
+              bottom: 0,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 1
+            }}
+            />
           </Box>
-          <Box maxWidth='lg' sx={{ mx: 'auto' }}>
-            <Typography variant="body1" sx={{ pt: 12, textTransform: 'uppercase', color: 'rgba(23,21,21,1)' }} align="center" color="text.secondary" paragraph>
-              In partnership with:
-            </Typography>
-            <Grid container alignItems="center" justifyContent="space-around">
-              <Grid item>
-                <Link
-                  href="https://www.harmoniclabs.tech"
-                  sx={logoLinkSx}
-                >
-                  <HarmonicLabsLogo sx={{ fontSize: '190px', height: '100px' }} />
-                </Link>
+          <Box sx={{ backgroundColor: 'rgb(8,8,16)', position: 'realtive' }}>
+            <Box
+              maxWidth='lg'
+              sx={{
+                mx: 'auto',
+                zIndex: 5,
+                mb: theme.palette.mode === 'dark' ? 12 : 0
+              }}
+            >
+              <Typography
+                variant="body1"
+                sx={{ pt: 4, textTransform: 'uppercase', color: 'rgba(244,244,244,1)', }}
+                align="center"
+                color="text.secondary"
+                paragraph
+              >
+                In partnership with:
+              </Typography>
+              <Grid container alignItems="center" justifyContent="space-around" spacing={2} sx={{ px: 2, mb: 4 }}>
+                <Grid item xs={12} sm={6} md>
+                  <Link
+                    href="https://www.harmoniclabs.tech"
+                    sx={logoLinkSx}
+                  >
+                    <HarmonicLabsLogo sx={{ fontSize: '190px', height: '80px' }} />
+                  </Link>
+                </Grid>
+                <Grid item xs={12} sm={6} md>
+                  <Link
+                    href="https://www.ergopad.io"
+                    sx={logoLinkSx}
+                  >
+                    <ErgopadLogo sx={{ fontSize: '160px', height: '80px' }} />
+                  </Link>
+                </Grid>
+                <Grid item xs={12} sm={6} md>
+                  <Link
+                    href="https://www.paideia.im"
+                    sx={logoLinkSx}
+                  >
+                    <PaideiaLogo sx={{ fontSize: '140px', height: '80px' }} />
+                  </Link>
+                </Grid>
+                <Grid item xs={12} sm={6} md>
+                  <Link
+                    href="https://www.crci.review/"
+                    sx={logoLinkSx}
+                  >
+                    <CrciLogo sx={{ fontSize: '160px', height: '80px' }} />
+                  </Link>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Link
-                  href="https://www.ergopad.io"
-                  sx={logoLinkSx}
-                >
-                  <ErgopadLogo sx={{ fontSize: '160px', height: '100px' }} />
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link
-                  href="https://www.paideia.im"
-                  sx={logoLinkSx}
-                >
-                  <PaideiaLogo sx={{ fontSize: '140px', height: '100px' }} />
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link
-                  href="https://www.blockheads.one"
-                  sx={logoLinkSx}
-                >
-                  <BlockheadsLogo sx={{ fontSize: '160px', height: '100px' }} />
-                </Link>
-              </Grid>
-            </Grid>
+              <Box sx={{
+                display: theme.palette.mode === 'dark' ? 'none' : 'block',
+                width: '3440px',
+                height: '218px',
+                backgroundImage: `url(${bottomBg.src})`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                position: 'relative',
+                left: '50%',
+                transform: 'translateX(-50%)',
+              }} />
+            </Box>
           </Box>
-        </Container>
+        </Box>
       </Box>
       {/* End hero section */}
 
+      < Grow in={inView4} {...(inView4 ? { timeout: 250 } : {})}>
+        <Box ref={ref4}>
+          <Projects />
+        </Box>
+      </Grow >
+
       {/* How it works */}
       <Box sx={{
-        '&:before': {
-          content: '""',
-          display: 'inline-block',
-          width: '3440px',
-          height: '430px',
-          backgroundImage: `url(${wideBg.src})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          position: 'relative',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          top: '-300px',
-        },
-        backgroundColor: 'rgb(8,8,16)',
-        pb: 0,
-        mb: theme.palette.mode === 'dark' ? 0 : 12,
-        color: 'rgba(244,244,244,1)',
-        zIndex: 1,
-        '&:after': {
-          content: '""',
-          display: 'inline-block',
-          width: '3440px',
-          height: '219px',
-          backgroundImage: theme.palette.mode === 'dark' ? 'none' : `url(${bottomBg.src})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          position: 'relative',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          bottom: '-50px',
-        },
+        mb: 24
       }}>
-        <Container sx={{ mt: '-250px' }}>
-
+        <Container>
           <Grid container sx={{ mb: 3 }} >
             <Grid item md={1}></Grid>
             <Grid item md={5}>
               <Typography
                 variant="h2"
                 fontWeight={600}
-
                 gutterBottom
               >
                 How it works
@@ -197,8 +192,6 @@ const Home: NextPage = () => {
               </Grid>
               <Grid item md={5}></Grid>
             </Grid>
-
-
           </Grow>
           <Grid container>
             <Grid item md={3}></Grid>
@@ -210,19 +203,13 @@ const Home: NextPage = () => {
                 >
                   <Grid item md={6} ref={ref2}>
                     <Typography variant="h5" fontWeight={600}>1. Stake The Token</Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(244,244,244,1)' }}>To participate, first you have to get the Coinecta Finance token and stake it to reach a staking tier. Your tier will represent your pool weight in IDOs. </Typography>
+                    <Typography variant="body2">To participate, first you have to get the Coinecta Finance token and stake it to reach a staking tier. Your tier will represent your pool weight in IDOs. </Typography>
                     <Grid container spacing={3}>
                       <Grid item>
                         <Button
                           variant="contained"
                           color="secondary"
                           disabled
-                          sx={{
-                            color: 'rgba(255, 255, 255, 0.3)!important',
-                            boxShadow: 'none!important',
-                            backgroundColor: 'rgba(255, 255, 255, 0.12)!important'
-
-                          }}
                         >
                           Get CNCT
                         </Button>
@@ -232,10 +219,6 @@ const Home: NextPage = () => {
                           variant="outlined"
                           color="secondary"
                           disabled
-                          sx={{
-                            color: 'rgba(255, 255, 255, 0.3)!important',
-                            border: '1px solid rgba(255, 255, 255, 0.12)!important'
-                          }}
                         >
                           Stake Now
                         </Button>
@@ -250,7 +233,7 @@ const Home: NextPage = () => {
                 >
                   <Grid item md={6}>
                     <Typography variant="h5" fontWeight={600}>2. Whitelist For IDOs</Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(244,244,244,1)' }}>Keep an eye out for IDOs you like, and whitelist to invest. You will be approved for a specific number of tokens based on your staking tier weight. </Typography>
+                    <Typography variant="body2">Keep an eye out for IDOs you like, and whitelist to invest. You will be approved for a specific number of tokens based on your staking tier weight. </Typography>
                     <Button variant="contained" color="secondary" href="/projects">View Projects</Button>
                   </Grid>
                 </Grow>
@@ -260,7 +243,7 @@ const Home: NextPage = () => {
                 >
                   <Grid item md={6} ref={ref3}>
                     <Typography variant="h5" fontWeight={600}>3. Contribute</Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(244,244,244,1)' }}>You will receive whitelist tokens in your wallet and can use those to contribute to the project. Send ADA or DJED to the Vesting Contract to receive your vesting key which will unlock tokens over time</Typography>
+                    <Typography variant="body2">You will receive whitelist tokens in your wallet and can use those to contribute to the project. Send ADA or DJED to the Vesting Contract to receive your vesting key which will unlock tokens over time</Typography>
                     <Button
                       variant="contained"
                       color="secondary"
@@ -277,17 +260,11 @@ const Home: NextPage = () => {
                 >
                   <Grid item md={6}>
                     <Typography variant="h5" fontWeight={600}>4. Redeem</Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(244,244,244,1)' }}>Each seed round will have a specific vesting period, depending on how deep the discount is. You can redeem your tokens as they unlock on the Redeem panel. </Typography>
+                    <Typography variant="body2">Each seed round will have a specific vesting period, depending on how deep the discount is. You can redeem your tokens as they unlock on the Redeem panel. </Typography>
                     <Button
                       variant="contained"
                       color="secondary"
                       disabled
-                      sx={{
-                        color: 'rgba(255, 255, 255, 0.3)!important',
-                        boxShadow: 'none!important',
-                        backgroundColor: 'rgba(255, 255, 255, 0.12)!important'
-
-                      }}
                     >
                       Redeem Now
                     </Button>
@@ -298,14 +275,8 @@ const Home: NextPage = () => {
             <Grid item md={1}></Grid>
           </Grid>
         </Container >
-      </Box >
+      </Box>
       {/* END How it works */}
-
-      < Grow in={inView4} {...(inView4 ? { timeout: 250 } : {})}>
-        <Box ref={ref4}>
-          <Projects />
-        </Box>
-      </Grow >
 
       {/* Whos it for? */}
       < Container sx={{ mb: 14 }}>
