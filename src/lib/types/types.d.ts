@@ -34,4 +34,6 @@ type TotalStakePerEpoch = {
   epoch: number;
   totalStake: number;
   totalDelegators: number;
+  totalActivePools: number;
+  totalStakePerPool: { [poolId: string]: number };
 }
