@@ -55,12 +55,11 @@ model User {
   sumsubType     String?           @map("sumsub_type")
   sumsubResult   Json?             @map("sumsub_result")
   sumsubStatus   String?           @map("sumsub_status")
-  whitelists     WhitelistSignup[]
   accounts       Account[]
   sessions       Session[]
   transactions   Transaction[]
   wallets        Wallet[]
-  // stakeHistory   UserStakeHistory[]
+  whitelists     WhitelistSignup[]
 
   @@map("users")
 }
@@ -71,7 +70,6 @@ model UserStakeHistory {
   amount              String
   pool_id             String
   user_reward_address String
-  // user                User   @relation(fields: [user_reward_address], references: [rewardAddress], onDelete: Cascade)
 
   @@unique([active_epoch, user_reward_address, pool_id])
   @@index([active_epoch, user_reward_address, pool_id])
@@ -115,8 +113,6 @@ model Transaction {
   @@map("transactions")
 }
 
-// PROJECT /////////////////////////////////////////////////
-
 model Project {
   id               Int         @id @default(autoincrement())
   created_at       DateTime    @default(now())
@@ -133,12 +129,12 @@ model Project {
   isLaunched       Boolean     @default(false) @map("is_launched")
   isDraft          Boolean     @default(true) @map("is_draft")
   frontPage        Boolean     @default(false) @map("front_page")
-  socials          Socials?
+  fisos            Fiso[]
   roadmap          Roadmap[]
+  socials          Socials?
   team             Team[]
   tokenomics       Tokenomics?
   whitelists       Whitelist[]
-  fisos            Fiso[]
 
   @@map("projects")
 }
@@ -150,8 +146,8 @@ model Socials {
   discord      String?
   github       String?
   website      String?
-  project      Project @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
   project_slug String  @unique
+  project      Project @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
 
   @@map("project_socials")
 }
@@ -161,8 +157,8 @@ model Roadmap {
   name         String
   description  String
   date         DateTime
-  project      Project  @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
   project_slug String
+  project      Project  @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
 
   @@map("project_roadmaps")
 }
@@ -174,8 +170,8 @@ model Team {
   profileImgUrl String? @map("profile_img_url")
   twitter       String?
   linkedin      String?
-  project       Project @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
   project_slug  String
+  project       Project @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
 
   @@map("project_team")
 }
@@ -185,9 +181,9 @@ model Tokenomics {
   tokenName    String      @map("token_name")
   totalTokens  Int         @map("total_tokens")
   tokenTicker  String      @map("token_ticker")
-  tokenomics   Tokenomic[]
-  project      Project     @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
   project_slug String      @unique
+  project      Project     @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
+  tokenomics   Tokenomic[]
 
   @@map("project_tokenomics")
 }
@@ -201,13 +197,11 @@ model Tokenomic {
   freq         String?
   length       String?
   lockup       String?
-  tokenomics   Tokenomics @relation(fields: [tokenomicsId], references: [id], onDelete: Cascade)
   tokenomicsId Int
+  tokenomics   Tokenomics @relation(fields: [tokenomicsId], references: [id], onDelete: Cascade)
 
   @@map("project_tokenomics_items")
 }
-
-// WHITELIST //////////////////////////////////////////////
 
 model Whitelist {
   id            String            @id @default(cuid())
@@ -220,9 +214,9 @@ model Whitelist {
   maxPerSignup  Int?              @map("max_per_signup")
   hardCap       Int?              @map("hard_cap")
   externalLink  String?           @map("external_link")
-  project       Project           @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
   project_slug  String
   signups       WhitelistSignup[]
+  project       Project           @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
 
   @@map("whitelists")
 }
@@ -235,15 +229,13 @@ model WhitelistSignup {
   amountApproved  String?   @map("amount_approved")
   status          String?
   notes           String?
-  whitelist       Whitelist @relation(fields: [whitelist_slug], references: [slug], onDelete: Cascade)
   whitelist_slug  String
-  user            User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id         String
+  user            User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  whitelist       Whitelist @relation(fields: [whitelist_slug], references: [slug], onDelete: Cascade)
 
   @@map("whitelist_signups")
 }
-
-// STAKEPOOL, ISPO, AND FISO STUFF /////////////////////////////////////
 
 model Fiso {
   id                 Int                     @id @default(autoincrement())
@@ -253,10 +245,10 @@ model Fiso {
   startEpoch         Int                     @map("start_epoch")
   endEpoch           Int                     @map("end_epoch")
   projectSlug        String                  @map("project_slug")
-  project            Project                 @relation(fields: [projectSlug], references: [slug])
-  approvedStakepools FisoApprovedStakePool[]
   totalStakeEpoch    Json?                   @map("total_stake_epoch")
-  spoSignups         SpoSignups[]
+  approvedStakepools FisoApprovedStakePool[]
+  project            Project                 @relation(fields: [projectSlug], references: [slug])
+  spoSignups         SpoSignups[]            @relation("FisoToSpoSignups")
 
   @@map("fisos")
 }
@@ -266,8 +258,8 @@ model FisoApprovedStakePool {
   startEpoch Int       @map("start_epoch")
   endEpoch   Int       @map("end_epoch")
   fisoId     Int       @map("fiso_id")
-  fiso       Fiso      @relation(fields: [fisoId], references: [id], onDelete: Cascade)
   poolId     String    @map("pool_id")
+  fiso       Fiso      @relation(fields: [fisoId], references: [id], onDelete: Cascade)
   stakepool  Stakepool @relation(fields: [poolId], references: [pool_id], onDelete: Cascade)
 
   @@map("fiso_approved_stake_pools")
@@ -278,13 +270,13 @@ model SpoSignups {
   created_at       DateTime  @default(now())
   updated_at       DateTime  @updatedAt
   poolId           String    @unique @map("pool_id")
-  stakepool        Stakepool @relation(fields: [poolId], references: [pool_id], onDelete: Cascade)
-  fisos            Fiso[]
   operatorName     String?   @map("operator_name")
   operatorEmail    String?   @map("operator_email")
   operatorTwitter  String?   @map("operator_twitter")
   operatorDiscord  String?   @map("operator_discord")
   operatorTelegram String?   @map("operator_telegram")
+  stakepool        Stakepool @relation(fields: [poolId], references: [pool_id], onDelete: Cascade)
+  fisos            Fiso[]    @relation("FisoToSpoSignups")
 
   @@map("spo_signups")
 }
@@ -299,10 +291,10 @@ model Stakepool {
   name        String?
   description String?
   homepage    String?
-  stats       StakepoolStats?
-  history     StakepoolHistory[]
   fisoPools   FisoApprovedStakePool[]
   spoSignups  SpoSignups?
+  history     StakepoolHistory[]
+  stats       StakepoolStats?
 
   @@map("stakepools")
 }
@@ -354,10 +346,22 @@ model StakepoolHistory {
   delegators_count Int
   rewards          String
   fees             String
-  stakepool        Stakepool @relation(fields: [pool_id], references: [pool_id], onDelete: Cascade)
   pool_id          String
+  stakepool        Stakepool @relation(fields: [pool_id], references: [pool_id], onDelete: Cascade)
 
   @@unique([epoch, pool_id])
   @@index([epoch, pool_id])
   @@map("stakepool_history")
+}
+
+model HeroCarousel {
+  id          Int     @id @default(autoincrement())
+  title       String
+  subtitle    String
+  image       String?
+  buttonTitle String  @map("button_title")
+  buttonLink  String  @map("button_link")
+  order       Int     @default(autoincrement())
+
+  @@map("hero_carousel")
 }
