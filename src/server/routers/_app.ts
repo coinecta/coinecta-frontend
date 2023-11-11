@@ -1,6 +1,7 @@
 import { createTRPCRouter } from "@server/trpc";
 import { fileRouter } from "./file";
 import { fisoRouter } from "./fisos";
+import { heroRouter } from "./hero";
 import { projectRouter } from "./project";
 import { stakepoolRouter } from "./stakepools";
 import { userRouter } from "./user";
@@ -17,7 +18,8 @@ export const appRouter = createTRPCRouter({
   file: fileRouter,
   whitelist: whitelistRouter,
   stakepool: stakepoolRouter,
-  fisos: fisoRouter
+  fisos: fisoRouter,
+  hero: heroRouter
 });
 
 // export type definition of API

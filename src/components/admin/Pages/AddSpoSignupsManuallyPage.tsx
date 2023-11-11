@@ -15,7 +15,7 @@ import {
 import { useState } from 'react';
 import { NextPage } from 'next';
 import { trpc } from '@lib/utils/trpc';
-import AdminMenu from '@components/AdminMenu';
+import AdminMenu from '@components/admin/AdminMenu';
 
 const AddSpoSignupsManuallyPage: FC = () => {
   const [signups, setSignups] = useState<string>('');

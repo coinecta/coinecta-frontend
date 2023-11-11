@@ -15,6 +15,7 @@ import { SessionProvider } from "next-auth/react"
 import { WalletProvider } from "@contexts/WalletContext";
 import { AlertProvider } from '@contexts/AlertContext';
 import AlertComponent from '@components/Alert';
+import { DialogProvider } from "@contexts/DialogContext";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [theme, setTheme] = useState(LightTheme);
@@ -41,15 +42,17 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           <ThemeProvider theme={theme}>
             <ThemeContext.Provider value={{ theme, setTheme }}>
               <AlertProvider>
-                <MeshProvider>
-                  <WalletProvider>
-                    <CssBaseline enableColorScheme />
-                    <Layout>
-                      <Component {...pageProps} />
-                    </Layout>
-                    <AlertComponent />
-                  </WalletProvider>
-                </MeshProvider>
+                <DialogProvider>
+                  <MeshProvider>
+                    <WalletProvider>
+                      <CssBaseline enableColorScheme />
+                      <Layout>
+                        <Component {...pageProps} />
+                      </Layout>
+                      <AlertComponent />
+                    </WalletProvider>
+                  </MeshProvider>
+                </DialogProvider>
               </AlertProvider>
             </ThemeContext.Provider>
           </ThemeProvider>

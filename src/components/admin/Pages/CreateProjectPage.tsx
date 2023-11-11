@@ -2,7 +2,7 @@ import { FC } from 'react';
 import {
   Typography,
 } from '@mui/material';
-import AdminMenu from '@components/AdminMenu';
+import AdminMenu from '@components/admin/AdminMenu';
 import ProjectForm from '../create-project/ProjectForm';
 
 const initialFormData: TProject = {

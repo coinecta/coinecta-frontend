@@ -31,40 +31,21 @@ type ExtendedSwiperRef = typeof Swiper & {
   swiper: SwiperCore;
 };
 
-type HeroSlide = {
-  title: string;
-  subtitle: string;
-  image?: string;
-  buttonTitle: string;
-  buttonLink: string;
-}
+const slides: THeroCarouselWithIds[] = [
+  {
+    id: 0,
+    title: 'Unlock the Cardano Community\'s Full Potential',
+    subtitle: 'We believe the community is one of Cardano\'s greatest strengths. Working together, we can grow the ecosystem to provide inclusive financial services to the entire globe.',
+    buttonTitle: 'Read the Whitepaper',
+    buttonLink: 'https://docs.coinecta.fi',
+    image: null,
+    order: 0
+  },
+]
 
 interface IHeroSliderProps {
 
 }
-
-const slides: HeroSlide[] = [
-  {
-    title: 'Unlock the Cardano Community\'s Full Potential',
-    subtitle: 'We believe the community is one of Cardano\'s greatest strengths. Working together, we can grow the ecosystem to provide inclusive financial services to the entire globe.',
-    buttonTitle: 'Read the Whitepaper',
-    buttonLink: 'https://docs.coinecta.fi'
-  },
-  {
-    title: 'Coinecta FISO: Details & FAQ',
-    subtitle: 'This article covers all the FISO details including dates, instructions on how to participate, and FAQs. ',
-    image: '/testimage.jpg',
-    buttonTitle: 'Read now',
-    buttonLink: 'https://coinecta.medium.com/coinecta-fiso-details-faq-bd3b5a03991c',
-  }
-  // {
-  //   title: 'Coinecta whitelist is open',
-  //   subtitle: 'Coinecta whitelists are open until November 23rd. This article covers all the FISO details including dates, instructions on how to participate, and FAQs. ',
-  //   image: '/sticker.png',
-  //   buttonTitle: 'Sign up',
-  //   buttonLink: '/projects/coinecta?tab=whitelist',
-  // },
-]
 
 const HeroSlider: FC<IHeroSliderProps> = ({ }) => {
   const theme = useTheme()
@@ -73,6 +54,7 @@ const HeroSlider: FC<IHeroSliderProps> = ({ }) => {
   const swiperRef = useRef<ExtendedSwiperRef | null>(null);
   const [projects, setProjects] = useState<IProjectDetails[]>([]);
   const { data: projectList } = trpc.project.getProjectList.useQuery({});
+  const { data: carouselItems } = trpc.hero.getHeroItems.useQuery();
 
   useEffect(() => {
     if (projectList) {
@@ -106,11 +88,11 @@ const HeroSlider: FC<IHeroSliderProps> = ({ }) => {
   };
   return (
     <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-      <Box sx={{ display: upMd ? 'flex' : 'none' }}>
+      {(carouselItems || slides).length > 1 && <Box sx={{ display: upMd ? 'flex' : 'none' }}>
         <IconButton onClick={handlePrev}>
           <KeyboardArrowLeftIcon />
         </IconButton>
-      </Box>
+      </Box>}
       <Box sx={{ width: upMd ? '94%' : '100%' }}>
         <Box
           sx={{
@@ -169,7 +151,7 @@ const HeroSlider: FC<IHeroSliderProps> = ({ }) => {
             modules={[Grid, Pagination, Navigation, Autoplay]}
             className="mySwiper"
           >
-            {slides.map((item) => {
+            {(carouselItems || slides).sort((a, b) => a.order - b.order).map((item) => {
               const slug = slugify(item.title)
               const Content: FC = () => {
                 return (
@@ -203,15 +185,6 @@ const HeroSlider: FC<IHeroSliderProps> = ({ }) => {
                 )
               }
               const ImageComponent: FC<{ maxHeight?: number }> = ({ maxHeight }) => {
-                const imageStyle: React.CSSProperties = {
-                  height: '100%', // Make height of the image fill the Box
-                  maxWidth: '100%', // Make sure the image is not wider than the Box
-                  width: 'auto', // Adjust width automatically
-                  display: 'block', // Display block to avoid inline extra space
-                  borderRadius: '8px', // Apply border radius if needed for the image itself
-                  objectFit: 'contain', // Ensures the aspect ratio is maintained without cropping
-                };
-
                 if (item.image) return (
                   <Paper
                     sx={{
@@ -291,11 +264,11 @@ const HeroSlider: FC<IHeroSliderProps> = ({ }) => {
           </Swiper>
         </Box>
       </Box>
-      <Box sx={{ display: upMd ? 'flex' : 'none' }}>
+      {(carouselItems || slides).length > 1 && <Box sx={{ display: upMd ? 'flex' : 'none' }}>
         <IconButton onClick={handleNext}>
           <KeyboardArrowRightIcon />
         </IconButton>
-      </Box>
+      </Box>}
     </Box >
   );
 };

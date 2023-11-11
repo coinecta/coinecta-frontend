@@ -14,7 +14,8 @@ import {
   Button,
   Container,
   Fab,
-  Zoom
+  Zoom,
+  Typography
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
@@ -25,28 +26,43 @@ interface IAdminMenuProps {
 
 const drawerWidth = 240;
 
-const links = [
-  {
-    name: 'Create Project',
-    link: '/admin/create-project'
-  },
-  {
-    name: 'Edit Project',
-    link: '/admin/edit-project'
-  },
-  {
-    name: 'FISO Management',
-    link: '/admin/fiso-management'
-  },
-  {
-    name: 'Whitelist Review',
-    link: '/admin/whitelist'
-  },
-  {
-    name: 'Add spo signups manually',
-    link: '/admin/add-spo-signups-manually'
-  },
-]
+type LinkItem = {
+  name: string;
+  link: string;
+}
+
+const links = {
+  Projects: [
+    {
+      name: 'Create Project',
+      link: '/admin/create-project'
+    },
+    {
+      name: 'Edit Project',
+      link: '/admin/edit-project'
+    }
+  ],
+  Fisos: [
+    {
+      name: 'FISO Management',
+      link: '/admin/fiso-management'
+    },
+    {
+      name: 'Add spo signups manually',
+      link: '/admin/add-spo-signups-manually'
+    },
+  ],
+  Other: [
+    {
+      name: 'Hero Carousel',
+      link: '/admin/hero-carousel'
+    },
+    {
+      name: 'Whitelist Review',
+      link: '/admin/whitelist'
+    }
+  ]
+}
 
 const AdminMenu: FC<IAdminMenuProps> = ({ children }) => {
   const theme = useTheme()
@@ -57,32 +73,31 @@ const AdminMenu: FC<IAdminMenuProps> = ({ children }) => {
     setMobileOpen(!mobileOpen);
   };
 
+  const renderLinkItems = (linkItems: LinkItem[]) => {
+    return linkItems.map((link, index) => (
+      <Link href={link.link} key={link.name + index}>
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemText primary={link.name} />
+          </ListItemButton>
+        </ListItem>
+      </Link>
+    ));
+  };
+
   const drawer = (
     <div>
-      <List>
-        {links.map((item, index) => (
-          <Link href={item.link} key={index}>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemText primary={item.name} />
-              </ListItemButton>
-            </ListItem>
-          </Link>
-        ))}
-      </List>
-      <Divider sx={{ mb: 2 }} />
-      <List>
-        <Link href='/'>
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <HomeIcon />
-              </ListItemIcon>
-              <ListItemText primary={'Home'} />
-            </ListItemButton>
-          </ListItem>
-        </Link>
-      </List>
+      {Object.entries(links).map(([category, linkItems], categoryIndex) => (
+        <div key={category + categoryIndex}>
+          {category !== "Other" && <Typography variant="h6" >
+            {category}
+          </Typography>}
+          <List>
+            {renderLinkItems(linkItems)}
+          </List>
+          {categoryIndex < Object.keys(links).length - 1 && <Divider sx={{ mb: 2 }} />}
+        </div>
+      ))}
     </div>
   );
 

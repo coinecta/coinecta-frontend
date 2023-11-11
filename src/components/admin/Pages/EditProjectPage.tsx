@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { trpc } from '@lib/utils/trpc';
 import FisoInput from '@components/admin/create-project/FisoInput';
-import AdminMenu from '@components/AdminMenu';
+import AdminMenu from '@components/admin/AdminMenu';
 import ProjectForm from '../create-project/ProjectForm';
 
 const socials = ['telegram', 'discord', 'github', 'twitter', 'website', 'linkedin'];

@@ -18,7 +18,7 @@ import {
 import { ChangeEvent, SetStateAction, useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import { trpc } from '@lib/utils/trpc';
-import AdminMenu from '@components/AdminMenu';
+import AdminMenu from '@components/admin/AdminMenu';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import FisoListItem from '@components/admin/fiso-management/FisoListItem';
 import UnlabelledTextField from '@components/styled-components/UnlabelledTextField';

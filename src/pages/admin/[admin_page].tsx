@@ -8,6 +8,7 @@ import EditProjectPage from '@components/admin/Pages/EditProjectPage';
 import AddSpoSignupsManuallyPage from '@components/admin/Pages/AddSpoSignupsManuallyPage';
 import FisoManagementPage from '@components/admin/Pages/FisoManagementPage';
 import { Container } from '@mui/material';
+import HeroCarouselPage from '@components/admin/Pages/HeroCarouselPage';
 
 const AdminPage: NextPage = () => {
   const { sessionData, sessionStatus } = useWalletContext()
@@ -19,7 +20,8 @@ const AdminPage: NextPage = () => {
     "create-project": <CreateProjectPage />,
     "edit-project": <EditProjectPage />,
     "add-spo-signups-manually": <AddSpoSignupsManuallyPage />,
-    "fiso-management": <FisoManagementPage />
+    "fiso-management": <FisoManagementPage />,
+    "hero-carousel": <HeroCarouselPage />
   }
 
   return (

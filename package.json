@@ -17,6 +17,7 @@
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@hello-pangea/dnd": "^16.3.0",
     "@meshsdk/core": "^1.5.6",
     "@meshsdk/react": "^1.1.7",
     "@mui/base": "^5.0.0-beta.8",
