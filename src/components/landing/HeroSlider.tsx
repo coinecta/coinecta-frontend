@@ -43,11 +43,7 @@ const slides: THeroCarouselWithIds[] = [
   },
 ]
 
-interface IHeroSliderProps {
-
-}
-
-const HeroSlider: FC<IHeroSliderProps> = ({ }) => {
+const HeroSlider: FC = () => {
   const theme = useTheme()
   const upMd = useMediaQuery(theme.breakpoints.up('md'))
   const upSm = useMediaQuery(theme.breakpoints.up('sm'))
