@@ -20,7 +20,7 @@ type WhitelistTabProps = {
 }
 
 const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
-  const { sessionStatus } = useWalletContext()
+  const { sessionStatus, sessionData } = useWalletContext()
   const [sumsubStatus, setSumsubStatus] = useState<string | undefined>(undefined)
   const checkVerificationResult = trpc.user.getSumsubResult.useQuery()
 
@@ -55,7 +55,7 @@ const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
                   )
                 })}
               </Collapse>
-              <Collapse in={checkVerificationResult.data?.sumsubStatus !== 'completed'} mountOnEnter unmountOnExit>
+              <Collapse in={checkVerificationResult.data?.sumsubStatus !== 'completed' || sessionData?.user.isAdmin} mountOnEnter unmountOnExit>
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="h4" sx={{ mb: 0 }}>
                     KYC/AML
