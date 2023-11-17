@@ -119,7 +119,9 @@ const SumsubId: FC = () => {
                 Sumsub Status: {userInfo?.data?.sumsubStatus}
               </Typography>
             </Box>
-            : <Box>Please enter a valid address</Box>
+            : userInfo?.data?.id
+              ? <Box>User has not done KYC</Box>
+              : <Box>Enter a valid ADA address</Box>
         }
       </Box>
     </Box>
