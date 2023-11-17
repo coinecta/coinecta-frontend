@@ -21,8 +21,8 @@ type WhitelistTabProps = {
 
 const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
   const { sessionStatus } = useWalletContext()
-  // const [sumsubStatus, setSumsubStatus] = useState<string | undefined>(undefined)
-  // const checkVerificationResult = trpc.user.getSumsubResult.useQuery()
+  const [sumsubStatus, setSumsubStatus] = useState<string | undefined>(undefined)
+  const checkVerificationResult = trpc.user.getSumsubResult.useQuery()
 
   return (
     <>
@@ -30,7 +30,7 @@ const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
         {sessionStatus === 'authenticated' ? (
           <>
             <Box sx={{ mb: 2 }}>
-              {/* <Collapse in={checkVerificationResult.data?.sumsubStatus === 'completed'} mountOnEnter unmountOnExit>
+              <Collapse in={checkVerificationResult.data?.sumsubStatus === 'completed'} mountOnEnter unmountOnExit>
                 <Alert
                   variant="outlined"
                   severity={
@@ -81,10 +81,10 @@ const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
                       })}
                     </Box>
                   )}
-              </Collapse> */}
-              <Typography>
+              </Collapse>
+              {/* <Typography>
                 Check back soon for whitelist availability.
-              </Typography>
+              </Typography> */}
             </Box>
           </>
         ) : (

@@ -1,11 +1,11 @@
-
-
 import React, { ChangeEvent, FC, useEffect, useState } from 'react';
 import { Box, Typography, Paper, Button, CircularProgress } from '@mui/material';
 import TextFieldWithButton from '@components/styled-components/TextFieldWithButton';
 import TimeRemaining from '@components/TimeRemaining';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import { trpc } from '@lib/utils/trpc';
+import ErgoVerify from './ErgoVerify';
+import { useAlert } from '@contexts/AlertContext';
 
 type WhitelistCardProps = {
   name: string;
@@ -16,6 +16,7 @@ type WhitelistCardProps = {
   hardCap?: number | undefined;
   externalLink?: string | undefined;
   projectSlug: string;
+  ergoProofs: boolean;
 }
 
 const WhitelistCard: FC<WhitelistCardProps> = ({
@@ -26,14 +27,17 @@ const WhitelistCard: FC<WhitelistCardProps> = ({
   maxPerSignup,
   hardCap,
   externalLink,
-  projectSlug
+  projectSlug,
+  ergoProofs
 }) => {
+  const { addAlert } = useAlert()
   const [dateStatus, setDateStatus] = useState('');
   const [contributionAmount, setContributionAmount] = useState<string | number | undefined>('Max')
   const [contributionAmountError, setContributionAmountError] = useState(false)
   const [buttonLoading, setButtonLoading] = useState(false)
   const submitWhitelist = trpc.whitelist.submitWhitelist.useMutation()
   const getUserWhitelistSignups = trpc.whitelist.getUserWhitelistSlugs.useQuery({ projectSlug })
+  const [openErgoVerify, setOpenErgoVerify] = useState(false)
 
   const handleChangeContributionAmount = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -74,6 +78,15 @@ const WhitelistCard: FC<WhitelistCardProps> = ({
   }, [startDateTime, endDateTime]);
 
   const handleSubmit = async () => {
+    if (ergoProofs) {
+      setOpenErgoVerify(true)
+    }
+    else {
+      await handleSubmitFinal()
+    }
+  }
+
+  const handleSubmitFinal = async () => {
     if (contributionAmount) {
       setButtonLoading(true)
       const submitResponse = await submitWhitelist.mutateAsync({
@@ -82,11 +95,12 @@ const WhitelistCard: FC<WhitelistCardProps> = ({
       })
       setButtonLoading(false)
       if (submitResponse.status === 'success') {
-        console.log(submitResponse.message)
+        addAlert('success', 'Whitelist successfully submitted')
       }
       else {
-        console.log(submitResponse.message)
+        addAlert('error', submitResponse.message)
       }
+      setOpenErgoVerify(false)
     }
   }
 
@@ -215,6 +229,7 @@ const WhitelistCard: FC<WhitelistCardProps> = ({
 
         </Grid>
       </Paper>
+      <ErgoVerify open={openErgoVerify} setOpen={setOpenErgoVerify} handleSubmit={handleSubmitFinal} />
     </>
   );
 };

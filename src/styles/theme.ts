@@ -165,45 +165,6 @@ const mainTheme = [{
         }
       }
     },
-    MuiSwitch: {
-      styleOverrides: {
-        root: {
-          width: 42,
-          height: 26,
-          padding: 0,
-          '& .MuiSwitch-switchBase': {
-            padding: 0,
-            margin: 2,
-            transitionDuration: '300ms',
-            '&.Mui-checked': {
-              transform: 'translateX(16px)',
-              color: '#fff',
-              '& + .MuiSwitch-track': {
-                opacity: 1,
-                border: 0,
-              },
-              '&.Mui-disabled + .MuiSwitch-track': {
-                opacity: 0.5,
-              },
-            },
-            '&.Mui-focusVisible .MuiSwitch-thumb': {
-              color: '#33cf4d',
-              border: '6px solid #fff',
-            },
-          },
-          '& .MuiSwitch-thumb': {
-            boxSizing: 'border-box',
-            width: 22,
-            height: 22,
-          },
-          '& .MuiSwitch-track': {
-            borderRadius: 26 / 2,
-            opacity: 1,
-            transition: 'background-color 500ms',
-          }
-        }
-      }
-    },
     MuiAlert: {
       styleOverrides: {
         root: {
@@ -297,28 +258,6 @@ let lightTheme = createTheme({
         }
       }
     },
-    MuiSwitch: {
-      styleOverrides: {
-        root: {
-          '& .MuiSwitch-switchBase': {
-            '&.Mui-checked': {
-              '& + .MuiSwitch-track': {
-                backgroundColor: '#00868F',
-              },
-            },
-            '&.Mui-disabled .MuiSwitch-thumb': {
-              color: "#ddd"
-            },
-            '&.Mui-disabled + .MuiSwitch-track': {
-              opacity: 0.7,
-            },
-          },
-          '& .MuiSwitch-track': {
-            backgroundColor: '#E9E9EA',
-          }
-        }
-      }
-    },
     MuiFilledInput: {
       styleOverrides: {
         root: {
@@ -362,44 +301,6 @@ let darkTheme = createTheme({
     }
   },
   components: {
-    // MuiPaper: {
-    //   styleOverrides: {
-    //     root: {
-    //       border: 'none'
-    //     },
-    //   },
-    // },
-    // MuiLink: {
-    //   styleOverrides: {
-    //     root: {
-    //       '&:hover': {
-    //         color: 'rgba(244,244,244,1)',
-    //       }
-    //     }
-    //   }
-    // },
-    MuiSwitch: {
-      styleOverrides: {
-        root: {
-          '& .MuiSwitch-switchBase': {
-            '&.Mui-checked': {
-              '& + .MuiSwitch-track': {
-                backgroundColor: '#9FD2DB',
-              },
-            },
-            '&.Mui-disabled .MuiSwitch-thumb': {
-              color: "#666"
-            },
-            '&.Mui-disabled + .MuiSwitch-track': {
-              opacity: 0.3,
-            },
-          },
-          '& .MuiSwitch-track': {
-            backgroundColor: 'rgba(255, 255, 255, 0.09)',
-          }
-        }
-      }
-    },
     MuiFilledInput: {
       styleOverrides: {
         root: {

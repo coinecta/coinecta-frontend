@@ -37,3 +37,14 @@ type TotalStakePerEpoch = {
   totalActivePools: number;
   totalStakePerPool: { [poolId: string]: number };
 }
+
+type TErgoBox = {
+  boxId: string;
+  value: string | bigint;
+  assets: { tokenId: string; amount: string | bigint }[];
+  ergoTree: string;
+  creationHeight: number;
+  additionalRegisters: NonMandatoryRegisters;
+  index: number;
+  transactionId: TransactionId;
+};

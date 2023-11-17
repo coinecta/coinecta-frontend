@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Box, Button, Grid, TextField } from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { slugify } from '@lib/utils/general';
@@ -38,6 +38,20 @@ const WhitelistInput: FC<IWhitelistInputProps> = ({ data, setData, projectSlug }
         return {
           ...elem,
           [e.target.name]: new Date(e.target.value),
+        };
+      } else {
+        return elem;
+      }
+    });
+    setData(updatedData);
+  };
+
+  const handleChangeCheckbox = (e: any, index: number) => {
+    const updatedData = data.map((elem, i) => {
+      if (index === i) {
+        return {
+          ...elem,
+          [e.target.name]: e.target.checked,
         };
       } else {
         return elem;
@@ -120,6 +134,19 @@ const WhitelistInput: FC<IWhitelistInputProps> = ({ data, setData, projectSlug }
               />
             </Grid>
             <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="ergoProofs"
+                    checked={whitelist.ergoProofs}
+                    onChange={(e) => handleChangeCheckbox(e, index)}
+                  />
+                }
+                label="Ask users to add Ergo wallets"
+                sx={{ mb: 0 }}
+              />
+            </Grid>
+            <Grid item xs={12}>
               <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                 <TextField
                   name="externalLink"
@@ -155,7 +182,7 @@ const WhitelistInput: FC<IWhitelistInputProps> = ({ data, setData, projectSlug }
         onClick={() =>
           setData([
             ...data,
-            { name: '', slug: '', startDateTime: new Date(), endDateTime: new Date() },
+            { name: '', slug: '', startDateTime: new Date(), endDateTime: new Date(), ergoProofs: false },
           ])
         }
       >
