@@ -74,6 +74,7 @@ const TWhitelist = z.object({
   maxPerSignup: z.number().optional(),
   hardCap: z.number().optional(),
   externalLink: z.string().optional(),
+  ergoProofs: z.boolean()
 });
 
 const TProject = z.object({

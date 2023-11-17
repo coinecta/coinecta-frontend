@@ -67,6 +67,9 @@ const Sumsub: FC<SumsubProps> = ({ setSumsubStatus }) => {
 
   return (
     <>
+      <Typography>
+        Please note, residents of the following countries will not be permitted to whitelist: Canada, Cuba, Iran, Iraq, Jordan, Lebanon, Myanmar, North Korea, Russia, Syria, Turkey. Thank you for your understanding.
+      </Typography>
       {accessToken ? (
         <Box sx={{
           p: 4,

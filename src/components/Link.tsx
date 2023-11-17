@@ -45,6 +45,7 @@ interface ILinkProps {
   noLinkStyle?: boolean;
   activeClassName?: string;
   sx?: SxProps;
+  target?: string;
 }
 
 const Link = React.forwardRef<HTMLAnchorElement, ILinkProps>((props, ref) => {

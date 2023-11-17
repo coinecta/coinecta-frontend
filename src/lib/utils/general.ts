@@ -95,4 +95,3 @@ export const getShorterAddress = (address: string, substring?: number): string =
 
   return shortAddress;
 };
-

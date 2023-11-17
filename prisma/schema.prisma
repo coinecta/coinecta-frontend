@@ -60,6 +60,7 @@ model User {
   transactions   Transaction[]
   wallets        Wallet[]
   whitelists     WhitelistSignup[]
+  ergoProofs     ErgoProof[]
 
   @@map("users")
 }
@@ -214,27 +215,12 @@ model Whitelist {
   maxPerSignup  Int?              @map("max_per_signup")
   hardCap       Int?              @map("hard_cap")
   externalLink  String?           @map("external_link")
+  ergoProofs    Boolean           @default(false) @map("ergo_proofs")
   project_slug  String
   signups       WhitelistSignup[]
   project       Project           @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
 
   @@map("whitelists")
-}
-
-model WhitelistSignup {
-  id              String    @id @default(cuid())
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  amountRequested String    @map("amount_requested")
-  amountApproved  String?   @map("amount_approved")
-  status          String?
-  notes           String?
-  whitelist_slug  String
-  user_id         String
-  user            User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  whitelist       Whitelist @relation(fields: [whitelist_slug], references: [slug], onDelete: Cascade)
-
-  @@map("whitelist_signups")
 }
 
 model Fiso {
@@ -364,4 +350,44 @@ model HeroCarousel {
   order       Int     @default(autoincrement())
 
   @@map("hero_carousel")
+}
+
+model WhitelistSignup {
+  id              String    @id @default(cuid())
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  amountRequested String?   @map("amount_requested")
+  amountApproved  String?   @map("amount_approved")
+  status          String?
+  notes           String?
+  user_id         String
+  user            User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  whitelist_slug  String
+  whitelist       Whitelist @relation(fields: [whitelist_slug], references: [slug], onDelete: Cascade)
+
+  @@map("whitelist_signups")
+}
+
+enum ProofStatus {
+  INITIATED // no address yet
+  PENDING // address is added
+  SIGNED // Proof is signed
+  VERIFIED // Proof is verified with a signed proof or on-chain transaction
+  EXPIRED
+}
+
+model ErgoProof {
+  id             Int         @id @default(autoincrement())
+  addresses      String[]
+  verificationId String      @unique @map("verification_id")
+  nonce          String
+  status         ProofStatus
+  walletType     String?     @map("wallet_type")
+  defaultAddress String?     @map("default_address")
+  signedMessage  String?     @map("signed_message")
+  proof          String?
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+  user_id        String
+  user           User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

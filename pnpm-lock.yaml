@@ -26,6 +26,9 @@ dependencies:
   '@emotion/styled':
     specifier: ^11.11.0
     version: 11.11.0(@emotion/react@11.11.1)(@types/react@18.2.17)(react@18.2.0)
+  '@fleet-sdk/core':
+    specifier: ^0.3.2
+    version: 0.3.2
   '@hello-pangea/dnd':
     specifier: ^16.3.0
     version: 16.3.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0)(react@18.2.0)
@@ -113,6 +116,9 @@ dependencies:
   easymde:
     specifier: ^2.18.0
     version: 2.18.0
+  ergo-lib-wasm-nodejs:
+    specifier: ^0.26.0
+    version: 0.26.0
   eslint:
     specifier: 8.45.0
     version: 8.45.0
@@ -149,6 +155,9 @@ dependencies:
   react-markdown:
     specifier: ^8.0.7
     version: 8.0.7(@types/react@18.2.17)(react@18.2.0)
+  react-qr-code:
+    specifier: ^2.0.12
+    version: 2.0.12(react@18.2.0)
   react-scroll:
     specifier: ^1.8.9
     version: 1.8.9(react-dom@18.2.0)(react@18.2.0)
@@ -1236,6 +1245,37 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: false
 
+  /@fleet-sdk/common@0.3.2:
+    resolution: {integrity: sha512-tfZPWv+rEJct9rySHGuAxQXvzUtXu7Bbiti/APWlxQ7FYm8E20XIhlrpj60MUNd/+jOLS+474MZtkylImG8d4g==}
+    engines: {node: '>=14'}
+    dev: false
+
+  /@fleet-sdk/core@0.3.2:
+    resolution: {integrity: sha512-gRDA9h7UyzKt+A7wMByL5cQtLfdSN4SlJWEHztp1D+mZyNhF4N65dlQCpFQSYfNXJ3ORdZiGrUAk7aHz3Zzsmg==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@fleet-sdk/common': 0.3.2
+      '@fleet-sdk/crypto': 0.3.2
+      '@fleet-sdk/serializer': 0.3.2
+    dev: false
+
+  /@fleet-sdk/crypto@0.3.2:
+    resolution: {integrity: sha512-vJodVe3VBAf764t6xk5SsdJtFHYX1bmfipGfzw9L2G3Ph4FyPNC1rRyGAn1XPwAdsQcS0E9m1QLEvXIFdgW3xw==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@fleet-sdk/common': 0.3.2
+      '@noble/hashes': 1.3.2
+      '@scure/base': 1.1.3
+    dev: false
+
+  /@fleet-sdk/serializer@0.3.2:
+    resolution: {integrity: sha512-aihIRL2l2uls2IhpRHSSVy7DKTBBlzgCav+qaG7uFHEZw5txgtNzWTJgmfTU3VQmX1CBaJtLcPQOsXbUNS3QuA==}
+    engines: {node: '>=14'}
+    dependencies:
+      '@fleet-sdk/common': 0.3.2
+      '@fleet-sdk/crypto': 0.3.2
+    dev: false
+
   /@hello-pangea/dnd@16.3.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-RYQ/K8shtJoyNPvFWz0gfXIK7HF3P3mL9UZFGMuHB0ljRSXVgMjVFI/FxcZmakMzw6tO7NflWLriwTNBow/4vw==}
     peerDependencies:
@@ -1714,6 +1754,11 @@ packages:
     dev: false
     optional: true
 
+  /@noble/hashes@1.3.2:
+    resolution: {integrity: sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ==}
+    engines: {node: '>= 16'}
+    dev: false
+
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -1779,6 +1824,10 @@ packages:
 
   /@rushstack/eslint-patch@1.3.2:
     resolution: {integrity: sha512-V+MvGwaHH03hYhY+k6Ef/xKd6RYlc4q8WBx+2ANmipHJcKuktNcI/NgEsJgdSUF6Lw32njT6OnrRsKYCdgHjYw==}
+    dev: false
+
+  /@scure/base@1.1.3:
+    resolution: {integrity: sha512-/+SgoRjLq7Xlf0CWuLHq2LUZeL/w65kfzAPG5NH9pcmBhs+nunQTn4gvdwgMTIXnt9b2C/1SeL2XiysZEyIC9Q==}
     dev: false
 
   /@smithy/abort-controller@2.0.12:
@@ -3169,6 +3218,10 @@ packages:
     dependencies:
       graceful-fs: 4.2.11
       tapable: 2.2.1
+    dev: false
+
+  /ergo-lib-wasm-nodejs@0.26.0:
+    resolution: {integrity: sha512-sG+MOwYKrCgcUbCHwnCOvHHS5wxEkaO/G8zUxlMiX6cSAdN06ddVIGflyqzebKe3z6OO1cN9tfMX0W7fJnzKHg==}
     dev: false
 
   /error-ex@1.3.2:
@@ -5229,6 +5282,10 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
+  /qr.js@0.0.0:
+    resolution: {integrity: sha512-c4iYnWb+k2E+vYpRimHqSu575b1/wKl4XFeJGpFmrJQz5I88v9aY2czh7s0w36srfCM1sXgC/xpoJz5dJfq+OQ==}
+    dev: false
+
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: false
@@ -5294,6 +5351,20 @@ packages:
       vfile: 5.3.7
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /react-qr-code@2.0.12(react@18.2.0):
+    resolution: {integrity: sha512-k+pzP5CKLEGBRwZsDPp98/CAJeXlsYRHM2iZn1Sd5Th/HnKhIZCSg27PXO58zk8z02RaEryg+60xa4vyywMJwg==}
+    peerDependencies:
+      react: ^16.x || ^17.x || ^18.x
+      react-native-svg: '*'
+    peerDependenciesMeta:
+      react-native-svg:
+        optional: true
+    dependencies:
+      prop-types: 15.8.1
+      qr.js: 0.0.0
+      react: 18.2.0
     dev: false
 
   /react-redux@8.1.3(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1):

@@ -88,6 +88,7 @@ export const mapFullProjectFromDb = (projectDb: ProjectWithRelations | null): z.
     maxPerSignup: whitelist.maxPerSignup || 0,
     hardCap: whitelist.hardCap || 0,
     externalLink: whitelist.externalLink || '',
+    ergoProofs: whitelist.ergoProofs
   }));
 
   // Combine everything into a project
