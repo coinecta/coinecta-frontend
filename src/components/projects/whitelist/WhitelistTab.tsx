@@ -30,7 +30,7 @@ const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
         {sessionStatus === 'authenticated' ? (
           <>
             <Box sx={{ mb: 2 }}>
-              <Collapse in={checkVerificationResult.data?.sumsubStatus === 'completed'} mountOnEnter unmountOnExit>
+              <Collapse in={checkVerificationResult.data?.sumsubStatus === 'completed' || sessionData?.user.isAdmin} mountOnEnter unmountOnExit>
                 <Alert
                   variant="outlined"
                   severity={
@@ -55,7 +55,7 @@ const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
                   )
                 })}
               </Collapse>
-              <Collapse in={checkVerificationResult.data?.sumsubStatus !== 'completed' || sessionData?.user.isAdmin} mountOnEnter unmountOnExit>
+              <Collapse in={checkVerificationResult.data?.sumsubStatus !== 'completed'} mountOnEnter unmountOnExit>
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="h4" sx={{ mb: 0 }}>
                     KYC/AML
