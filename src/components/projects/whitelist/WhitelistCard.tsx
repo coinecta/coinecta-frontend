@@ -17,6 +17,7 @@ type WhitelistCardProps = {
   externalLink?: string | undefined;
   projectSlug: string;
   ergoProofs: boolean;
+  disabled?: boolean;
 }
 
 const WhitelistCard: FC<WhitelistCardProps> = ({
@@ -28,7 +29,8 @@ const WhitelistCard: FC<WhitelistCardProps> = ({
   hardCap,
   externalLink,
   projectSlug,
-  ergoProofs
+  ergoProofs,
+  disabled
 }) => {
   const { addAlert } = useAlert()
   const [dateStatus, setDateStatus] = useState('');
@@ -198,7 +200,12 @@ const WhitelistCard: FC<WhitelistCardProps> = ({
                   <Box sx={{ position: 'relative', display: 'inline-block' }}>
                     <Button
                       variant="contained"
-                      disabled={dateStatus !== 'started' || contributionAmountError || buttonLoading}
+                      disabled={
+                        dateStatus !== 'started'
+                        || contributionAmountError
+                        || buttonLoading
+                        || disabled
+                      }
                       color="secondary"
                       onClick={handleSubmit}
                       sx={{

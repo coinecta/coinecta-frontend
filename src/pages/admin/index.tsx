@@ -2,17 +2,12 @@ import React from 'react';
 import { NextPage } from 'next';
 import { useWalletContext } from '@contexts/WalletContext';
 import { useRouter } from 'next/router';
-import CreateProjectPage from '@components/admin/Pages/CreateProjectPage';
 import ErrorPage from '@components/ErrorPage';
-import EditProjectPage from '@components/admin/Pages/EditProjectPage';
-import AddSpoSignupsManuallyPage from '@components/admin/Pages/AddSpoSignupsManuallyPage';
-import FisoManagementPage from '@components/admin/Pages/FisoManagementPage';
 import { Box, Container } from '@mui/material';
 import AdminMenu from '@components/admin/AdminMenu';
 
 const AdminIndex: NextPage = () => {
   const { sessionData, sessionStatus } = useWalletContext()
-  const router = useRouter()
 
   return (
     <>
