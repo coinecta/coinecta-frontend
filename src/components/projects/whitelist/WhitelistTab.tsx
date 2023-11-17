@@ -30,32 +30,7 @@ const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
         {sessionStatus === 'authenticated' ? (
           <>
             <Box sx={{ mb: 2 }}>
-              <Collapse in={checkVerificationResult.data?.sumsubStatus === 'completed' || sessionData?.user.isAdmin} mountOnEnter unmountOnExit>
-                <Alert
-                  variant="outlined"
-                  severity={
-                    !checkVerificationResult.data?.sumsubResult?.reviewAnswer
-                      ? 'error'
-                      : checkVerificationResult.data?.sumsubResult.reviewAnswer === 'GREEN'
-                        ? 'success'
-                        : 'error'
-                  }
-                  sx={{ mb: 2 }}
-                >
-                  KYC Status: {
-                    !checkVerificationResult.data?.sumsubResult?.reviewAnswer ?
-                      'Sumsub result not available, please contact support'
-                      : checkVerificationResult.data?.sumsubResult?.reviewAnswer === 'GREEN'
-                        ? 'Verified'
-                        : 'Failed, contact support for more info'}
-                </Alert>
-                {whitelists.map((item, i) => {
-                  return (
-                    <WhitelistCard {...item} projectSlug={projectSlug} key={`whitelist-${i}`} />
-                  )
-                })}
-              </Collapse>
-              <Collapse in={checkVerificationResult.data?.sumsubStatus !== 'completed'} mountOnEnter unmountOnExit>
+              <Collapse in={!checkVerificationResult.data?.sumsubResult?.reviewAnswer || checkVerificationResult.data?.sumsubResult?.reviewAnswer !== 'GREEN'} mountOnEnter unmountOnExit>
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="h4" sx={{ mb: 0 }}>
                     KYC/AML
@@ -65,23 +40,51 @@ const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
                   </Typography>
                   <Sumsub setSumsubStatus={setSumsubStatus} />
                 </Box>
-                {whitelists.filter(item => item.externalLink).length > 0 &&
-                  (
-                    <Box sx={{ mb: 6 }}>
-                      <Typography variant="h4" sx={{ mb: 0 }}>
-                        External whitelists
-                      </Typography>
-                      <Typography color="text.secondary" sx={{ mb: 2 }}>
-                        Follow the instructions on the external site to complete their whitelist process
-                      </Typography>
-                      {whitelists.filter(item => item.externalLink).map((item, i) => {
-                        return (
-                          <WhitelistCard {...item} projectSlug={projectSlug} key={`external-whitelist-${i}`} />
-                        )
-                      })}
-                    </Box>
-                  )}
               </Collapse>
+              <Alert
+                variant="outlined"
+                severity={
+                  !checkVerificationResult.data?.sumsubResult?.reviewAnswer
+                    ? 'error'
+                    : checkVerificationResult.data?.sumsubResult.reviewAnswer === 'GREEN'
+                      ? 'success'
+                      : 'error'
+                }
+                sx={{ mb: 2 }}
+              >
+                KYC Status: {
+                  !checkVerificationResult.data?.sumsubResult?.reviewAnswer ?
+                    'Sumsub result not available, please contact support if this is incorrect. '
+                    : checkVerificationResult.data?.sumsubResult?.reviewAnswer === 'GREEN'
+                      ? 'Verified'
+                      : 'Failed, contact support for more info'}
+              </Alert>
+              {whitelists.filter(item => !item.externalLink).map((item, i) => {
+                return (
+                  <WhitelistCard
+                    {...item}
+                    projectSlug={projectSlug}
+                    key={`whitelist-${i}`}
+                    disabled={!checkVerificationResult.data?.sumsubResult?.reviewAnswer || checkVerificationResult.data?.sumsubResult.reviewAnswer !== 'GREEN'}
+                  />
+                )
+              })}
+              {whitelists.filter(item => item.externalLink).length > 0 &&
+                (
+                  <Box sx={{ mb: 6 }}>
+                    <Typography variant="h4" sx={{ mb: 0 }}>
+                      External whitelists
+                    </Typography>
+                    <Typography color="text.secondary" sx={{ mb: 2 }}>
+                      Follow the instructions on the external site to complete their whitelist process
+                    </Typography>
+                    {whitelists.filter(item => item.externalLink).map((item, i) => {
+                      return (
+                        <WhitelistCard {...item} projectSlug={projectSlug} key={`external-whitelist-${i}`} />
+                      )
+                    })}
+                  </Box>
+                )}
               {/* <Typography>
                 Check back soon for whitelist availability.
               </Typography> */}
