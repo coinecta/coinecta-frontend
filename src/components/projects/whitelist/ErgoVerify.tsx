@@ -500,8 +500,8 @@ const ErgoVerify: FC<IErgoVerifyProps> = ({ open, setOpen, handleSubmit }) => {
 
         <Collapse in={openAddWallet}>
 
-          {wallets.map((item) => (
-            <WalletButtonComponent {...item} />
+          {wallets.map((item, i) => (
+            <WalletButtonComponent {...item} key={`${item.name}-${i}`} />
           ))}
 
         </Collapse>
@@ -535,6 +535,7 @@ const ErgoVerify: FC<IErgoVerifyProps> = ({ open, setOpen, handleSubmit }) => {
             const wallet = wallets.find(wallet => item.walletType === wallet.walletType)
             return (
               <Box
+                key={item.verificationId}
                 sx={{
                   p: '3px 12px',
                   fontSize: '1rem',

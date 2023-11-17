@@ -100,7 +100,7 @@ const FisoManagementPage: FC = () => {
       resetData();
       setShouldResetData(false);
     }
-  }, [shouldResetData, resetData]);
+  }, [shouldResetData]);
 
   useEffect(() => {
     setShouldResetData(true)
