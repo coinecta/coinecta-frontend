@@ -54,7 +54,7 @@ const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
               >
                 KYC Status: {
                   !checkVerificationResult.data?.sumsubResult?.reviewAnswer ?
-                    'Sumsub result not available, please contact support if this is incorrect. '
+                    'KYC was not successful or is incomplete, please contact support if this is incorrect. '
                     : checkVerificationResult.data?.sumsubResult?.reviewAnswer === 'GREEN'
                       ? 'Verified'
                       : 'Failed, contact support for more info'}
