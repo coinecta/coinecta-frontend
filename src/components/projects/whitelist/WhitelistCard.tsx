@@ -1,11 +1,10 @@
 import React, { ChangeEvent, FC, useEffect, useState } from 'react';
 import { Box, Typography, Paper, Button, CircularProgress } from '@mui/material';
-import TextFieldWithButton from '@components/styled-components/TextFieldWithButton';
 import TimeRemaining from '@components/TimeRemaining';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import { trpc } from '@lib/utils/trpc';
-import ErgoVerify from './ErgoVerify';
 import { useAlert } from '@contexts/AlertContext';
+import ErgoDialog from './ErgoDialog';
 
 type WhitelistCardProps = {
   name: string;
@@ -236,7 +235,7 @@ const WhitelistCard: FC<WhitelistCardProps> = ({
 
         </Grid>
       </Paper>
-      <ErgoVerify open={openErgoVerify} setOpen={setOpenErgoVerify} handleSubmit={handleSubmitFinal} />
+      <ErgoDialog open={openErgoVerify} setOpen={setOpenErgoVerify} handleSubmit={handleSubmitFinal} />
     </>
   );
 };

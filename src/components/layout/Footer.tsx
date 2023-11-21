@@ -44,27 +44,31 @@ const secondPages = {
     {
       name: "Documentation",
       link: "https://docs.coinecta.fi",
+    },
+    {
+      name: "Contact us",
+      link: "/contact",
     }
   ],
 };
 
-const thirdPages = {
-  title: 'Launchpad',
-  links: [
-    {
-      name: "Stake",
-      link: "/stake",
-    },
-    {
-      name: "Contribute",
-      link: "/contribute",
-    },
-    {
-      name: "Redeem",
-      link: "/redeem",
-    },
-  ],
-};
+// const thirdPages = {
+//   title: 'Launchpad',
+//   links: [
+//     {
+//       name: "Stake",
+//       link: "/stake",
+//     },
+//     {
+//       name: "Contribute",
+//       link: "/contribute",
+//     },
+//     {
+//       name: "Redeem",
+//       link: "/redeem",
+//     },
+//   ],
+// };
 
 // const fourthPages = {
 //   title: 'Fourth',
@@ -157,7 +161,7 @@ const Footer: FC = () => {
           <Grid container direction="row" justifyContent="flex-end" spacing={4} sx={{ flexWrap: 'wrap' }}>
             {firstPages.links.length != 0 && LinkList(firstPages)}
             {secondPages.links.length != 0 && LinkList(secondPages)}
-            {thirdPages.links.length != 0 && LinkList(thirdPages)}
+            {/* {thirdPages.links.length != 0 && LinkList(thirdPages)} */}
             <Grid item xs={6} md={3} sx={{}} zeroMinWidth>
               <Typography sx={titleFont}>Socials</Typography>
               <Grid
