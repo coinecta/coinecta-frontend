@@ -1,23 +1,16 @@
-import React, { FC, SyntheticEvent, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useAlert } from '@contexts/AlertContext';
 import { trpc } from '@lib/utils/trpc';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
   Collapse,
   Typography,
-  CircularProgress,
-  DialogActions,
   useMediaQuery,
   Box,
   useTheme,
   Avatar,
   Button,
-  Checkbox,
-  FormControlLabel,
-  Switch,
-  IconButton
+  IconButton,
+  Divider
 } from '@mui/material';
 import Link from '@components/Link';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -98,13 +91,7 @@ interface ErgopadStakedResponse {
   };
 }
 
-interface IErgoVerifyProps {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handleSubmit: () => void;
-}
-
-const ErgoVerify: FC<IErgoVerifyProps> = ({ open, setOpen, handleSubmit }) => {
+const ErgoVerify: FC = () => {
   const { addAlert } = useAlert()
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -170,12 +157,6 @@ const ErgoVerify: FC<IErgoVerifyProps> = ({ open, setOpen, handleSubmit }) => {
       getErgopadStaked(uniqueAddresses);
     }
   }, [usersProofs.data])
-
-  const handleClose = (event: SyntheticEvent, reason?: string) => {
-    if (reason !== 'backdropClick') {
-      setOpen(false);
-    }
-  };
 
   const handleOpenAddWallet = () => {
     if (!openAddWallet) {
@@ -356,6 +337,7 @@ const ErgoVerify: FC<IErgoVerifyProps> = ({ open, setOpen, handleSubmit }) => {
         });
         if (response?.status === 'success') {
           // console.log(response)
+          await usersProofs.refetch();
           addAlert('success', 'Verification successful')
         }
       } catch (error) {
@@ -474,187 +456,161 @@ const ErgoVerify: FC<IErgoVerifyProps> = ({ open, setOpen, handleSubmit }) => {
   }
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullScreen={fullScreen}
-      PaperProps={{
-        variant: 'outlined'
-      }}
-    >
-      <DialogTitle
+    <Box sx={{ display: 'block', position: 'relative', maxWidth: 'sm' }}>
+      <Button
+        endIcon={<ExpandMoreIcon sx={{ transform: openAddWallet ? 'rotate(180deg)' : null }} />}
+        startIcon={
+          <Box>
+            <Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.primary }}>
+              {openAddWallet ? 'Close wallet list' : `Add a wallet`}
+            </Typography>
+          </Box>
+        }
         sx={{
-          textAlign: "center",
-          fontWeight: "800",
-          fontSize: "32px",
+          background: theme.palette.background.paper,
+          border: `1px solid ${theme.palette.divider}`,
+          borderRadius: '6px',
+          mb: 1,
+          px: 2,
+          textTransform: 'none',
+          '& .MuiListItemSecondaryAction-root': {
+            height: '24px'
+          },
+          color: theme.palette.text.secondary,
+          justifyContent: "space-between"
         }}
-      >
-        Connect Ergo Wallet
-      </DialogTitle>
-      <DialogContent sx={{ minWidth: '350px', maxWidth: !fullScreen ? '460px' : null }}>
-        <>
-          <Typography variant="body2" sx={{ fontSize: '1rem!important' }}>
-            This round offers benefits to Ergopad stakers but you can participate without staking Ergopad tokens. When you&apos;re done adding an Ergo wallet, submit your whitelist below.
-          </Typography>
-        </>
+        fullWidth
+        onClick={() => handleOpenAddWallet()}
+      />
+      <Collapse in={openAddWallet}>
 
-        <Collapse in={openAddWallet}>
+        {wallets.map((item, i) => (
+          <WalletButtonComponent {...item} key={`${item.name}-${i}`} />
+        ))}
 
-          {wallets.map((item, i) => (
-            <WalletButtonComponent {...item} key={`${item.name}-${i}`} />
-          ))}
-
-        </Collapse>
-        <Button
-          endIcon={<ExpandMoreIcon sx={{ transform: openAddWallet ? 'rotate(180deg)' : null }} />}
-          startIcon={
-            <Box>
-              <Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.primary }}>
-                {openAddWallet ? 'Close wallet list' : `Add a wallet`}
-              </Typography>
-            </Box>}
-          sx={{
-            background: theme.palette.background.paper,
-            border: `1px solid ${theme.palette.divider}`,
-            borderRadius: '6px',
-            mb: 1,
-            px: 2,
-            textTransform: 'none',
-            '& .MuiListItemSecondaryAction-root': {
-              height: '24px'
-            },
-            color: theme.palette.text.secondary,
-            justifyContent: "space-between"
-          }}
-          fullWidth
-          onClick={() => handleOpenAddWallet()}
-        />
-        <Collapse in={openManageWallets}>
-
-          {usersProofs.data && usersProofs.data.map((item) => {
-            const wallet = wallets.find(wallet => item.walletType === wallet.walletType)
-            return (
-              <Box
-                key={item.verificationId}
-                sx={{
-                  p: '3px 12px',
-                  fontSize: '1rem',
-                  minWidth: '64px',
-                  width: '100%',
-                  background: theme.palette.background.paper,
-                  border: `1px solid ${theme.palette.divider}`,
-                  borderRadius: '6px',
-                  mb: 1,
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: 2,
-                }}
-              >
-                <Box>
-                  <Avatar
-                    src={theme.palette.mode === 'dark' ? wallet?.iconDark : wallet?.icon}
-                    sx={{ height: '24px', width: '24px' }}
-                    variant={wallet?.walletType === 'mobile' ? "circular" : "square"}
-                  />
-                </Box>
-                <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {item.defaultAddress}
-                </Box>
-                <Box>
-                  <IconButton onClick={() => {
-                    removeItem(item.verificationId)
-                  }}>
-                    <ClearIcon sx={{ height: '18px', width: '18px' }} />
-                  </IconButton>
-                </Box>
+      </Collapse>
+      {/* <Divider sx={{ mb: 2, mt: 1 }} /> */}
+      <Button
+        endIcon={<ExpandMoreIcon sx={{ transform: openManageWallets ? 'rotate(180deg)' : null }} />}
+        startIcon={
+          <Box>
+            <Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.primary }}>
+              {openManageWallets ? 'Close' : `Manage wallets`}
+            </Typography>
+          </Box>}
+        sx={{
+          background: theme.palette.background.paper,
+          border: `1px solid ${theme.palette.divider}`,
+          borderRadius: '6px',
+          mb: 1,
+          px: 2,
+          textTransform: 'none',
+          '& .MuiListItemSecondaryAction-root': {
+            height: '24px'
+          },
+          color: theme.palette.text.secondary,
+          justifyContent: "space-between"
+        }}
+        fullWidth
+        onClick={() => handleOpenManageWallets()}
+      />
+      <Collapse in={openManageWallets}>
+        {usersProofs.data && usersProofs.data.map((item) => {
+          const wallet = wallets.find(wallet => item.walletType === wallet.walletType)
+          return (
+            <Box
+              key={item.verificationId}
+              sx={{
+                p: '3px 12px',
+                fontSize: '1rem',
+                minWidth: '64px',
+                width: '100%',
+                background: theme.palette.background.paper,
+                border: `1px solid ${theme.palette.divider}`,
+                borderRadius: '6px',
+                mb: 1,
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 2,
+              }}
+            >
+              <Box>
+                <Avatar
+                  src={theme.palette.mode === 'dark' ? wallet?.iconDark : wallet?.icon}
+                  sx={{ height: '24px', width: '24px' }}
+                  variant={wallet?.walletType === 'mobile' ? "circular" : "square"}
+                />
               </Box>
-            )
-          })}
+              <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {item.defaultAddress}
+              </Box>
+              <Box>
+                <IconButton onClick={() => {
+                  removeItem(item.verificationId)
+                }}>
+                  <ClearIcon sx={{ height: '18px', width: '18px' }} />
+                </IconButton>
+              </Box>
+            </Box>
+          )
+        })}
 
-        </Collapse>
-        <Button
-          endIcon={<ExpandMoreIcon sx={{ transform: openManageWallets ? 'rotate(180deg)' : null }} />}
-          startIcon={
-            <Box>
-              <Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.primary }}>
-                {openManageWallets ? 'Close' : `Manage wallets`}
-              </Typography>
-            </Box>}
-          sx={{
-            background: theme.palette.background.paper,
-            border: `1px solid ${theme.palette.divider}`,
-            borderRadius: '6px',
-            mb: 2,
-            px: 2,
-            textTransform: 'none',
-            '& .MuiListItemSecondaryAction-root': {
-              height: '24px'
-            },
-            color: theme.palette.text.secondary,
-            justifyContent: "space-between"
-          }}
-          fullWidth
-          onClick={() => handleOpenManageWallets()}
+      </Collapse>
+
+      <Collapse in={ergopayOpen} mountOnEnter unmountOnExit>
+        <Typography sx={{ fontSize: '1.1rem !important', fontWeight: 700, mb: 1, lineHeight: 1 }}>
+          Step 1: Provide your address by selecting it with Ergopay
+        </Typography>
+        <Ergopay
+          open={ergopayOpen}
+          setOpen={setErgopayOpen}
+          walletType={ergopayInfo.walletType}
+          messageSigning={ergopayInfo.messageSigning}
+          callback={handleErgopayCallback}
         />
-        <Collapse in={ergopayOpen} mountOnEnter unmountOnExit>
+      </Collapse>
+      <Collapse in={ergoauthOpen} mountOnEnter unmountOnExit>
+        <Typography sx={{ fontSize: '1.1rem !important', fontWeight: 700, mb: 1, lineHeight: 1 }}>
+          Step 1: Complete!
+        </Typography>
+        <Typography sx={{ fontSize: '1.1rem !important', fontWeight: 700, mb: 1, lineHeight: 1 }}>
+          Step 2: Sign a message with Ergoauth to verify wallet ownership
+        </Typography>
+        {defaultAddress && verificationId && <Ergoauth
+          walletType={ergopayInfo.walletType}
+          verificationId={verificationId}
+          defaultAddress={defaultAddress}
+          callback={handleErgoauthCallback}
+        />}
+      </Collapse>
+      <Collapse in={transactionVerifyOpen}>
+        <Box sx={{ mb: 2 }}>
           <Typography sx={{ fontSize: '1.1rem !important', fontWeight: 700, mb: 1, lineHeight: 1 }}>
-            Step 1: Provide your address by selecting it with Ergopay
+            Please sign the transaction to verify your wallet.
           </Typography>
-          <Ergopay
-            open={ergopayOpen}
-            setOpen={setErgopayOpen}
-            walletType={ergopayInfo.walletType}
-            messageSigning={ergopayInfo.messageSigning}
-            callback={handleErgopayCallback}
-          />
-        </Collapse>
-        <Collapse in={ergoauthOpen} mountOnEnter unmountOnExit>
-          <Typography sx={{ fontSize: '1.1rem !important', fontWeight: 700, mb: 1, lineHeight: 1 }}>
-            Step 1: Complete!
+          <Typography sx={{ fontSize: '0.9rem !important', color: theme.palette.text.secondary, mb: 1, lineHeight: 1 }}>
+            The transaction sends 0.1 erg to yourself. We will be able to verify your ownership of the wallet once it hits the blockchain.
           </Typography>
-          <Typography sx={{ fontSize: '1.1rem !important', fontWeight: 700, mb: 1, lineHeight: 1 }}>
-            Step 2: Sign a message with Ergoauth to verify wallet ownership
-          </Typography>
-          {defaultAddress && verificationId && <Ergoauth
-            walletType={ergopayInfo.walletType}
-            verificationId={verificationId}
-            defaultAddress={defaultAddress}
-            callback={handleErgoauthCallback}
-          />}
-        </Collapse>
-        <Collapse in={transactionVerifyOpen}>
-          <Box sx={{ mb: 2 }}>
-            <Typography sx={{ fontSize: '1.1rem !important', fontWeight: 700, mb: 1, lineHeight: 1 }}>
-              Please sign the transaction to verify your wallet.
-            </Typography>
-            <Typography sx={{ fontSize: '0.9rem !important', color: theme.palette.text.secondary, mb: 1, lineHeight: 1 }}>
-              The transaction sends 0.1 erg to yourself. We will be able to verify your ownership of the wallet once it hits the blockchain.
-            </Typography>
-            <LinearProgress />
-          </Box>
+          <LinearProgress />
+        </Box>
 
-        </Collapse>
-        {usersProofs?.data && usersProofs?.data.length > 0 ? (
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography sx={{ fontSize: '0.9rem !important', color: theme.palette.text.secondary, mb: 0, lineHeight: 1 }}>
-              You have {usersProofs?.data.length} wallets connected {` with ${ergopadStaked?.totalStaked.toLocaleString(undefined, { maximumFractionDigits: 0 }) || 'no'} Ergopad staked.`}
-            </Typography>
-          </Box>
-        ) : (
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography sx={{ fontSize: '0.9rem !important', color: theme.palette.text.secondary, mb: 0, lineHeight: 1 }}>
-              Add a wallet to see how much you have staked.
-            </Typography>
-          </Box>
-        )}
-      </DialogContent>
-      <DialogActions sx={{ justifyContent: 'space-between', m: 1 }}>
-        <Button variant="contained" onClick={handleSubmit}>Submit Whitelist</Button>
-        <Button onClick={handleClose}>Cancel</Button>
-      </DialogActions>
-    </Dialog>
+      </Collapse>
+      {usersProofs?.data && usersProofs?.data.length > 0 ? (
+        <Box sx={{ textAlign: 'center', mt: 2 }}>
+          <Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.primary, mb: 0, lineHeight: 1 }}>
+            You have {usersProofs?.data.length} wallets connected {` with ${ergopadStaked?.totalStaked.toLocaleString(undefined, { maximumFractionDigits: 0 }) || 'no'} Ergopad staked.`}
+          </Typography>
+        </Box>
+      ) : (
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.primary, mb: 0, lineHeight: 1 }}>
+            Add a wallet to see how much you have staked.
+          </Typography>
+        </Box>
+      )}
+    </Box>
   );
 };
 

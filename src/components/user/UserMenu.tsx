@@ -309,6 +309,12 @@ const UserMenu: FC<IUserMenuProps> = () => {
               </ListItemIcon>
               Change Wallet
             </MenuItem> */}
+            <MenuItem onClick={() => router.push('/user/connected-wallets')}>
+              <ListItemIcon>
+                <AccountBalanceWalletIcon fontSize="small" />
+              </ListItemIcon>
+              Connected Wallets
+            </MenuItem>
             <MenuItem onClick={() => {
               cleanup()
               setProviderLoading(true)

@@ -26,11 +26,6 @@ const pages = [
   {
     name: "Projects",
     link: "/projects"
-  },
-  {
-    name: "Dashboard",
-    link: "/dashboard",
-    disabled: true
   }
 ];
 
