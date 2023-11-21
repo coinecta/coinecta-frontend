@@ -411,7 +411,7 @@ const ErgoVerify: FC = () => {
   };
 
   const handleErgopayCallback = (success: boolean, address: string, verification: string) => {
-    if (success) {
+    if (success && !ergoauthOpen) {
       setDefaultAddress(address)
       setVerificationId(verification)
       if (ergopayInfo.messageSigning) {
@@ -560,7 +560,7 @@ const ErgoVerify: FC = () => {
       </Collapse>
 
       <Collapse in={ergopayOpen} mountOnEnter unmountOnExit>
-        <Typography sx={{ fontSize: '1.1rem !important', fontWeight: 700, mb: 1, lineHeight: 1 }}>
+        <Typography sx={{ fontSize: '1.1rem !important', fontWeight: 700, my: 1, lineHeight: 1 }}>
           Step 1: Provide your address by selecting it with Ergopay
         </Typography>
         <Ergopay
@@ -572,7 +572,7 @@ const ErgoVerify: FC = () => {
         />
       </Collapse>
       <Collapse in={ergoauthOpen} mountOnEnter unmountOnExit>
-        <Typography sx={{ fontSize: '1.1rem !important', fontWeight: 700, mb: 1, lineHeight: 1 }}>
+        <Typography sx={{ fontSize: '1.1rem !important', fontWeight: 700, my: 1, lineHeight: 1 }}>
           Step 1: Complete!
         </Typography>
         <Typography sx={{ fontSize: '1.1rem !important', fontWeight: 700, mb: 1, lineHeight: 1 }}>
