@@ -48,3 +48,16 @@ type TErgoBox = {
   index: number;
   transactionId: TransactionId;
 };
+
+type TProRataFormProps = {
+  startDate: Date;
+  endDate: Date;
+  tokenTarget: number;
+  tokenTicker: string;
+  price: number;
+  currency: string;
+  deposited: number;
+  roundName: string;
+  projectName: string;
+  projectIcon: string;
+}

@@ -129,20 +129,21 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
     setCustomAddressText(e.target.value)
   }
   const deriveCustomRewardAddress = (address: string) => {
+    const trimmedAddress = address.trim()
     if (address === '') {
       setCustomRewardAddress(undefined)
       return
     }
     try {
-      const rewardAddress = resolveRewardAddress(address);
+      const rewardAddress = resolveRewardAddress(trimmedAddress);
       if (rewardAddress) {
         setCustomRewardAddress(rewardAddress);
       }
     } catch (error) {
       try {
-        const rewardAddress = resolveStakeKeyHash(address);
+        const rewardAddress = resolveStakeKeyHash(trimmedAddress);
         if (rewardAddress) {
-          setCustomRewardAddress(address);
+          setCustomRewardAddress(trimmedAddress);
         }
       } catch (innerError) {
         setCustomRewardAddress(undefined);
@@ -234,10 +235,10 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
               : (
                 <>
                   <Typography>
-                    Your current estimated rewards:
+                    Estimated rewards to epoch {currentEpoch - 1}:
                   </Typography>
                   <Typography variant="h5">
-                    {fisoUserInfoQuery.data
+                    {fisoUserInfoQuery.data && !Number.isNaN(fisoUserInfoQuery.data.userEarned)
                       ? `${fisoUserInfoQuery.data.userEarned.toLocaleString(
                         undefined,
                         { maximumFractionDigits: 2 }
