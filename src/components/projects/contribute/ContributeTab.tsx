@@ -47,48 +47,54 @@ const ContributeTab: FC<ContributeTabProps> = ({ projectName, projectIcon }) => 
     setTabValue(newValue);
   };
 
-  const forms = [
-    {
-      roundName: 'Public Round',
-      saleType: 'pro-rata',
-      startDate: new Date(1698835989000),
-      endDate: new Date(1701610416000),
-      tokenTicker: 'CNCT',
-      tokenTarget: 20000000,
-      currency: 'ADA',
-      price: 0.12,
-      deposited: 2213516,
-    },
-    {
-      roundName: 'Ergopad Staker Round',
-      saleType: 'pro-rata',
-      startDate: new Date(1701228385000),
-      endDate: new Date(1701314785000),
-      tokenTicker: 'CNCT',
-      tokenTarget: 5000000,
-      currency: 'ADA',
-      price: 0.12,
-      deposited: 0,
-    }
+  const forms: any[] = [
+    // {
+    //   roundName: 'Public Round',
+    //   saleType: 'pro-rata',
+    //   startDate: new Date(1698835989000),
+    //   endDate: new Date(1701610416000),
+    //   tokenTicker: 'CNCT',
+    //   tokenTarget: 20000000,
+    //   currency: 'ADA',
+    //   price: 0.12,
+    //   deposited: 2213516,
+    // },
+    // {
+    //   roundName: 'Ergopad Staker Round',
+    //   saleType: 'pro-rata',
+    //   startDate: new Date(1701228385000),
+    //   endDate: new Date(1701314785000),
+    //   tokenTicker: 'CNCT',
+    //   tokenTarget: 5000000,
+    //   currency: 'ADA',
+    //   price: 0.12,
+    //   deposited: 0,
+    // }
   ]
 
   return (
     <Box sx={{ mb: 2 }}>
-      <ContainedTabs
-        value={tabValue}
-        onChange={handleChangeTab}
-        aria-label="styled tabs example"
-      >
-        {forms.map((round, i) => (
-          <ContainedTab key={`tab-${i}`} label={round.roundName} />
-        ))}
-      </ContainedTabs>
-      <Box sx={{ my: 2 }}>
-        {forms.map((round, i) => (
-          tabValue === i &&
-          <ProRataForm key={`form-${i}`} {...round} projectName={projectName} projectIcon={projectIcon} />
-        ))}
-      </Box>
+      {forms.length > 0
+        ? <>
+          <ContainedTabs
+            value={tabValue}
+            onChange={handleChangeTab}
+            aria-label="styled tabs example"
+          >
+            {forms.map((round, i) => (
+              <ContainedTab key={`tab-${i}`} label={round.roundName} />
+            ))}
+          </ContainedTabs>
+          <Box sx={{ my: 2 }}>
+            {forms.map((round, i) => (
+              tabValue === i &&
+              <ProRataForm key={`form-${i}`} {...round} projectName={projectName} projectIcon={projectIcon} />
+            ))}
+          </Box></>
+        : <Typography>
+          No contribution forms available at this time. Check back soon.
+        </Typography>}
+
     </Box>
   );
 };
