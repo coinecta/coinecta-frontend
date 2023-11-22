@@ -284,7 +284,9 @@ export const calculateFisoRewards = async (
     }
 
     // Extract necessary details from the FISO
-    const { startEpoch: fisoStartEpoch, endEpoch: fisoEndEpoch, tokenAmount: totalTokens, approvedStakepools } = fiso;
+    const { startEpoch, endEpoch, tokenAmount: totalTokens, approvedStakepools } = fiso;
+    let fisoStartEpoch = startEpoch + 1
+    let fisoEndEpoch = endEpoch + 1
 
     // get or set current epoch, only doing the API call here if necessary (not already done outside of the function)
     let currentEpoch = currentEpochProvided
@@ -300,12 +302,12 @@ export const calculateFisoRewards = async (
     }
 
     let totalEarned = 0;
-    const epochsToFetch = Math.min(fisoEndEpoch, currentEpoch) - fisoStartEpoch + 1;
+    const epochsToFetch = Math.min(fisoEndEpoch, currentEpoch + 1) - fisoStartEpoch + 1;
 
     // Fetch the total stake per epoch.
     const totalStakePerEpoch = await checkTotalStake(
       fiso,
-      fisoStartEpoch,
+      fisoStartEpoch - 2,
       fisoEndEpoch,
       currentEpoch,
       approvedStakepools
@@ -326,7 +328,7 @@ export const calculateFisoRewards = async (
 
     if (userStakeAddress && epochsToFetch > 0) {
       // Fetch the user's stake history within the FISO's period
-      let userStakeHistories = await prisma.userStakeHistory.findMany({
+      const userStakeHistories = await prisma.userStakeHistory.findMany({
         where: {
           user_reward_address: userStakeAddress,
           active_epoch: {
@@ -334,20 +336,17 @@ export const calculateFisoRewards = async (
             lte: Math.min(fisoEndEpoch, currentEpoch), // The FISO's end epoch or the current epoch, whichever is smaller
           },
         },
-        orderBy: {
-          active_epoch: 'asc'
-        }
       });
 
       // console.log('\x1b[36m%s\x1b[0m', 'userStakeHistories:', userStakeHistories); // Cyan
       // console.log('\x1b[33m%s\x1b[0m', 'epochsToFetch:', epochsToFetch); // Yellow
 
       if (userStakeHistories.length === epochsToFetch) {
-        userStakeDetails = userStakeHistories.map(history => ({ poolId: history.pool_id, epoch: (history.active_epoch - 1), amount: Number(history.amount) }));
+        userStakeDetails = userStakeHistories.map(history => ({ poolId: history.pool_id, epoch: history.active_epoch, amount: Number(history.amount) }));
       } else {
         console.log('\x1b[36m%s\x1b[0m', `Database missing ${epochsToFetch - userStakeHistories.length} epochs for user history`)
         const confirmedUserStakeHistories = await fetchUserStakeHistory(userStakeAddress, fisoStartEpoch, fisoEndEpoch, currentEpoch)
-        userStakeDetails = confirmedUserStakeHistories.map(history => ({ poolId: history.pool_id, epoch: (history.active_epoch - 1), amount: Number(history.amount) }));
+        userStakeDetails = confirmedUserStakeHistories.map(history => ({ poolId: history.pool_id, epoch: history.active_epoch, amount: Number(history.amount) }));
       }
 
       const relevantUserStakes = userStakeDetails.filter(detail => approvedPoolIds.includes(detail.poolId));

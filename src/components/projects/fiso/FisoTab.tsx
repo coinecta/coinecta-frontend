@@ -232,10 +232,10 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
           >
             {loadingCheck
               ? <CircularProgress />
-              : (
-                <>
+              : (currentEpoch - 2) > fisos[0].startEpoch
+                ? <>
                   <Typography>
-                    Estimated rewards to epoch {currentEpoch - 1}:
+                    Estimated rewards to epoch {currentEpoch - 2}:
                   </Typography>
                   <Typography variant="h5">
                     {fisoUserInfoQuery.data && !Number.isNaN(fisoUserInfoQuery.data.userEarned)
@@ -246,7 +246,14 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
                       : '-'}
                   </Typography>
                 </>
-              )
+                : <Box>
+                  <Typography>
+                    Rewards will show here 2 epochs after FISO start
+                  </Typography>
+                  {/* <Button variant="contained" color="secondary" onClick={() => {}}>
+                    Estimate
+                  </Button> */}
+                </Box>
             }
           </Paper>
         </Grid>
