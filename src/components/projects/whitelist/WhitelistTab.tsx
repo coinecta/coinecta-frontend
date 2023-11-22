@@ -72,7 +72,15 @@ const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
                     </>
                     : checkVerificationResult.data?.sumsubResult?.reviewAnswer === 'GREEN'
                       ? 'Verified'
-                      : 'Failed, contact support for more info'}
+                      : <>
+                        KYC status failed, try to&nbsp;
+                        <Link sx={{
+                          '&:hover': {
+                            cursor: 'pointer'
+                          }
+                        }} onClick={handleRefresh}>refresh</Link>
+                        &nbsp;or contact support if this is incorrect.
+                      </>}
               </Alert>
               {whitelists.filter(item => !item.externalLink).map((item, i) => {
                 return (
