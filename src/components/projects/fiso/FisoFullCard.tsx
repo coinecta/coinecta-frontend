@@ -85,6 +85,7 @@ const FisoFullCard: FC<FisoFullCardProps> = ({ stakepoolData, projectSlug, epoch
 
   const isActive: boolean = !!currentEpoch && !!thisEpoch && (thisEpoch.startEpoch <= currentEpoch && thisEpoch.endEpoch >= currentEpoch)
   const showStakeNowButton: boolean = !!currentEpoch && !!thisEpoch && (thisEpoch.startEpoch - 3 <= currentEpoch && thisEpoch.endEpoch >= currentEpoch)
+  const endsSoon: boolean = !!currentEpoch && !!thisEpoch && currentEpoch >= thisEpoch.endEpoch - 1 && currentEpoch <= thisEpoch.endEpoch;
 
   return (
     <Paper variant="outlined" sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -108,11 +109,20 @@ const FisoFullCard: FC<FisoFullCardProps> = ({ stakepoolData, projectSlug, epoch
             </Typography>
           }
 
-          {isActive && (
+          {isActive && !endsSoon && (
             <Chip
               icon={<CheckCircleIcon />}
               label="Active"
               color="success"
+              size="small"
+              variant="outlined"
+            />
+          )}
+          {isActive && endsSoon && (
+            <Chip
+              icon={<InfoOutlinedIcon />}
+              label="Ends soon"
+              color="info"
               size="small"
               variant="outlined"
             />

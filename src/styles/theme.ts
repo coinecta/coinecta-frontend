@@ -265,6 +265,24 @@ let lightTheme = createTheme({
         }
       }
     },
+    MuiAlert: {
+      styleOverrides: {
+        outlined: {
+          '&.MuiAlert-outlinedError': {
+            background: 'rgba(255, 205, 210, 0.5)',
+          },
+          '&.MuiAlert-outlinedWarning': {
+            background: 'rgba(255, 249, 235, 0.5)',
+          },
+          '&.MuiAlert-outlinedInfo': {
+            background: 'rgba(187, 222, 251, 0.5)',
+          },
+          '&.MuiAlert-outlinedSuccess': {
+            background: '#E9FBF0',
+          },
+        },
+      },
+    }
   }
 }, ...mainTheme);
 
@@ -308,6 +326,24 @@ let darkTheme = createTheme({
         }
       }
     },
+    MuiAlert: {
+      styleOverrides: {
+        outlined: {
+          '&.MuiAlert-outlinedError': {
+            background: 'rgba(183, 28, 28, 0.15)',
+          },
+          '&.MuiAlert-outlinedWarning': {
+            background: 'rgba(171, 104, 0, 0.15)',
+          },
+          '&.MuiAlert-outlinedInfo': {
+            background: 'rgba(2, 136, 209, 0.15)',
+          },
+          '&.MuiAlert-outlinedSuccess': {
+            background: 'rgba(26, 162, 81, 0.15)',
+          },
+        },
+      },
+    }
   }
 }, ...mainTheme);
 
