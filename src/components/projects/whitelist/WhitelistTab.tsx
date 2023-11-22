@@ -1,7 +1,7 @@
 
 
 import React, { ChangeEvent, FC, useState } from 'react';
-import { Alert, Collapse, Box, Typography, Paper, TextField, FilledInput } from '@mui/material';
+import { Alert, Collapse, Box, Typography, Paper, TextField, FilledInput, Link } from '@mui/material';
 import Sumsub from './Sumsub';
 import { trpc } from '@lib/utils/trpc';
 import { useWalletContext } from '@contexts/WalletContext';
@@ -23,6 +23,13 @@ const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
   const { sessionStatus, sessionData } = useWalletContext()
   const [sumsubStatus, setSumsubStatus] = useState<string | undefined>(undefined)
   const checkVerificationResult = trpc.user.getSumsubResult.useQuery()
+  const refetchSumsub = trpc.user.refetchSumsubResult.useMutation()
+
+  const handleRefresh = async () => {
+    await refetchSumsub.mutateAsync()
+    console.log(refetchSumsub)
+    await checkVerificationResult.refetch()
+  }
 
   return (
     <>
@@ -54,7 +61,15 @@ const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
               >
                 KYC Status: {
                   !checkVerificationResult.data?.sumsubResult?.reviewAnswer ?
-                    'KYC was not successful or is incomplete, please contact support if this is incorrect. '
+                    <>
+                      KYC was not successful or is incomplete, try to&nbsp;
+                      <Link sx={{
+                        '&:hover': {
+                          cursor: 'pointer'
+                        }
+                      }} onClick={handleRefresh}>refresh</Link>
+                      &nbsp;or contact support if this is incorrect.
+                    </>
                     : checkVerificationResult.data?.sumsubResult?.reviewAnswer === 'GREEN'
                       ? 'Verified'
                       : 'Failed, contact support for more info'}
