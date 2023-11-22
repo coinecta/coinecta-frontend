@@ -2,6 +2,8 @@ import { prisma } from '@server/prisma';
 import { checkAddressAvailability } from '@server/utils/checkAddress';
 import { deleteEmptyUser } from '@server/utils/deleteEmptyUser';
 import { generateNonceForLogin } from '@server/utils/nonce';
+import { TRPCError } from '@trpc/server';
+import crypto from 'crypto';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -242,6 +244,71 @@ export const userRouter = createTRPCRouter({
         sumsubStatus: user.sumsubStatus,
       };
     }),
+  refetchSumsubResult: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      const appToken = process.env.SUMSUB_TOKEN!;
+      const secretKey = process.env.SUMSUB_SECRET_KEY!;
+      const userId = ctx.session.user.id
+
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          sumsubId: true,
+        },
+      });
+
+      if (user) {
+        try {
+          // Generate the signature
+          const requestUrl = 'https://api.sumsub.com'
+          const requestPath = `/resources/applicants/${user.sumsubId}/status`;
+          const requestMethod = 'GET';
+          const timestamp = Math.floor(Date.now() / 1000).toString();
+          const hmac = crypto.createHmac('sha256', secretKey);
+          hmac.update(timestamp + requestMethod.toUpperCase() + requestPath);
+          const signature = hmac.digest('hex');
+
+          const apiUrl = requestUrl + requestPath;
+          const requestOptions = {
+            method: requestMethod,
+            headers: {
+              'Accept': 'application/json',
+              'X-App-Token': appToken,
+              'X-App-Access-Sig': signature,
+              'X-App-Access-Ts': timestamp,
+            },
+            // Add any request payload here (if applicable)
+            // body: JSON.stringify({}),
+          };
+
+          const response = await fetch(apiUrl, requestOptions);
+
+          console.log('Status code:', response.status);
+
+          const data = await response.json();
+          console.log('Response body:', data);
+
+          if (!response.ok) {
+            throw new TRPCError({ message: 'Response not OK', code: 'INTERNAL_SERVER_ERROR' });
+          }
+
+          const update = await prisma.user.update({
+            where: { id: userId },
+            data: {
+              sumsubResult: data.reviewResult
+            }
+          });
+
+          return update
+        } catch (error) {
+          console.error('Error generating access token:', error);
+          throw new TRPCError({
+            message: 'Unexptected error occured',
+            code: 'INTERNAL_SERVER_ERROR',
+          });
+        }
+      }
+    }),
   getUserDetails: protectedProcedure
     .input(z.object({
       name: z.boolean().optional(),
@@ -267,7 +334,10 @@ export const userRouter = createTRPCRouter({
       });
 
       if (!user) {
-        throw new Error('Unable to find user in database');
+        throw new TRPCError({
+          message: 'Unable to find user in database',
+          code: 'NOT_FOUND',
+        });
       }
 
       return { user }
