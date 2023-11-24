@@ -406,6 +406,9 @@ ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_fkey" FOREIGN KEY ("user
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "user_stake_history" ADD CONSTRAINT "user_stake_history_user_reward_address_fkey" FOREIGN KEY ("user_reward_address") REFERENCES "users"("reward_address") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "wallets" ADD CONSTRAINT "wallets_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -430,10 +433,10 @@ ALTER TABLE "project_tokenomics_items" ADD CONSTRAINT "project_tokenomics_items_
 ALTER TABLE "whitelists" ADD CONSTRAINT "whitelists_project_slug_fkey" FOREIGN KEY ("project_slug") REFERENCES "projects"("slug") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "whitelist_signups" ADD CONSTRAINT "whitelist_signups_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "whitelist_signups" ADD CONSTRAINT "whitelist_signups_whitelist_slug_fkey" FOREIGN KEY ("whitelist_slug") REFERENCES "whitelists"("slug") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "whitelist_signups" ADD CONSTRAINT "whitelist_signups_whitelist_slug_fkey" FOREIGN KEY ("whitelist_slug") REFERENCES "whitelists"("slug") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "whitelist_signups" ADD CONSTRAINT "whitelist_signups_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "fisos" ADD CONSTRAINT "fisos_project_slug_fkey" FOREIGN KEY ("project_slug") REFERENCES "projects"("slug") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -458,4 +461,3 @@ ALTER TABLE "_FisoToSpoSignups" ADD CONSTRAINT "_FisoToSpoSignups_A_fkey" FOREIG
 
 -- AddForeignKey
 ALTER TABLE "_FisoToSpoSignups" ADD CONSTRAINT "_FisoToSpoSignups_B_fkey" FOREIGN KEY ("B") REFERENCES "spo_signups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-

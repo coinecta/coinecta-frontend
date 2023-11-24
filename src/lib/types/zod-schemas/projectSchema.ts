@@ -2,8 +2,7 @@ import { z } from 'zod';
 import { TFiso } from './fisoSchema';
 
 export {
-  TProject,
-  TRoadmap,
+  TProject, TProjectBase, TRoadmap,
   TSocials,
   TTeam,
   TTokenomic,
@@ -96,6 +95,21 @@ const TProject = z.object({
   tokenomics: TTokenomics,
   whitelists: z.array(TWhitelist),
   fisos: z.array(TFiso)
+});
+
+const TProjectBase = z.object({
+  name: z.string(),
+  slug: z.string(),
+  shortDescription: z.string(),
+  whitepaperLink: z.string().nullable(),
+  description: z.string(),
+  blockchains: z.array(z.string()),
+  fundsRaised: z.number().nullable(),
+  bannerImgUrl: z.string(),
+  avatarImgUrl: z.string(),
+  isLaunched: z.boolean(),
+  isDraft: z.boolean(),
+  frontPage: z.boolean()
 });
 
 

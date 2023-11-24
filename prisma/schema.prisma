@@ -100,44 +100,69 @@ model Wallet {
 }
 
 model Transaction {
-  id          String   @id @default(cuid())
-  description String
-  amount      String
-  currency    String
-  address     String
-  completed   Boolean  @default(false)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  user_id     String
-  user        User     @relation(fields: [user_id], references: [id])
+  id                String            @id @default(cuid())
+  description       String?
+  amount            String
+  currency          String
+  address           String
+  completed         Boolean           @default(false)
+  txId              String?           @map("tx_id")
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @updatedAt
+  user_id           String
+  user              User              @relation(fields: [user_id], references: [id])
+  contribution_id   Int
+  contributionRound ContributionRound @relation(fields: [contribution_id], references: [id])
 
   @@map("transactions")
 }
 
 model Project {
-  id               Int         @id @default(autoincrement())
-  created_at       DateTime    @default(now())
-  updated_at       DateTime    @updatedAt
-  name             String      @unique
-  slug             String      @unique
-  shortDescription String      @map("short_description")
-  whitepaperLink   String?     @map("whitepaper_link")
-  description      String
-  blockchains      String[]
-  fundsRaised      Int?        @map("funds_raised")
-  bannerImgUrl     String      @map("banner_img_url")
-  avatarImgUrl     String      @map("avatar_img_url")
-  isLaunched       Boolean     @default(false) @map("is_launched")
-  isDraft          Boolean     @default(true) @map("is_draft")
-  frontPage        Boolean     @default(false) @map("front_page")
-  fisos            Fiso[]
-  roadmap          Roadmap[]
-  socials          Socials?
-  team             Team[]
-  tokenomics       Tokenomics?
-  whitelists       Whitelist[]
+  id                 Int                 @id @default(autoincrement())
+  created_at         DateTime            @default(now())
+  updated_at         DateTime            @updatedAt
+  name               String              @unique
+  slug               String              @unique
+  shortDescription   String              @map("short_description")
+  whitepaperLink     String?             @map("whitepaper_link")
+  description        String
+  blockchains        String[]
+  fundsRaised        Int?                @map("funds_raised")
+  bannerImgUrl       String              @map("banner_img_url")
+  avatarImgUrl       String              @map("avatar_img_url")
+  isLaunched         Boolean             @default(false) @map("is_launched")
+  isDraft            Boolean             @default(true) @map("is_draft")
+  frontPage          Boolean             @default(false) @map("front_page")
+  fisos              Fiso[]
+  roadmap            Roadmap[]
+  socials            Socials?
+  team               Team[]
+  tokenomics         Tokenomics?
+  whitelists         Whitelist[]
+  contributionRounds ContributionRound[]
 
   @@map("projects")
+}
+
+model ContributionRound {
+  id            Int           @id @default(autoincrement())
+  name          String
+  saleType      String        @map("sale_type")
+  startDate     DateTime      @map("start_date")
+  endDate       DateTime      @map("end_date")
+  tokenTicker   String        @map("token_ticker")
+  tokenTarget   Int           @map("token_target")
+  currency      String
+  price         Float
+  deposited     Float
+  whitelistSlug String        @unique @map("whitelist_slug")
+  whitelist     Whitelist     @relation(fields: [whitelistSlug], references: [slug])
+  Transaction   Transaction[]
+  projectName   String        @map("project_name")
+  projectSlug   String        @map("project_slug")
+  project       Project       @relation(fields: [projectSlug], references: [slug], onDelete: Cascade)
+
+  @@map("contribution_round")
 }
 
 model Socials {
@@ -205,20 +230,21 @@ model Tokenomic {
 }
 
 model Whitelist {
-  id            String            @id @default(cuid())
-  created_at    DateTime          @default(now())
-  updated_at    DateTime          @updatedAt
-  name          String
-  slug          String            @unique
-  startDateTime DateTime          @map("start_date_time")
-  endDateTime   DateTime          @map("end_date_time")
-  maxPerSignup  Int?              @map("max_per_signup")
-  hardCap       Int?              @map("hard_cap")
-  externalLink  String?           @map("external_link")
-  ergoProofs    Boolean           @default(false) @map("ergo_proofs")
-  project_slug  String
-  signups       WhitelistSignup[]
-  project       Project           @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
+  id                String             @id @default(cuid())
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+  name              String
+  slug              String             @unique
+  startDateTime     DateTime           @map("start_date_time")
+  endDateTime       DateTime           @map("end_date_time")
+  maxPerSignup      Int?               @map("max_per_signup")
+  hardCap           Int?               @map("hard_cap")
+  externalLink      String?            @map("external_link")
+  ergoProofs        Boolean            @default(false) @map("ergo_proofs")
+  project_slug      String
+  signups           WhitelistSignup[]
+  project           Project            @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
+  ContributionRound ContributionRound?
 
   @@map("whitelists")
 }
@@ -397,4 +423,6 @@ model CardanoPrice {
   price     Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("cardano_price")
 }

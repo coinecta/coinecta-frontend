@@ -40,6 +40,10 @@ const links = {
     {
       name: 'Edit Project',
       link: '/admin/edit-project'
+    },
+    {
+      name: 'Contribution Rounds',
+      link: '/admin/contribution-rounds'
     }
   ],
   Fisos: [

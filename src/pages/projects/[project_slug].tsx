@@ -246,7 +246,7 @@ const Project = () => {
               {tabValue === 'summary' && <ProjectInfoTab project={projectData} />}
               {tabValue === 'tokenomics' && <TokenomicsTab tokenomics={projectData.tokenomics} />}
               {tabValue === 'whitelist' && <WhitelistTab whitelists={projectData.whitelists} projectSlug={projectData.slug} />}
-              {tabValue === 'contribute' && <ContributeTab projectName={projectData.name} projectIcon={projectData.avatarImgUrl} />}
+              {tabValue === 'contribute' && <ContributeTab projectSlug={projectData.slug} projectName={projectData.name} projectIcon={projectData.avatarImgUrl} />}
               {tabValue === 'fiso' && <FisoTab projectSlug={projectData.slug} fisos={fisoData} />}
             </Box>
           </Container >

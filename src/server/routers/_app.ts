@@ -1,4 +1,5 @@
 import { createTRPCRouter } from "@server/trpc";
+import { contributionRouter } from "./contributions";
 import { ergoRouter } from "./ergo";
 import { fileRouter } from "./file";
 import { fisoRouter } from "./fisos";
@@ -23,7 +24,8 @@ export const appRouter = createTRPCRouter({
   fisos: fisoRouter,
   hero: heroRouter,
   ergo: ergoRouter,
-  price: priceRouter
+  price: priceRouter,
+  contributions: contributionRouter
 });
 
 // export type definition of API
