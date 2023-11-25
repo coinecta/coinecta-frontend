@@ -143,6 +143,23 @@ export const ergoRouter = createTRPCRouter({
         const verify = verifySignature(address, signedMessage, proof, walletType)
 
         if (verify) {
+          const addressExists = await prisma.ergoProof.findFirst({
+            where: {
+              OR: [
+                { defaultAddress: address },
+                { addresses: { has: address } }
+              ],
+              NOT: { verificationId: verificationId } // Exclude the current record
+            }
+          });
+
+          if (addressExists) {
+            throw new TRPCError({
+              message: 'Address already in use',
+              code: 'CONFLICT'
+            });
+          }
+
           const update = await prisma.ergoProof.update({
             where: {
               verificationId: verificationId,
