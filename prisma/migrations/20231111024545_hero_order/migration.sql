@@ -6,6 +6,7 @@ CREATE TABLE "hero_carousel" (
     "image" TEXT,
     "button_title" TEXT NOT NULL,
     "button_link" TEXT NOT NULL,
+    "order" SERIAL NOT NULL,
 
     CONSTRAINT "hero_carousel_pkey" PRIMARY KEY ("id")
 );

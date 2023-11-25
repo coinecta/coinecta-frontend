@@ -24,6 +24,19 @@ export const whitelistRouter = createTRPCRouter({
       const whitelists = await prisma.whitelist.findMany();
       return whitelists
     }),
+  listProjectWhitelists: adminProcedure
+    .input(z.object({
+      projectSlug: z.string()
+    }))
+    .query(async ({ input }) => {
+      const { projectSlug } = input
+      const whitelists = await prisma.whitelist.findMany({
+        where: {
+          project_slug: projectSlug
+        }
+      });
+      return whitelists
+    }),
   submitWhitelist: protectedProcedure
     .input(z.object({
       whitelistSlug: z.string(),

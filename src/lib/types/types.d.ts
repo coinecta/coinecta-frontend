@@ -57,7 +57,9 @@ type TProRataFormProps = {
   price: number;
   currency: string;
   deposited: number;
-  roundName: string;
+  name: string;
   projectName: string;
   projectIcon: string;
+  projectSlug: string;
+  whitelistSlug: string;
 }

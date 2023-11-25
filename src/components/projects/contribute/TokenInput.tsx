@@ -20,9 +20,13 @@ const TokenInput: FC<ITokenInputProps> = ({ inputTokenTicker, outputTokenTicker,
   const [outputValue, setOutputValue] = useState('');
 
   const getUserAdaAmount = async () => {
-    const lovelace = await wallet.getLovelace();
-    const ada = Number(lovelace) * 0.000001;
-    if (ada) setAdaAmount(ada);
+    try {
+      const lovelace = await wallet.getLovelace();
+      const ada = Number(lovelace) * 0.000001;
+      if (ada) setAdaAmount(ada);
+    } catch (error) {
+      console.error(error)
+    }
   };
 
   useEffect(() => {
@@ -38,6 +42,13 @@ const TokenInput: FC<ITokenInputProps> = ({ inputTokenTicker, outputTokenTicker,
       setOutputValue((Number(value) * exchangeRate).toLocaleString(undefined, { maximumFractionDigits: 2 }))
     }
   };
+
+  const handleInputMax = () => {
+    if (adaAmount) {
+      setInputValue(adaAmount.toLocaleString(undefined, { maximumFractionDigits: 2 }))
+      setOutputValue((Number(adaAmount) * exchangeRate).toLocaleString(undefined, { maximumFractionDigits: 2 }))
+    }
+  }
 
   const calculateUSDValue = () => {
     const numericalValue = Number(inputValue.replace(/,/g, ''));
@@ -77,7 +88,7 @@ const TokenInput: FC<ITokenInputProps> = ({ inputTokenTicker, outputTokenTicker,
             onChange={handleInputChange}
           />
           <Typography sx={{
-            fontSize: '32px!important', fontWeight: 700, whiteSpace: 'nowrap',
+            fontSize: '26px!important', fontWeight: 700, whiteSpace: 'nowrap',
           }}>
             ADA ₳
           </Typography>
@@ -92,7 +103,12 @@ const TokenInput: FC<ITokenInputProps> = ({ inputTokenTicker, outputTokenTicker,
             ${calculateUSDValue()}
           </Typography>
           <Typography sx={{ fontSize: '1rem!important', whiteSpace: 'nowrap' }}>
-            Balance: {adaAmount && adaAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+            Balance:&nbsp;
+            {adaAmount
+              ? <Box component="span" onClick={handleInputMax} sx={{ cursor: 'pointer' }}>
+                {adaAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </Box>
+              : '0'}
           </Typography>
         </Box>
       </Box>
@@ -125,7 +141,7 @@ const TokenInput: FC<ITokenInputProps> = ({ inputTokenTicker, outputTokenTicker,
             value={outputValue}
           />
           <Typography sx={{
-            fontSize: '32px!important', fontWeight: 700, whiteSpace: 'nowrap',
+            fontSize: '26px!important', fontWeight: 700, whiteSpace: 'nowrap',
           }}>
             {outputTokenTicker}
           </Typography>

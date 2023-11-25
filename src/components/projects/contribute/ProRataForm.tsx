@@ -7,6 +7,7 @@ import { getSymbol } from '@lib/utils/currencies';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import ContributeCard from './ContributeCard';
 import { trpc } from '@lib/utils/trpc';
+import { useWalletContext } from '@contexts/WalletContext';
 
 const ProRataForm: FC<TProRataFormProps> = ({
   startDate,
@@ -16,16 +17,40 @@ const ProRataForm: FC<TProRataFormProps> = ({
   price,
   currency,
   deposited,
-  roundName,
+  name,
   projectName,
-  projectIcon
+  projectIcon,
+  projectSlug,
+  whitelistSlug
 }) => {
   const theme = useTheme()
+  const { sessionStatus } = useWalletContext()
   const currencySymbol = getSymbol(currency)
   const priceToCurrency = `1 ${currency} = ${(1 / price).toLocaleString(undefined, {
     maximumFractionDigits: 2,
   })} ${tokenTicker}`
   const [priceSet, setPriceSet] = useState<string>(priceToCurrency)
+  const getUserWhitelistSignups = trpc.whitelist.getUserWhitelistSlugs.useQuery({ projectSlug })
+  const [whitelistStatus, setWhitelistStatus] = useState<"pending" | "whitelisted" | "notWhitelisted">('pending');
+  const [whitelisted, setWhitelisted] = useState(false)
+
+  useEffect(() => {
+    if (sessionStatus === 'authenticated' && getUserWhitelistSignups.data?.data) {
+      const isWhitelisted = getUserWhitelistSignups.data?.data.some(item => whitelistSlug === item);
+      if (isWhitelisted) {
+        setWhitelistStatus('whitelisted')
+        setWhitelisted(true)
+      }
+      else {
+        setWhitelistStatus('notWhitelisted')
+        setWhitelisted(false)
+      }
+    }
+    else {
+      setWhitelistStatus('pending')
+      setWhitelisted(false)
+    }
+  }, [getUserWhitelistSignups.data, sessionStatus])
 
   const claimedAmount = deposited / price
   const depositTarget = tokenTarget * price
@@ -39,32 +64,22 @@ const ProRataForm: FC<TProRataFormProps> = ({
 
   return (
     <>
-
-      <Grid container spacing={2}>
+      <Grid container spacing={2} alignItems="stretch" direction={{ xs: 'column-reverse', md: 'row' }}>
         <Grid xs={12} md={7}>
-          <Alert
-            variant="outlined"
-            severity={'success'}
-            sx={{
-              mb: 2,
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            Account is whitelisted
-          </Alert>
-          <Paper variant="outlined" sx={{ px: 3, py: 2 }}>
+          <Paper variant="outlined" sx={{ px: 2, py: 4, height: '100%' }}>
             <ContributeCard
               projectName={projectName}
               projectIcon={projectIcon}
-              roundName={roundName}
+              roundName={name}
               tokenTicker={tokenTicker}
               remainingTokens={tokenTarget - claimedAmount}
               exchangeRate={1 / price}
+              whitelisted={whitelisted}
             />
           </Paper>
         </Grid>
         <Grid xs={12} md={5}>
+          <WhitelistResult whitelistStatus={whitelistStatus} sessionStatus={sessionStatus} />
           <Paper variant="outlined" sx={{ px: 3, py: 2 }}>
             <Box
               sx={{
@@ -196,3 +211,57 @@ const ProRataForm: FC<TProRataFormProps> = ({
 };
 
 export default ProRataForm;
+
+const WhitelistResult: FC<{ whitelistStatus: 'whitelisted' | 'notWhitelisted' | 'pending', sessionStatus: "loading" | "authenticated" | "unauthenticated" }> = ({ whitelistStatus, sessionStatus }) => {
+  if (sessionStatus === 'loading') {
+    return <Alert
+      variant="outlined"
+      severity="info"
+      sx={{ mb: 2, justifyContent: 'center', alignItems: 'center' }}
+    >
+      Loading whitelist status...
+    </Alert>
+  }
+  else {
+    let content;
+    switch (whitelistStatus) {
+      case 'whitelisted':
+        content = (
+          <Alert
+            variant="outlined"
+            severity="success"
+            sx={{ mb: 2, justifyContent: 'center', alignItems: 'center' }}
+          >
+            Your account is whitelisted.
+          </Alert>
+        );
+        break;
+      case 'notWhitelisted':
+        content = (
+          <Alert
+            variant="outlined"
+            severity="error"
+            sx={{ mb: 2, justifyContent: 'center', alignItems: 'center' }}
+          >
+            Your account is not whitelisted.
+          </Alert>
+        );
+        break;
+      case 'pending':
+        content = (
+          <Alert
+            variant="outlined"
+            severity="warning"
+            sx={{ mb: 2, justifyContent: 'center', alignItems: 'center' }}
+          >
+            Please sign in to verify status
+          </Alert>
+        );
+        break;
+      default:
+        content = null;
+    }
+
+    return <>{content}</>;
+  }
+};
