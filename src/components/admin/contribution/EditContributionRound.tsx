@@ -31,7 +31,8 @@ const initForm = {
   price: 0,
   deposited: 0,
   projectName: '',
-  projectSlug: ''
+  projectSlug: '',
+  whitelistSlug: ''
 }
 
 const formatDateForDateTimeLocal = (date: Date) => {
