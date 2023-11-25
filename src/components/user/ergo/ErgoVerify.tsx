@@ -20,6 +20,7 @@ import Ergoauth from './Ergoauth';
 import { TransactionBuilder, OutputBuilder } from "@fleet-sdk/core";
 import { LinearProgressStyled as LinearProgress } from '@components/styled-components/LinearProgress'
 import ClearIcon from '@mui/icons-material/Clear';
+import { TRPCError } from '@trpc/server';
 
 declare global {
   interface Window {
@@ -319,12 +320,16 @@ const ErgoVerify: FC = () => {
     try {
       // @ts-ignore
       const signature = await ergo.auth(address, nonce);
-      // console.log(signature);
 
       if (!signature.signedMessage || !signature.proof) {
-        console.error('signature failed to generate');
+        console.error('Signature failed to generate');
+        addAlert('error', 'Signature failed to generate. Please try again.');
         return;
       }
+
+      const combinedAddresses = [...usedAddresses, ...unusedAddresses];
+      const filteredAddresses = combinedAddresses.filter(item => item !== address);
+      const addresses = [address, ...filteredAddresses];
 
       try {
         const response = await verifyProof.mutateAsync({
@@ -332,21 +337,22 @@ const ErgoVerify: FC = () => {
           proof: signature.proof,
           address,
           walletType: walletType,
-          addresses: [...usedAddresses, ...unusedAddresses],
+          addresses,
           verificationId
         });
         if (response?.status === 'success') {
-          // console.log(response)
           await usersProofs.refetch();
-          addAlert('success', 'Verification successful')
+          addAlert('success', 'Verification successful');
         }
-      } catch (error) {
-        console.error('Error during signIn:', error);
+      } catch (error: any) {
+        console.error('Error during verification:', error);
+        // Use the specific error message received from verifyProof mutation
+        addAlert('error', error.message || 'Error during verification. Please try again.');
         return;
       }
     } catch (error) {
       console.error('Error during wallet signature:', error);
-      addAlert('error', 'Unable to verify wallet signature')
+      addAlert('error', 'Unable to verify wallet signature. Please try again.');
     }
   };
 
