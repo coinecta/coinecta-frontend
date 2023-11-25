@@ -11,6 +11,7 @@ interface IContributeCardProps {
   remainingTokens: number;
   exchangeRate: number;
   whitelisted: boolean;
+  live: boolean;
 }
 
 const ContributeCard: FC<IContributeCardProps> = ({
@@ -20,7 +21,8 @@ const ContributeCard: FC<IContributeCardProps> = ({
   tokenTicker,
   remainingTokens,
   exchangeRate,
-  whitelisted
+  whitelisted,
+  live
 }) => {
   const theme = useTheme()
   const [termsCheck, setTermsCheck] = useState(false)
@@ -63,7 +65,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
         <Button
           variant="contained"
           color="secondary"
-          disabled={!termsCheck || !whitelisted}
+          disabled={!termsCheck || !whitelisted || !live}
           sx={{
             textTransform: 'none',
             fontSize: '20px',

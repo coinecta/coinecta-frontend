@@ -33,6 +33,8 @@ const ProRataForm: FC<TProRataFormProps> = ({
   const getUserWhitelistSignups = trpc.whitelist.getUserWhitelistSlugs.useQuery({ projectSlug })
   const [whitelistStatus, setWhitelistStatus] = useState<"pending" | "whitelisted" | "notWhitelisted">('pending');
   const [whitelisted, setWhitelisted] = useState(false)
+  const currentDate = new Date();
+  const isCurrentDateBetween = currentDate >= startDate && currentDate <= endDate;
 
   useEffect(() => {
     if (sessionStatus === 'authenticated' && getUserWhitelistSignups.data?.data) {
@@ -75,6 +77,7 @@ const ProRataForm: FC<TProRataFormProps> = ({
               remainingTokens={tokenTarget - claimedAmount}
               exchangeRate={1 / price}
               whitelisted={whitelisted}
+              live={isCurrentDateBetween}
             />
           </Paper>
         </Grid>
