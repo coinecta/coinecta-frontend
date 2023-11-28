@@ -3,7 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   env: {
     API_URL: process.env.API_URL,
-    FORM_EMAIL: process.env.FORM_EMAIL
+    FORM_EMAIL: process.env.FORM_EMAIL,
+    CONTRIBUTION_ADDRESS: process.env.CONTRIBUTION_ADDRESS
   },
   swcMinify: true,
   webpack: function (config, options) {

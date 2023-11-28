@@ -9,21 +9,34 @@ interface ITokenInputProps {
   outputTokenTicker: string;
   remainingTokens: number;
   exchangeRate: number; // 1 input token = (exchangeRate * input) output tokens
+  inputValue: string;
+  setInputValue: React.Dispatch<React.SetStateAction<string>>;
+  outputValue: string;
+  setOutputValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const TokenInput: FC<ITokenInputProps> = ({ inputTokenTicker, outputTokenTicker, remainingTokens, exchangeRate }) => {
+const TokenInput: FC<ITokenInputProps> = ({
+  inputTokenTicker,
+  outputTokenTicker,
+  remainingTokens,
+  exchangeRate,
+  inputValue,
+  setInputValue,
+  outputValue,
+  setOutputValue
+}) => {
   const theme = useTheme();
   const { data: adaPrice } = trpc.price.getCardanoPrice.useQuery();
-  const { wallet } = useWallet();
+  const { wallet, connected } = useWallet();
   const [adaAmount, setAdaAmount] = useState<number | undefined>(undefined);
-  const [inputValue, setInputValue] = useState('');
-  const [outputValue, setOutputValue] = useState('');
 
   const getUserAdaAmount = async () => {
     try {
-      const lovelace = await wallet.getLovelace();
-      const ada = Number(lovelace) * 0.000001;
-      if (ada) setAdaAmount(ada);
+      if (connected) {
+        const lovelace = await wallet.getLovelace();
+        const ada = Number(lovelace) * 0.000001;
+        if (ada) setAdaAmount(ada);
+      }
     } catch (error) {
       console.error(error)
     }
@@ -36,10 +49,27 @@ const TokenInput: FC<ITokenInputProps> = ({ inputTokenTicker, outputTokenTicker,
   }, [wallet]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replace(/,/g, '');
-    if (!isNaN(Number(value))) {
-      setInputValue(Number(value).toLocaleString());
-      setOutputValue((Number(value) * exchangeRate).toLocaleString(undefined, { maximumFractionDigits: 2 }))
+    const rawValue = event.target.value.replace(/,/g, '');
+
+    // Check if the value is a valid number or a valid number with a decimal point
+    if (!isNaN(Number(rawValue)) || rawValue.match(/^\d+\.?\d*$/)) {
+      // Determine whether the value ends with a decimal point or has decimal digits
+      const endsWithDecimal = rawValue.includes('.') && rawValue.split('.')[1] === '';
+      const hasDecimalDigits = rawValue.includes('.') && rawValue.split('.')[1].length > 0;
+
+      // Format the input value according to its content
+      if (endsWithDecimal) {
+        setInputValue(rawValue); // Keep as is, user might be typing decimal part
+      } else if (hasDecimalDigits) {
+        // Format but keep decimal digits
+        setInputValue(Number(rawValue).toLocaleString(undefined, { minimumFractionDigits: rawValue.split('.')[1].length, maximumFractionDigits: 20 }));
+      } else {
+        // Standard formatting for whole numbers
+        setInputValue(Number(rawValue).toLocaleString(undefined, { maximumFractionDigits: 2 }));
+      }
+
+      // Set output value, formatted with two decimal places
+      setOutputValue((Number(rawValue) * exchangeRate).toLocaleString(undefined, { maximumFractionDigits: 2 }));
     }
   };
 

@@ -183,8 +183,8 @@ const Header: FC<IHeaderProps> = ({ }) => {
                     fontSize: '2rem!important',
                     fontWeight: '700',
                     lineHeight: 1,
-                    display: 'inline-block',
-                    verticalAlign: 'bottom'
+                    verticalAlign: 'bottom',
+                    display: { xs: 'none', sm: 'inline-block' }
                   }}
                 >
                   Coinecta

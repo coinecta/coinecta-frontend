@@ -2,6 +2,7 @@ import { Avatar, Box, Button, Checkbox, FormControlLabel, Typography, useTheme }
 import React, { ChangeEvent, FC, useState } from 'react';
 import TokenInput from './TokenInput';
 import Link from '@components/Link';
+import ContributeConfirm from './ContributeConfirm';
 
 interface IContributeCardProps {
   projectName: string;
@@ -12,12 +13,14 @@ interface IContributeCardProps {
   exchangeRate: number;
   whitelisted: boolean;
   live: boolean;
+  contributionRoundId: number
 }
 
 const ContributeCard: FC<IContributeCardProps> = ({
   projectName,
   projectIcon,
   roundName,
+  contributionRoundId,
   tokenTicker,
   remainingTokens,
   exchangeRate,
@@ -26,6 +29,9 @@ const ContributeCard: FC<IContributeCardProps> = ({
 }) => {
   const theme = useTheme()
   const [termsCheck, setTermsCheck] = useState(false)
+  const [openContribution, setOpenContribution] = useState(false)
+  const [inputValue, setInputValue] = useState('');
+  const [outputValue, setOutputValue] = useState('');
 
   const handleCheckTerms = (e: ChangeEvent) => {
     setTermsCheck(!termsCheck)
@@ -49,7 +55,15 @@ const ContributeCard: FC<IContributeCardProps> = ({
       </Box>
       <Box sx={{ mb: 2 }}>
         <Box sx={{ mb: 2 }}>
-          <TokenInput outputTokenTicker={tokenTicker} remainingTokens={remainingTokens} exchangeRate={exchangeRate} />
+          <TokenInput
+            outputTokenTicker={tokenTicker}
+            remainingTokens={remainingTokens}
+            exchangeRate={exchangeRate}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            outputValue={outputValue}
+            setOutputValue={setOutputValue}
+          />
         </Box>
         <FormControlLabel
           control={
@@ -72,6 +86,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
             fontWeight: 600,
             borderRadius: '6px'
           }}
+          onClick={() => setOpenContribution(true)}
         >
           Contribute now
         </Button>
@@ -81,6 +96,14 @@ const ContributeCard: FC<IContributeCardProps> = ({
           You must be whitelisted to contribute
         </Typography>
       </Box>}
+      <ContributeConfirm
+        open={openContribution}
+        setOpen={setOpenContribution}
+        paymentAmount={inputValue}
+        receiveAmount={outputValue}
+        receiveCurrency={tokenTicker}
+        contributionRoundId={contributionRoundId}
+      />
     </Box>
   );
 };

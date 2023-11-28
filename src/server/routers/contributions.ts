@@ -2,7 +2,7 @@ import { ZContributionRound } from '@lib/types/zod-schemas/contributionSchema';
 import { prisma } from '@server/prisma';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { adminProcedure, createTRPCRouter, publicProcedure } from "../trpc";
+import { adminProcedure, createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const contributionRouter = createTRPCRouter({
   addContributionRound: adminProcedure
@@ -73,6 +73,52 @@ export const contributionRouter = createTRPCRouter({
         console.error(`Error fetching contribution rounds for projectSlug ${input.projectSlug}:`, error);
         throw new TRPCError({
           message: `An unexpected error occurred while fetching contribution rounds for projectSlug ${input.projectSlug}`,
+          code: 'INTERNAL_SERVER_ERROR',
+        });
+      }
+    }),
+
+  createTransaction: protectedProcedure
+    .input(z.object({
+      description: z.string().optional(),
+      amount: z.string(),
+      currency: z.string(),
+      address: z.string(),
+      txId: z.string().optional(),
+      contributionId: z.number(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const userId = ctx.session.user.id
+
+      try {
+        const newTransaction = await prisma.transaction.create({
+          data: {
+            description: input.description,
+            amount: input.amount,
+            currency: input.currency,
+            address: input.address,
+            txId: input.txId,
+            user_id: userId,
+            contribution_id: input.contributionId,
+          },
+        });
+
+        await prisma.contributionRound.update({
+          where: {
+            id: input.contributionId,
+          },
+          data: {
+            deposited: {
+              increment: Number(input.amount),
+            },
+          },
+        });
+
+        return newTransaction;
+      } catch (error) {
+        console.error(`Error creating transaction:`, error);
+        throw new TRPCError({
+          message: `An unexpected error occurred while creating the transaction`,
           code: 'INTERNAL_SERVER_ERROR',
         });
       }
