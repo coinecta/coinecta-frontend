@@ -10,6 +10,7 @@ import { trpc } from '@lib/utils/trpc';
 import { useWalletContext } from '@contexts/WalletContext';
 
 const ProRataForm: FC<TProRataFormProps> = ({
+  id,
   startDate,
   endDate,
   tokenTarget,
@@ -78,6 +79,7 @@ const ProRataForm: FC<TProRataFormProps> = ({
               exchangeRate={1 / price}
               whitelisted={whitelisted}
               live={isCurrentDateBetween}
+              contributionRoundId={id}
             />
           </Paper>
         </Grid>

@@ -50,6 +50,7 @@ type TErgoBox = {
 };
 
 type TProRataFormProps = {
+  id: number;
   startDate: Date;
   endDate: Date;
   tokenTarget: number;
@@ -62,4 +63,13 @@ type TProRataFormProps = {
   projectIcon: string;
   projectSlug: string;
   whitelistSlug: string;
+}
+
+type TWalletListItem = {
+  name: string;
+  connectName: string;
+  icon: string;
+  iconDark: string;
+  mobile: boolean;
+  url: string;
 }

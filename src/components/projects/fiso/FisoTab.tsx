@@ -232,7 +232,7 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
           >
             {loadingCheck
               ? <CircularProgress />
-              : (currentEpoch - 2) > fisos[0].startEpoch
+              : (currentEpoch - 2) >= fisos[0].startEpoch
                 ? <>
                   <Typography>
                     Estimated rewards to epoch {currentEpoch - 2}:

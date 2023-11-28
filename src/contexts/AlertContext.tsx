@@ -20,7 +20,7 @@ export const AlertProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const addAlert = (type: Alert['type'], message: Alert['message']) => {
     const id = Date.now().toString(); // Using timestamp as unique ID for simplicity
     setAlerts((prevAlerts) => [...prevAlerts, { id, type, message }]);
-    setTimeout(() => removeAlert(id), 10000);
+    setTimeout(() => removeAlert(id), 4000);
   };
 
   const removeAlert = (id: string) => {
