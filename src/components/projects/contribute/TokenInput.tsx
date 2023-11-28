@@ -61,7 +61,7 @@ const TokenInput: FC<ITokenInputProps> = ({
       // Convert to a number for output value, handling potential NaN
       const numericValue = Number(rawValue);
       if (!isNaN(numericValue)) {
-        setOutputValue(numericValue.toFixed(0));
+        setOutputValue((numericValue * exchangeRate).toFixed(0));
       } else {
         setOutputValue('');
       }
@@ -71,7 +71,7 @@ const TokenInput: FC<ITokenInputProps> = ({
   const handleInputMax = () => {
     if (adaAmount) {
       setInputValue(adaAmount.toString())
-      setOutputValue((Number(adaAmount) * exchangeRate).toString())
+      setOutputValue((Number(adaAmount) * exchangeRate).toFixed(0))
     }
   }
 
