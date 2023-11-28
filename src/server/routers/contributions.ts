@@ -67,6 +67,7 @@ export const contributionRouter = createTRPCRouter({
         const { projectSlug } = input;
         const rounds = await prisma.contributionRound.findMany({
           where: { projectSlug },
+          orderBy: { startDate: 'asc' }
         });
         return rounds;
       } catch (error) {
