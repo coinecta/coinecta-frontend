@@ -49,12 +49,23 @@ const TokenInput: FC<ITokenInputProps> = ({
   }, [wallet]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = event.target.value;
+    const rawValue = event.target.value.replace(/,/g, '.');
 
-    setInputValue(rawValue);
+    // Function to count the number of periods in the string
+    const countPeriods = (str: string) => (str.match(/\./g) || []).length;
 
-    // Set output value (if necessary)
-    setOutputValue((Number(rawValue) * exchangeRate).toLocaleString(undefined, { maximumFractionDigits: 2 }));
+    // Only update the input value if it doesn't result in multiple periods
+    if (countPeriods(rawValue) <= 1) {
+      setInputValue(rawValue);
+
+      // Convert to a number for output value, handling potential NaN
+      const numericValue = Number(rawValue);
+      if (!isNaN(numericValue)) {
+        setOutputValue(numericValue.toLocaleString(undefined, { maximumFractionDigits: 2 }));
+      } else {
+        setOutputValue('');
+      }
+    }
   };
 
   const handleInputMax = () => {
