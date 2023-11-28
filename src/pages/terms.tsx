@@ -266,7 +266,7 @@ const CoinectaTermsOfService = () => {
         </Typography>
 
         <Typography variant="body2">
-          5.11.1 Platform Role: The Platform serves as an intermediary facilitating token sales between third-party companies ("Issuers") and Users. The Company does not issue tokens directly and does not take responsibility for the creation, listing, or management of tokens. If the Company takes part in those activities, it is solely on the behalf of token Issuers and/or Projects launching through the Platform.
+          5.11.1 Platform Role: The Platform serves as an intermediary facilitating token sales between third-party companies (&quot;Issuers&quot;) and Users. The Company does not issue tokens directly and does not take responsibility for the creation, listing, or management of tokens. If the Company takes part in those activities, it is solely on the behalf of token Issuers and/or Projects launching through the Platform.
         </Typography>
 
         <Typography variant="body2">
@@ -274,7 +274,7 @@ const CoinectaTermsOfService = () => {
         </Typography>
 
         <Typography variant="body2">
-          5.11.3 User Responsibility: Users are responsible for performing their own research and due diligence before participating in any token sale facilitated by the Platform. Engaging in any such sales is at the User's own risk.
+          5.11.3 User Responsibility: Users are responsible for performing their own research and due diligence before participating in any token sale facilitated by the Platform. Engaging in any such sales is at the User&apos;s own risk.
         </Typography>
 
         <Typography variant="h4" component="h2" gutterBottom>
