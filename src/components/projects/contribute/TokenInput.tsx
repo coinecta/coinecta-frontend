@@ -71,7 +71,7 @@ const TokenInput: FC<ITokenInputProps> = ({
   const handleInputMax = () => {
     if (adaAmount) {
       setInputValue(adaAmount.toString())
-      setOutputValue((Number(adaAmount) * exchangeRate).toString())
+      setOutputValue((Number(adaAmount) * exchangeRate).toFixed(0))
     }
   }
 
