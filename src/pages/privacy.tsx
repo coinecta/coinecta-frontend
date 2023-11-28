@@ -20,7 +20,7 @@ const PrivacyPolicy = () => {
         </Typography>
 
         <Typography variant="body2">
-          Last modified: May 19, 2023
+          Last modified: November 27, 2023
         </Typography>
 
         <Typography variant="h4" component="h2" gutterBottom>
@@ -75,7 +75,7 @@ const PrivacyPolicy = () => {
         <List sx={listStyle}>
           <ListItem>
             <Typography>
-              Providing Financial Services: Facilitating transactions, processing payments, and managing your accounts on the Platform.
+              Providing Payment and Transfer Infrastructure: Facilitating blockchain transactions, processing blockchain payments to third parties and smart contracts, and managing a record of your transactions generated through the Platform.
             </Typography>
           </ListItem>
           <ListItem>
@@ -183,7 +183,7 @@ const PrivacyPolicy = () => {
         </Typography>
 
         <Typography variant="body2">
-          The Platform is not intended for individuals under the age of 18. We do not knowingly collect personal data from children. 
+          The Platform is not intended for individuals under the age of 18. We do not knowingly collect personal data from children.
         </Typography>
 
         <Typography variant="h4" component="h2" gutterBottom>
