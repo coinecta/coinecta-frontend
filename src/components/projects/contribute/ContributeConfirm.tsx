@@ -153,10 +153,10 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
             addAlert('success', <>Transaction submitted successfully.
               Hash: <Link target="_blank" sx={{ color: '#fff' }} href={`https://cardanoscan.io/transaction/${txHash}`}>{txHash}</Link>
             </>);
-
+            const integerValue = parseInt(paymentAmount, 10).toString();
             try {
               await createTransaction.mutateAsync({
-                amount: paymentAmount,
+                amount: integerValue,
                 currency: paymentCurrency || 'ADA',
                 address: (changeAddress || sessionData?.user.address)!,
                 txId: txHash,
