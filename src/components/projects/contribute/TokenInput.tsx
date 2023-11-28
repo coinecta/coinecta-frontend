@@ -61,7 +61,7 @@ const TokenInput: FC<ITokenInputProps> = ({
       // Convert to a number for output value, handling potential NaN
       const numericValue = Number(rawValue);
       if (!isNaN(numericValue)) {
-        setOutputValue(numericValue.toLocaleString(undefined, { maximumFractionDigits: 2 }));
+        setOutputValue(numericValue.toFixed(0));
       } else {
         setOutputValue('');
       }
