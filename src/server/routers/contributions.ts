@@ -124,4 +124,28 @@ export const contributionRouter = createTRPCRouter({
         });
       }
     }),
+
+  sumTransactions: protectedProcedure
+    .input(z.object({
+      contributionId: z.number()
+    }))
+    .query(async ({ input, ctx }) => {
+      const userId = ctx.session.user.id
+
+      const transactions = await prisma.transaction.findMany({
+        where: {
+          contribution_id: input.contributionId,
+          user_id: userId
+        },
+        select: {
+          amount: true, // Select only the amount field
+        },
+      });
+
+      const totalAmount = transactions.reduce((sum, transaction) => {
+        return sum + parseFloat(transaction.amount);
+      }, 0);
+
+      return totalAmount
+    })
 })
