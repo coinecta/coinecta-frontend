@@ -36,6 +36,7 @@ const ProRataForm: FC<TProRataFormProps> = ({
   const [whitelisted, setWhitelisted] = useState(false)
   const currentDate = new Date();
   const isCurrentDateBetween = currentDate >= startDate && currentDate <= endDate;
+  const usersTransactions = trpc.contributions.sumTransactions.useQuery({ contributionId: id })
 
   useEffect(() => {
     if (sessionStatus === 'authenticated' && getUserWhitelistSignups.data?.data) {
@@ -150,64 +151,104 @@ const ProRataForm: FC<TProRataFormProps> = ({
                 {(claimedAmount / tokenTarget * 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}%
               </Typography>
             </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                mb: 2
-              }}
-            >
-              <Box>
-                <Typography variant="overline">
-                  Price
-                </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', mt: -1 }}>
+            <Grid container>
+              <Grid xs={12} sm={6}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    mb: 2
+                  }}
+                >
                   <Box>
-                    <Typography variant="h6">
-                      {priceSet}
+                    <Typography variant="overline">
+                      Price
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', mt: -1 }}>
+                      <Box>
+                        <Typography variant="h6">
+                          {priceSet}
+                        </Typography>
+                      </Box>
+                      <Button
+                        variant="outlined"
+                        color="inherit"
+                        sx={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '3px',
+                          background: theme.palette.background.paper,
+                          border: `1px solid ${theme.palette.divider}`,
+                          ml: 1,
+                          minWidth: '0!important',
+                          p: 0
+                        }}
+                        onClick={handleFlipPrice}
+                      >
+                        <AutorenewIcon sx={{
+                          width: '20px',
+                          height: '20px',
+                          color: theme.palette.text.secondary
+                        }} />
+                      </Button>
+                    </Box>
+                  </Box>
+                  <Box>
+                    <Typography variant="overline">
+                      Total {currency} Deposited
+                    </Typography>
+                    <Typography variant="h6" sx={{ mt: -1 }}>
+                      {(deposited).toLocaleString(undefined, { maximumFractionDigits: 2 })} {currencySymbol}
                     </Typography>
                   </Box>
-                  <Button
-                    variant="outlined"
-                    color="inherit"
-                    sx={{
-                      width: '24px',
-                      height: '24px',
-                      borderRadius: '3px',
-                      background: theme.palette.background.paper,
-                      border: `1px solid ${theme.palette.divider}`,
-                      ml: 1,
-                      minWidth: '0!important',
-                      p: 0
-                    }}
-                    onClick={handleFlipPrice}
-                  >
-                    <AutorenewIcon sx={{
-                      width: '20px',
-                      height: '20px',
-                      color: theme.palette.text.secondary
-                    }} />
-                  </Button>
+                  <Box>
+                    <Typography variant="overline">
+                      Total {currency} to be refunded
+                    </Typography>
+                    <Typography variant="h6" sx={{ mt: -1 }}>
+                      {(deposited - depositTarget) > 0 ? (deposited - depositTarget).toLocaleString(undefined, { maximumFractionDigits: 2 }) : 0} {currencySymbol}
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-              <Box>
-                <Typography variant="overline">
-                  {currency} Deposited
-                </Typography>
-                <Typography variant="h6" sx={{ mt: -1 }}>
-                  {(deposited).toLocaleString(undefined, { maximumFractionDigits: 2 })} {currencySymbol}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="overline">
-                  {currency} to be refunded
-                </Typography>
-                <Typography variant="h6" sx={{ mt: -1 }}>
-                  {(deposited - depositTarget) > 0 ? (deposited - depositTarget).toLocaleString(undefined, { maximumFractionDigits: 2 }) : 0} {currencySymbol}
-                </Typography>
-              </Box>
-            </Box>
+              </Grid>
+              {usersTransactions.data !== undefined
+                && usersTransactions.data > 0
+                && <Grid xs={12} sm={6}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      mb: 2,
+                      textAlign: { xs: 'left', sm: 'right' }
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="overline">
+                        Your contribution
+                      </Typography>
+
+                      <Box>
+                        <Typography variant="h6">
+                          {usersTransactions.data} ₳
+                        </Typography>
+                      </Box>
+
+                      <Typography variant="overline">
+                        Your expected {tokenTicker}
+                      </Typography>
+
+                      <Box>
+                        <Typography variant="h6">
+                          {usersTransactions.data * (1 / price)} {tokenTicker}
+                        </Typography>
+                      </Box>
+
+                    </Box>
+                  </Box>
+                </Grid>}
+            </Grid>
           </Paper>
         </Grid>
       </Grid>
