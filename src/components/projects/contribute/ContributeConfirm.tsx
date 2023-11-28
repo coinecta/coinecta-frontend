@@ -97,8 +97,6 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
       const thisChangeAddress = await wallet.getChangeAddress();
       setChangeAddress(thisChangeAddress);
       const balance = await wallet.getLovelace();
-      console.log(balance)
-      console.log(paymentAmount)
       if (Number(paymentAmount) * 1000000 > Number(balance)) {
         // addAlert('error', `Wallet doesn't have ${Number(paymentAmount)} ADA available, please choose another wallet. `)
         setButtonDisabled(true)
@@ -128,7 +126,6 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
   const handleSubmit = async () => {
     if (changeAddress || sessionData?.user.address) {
       try {
-        console.log(CONTRIBUTION_ADDRESS)
         const tx = new Transaction({ initiator: wallet })
           .sendLovelace(
             CONTRIBUTION_ADDRESS,
