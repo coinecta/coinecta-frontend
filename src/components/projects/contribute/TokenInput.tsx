@@ -49,34 +49,29 @@ const TokenInput: FC<ITokenInputProps> = ({
   }, [wallet]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = event.target.value.replace(/,/g, '');
+    const rawValue = event.target.value.replace(/,/g, '.');
 
-    // Check if the value is a valid number or a valid number with a decimal point
-    if (!isNaN(Number(rawValue)) || rawValue.match(/^\d+\.?\d*$/)) {
-      // Determine whether the value ends with a decimal point or has decimal digits
-      const endsWithDecimal = rawValue.includes('.') && rawValue.split('.')[1] === '';
-      const hasDecimalDigits = rawValue.includes('.') && rawValue.split('.')[1].length > 0;
+    // Function to count the number of periods in the string
+    const countPeriods = (str: string) => (str.match(/\./g) || []).length;
 
-      // Format the input value according to its content
-      if (endsWithDecimal) {
-        setInputValue(rawValue); // Keep as is, user might be typing decimal part
-      } else if (hasDecimalDigits) {
-        // Format but keep decimal digits
-        setInputValue(Number(rawValue).toLocaleString(undefined, { minimumFractionDigits: rawValue.split('.')[1].length, maximumFractionDigits: 20 }));
+    // Only update the input value if it doesn't result in multiple periods
+    if (countPeriods(rawValue) <= 1) {
+      setInputValue(rawValue);
+
+      // Convert to a number for output value, handling potential NaN
+      const numericValue = Number(rawValue);
+      if (!isNaN(numericValue)) {
+        setOutputValue(numericValue.toLocaleString(undefined, { maximumFractionDigits: 2 }));
       } else {
-        // Standard formatting for whole numbers
-        setInputValue(Number(rawValue).toLocaleString(undefined, { maximumFractionDigits: 2 }));
+        setOutputValue('');
       }
-
-      // Set output value, formatted with two decimal places
-      setOutputValue((Number(rawValue) * exchangeRate).toLocaleString(undefined, { maximumFractionDigits: 2 }));
     }
   };
 
   const handleInputMax = () => {
     if (adaAmount) {
-      setInputValue(adaAmount.toLocaleString(undefined, { maximumFractionDigits: 2 }))
-      setOutputValue((Number(adaAmount) * exchangeRate).toLocaleString(undefined, { maximumFractionDigits: 2 }))
+      setInputValue(adaAmount.toString())
+      setOutputValue((Number(adaAmount) * exchangeRate).toString())
     }
   }
 
