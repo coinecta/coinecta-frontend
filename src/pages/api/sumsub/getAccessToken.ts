@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const userId = req.query.userId as string;
-  const levelName = 'kyc-with-address';
+  const levelName = 'basic-kyc-level';
   const appToken = process.env.SUMSUB_TOKEN!;
   const secretKey = process.env.SUMSUB_SECRET_KEY!;
 
