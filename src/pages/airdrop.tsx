@@ -143,6 +143,7 @@ const Airdrop: NextPage = () => {
         onChange={handleTokenChange}
       >
         {assets && assets.map((asset, i) => (
+          // @ts-ignore
           <MenuItem key={i} value={asset.unit}>{asset.assetName}</MenuItem>
         ))}
       </Select>
