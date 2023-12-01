@@ -50,7 +50,6 @@
     "ergo-lib-wasm-nodejs": "^0.26.0",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.12",
-    "lucid-cardano": "^0.10.7",
     "nanoid": "^5.0.1",
     "next": "^13.4.12",
     "next-auth": "^4.22.3",
