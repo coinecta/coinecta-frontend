@@ -56,6 +56,12 @@ const links = {
       link: '/admin/add-spo-signups-manually'
     },
   ],
+  Reports: [
+    {
+      name: 'Transaction Reports',
+      link: '/admin/transaction-report'
+    }
+  ],
   Other: [
     {
       name: 'Hero Carousel',

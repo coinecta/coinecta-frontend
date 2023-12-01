@@ -147,5 +147,71 @@ export const contributionRouter = createTRPCRouter({
       }, 0);
 
       return totalAmount
-    })
+    }),
+
+  listTransactionsByContribution: adminProcedure
+    .input(z.object({
+      contributionId: z.number()
+    }))
+    .query(async ({ input }) => {
+      const { contributionId } = input;
+      const transactions = await prisma.transaction.findMany({
+        where: {
+          contribution_id: contributionId
+        },
+        include: {
+          user: {
+            select: {
+              defaultAddress: true,
+              sumsubId: true,
+              sumsubResult: true
+            }
+          }
+        }
+      });
+      return transactions.map(transaction => ({
+        ...transaction,
+        userDefaultAddress: transaction.user?.defaultAddress,
+        userSumsubId: transaction.user?.sumsubId
+      }));
+    }),
+
+  // listUsersExceedingThreshold: adminProcedure
+  // .input(z.object({
+  //   contributionId: z.number(),
+  //   date: z.date(),
+  //   threshold: z.number()
+  // }))
+  // .query(async ({ input }) => {
+  //   const { contributionId, date, threshold } = input;
+
+  //   // Fetch all transactions for the given contributionId and date
+  //   const transactions = await prisma.transaction.findMany({
+  //     where: {
+  //       contribution_id: contributionId,
+  //       created_at: {
+  //         gte: startOfDay(date),
+  //         lte: endOfDay(date)
+  //       }
+  //     },
+  //     include: {
+  //       user: true // include user data
+  //     }
+  //   });
+
+  //   // Aggregate transactions by user
+  //   const userTotals = transactions.reduce((acc, transaction) => {
+  //     const amount = parseFloat(transaction.amount);
+  //     if (!acc[transaction.user_id]) {
+  //       acc[transaction.user_id] = { totalAmount: 0, user: transaction.user };
+  //     }
+  //     acc[transaction.user_id].totalAmount += amount;
+  //     return acc;
+  //   }, {});
+
+  //   // Filter users exceeding the threshold
+  //   const usersExceedingThreshold = Object.values(userTotals).filter(userTotal => userTotal.totalAmount > threshold);
+
+  //   return usersExceedingThreshold;
+  // }),
 })

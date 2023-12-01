@@ -11,6 +11,7 @@ import { Container } from '@mui/material';
 import HeroCarouselPage from '@components/admin/Pages/HeroCarouselPage';
 import WhitelistPage from '@components/admin/Pages/WhitelistPage';
 import ContributionPage from '@components/admin/Pages/ContributionPage';
+import TransactionReportPage from '@components/admin/Pages/TransactionReportPage';
 
 const AdminPage: NextPage = () => {
   const { sessionData, sessionStatus } = useWalletContext()
@@ -25,7 +26,8 @@ const AdminPage: NextPage = () => {
     "fiso-management": <FisoManagementPage />,
     "hero-carousel": <HeroCarouselPage />,
     "whitelist": <WhitelistPage />,
-    "contribution-rounds": <ContributionPage />
+    "contribution-rounds": <ContributionPage />,
+    "transaction-report": <TransactionReportPage />
   }
 
   return (
