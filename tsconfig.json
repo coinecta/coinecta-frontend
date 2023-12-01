@@ -19,6 +19,7 @@
         "name": "next"
       }
     ],
+    "noErrorTruncation": true,
     "paths": {
       "@lib/*": ["./src/lib/*"],
       "@components/*": ["./src/components/*"],

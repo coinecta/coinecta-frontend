@@ -1,12 +1,12 @@
 import type { NextPage } from 'next'
-import { 
+import {
   Container,
   useTheme,
   useMediaQuery
 } from '@mui/material'
 import ButtonLink from '@components/ButtonLink'
 
-const Page: NextPage = () => {
+const Template: NextPage = () => {
   const theme = useTheme()
   const upSm = useMediaQuery(theme.breakpoints.up('sm'))
   return (
@@ -20,4 +20,4 @@ const Page: NextPage = () => {
   )
 }
 
-export default Page
+export default Template
