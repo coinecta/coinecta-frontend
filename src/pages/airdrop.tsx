@@ -56,6 +56,7 @@ const Airdrop: NextPage = () => {
   const addRecipient = () => {
     setRecipients([...recipients, { address: '', amount: '' }]);
   };
+  console.log(token)
 
   const submitAirdrop = async () => {
     try {
@@ -73,6 +74,7 @@ const Airdrop: NextPage = () => {
               {
                 unit: token,
                 quantity: decimals ? (Number(recipient.amount) * Math.pow(10, decimals)).toString() : recipient.amount,
+                // quantity: (Number(recipient.amount) * Math.pow(10, 4)).toString(),
               },
             ]
           );

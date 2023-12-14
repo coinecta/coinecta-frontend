@@ -10,6 +10,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from '@mui/material';
 import { trpc } from '@lib/utils/trpc';
@@ -18,6 +19,7 @@ import SelectContributionRound from '@components/admin/contribution/SelectContri
 import SelectProject from '@components/admin/SelectProject';
 import AdminMenu from '../AdminMenu';
 import { Prisma } from '@prisma/client';
+import { getSymbol } from '@lib/utils/currencies';
 
 type TransactionDetails = {
   userDefaultAddress: string | null;
@@ -64,6 +66,8 @@ const TransactionReport: FC = () => {
   const [selectedRound, setSelectedRound] = useState<string | null>(null);
   const [selectedProject, setSelectedProject] = useState<string | null>(null)
   const [aggregatedTransactions, setAggregatedTransactions] = useState<TransactionDetails[]>([])
+  const [minUsdValue, setMinUsdValue] = useState<number | null>(null);
+  const [maxUsdValue, setMaxUsdValue] = useState<number | null>(null);
   const { data: projectList } = trpc.project.getProjectList.useQuery({});
   const roundQuery = trpc.contributions.getContributionRoundsByProjectSlug.useQuery(
     { projectSlug: selectedProject || '' },
@@ -73,6 +77,13 @@ const TransactionReport: FC = () => {
     { contributionId: formRound?.id || 0 },
     { enabled: !!formRound }
   );
+  const priceHistory = trpc.price.getCardanoPriceHistory.useQuery(
+    {
+      startDate: formRound?.startDate || new Date(0),
+      endDate: formRound?.endDate || new Date(0)
+    },
+    { enabled: !!formRound }
+  )
 
   useEffect(() => {
     const round = roundQuery.data?.find(round => round.id === Number(selectedRound))
@@ -114,6 +125,35 @@ const TransactionReport: FC = () => {
     copyToClipboard(tableString);
   };
 
+  type ExchangeRate = {
+    date: Date;
+    price: number;
+  };
+
+  const findClosestExchangeRate = (transactionDate: Date, exchangeRates: ExchangeRate[]): number => {
+    const closestRate = exchangeRates.reduce((closest, current) => {
+      const currentDiff = Math.abs(current.date.getTime() - transactionDate.getTime());
+      const closestDiff = Math.abs(closest.date.getTime() - transactionDate.getTime());
+
+      return currentDiff < closestDiff ? current : closest;
+    });
+
+    return closestRate.price;
+  };
+
+  const filterTransactionsByUsdValue = (transactions: TransactionDetails[]) => {
+    return transactions.filter(item => {
+      if (item.currency !== 'ADA' || !priceHistory.data) {
+        return false;
+      }
+      const usdValue = parseFloat(item.amount) * findClosestExchangeRate(item.created_at, priceHistory.data);
+      return (!minUsdValue || usdValue >= minUsdValue) && (!maxUsdValue || usdValue <= maxUsdValue);
+    });
+  };
+
+  const filteredTransactions = filterTransactionsByUsdValue(aggregatedTransactions);
+
+
   return (
     <AdminMenu>
       <Box>
@@ -131,6 +171,21 @@ const TransactionReport: FC = () => {
         <Box sx={{ mb: 1, maxWidth: '350px' }}>
           <SelectContributionRound roundData={roundQuery.data} selectedRound={selectedRound} setSelectedRound={setSelectedRound} />
         </Box>
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            label="Min USD Value"
+            type="number"
+            value={minUsdValue ?? ''}
+            onChange={(e) => setMinUsdValue(e.target.value ? parseFloat(e.target.value) : null)}
+            sx={{ mr: 1 }}
+          />
+          <TextField
+            label="Max USD Value"
+            type="number"
+            value={maxUsdValue ?? ''}
+            onChange={(e) => setMaxUsdValue(e.target.value ? parseFloat(e.target.value) : null)}
+          />
+        </Box>
         <Button onClick={handleCopy}>Copy Table</Button>
         {
           transactionQuery.isLoading ? (
@@ -145,11 +200,12 @@ const TransactionReport: FC = () => {
                     <TableCell>Address</TableCell>
                     <TableCell>Token</TableCell>
                     <TableCell>Contribution</TableCell>
+                    <TableCell>USD Value</TableCell>
                     <TableCell>SumSub ID</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {aggregatedTransactions.map((item, index) => (
+                  {filteredTransactions.map((item, index) => (
                     <TableRow key={index}>
                       <TableCell
                         sx={{
@@ -162,7 +218,12 @@ const TransactionReport: FC = () => {
                         {item.address}
                       </TableCell>
                       <TableCell>{(parseFloat(item.amount) / (formRound?.price || 1))}</TableCell>
-                      <TableCell>{item.amount}</TableCell>
+                      <TableCell>{item.amount} {getSymbol(item.currency)}</TableCell>
+                      <TableCell>{
+                        item.currency === 'ADA' && priceHistory.data ?
+                          `$${(parseFloat(item.amount) * findClosestExchangeRate(item.created_at, priceHistory.data)).toFixed(2)}`
+                          : 'N/A'
+                      }</TableCell>
                       <TableCell><Link target="_blank" href={`https://cockpit.sumsub.com/checkus#/applicant/${item.userSumsubId}`}>{item.userSumsubId}</Link></TableCell>
                     </TableRow>
                   ))}
