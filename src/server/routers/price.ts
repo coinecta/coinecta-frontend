@@ -51,23 +51,28 @@ const getPriceHistory = async (startDate: Date, endDate: Date) => {
 export const priceRouter = createTRPCRouter({
   getCardanoPrice: publicProcedure
     .query(async () => {
-      // Check if the latest price in the database is older than 1 minute
       const oneMinuteAgo = new Date(new Date().getTime() - 60000);
-      let latestPrice = await prisma.cardanoPrice.findFirst({
-        orderBy: { updatedAt: 'desc' }
+
+      const latestPriceEntry = await prisma.cardanoPrice.findUnique({
+        where: { id: 1 },
       });
 
-      if (!latestPrice || latestPrice.updatedAt < oneMinuteAgo) {
-        // Price is stale, fetch new price
+      // Check if the price is stale
+      if (!latestPriceEntry || latestPriceEntry.updatedAt < oneMinuteAgo) {
+        // Price is stale, fetch new price from the API
         const newPrice = await getPriceFromAPI();
-        latestPrice = await prisma.cardanoPrice.create({
-          data: {
-            price: newPrice
-          }
-        });
-      }
 
-      return latestPrice.price;
+        await prisma.cardanoPrice.upsert({
+          where: { id: 1 },
+          update: { price: newPrice },
+          create: { id: 1, price: newPrice },
+        });
+
+        return newPrice;
+      } else {
+        // Price is not stale, return the existing price
+        return latestPriceEntry.price;
+      }
     }),
   getCardanoPriceHistory: publicProcedure
     .input(z.object({

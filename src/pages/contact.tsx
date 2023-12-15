@@ -21,7 +21,7 @@ const Contact: NextPage = () => {
       <Typography variant="body1" sx={{ mb: 4 }}>
         If you run into issues while using the Coinceta website, please open a support ticket on Discord. We will work to resolve the issue as quickly as possible for you.
       </Typography>
-      <Alert severity="warning" sx={{ fontWeight: 700 }}>
+      <Alert severity="warning" variant="outlined" sx={{ fontWeight: 700 }}>
         Never share your private keys with anyone! We will never DM you first!
       </Alert>
       <Typography variant="h6">
@@ -34,7 +34,7 @@ const Contact: NextPage = () => {
         Step 2: Create a support ticket
       </Typography>
       <Typography sx={{ mb: 2 }}>
-        Enter the #bug-report channel, then create a new ticket.
+        Enter the #create-a-ticket channel, then create a new ticket.
       </Typography>
       <Box sx={{
         width: '100%',
@@ -56,11 +56,9 @@ const Contact: NextPage = () => {
       <Typography sx={{ mb: 4 }}>
         Describe the issue and someone will help you out as soon as possible. Only admins will be able to see the ticket, and they might ask for information such as your public ADA address.
       </Typography>
-      <Alert severity="warning" sx={{ fontWeight: 700 }}>
+      <Alert severity="warning" variant="outlined" sx={{ fontWeight: 700 }}>
         Never share your private keys with anyone! We will never DM you first!
       </Alert>
-
-
     </Container>
   )
 }

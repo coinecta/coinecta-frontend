@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { 
+import {
   Container,
   useTheme,
   useMediaQuery,
@@ -11,16 +11,14 @@ const Stake: NextPage = () => {
   const theme = useTheme()
   const upSm = useMediaQuery(theme.breakpoints.up('sm'))
   return (
-    <Container sx={{ textAlign: 'center', py: '20vh' }}>
-      <Typography variant="h2">
-        Staking panel coming soon
+    <Container maxWidth="md" sx={{ py: 12 }}>
+      <Typography variant="h2" component="h1" sx={{ fontWeight: '600' }}>
+        Staking
       </Typography>
-      <Typography variant="body1" gutterBottom>
-        We are getting this ready and will release it shortly. 
+      <Typography variant="body1" sx={{ mb: 4 }}>
+        Stake your CNCT tokens here
       </Typography>
-      <Link href="/">
-        Go Back Home
-      </Link>
+
     </Container>
   )
 }
