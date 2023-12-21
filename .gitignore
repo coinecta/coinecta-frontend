@@ -51,3 +51,7 @@ ssl.key
 /db
 
 .env.*
+
+/deployments/local_postgres/db.dump
+/deployments/local_postgres/test_keys
+bun.lockb
