@@ -225,7 +225,7 @@ model Tokenomic {
   length         String?
   lockup         String?
   tokenomicsId   Int
-  walletAddress String?     @map("wallet_address")
+  walletAddress  String?     @map("wallet_address")
   tokenomics     Tokenomics @relation(fields: [tokenomicsId], references: [id], onDelete: Cascade)
 
   @@map("project_tokenomics_items")
