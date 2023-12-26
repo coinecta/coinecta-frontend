@@ -145,8 +145,6 @@ const UserMenu: FC<IUserMenuProps> = () => {
 
     try {
       const signature = await wallet.signData(address, nonce.nonce)
-      // console.log(signature)
-
       if (!signature.signature || !signature.key) {
         console.error('signature failed to generate');
         addAlert('error', 'Message signing failed. ')
@@ -168,6 +166,8 @@ const UserMenu: FC<IUserMenuProps> = () => {
           }),
           redirect: false
         });
+
+        console.log(response)
 
         if (!response?.status || response.status !== 200) {
           // console.log(response)
