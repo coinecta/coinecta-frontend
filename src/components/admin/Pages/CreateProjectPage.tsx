@@ -31,6 +31,7 @@ const initialFormData: TProject = {
     tokenName: '',
     totalTokens: 0,
     tokenTicker: '',
+    tokenPolicyId: '',
     tokenomics: [],
   },
   whitelists: [],
