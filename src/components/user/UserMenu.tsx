@@ -167,8 +167,6 @@ const UserMenu: FC<IUserMenuProps> = () => {
           redirect: false
         });
 
-        console.log(response)
-
         if (!response?.status || response.status !== 200) {
           // console.log(response)
           cleanupForAuth(nonce);
