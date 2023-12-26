@@ -55,12 +55,12 @@ model User {
   sumsubType     String?           @map("sumsub_type")
   sumsubResult   Json?             @map("sumsub_result")
   sumsubStatus   String?           @map("sumsub_status")
+  ergoProofs     ErgoProof[]
   accounts       Account[]
   sessions       Session[]
   transactions   Transaction[]
   wallets        Wallet[]
   whitelists     WhitelistSignup[]
-  ergoProofs     ErgoProof[]
 
   @@map("users")
 }
@@ -106,13 +106,13 @@ model Transaction {
   currency          String
   address           String
   completed         Boolean           @default(false)
-  txId              String?           @map("tx_id")
   created_at        DateTime          @default(now())
   updated_at        DateTime          @updatedAt
   user_id           String
-  user              User              @relation(fields: [user_id], references: [id])
   contribution_id   Int
+  txId              String?           @map("tx_id")
   contributionRound ContributionRound @relation(fields: [contribution_id], references: [id])
+  user              User              @relation(fields: [user_id], references: [id])
 
   @@map("transactions")
 }
@@ -133,13 +133,13 @@ model Project {
   isLaunched         Boolean             @default(false) @map("is_launched")
   isDraft            Boolean             @default(true) @map("is_draft")
   frontPage          Boolean             @default(false) @map("front_page")
+  contributionRounds ContributionRound[]
   fisos              Fiso[]
   roadmap            Roadmap[]
   socials            Socials?
   team               Team[]
   tokenomics         Tokenomics?
   whitelists         Whitelist[]
-  contributionRounds ContributionRound[]
 
   @@map("projects")
 }
@@ -155,12 +155,12 @@ model ContributionRound {
   currency      String
   price         Float
   deposited     Float
-  whitelistSlug String        @unique @map("whitelist_slug")
-  whitelist     Whitelist     @relation(fields: [whitelistSlug], references: [slug])
-  Transaction   Transaction[]
   projectName   String        @map("project_name")
   projectSlug   String        @map("project_slug")
+  whitelistSlug String        @unique @map("whitelist_slug")
   project       Project       @relation(fields: [projectSlug], references: [slug], onDelete: Cascade)
+  whitelist     Whitelist     @relation(fields: [whitelistSlug], references: [slug])
+  Transaction   Transaction[]
 
   @@map("contribution_round")
 }
@@ -208,6 +208,7 @@ model Tokenomics {
   totalTokens  Int         @map("total_tokens")
   tokenTicker  String      @map("token_ticker")
   project_slug String      @unique
+  policyId     String?     @map("policy_id")
   project      Project     @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
   tokenomics   Tokenomic[]
 
@@ -215,16 +216,17 @@ model Tokenomics {
 }
 
 model Tokenomic {
-  id           Int        @id @default(autoincrement())
-  name         String
-  amount       Int
-  value        String?
-  tge          String?
-  freq         String?
-  length       String?
-  lockup       String?
-  tokenomicsId Int
-  tokenomics   Tokenomics @relation(fields: [tokenomicsId], references: [id], onDelete: Cascade)
+  id             Int        @id @default(autoincrement())
+  name           String
+  amount         Int
+  value          String?
+  tge            String?
+  freq           String?
+  length         String?
+  lockup         String?
+  tokenomicsId   Int
+  walletAddress String?     @map("wallet_address")
+  tokenomics     Tokenomics @relation(fields: [tokenomicsId], references: [id], onDelete: Cascade)
 
   @@map("project_tokenomics_items")
 }
@@ -240,11 +242,11 @@ model Whitelist {
   maxPerSignup      Int?               @map("max_per_signup")
   hardCap           Int?               @map("hard_cap")
   externalLink      String?            @map("external_link")
-  ergoProofs        Boolean            @default(false) @map("ergo_proofs")
   project_slug      String
+  ergoProofs        Boolean            @default(false) @map("ergo_proofs")
+  ContributionRound ContributionRound?
   signups           WhitelistSignup[]
   project           Project            @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
-  ContributionRound ContributionRound?
 
   @@map("whitelists")
 }
@@ -386,20 +388,12 @@ model WhitelistSignup {
   amountApproved  String?   @map("amount_approved")
   status          String?
   notes           String?
+  whitelist_slug  String
   user_id         String
   user            User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  whitelist_slug  String
   whitelist       Whitelist @relation(fields: [whitelist_slug], references: [slug], onDelete: Cascade)
 
   @@map("whitelist_signups")
-}
-
-enum ProofStatus {
-  INITIATED // no address yet
-  PENDING // address is added
-  SIGNED // Proof is signed
-  VERIFIED // Proof is verified with a signed proof or on-chain transaction
-  EXPIRED
 }
 
 model ErgoProof {
@@ -425,4 +419,12 @@ model CardanoPrice {
   updatedAt DateTime @updatedAt
 
   @@map("cardano_price")
+}
+
+enum ProofStatus {
+  INITIATED
+  PENDING
+  SIGNED
+  VERIFIED
+  EXPIRED
 }

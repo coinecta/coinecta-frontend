@@ -6,11 +6,10 @@ import {
   TableRow,
   Paper,
   useMediaQuery,
-  Typography,
   useTheme,
   TableContainer
 } from '@mui/material';
-import { Fragment, FC } from 'react';
+import { FC, useMemo, useEffect, useState } from 'react';
 
 const tokenomicsHeading: { [key: string]: string } = {
   name: 'Name',
@@ -19,11 +18,8 @@ const tokenomicsHeading: { [key: string]: string } = {
   tge: 'TGE',
   freq: 'Frequency',
   length: 'Length',
-  lockup: 'Cliff',
+  lockup: 'Cliff'
 };
-
-const tokenomicsKeys = Object.keys(tokenomicsHeading);
-const tokenomicsHeadingValues = Object.values(tokenomicsHeading);
 
 interface IDistribution {
   data: TTokenomic[],
@@ -32,6 +28,21 @@ interface IDistribution {
 const Distribution: FC<IDistribution> = ({ data }) => {
   const theme = useTheme()
   const desktop = useMediaQuery(() => theme.breakpoints.up('md'));
+  const [tokenomicsKeys, setTokenomicKeys] = useState(Object.keys(tokenomicsHeading));
+  const [tokenomicsHeadingValues, setTokenomicsHeadingValues] = useState(Object.values(tokenomicsHeading));
+
+  const dataHasWalletAddress = useMemo(() => {
+    return data.some((elem) => elem.walletAddress !== '' && elem.walletAddress !== null && elem.walletAddress !== undefined);
+  }, [data]);
+
+  useEffect(() => {
+    // Dynamic Column Wallet Address
+    if (dataHasWalletAddress) {
+      tokenomicsHeading.walletAddress = 'Wallet Address';
+      setTokenomicKeys(Object.keys(tokenomicsHeading));
+      setTokenomicsHeadingValues(Object.values(tokenomicsHeading));
+    }
+  }, [dataHasWalletAddress]);
 
   const largeHeading = tokenomicsHeadingValues.map((value, i) => {
     return (
@@ -54,7 +65,11 @@ const Distribution: FC<IDistribution> = ({ data }) => {
               const keysLoop = tokenomicsKeys.map((key) => {
                 return (
                   <TableCell key={key}>
-                    {round?.[key].toLocaleString(navigator.language, {
+                    {key === 'walletAddress' ? <>
+                      <a href={`https://cardanoscan.io/address/${round?.[key]}`} target="_blank">
+                        {round?.[key].substr(0, 5)}...{round?.[key].substr(round?.[key].length - 5, round?.[key].length)}
+                      </a>
+                    </> : round?.[key]?.toLocaleString(navigator.language, {
                       maximumFractionDigits: 0,
                     })}
                   </TableCell>
@@ -92,7 +107,11 @@ const Distribution: FC<IDistribution> = ({ data }) => {
                       {tokenomicsHeading[key]}:
                     </TableCell>
                     <TableCell sx={{ p: 1, fontWeight: 700, border: 0 }}>
-                      {round?.[key].toLocaleString(navigator.language, {
+                      {key === 'walletAddress' ? <>
+                        <a href={`https://cardanoscan.io/address/${round?.[key]}`} target="_blank">
+                          {round?.[key].substr(0, 5)}...{round?.[key].substr(round?.[key].length - 5, round?.[key].length)}
+                        </a>
+                      </> : round?.[key]?.toLocaleString(navigator.language, {
                         maximumFractionDigits: 0,
                       })}
                     </TableCell>

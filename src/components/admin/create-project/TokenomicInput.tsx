@@ -118,6 +118,17 @@ const TokenomicInput: FC<ITokenomicInputProps> = ({ data, setData }) => {
               onChange={(e) => handleChange(e, index)}
             />
           </Grid>
+          <Grid item md={12} xs={12}>
+            <TextField
+              name="walletAddress"
+              label="Wallet Address"
+              InputProps={{ disableUnderline: true }}
+              fullWidth
+              variant="filled"
+              value={elem.walletAddress}
+              onChange={(e) => handleChange(e, index)}
+            />
+          </Grid>
         </Grid>
       ))}
       <Button
@@ -135,6 +146,7 @@ const TokenomicInput: FC<ITokenomicInputProps> = ({ data, setData }) => {
               freq: '',
               length: '',
               lockup: '',
+              walletAddress: '',
             },
           ])
         }

@@ -59,6 +59,20 @@ const TokenomicsTab: FC<{ tokenomics: TTokenomics }> = ({ tokenomics }) => {
               </Typography>
             </Grid>
           </Grid>
+          <Grid container>
+            <Grid xs={6} sx={{ p: 1, textAlign: 'right' }}>
+              <Typography color="text.secondary">
+                Policy ID:
+              </Typography>
+            </Grid>
+            <Grid xs={6} sx={{ p: 1 }}>
+              <Typography
+                sx={{ fontWeight: '700' }}
+              >
+                <a href={`https://cardanoscan.io/tokenPolicy/${tokenomics.tokenPolicyId}`} target='_blank'>{tokenomics.tokenPolicyId}</a>
+              </Typography>
+            </Grid>
+          </Grid>
         </Paper>
       </Box>
       <Box sx={{ mb: 3 }}>
