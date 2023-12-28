@@ -10,6 +10,7 @@ import {
   TableContainer
 } from '@mui/material';
 import { FC, useMemo, useEffect, useState } from 'react';
+import Link from '@components/Link';
 
 const tokenomicsHeading: { [key: string]: string } = {
   name: 'Name',
@@ -66,9 +67,9 @@ const Distribution: FC<IDistribution> = ({ data }) => {
                 return (
                   <TableCell key={key}>
                     {key === 'walletAddress' ? <>
-                      <a href={`https://cardanoscan.io/address/${round?.[key]}`} target="_blank">
+                      <Link href={`https://cardanoscan.io/address/${round?.[key]}`} target="_blank">
                         {round?.[key].substr(0, 5)}...{round?.[key].substr(round?.[key].length - 5, round?.[key].length)}
-                      </a>
+                      </Link>
                     </> : round?.[key]?.toLocaleString(navigator.language, {
                       maximumFractionDigits: 0,
                     })}
@@ -108,9 +109,9 @@ const Distribution: FC<IDistribution> = ({ data }) => {
                     </TableCell>
                     <TableCell sx={{ p: 1, fontWeight: 700, border: 0 }}>
                       {key === 'walletAddress' ? <>
-                        <a href={`https://cardanoscan.io/address/${round?.[key]}`} target="_blank">
+                        <Link href={`https://cardanoscan.io/address/${round?.[key]}`} target="_blank">
                           {round?.[key].substr(0, 5)}...{round?.[key].substr(round?.[key].length - 5, round?.[key].length)}
-                        </a>
+                        </Link>
                       </> : round?.[key]?.toLocaleString(navigator.language, {
                         maximumFractionDigits: 0,
                       })}
