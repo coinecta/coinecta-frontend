@@ -11,6 +11,8 @@ import {
 } from '@mui/material';
 import { FC, useMemo, useEffect, useState } from 'react';
 import Link from '@components/Link';
+import { getShorterAddress } from '@lib/utils/general';
+import { trpc } from '@lib/utils/trpc';
 
 const tokenomicsHeading: { [key: string]: string } = {
   name: 'Name',
@@ -36,6 +38,11 @@ const Distribution: FC<IDistribution> = ({ data }) => {
     return data.some((elem) => elem.walletAddress !== '' && elem.walletAddress !== null && elem.walletAddress !== undefined);
   }, [data]);
 
+  const walletAddresses = useMemo(() => data.map((item) => item.walletAddress || ''), [data]);
+  const { data: verifiedAddresses, isLoading } = trpc.project.verifyAdaHandles.useQuery(walletAddresses, {
+    enabled: walletAddresses.length > 0
+  });
+
   useEffect(() => {
     // Dynamic Column Wallet Address
     if (dataHasWalletAddress) {
@@ -45,32 +52,33 @@ const Distribution: FC<IDistribution> = ({ data }) => {
     }
   }, [dataHasWalletAddress]);
 
-  const largeHeading = tokenomicsHeadingValues.map((value, i) => {
-    return (
-      <TableCell key={i} sx={{ fontWeight: '800' }}>
-        {value}
-      </TableCell>
-    );
-  });
-
   return (
     <TableContainer component={Paper} variant="outlined">
 
       {desktop ? (
         <Table size="small" >
           <TableHead>
-            <TableRow>{largeHeading}</TableRow>
+            <TableRow>
+              {tokenomicsHeadingValues.map((value, i) => {
+                return (
+                  <TableCell key={i} sx={{ fontWeight: '800' }}>
+                    {value}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((round: any) => {
+            {data.map((round: any, index) => {
               const keysLoop = tokenomicsKeys.map((key) => {
                 return (
                   <TableCell key={key}>
-                    {key === 'walletAddress' ? <>
-                      <Link href={`https://cardanoscan.io/address/${round?.[key]}`} target="_blank">
-                        {round?.[key].substr(0, 5)}...{round?.[key].substr(round?.[key].length - 5, round?.[key].length)}
-                      </Link>
-                    </> : round?.[key]?.toLocaleString(navigator.language, {
+                    {key === 'walletAddress' && verifiedAddresses ? (
+                      isLoading ? 'Loading...' :
+                        <Link href={`https://cardanoscan.io/address/${verifiedAddresses[index]}`} target="_blank">
+                          {round.walletAddress.includes('$') ? round.walletAddress : getShorterAddress(verifiedAddresses[index], 4)}
+                        </Link>
+                    ) : round?.[key]?.toLocaleString(navigator.language, {
                       maximumFractionDigits: 0,
                     })}
                   </TableCell>
@@ -108,11 +116,12 @@ const Distribution: FC<IDistribution> = ({ data }) => {
                       {tokenomicsHeading[key]}:
                     </TableCell>
                     <TableCell sx={{ p: 1, fontWeight: 700, border: 0 }}>
-                      {key === 'walletAddress' ? <>
-                        <Link href={`https://cardanoscan.io/address/${round?.[key]}`} target="_blank">
-                          {round?.[key].substr(0, 5)}...{round?.[key].substr(round?.[key].length - 5, round?.[key].length)}
-                        </Link>
-                      </> : round?.[key]?.toLocaleString(navigator.language, {
+                      {key === 'walletAddress' && verifiedAddresses ? (
+                        isLoading ? 'Loading...' :
+                          <Link href={`https://cardanoscan.io/address/${verifiedAddresses[index]}`} target="_blank">
+                            {round.walletAddress.includes('$') ? round.walletAddress : getShorterAddress(verifiedAddresses[index], 4)}
+                          </Link>
+                      ) : round?.[key]?.toLocaleString(navigator.language, {
                         maximumFractionDigits: 0,
                       })}
                     </TableCell>

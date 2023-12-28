@@ -3,6 +3,7 @@ import Distribution from './Distribution';
 import LinearTokenomics from './LinearTokenomics';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import { useTheme, Typography, Box, Paper, } from '@mui/material';
+import Link from '@components/Link';
 
 const TokenomicsTab: FC<{ tokenomics: TTokenomics }> = ({ tokenomics }) => {
   const theme = useTheme()
@@ -67,9 +68,15 @@ const TokenomicsTab: FC<{ tokenomics: TTokenomics }> = ({ tokenomics }) => {
             </Grid>
             <Grid xs={6} sx={{ p: 1 }}>
               <Typography
-                sx={{ fontWeight: '700' }}
+                sx={{
+                  fontWeight: '700',
+                  display: 'block',
+                  overflow: 'hidden'
+                }}
               >
-                <a href={`https://cardanoscan.io/tokenPolicy/${tokenomics.tokenPolicyId}`} target='_blank'>{tokenomics.tokenPolicyId}</a>
+                <Link
+                  sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }}
+                  href={`https://cardanoscan.io/tokenPolicy/${tokenomics.tokenPolicyId}`} target='_blank'>{tokenomics.tokenPolicyId}</Link>
               </Typography>
             </Grid>
           </Grid>

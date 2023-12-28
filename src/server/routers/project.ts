@@ -1,5 +1,6 @@
 import { TProject } from '@lib/types/zod-schemas/projectSchema';
 import { prisma } from '@server/prisma';
+import { blockfrostAPI } from '@server/utils/blockfrostApi';
 import { mapFullProjectFromDb } from '@server/utils/mapProjectObject';
 import { findToCreate, findToDelete, findToUpdate } from '@server/utils/prismaHelpers';
 import { z } from 'zod';
@@ -377,4 +378,20 @@ export const projectRouter = createTRPCRouter({
       }
       else throw new Error("No project slug provided");
     }),
+  verifyAdaHandles: publicProcedure
+    .input(z.array(z.string()))
+    .query(async ({ input }) => {
+      const policyID = 'f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a';
+      const addresses = await Promise.all(input.map(async (handle) => {
+        if (handle.length === 0 || !handle.startsWith('$')) {
+          return handle;
+        }
+        const assetName = Buffer.from(handle.substring(1)).toString('hex'); // Remove '$' and convert to hex
+        console.log(handle.substring(1))
+        console.log(`${assetName}`)
+        const response = await blockfrostAPI.get(`/assets/${policyID}000de140${assetName}/addresses`);
+        return response.data[0]?.address || null; // Return the first address or null
+      }));
+      return addresses;
+    })
 })
