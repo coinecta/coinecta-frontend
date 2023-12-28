@@ -387,8 +387,6 @@ export const projectRouter = createTRPCRouter({
           return handle;
         }
         const assetName = Buffer.from(handle.substring(1)).toString('hex'); // Remove '$' and convert to hex
-        console.log(handle.substring(1))
-        console.log(`${assetName}`)
         const response = await blockfrostAPI.get(`/assets/${policyID}000de140${assetName}/addresses`);
         return response.data[0]?.address || null; // Return the first address or null
       }));
