@@ -53,6 +53,7 @@ const initialFormData: TProject = {
     tokenName: '',
     totalTokens: 0,
     tokenTicker: '',
+    tokenPolicyId: '',
     tokenomics: [],
   },
   whitelists: [],
@@ -163,7 +164,7 @@ const ProjectForm: FC<ProjectFormProps> = ({ project, edit }) => {
         },
       });
     } else if (
-      ['tokenName', 'totalTokens', 'tokenTicker'].includes(e.target.name)
+      ['tokenName', 'totalTokens', 'tokenTicker', 'tokenPolicyId'].includes(e.target.name)
     ) {
       updateFormData({
         ...formData,
@@ -270,10 +271,8 @@ const ProjectForm: FC<ProjectFormProps> = ({ project, edit }) => {
       const serializedData = JSON.stringify(data);
       localStorage.setItem('myFormData', serializedData);
       const sanitizedData = convertStringsInObject(data)
-      // console.log(sanitizedData)
       try {
         const response = await submitProject.mutateAsync(sanitizedData);
-        // console.log(response)
         addAlert(
           'success',
           'Successfully submitted'
@@ -648,6 +647,18 @@ const ProjectForm: FC<ProjectFormProps> = ({ project, edit }) => {
             name="tokenTicker"
             variant="filled"
             value={formData.tokenomics.tokenTicker}
+            onChange={handleChange}
+          />
+        </Grid>
+        <Grid item xs={12} sx={{ p: 0.5 }}>
+          <TextField
+            InputProps={{ disableUnderline: true }}
+            fullWidth
+            id="tokenPolicyId"
+            label="Policy Id"
+            name="tokenPolicyId"
+            variant="filled"
+            value={formData.tokenomics.tokenPolicyId}
             onChange={handleChange}
           />
         </Grid>

@@ -45,6 +45,7 @@ const TTokenomic = z.object({
   freq: z.string().optional(),
   length: z.string().optional(),
   lockup: z.string().optional(),
+  walletAddress: z.string().optional(),
 });
 
 const TTokenomics = z.object({
@@ -53,6 +54,7 @@ const TTokenomics = z.object({
   totalTokens: z.number(),
   tokenTicker: z.string(),
   tokenomics: z.array(TTokenomic),
+  tokenPolicyId: z.string(),
 });
 
 const TWhitelistSignup = z.object({

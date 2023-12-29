@@ -1,5 +1,6 @@
 import { TProject } from '@lib/types/zod-schemas/projectSchema';
 import { prisma } from '@server/prisma';
+import { blockfrostAPI } from '@server/utils/blockfrostApi';
 import { mapFullProjectFromDb } from '@server/utils/mapProjectObject';
 import { findToCreate, findToDelete, findToUpdate } from '@server/utils/prismaHelpers';
 import { z } from 'zod';
@@ -35,6 +36,7 @@ export const projectRouter = createTRPCRouter({
                   tokenName: input.tokenomics.tokenName,
                   totalTokens: input.tokenomics.totalTokens,
                   tokenTicker: input.tokenomics.tokenTicker,
+                  policyId: input.tokenomics.tokenPolicyId,
                   // For the nested Tokenomic records
                   tokenomics: {
                     create: input.tokenomics.tokenomics,
@@ -71,7 +73,6 @@ export const projectRouter = createTRPCRouter({
       }
 
       const { slug, socials, roadmap, team, tokenomics, whitelists, fisos, ...rest } = input;
-
       try {
         // update roadmap items
         const currentRoadmap = await prisma.roadmap.findMany({ where: { project_slug: slug } });
@@ -113,6 +114,7 @@ export const projectRouter = createTRPCRouter({
                 freq: t.freq,
                 length: t.length,
                 lockup: t.lockup,
+                walletAddress: t.walletAddress,
                 tokenomicsId: currentTokenomics.id
               }
             })));
@@ -132,6 +134,7 @@ export const projectRouter = createTRPCRouter({
                 freq: t.freq,
                 length: t.length,
                 lockup: t.lockup,
+                walletAddress: t.walletAddress,
                 tokenomicsId: currentTokenomics.id
               }))
             }));
@@ -146,6 +149,7 @@ export const projectRouter = createTRPCRouter({
               tokenName: tokenomics.tokenName,
               totalTokens: tokenomics.totalTokens,
               tokenTicker: tokenomics.tokenTicker,
+              policyId: tokenomics.tokenPolicyId,
               // Note that `tokenomics` is not included here
             }
           });
@@ -156,6 +160,7 @@ export const projectRouter = createTRPCRouter({
               tokenName: tokenomics.tokenName,
               totalTokens: tokenomics.totalTokens,
               tokenTicker: tokenomics.tokenTicker,
+              policyId: tokenomics.tokenPolicyId,
               project_slug: slug,
               tokenomics: {
                 create: tokenomics.tokenomics.map(t => ({
@@ -166,6 +171,7 @@ export const projectRouter = createTRPCRouter({
                   freq: t.freq,
                   length: t.length,
                   lockup: t.lockup,
+                  walletAddress: t.walletAddress,
                 }))
               }
             }
@@ -372,4 +378,18 @@ export const projectRouter = createTRPCRouter({
       }
       else throw new Error("No project slug provided");
     }),
+  verifyAdaHandles: publicProcedure
+    .input(z.array(z.string()))
+    .query(async ({ input }) => {
+      const policyID = 'f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a';
+      const addresses = await Promise.all(input.map(async (handle) => {
+        if (handle.length === 0 || !handle.startsWith('$')) {
+          return handle;
+        }
+        const assetName = Buffer.from(handle.substring(1)).toString('hex'); // Remove '$' and convert to hex
+        const response = await blockfrostAPI.get(`/assets/${policyID}000de140${assetName}/addresses`);
+        return response.data[0]?.address || null; // Return the first address or null
+      }));
+      return addresses;
+    })
 })
