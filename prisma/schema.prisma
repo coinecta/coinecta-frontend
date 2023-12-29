@@ -207,6 +207,7 @@ model Tokenomics {
   tokenName    String      @map("token_name")
   totalTokens  Int         @map("total_tokens")
   tokenTicker  String      @map("token_ticker")
+  policyId     String?     @map("policy_id")
   project_slug String      @unique
   project      Project     @relation(fields: [project_slug], references: [slug], onDelete: Cascade)
   tokenomics   Tokenomic[]
@@ -215,16 +216,17 @@ model Tokenomics {
 }
 
 model Tokenomic {
-  id           Int        @id @default(autoincrement())
-  name         String
-  amount       Int
-  value        String?
-  tge          String?
-  freq         String?
-  length       String?
-  lockup       String?
-  tokenomicsId Int
-  tokenomics   Tokenomics @relation(fields: [tokenomicsId], references: [id], onDelete: Cascade)
+  id            Int        @id @default(autoincrement())
+  name          String
+  amount        Int
+  value         String?
+  tge           String?
+  freq          String?
+  length        String?
+  lockup        String?
+  walletAddress String?    @map("wallet_address")
+  tokenomicsId  Int
+  tokenomics    Tokenomics @relation(fields: [tokenomicsId], references: [id], onDelete: Cascade)
 
   @@map("project_tokenomics_items")
 }

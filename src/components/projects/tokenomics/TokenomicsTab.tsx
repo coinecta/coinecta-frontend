@@ -3,6 +3,7 @@ import Distribution from './Distribution';
 import LinearTokenomics from './LinearTokenomics';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import { useTheme, Typography, Box, Paper, } from '@mui/material';
+import Link from '@components/Link';
 
 const TokenomicsTab: FC<{ tokenomics: TTokenomics }> = ({ tokenomics }) => {
   const theme = useTheme()
@@ -56,6 +57,26 @@ const TokenomicsTab: FC<{ tokenomics: TTokenomics }> = ({ tokenomics }) => {
                 {tokenomics.totalTokens.toLocaleString(navigator.language, {
                   maximumFractionDigits: 0,
                 })}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid xs={6} sx={{ p: 1, textAlign: 'right' }}>
+              <Typography color="text.secondary">
+                Policy ID:
+              </Typography>
+            </Grid>
+            <Grid xs={6} sx={{ p: 1 }}>
+              <Typography
+                sx={{
+                  fontWeight: '700',
+                  display: 'block',
+                  overflow: 'hidden'
+                }}
+              >
+                <Link
+                  sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }}
+                  href={`https://cardanoscan.io/tokenPolicy/${tokenomics.tokenPolicyId}`} target='_blank'>{tokenomics.tokenPolicyId}</Link>
               </Typography>
             </Grid>
           </Grid>
