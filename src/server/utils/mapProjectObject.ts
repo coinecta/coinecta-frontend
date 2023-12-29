@@ -62,6 +62,7 @@ export const mapFullProjectFromDb = (projectDb: ProjectWithRelations | null): z.
     tokenName: projectDb.tokenomics.tokenName,
     totalTokens: projectDb.tokenomics.totalTokens,
     tokenTicker: projectDb.tokenomics.tokenTicker,
+    tokenPolicyId: projectDb.tokenomics.policyId || '',
     tokenomics: projectDb.tokenomics.tokenomics.map(tokenomic => ({
       name: tokenomic.name,
       amount: tokenomic.amount,
@@ -70,11 +71,13 @@ export const mapFullProjectFromDb = (projectDb: ProjectWithRelations | null): z.
       freq: tokenomic.freq || '',
       length: tokenomic.length || '',
       lockup: tokenomic.lockup || '',
+      walletAddress: tokenomic.walletAddress || '',
     })),
   } : { // default empty object if tokenomics is null
     tokenName: '',
     totalTokens: 0,
     tokenTicker: '',
+    tokenPolicyId: '',
     tokenomics: [],
   };
 

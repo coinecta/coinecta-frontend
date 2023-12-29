@@ -41,6 +41,7 @@ const initialFormData: TProject = {
     tokenName: '',
     totalTokens: 0,
     tokenTicker: '',
+    tokenPolicyId: '',
     tokenomics: [],
   },
   whitelists: [],
@@ -76,7 +77,7 @@ const EditProjectPage: FC = () => {
 
   return (
     <AdminMenu>
-      <FormControl fullWidth sx={{ mb: 2 }}>
+      <FormControl fullWidth sx={{ mt: 2, mb: 2 }}>
         <InputLabel id="project-select-label">Project</InputLabel>
         <Select
           labelId="project-select-label"

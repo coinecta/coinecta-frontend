@@ -6,11 +6,13 @@ import {
   TableRow,
   Paper,
   useMediaQuery,
-  Typography,
   useTheme,
   TableContainer
 } from '@mui/material';
-import { Fragment, FC } from 'react';
+import { FC, useMemo, useEffect, useState } from 'react';
+import Link from '@components/Link';
+import { getShorterAddress } from '@lib/utils/general';
+import { trpc } from '@lib/utils/trpc';
 
 const tokenomicsHeading: { [key: string]: string } = {
   name: 'Name',
@@ -19,11 +21,8 @@ const tokenomicsHeading: { [key: string]: string } = {
   tge: 'TGE',
   freq: 'Frequency',
   length: 'Length',
-  lockup: 'Cliff',
+  lockup: 'Cliff'
 };
-
-const tokenomicsKeys = Object.keys(tokenomicsHeading);
-const tokenomicsHeadingValues = Object.values(tokenomicsHeading);
 
 interface IDistribution {
   data: TTokenomic[],
@@ -32,14 +31,26 @@ interface IDistribution {
 const Distribution: FC<IDistribution> = ({ data }) => {
   const theme = useTheme()
   const desktop = useMediaQuery(() => theme.breakpoints.up('md'));
+  const [tokenomicsKeys, setTokenomicKeys] = useState(Object.keys(tokenomicsHeading));
+  const [tokenomicsHeadingValues, setTokenomicsHeadingValues] = useState(Object.values(tokenomicsHeading));
 
-  const largeHeading = tokenomicsHeadingValues.map((value, i) => {
-    return (
-      <TableCell key={i} sx={{ fontWeight: '800' }}>
-        {value}
-      </TableCell>
-    );
+  const dataHasWalletAddress = useMemo(() => {
+    return data.some((elem) => elem.walletAddress !== '' && elem.walletAddress !== null && elem.walletAddress !== undefined);
+  }, [data]);
+
+  const walletAddresses = useMemo(() => data.map((item) => item.walletAddress || ''), [data]);
+  const { data: verifiedAddresses, isLoading } = trpc.project.verifyAdaHandles.useQuery(walletAddresses, {
+    enabled: walletAddresses.length > 0
   });
+
+  useEffect(() => {
+    // Dynamic Column Wallet Address
+    if (dataHasWalletAddress) {
+      tokenomicsHeading.walletAddress = 'Wallet Address';
+      setTokenomicKeys(Object.keys(tokenomicsHeading));
+      setTokenomicsHeadingValues(Object.values(tokenomicsHeading));
+    }
+  }, [dataHasWalletAddress]);
 
   return (
     <TableContainer component={Paper} variant="outlined">
@@ -47,14 +58,27 @@ const Distribution: FC<IDistribution> = ({ data }) => {
       {desktop ? (
         <Table size="small" >
           <TableHead>
-            <TableRow>{largeHeading}</TableRow>
+            <TableRow>
+              {tokenomicsHeadingValues.map((value, i) => {
+                return (
+                  <TableCell key={i} sx={{ fontWeight: '800' }}>
+                    {value}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((round: any) => {
+            {data.map((round: any, index) => {
               const keysLoop = tokenomicsKeys.map((key) => {
                 return (
                   <TableCell key={key}>
-                    {round?.[key].toLocaleString(navigator.language, {
+                    {key === 'walletAddress' && verifiedAddresses ? (
+                      isLoading ? 'Loading...' :
+                        <Link href={`https://cardanoscan.io/address/${verifiedAddresses[index]}`} target="_blank">
+                          {round.walletAddress.includes('$') ? round.walletAddress : getShorterAddress(verifiedAddresses[index], 4)}
+                        </Link>
+                    ) : round?.[key]?.toLocaleString(navigator.language, {
                       maximumFractionDigits: 0,
                     })}
                   </TableCell>
@@ -92,7 +116,12 @@ const Distribution: FC<IDistribution> = ({ data }) => {
                       {tokenomicsHeading[key]}:
                     </TableCell>
                     <TableCell sx={{ p: 1, fontWeight: 700, border: 0 }}>
-                      {round?.[key].toLocaleString(navigator.language, {
+                      {key === 'walletAddress' && verifiedAddresses ? (
+                        isLoading ? 'Loading...' :
+                          <Link href={`https://cardanoscan.io/address/${verifiedAddresses[index]}`} target="_blank">
+                            {round.walletAddress.includes('$') ? round.walletAddress : getShorterAddress(verifiedAddresses[index], 4)}
+                          </Link>
+                      ) : round?.[key]?.toLocaleString(navigator.language, {
                         maximumFractionDigits: 0,
                       })}
                     </TableCell>
