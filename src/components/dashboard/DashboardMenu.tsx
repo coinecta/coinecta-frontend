@@ -76,7 +76,7 @@ const DashboardMenu: FC<IDashboardMenuProps> = ({ children }) => {
       <Link href={link.link} key={link.name + index}>
         <ListItem disablePadding sx={{ mb: 1 }}>
           <ListItemButton sx={{
-            background: router.asPath === link.link ? theme.palette.divider : 'none',
+            background: router.asPath === link.link ? theme.palette.background.paper : 'none',
             borderRadius: '8px',
             transition: 'transform 100ms',
             '&:hover': {
@@ -162,13 +162,13 @@ const DashboardMenu: FC<IDashboardMenuProps> = ({ children }) => {
               Menu
             </Fab>
           </Zoom>
-          <Container maxWidth="md">
+          <Container maxWidth="md" sx={{ overflow: 'clip' }}>
             {children}
           </Container>
         </>
       }
       {desktop &&
-        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Box maxWidth="xl" sx={{ display: 'flex', flexDirection: 'row', mx: 'auto' }}>
           <Box
             component="nav"
             aria-label="dashboard-menu"

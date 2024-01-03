@@ -1,21 +1,23 @@
 import React, { FC } from 'react';
 import {
   Box,
+  Button,
   Divider,
   Typography,
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import DashboardCard from '../DashboardCard';
 import DataSpread from '@components/DataSpread';
+import DashboardTable from '../DashboardTable';
 
 const StakePositions: FC = () => {
   return (
-    <Box>
+    <Box sx={{ position: 'relative' }}>
       <Typography variant="h5" sx={{ mb: 1 }}>
         Manage Staked Positions
       </Typography>
       <Divider sx={{ mb: 2 }} />
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{ mb: 1 }}>
         <Grid xs={12} md={4}>
           <DashboardCard sx={{
             alignItems: 'center',
@@ -62,8 +64,45 @@ const StakePositions: FC = () => {
           </DashboardCard>
         </Grid>
       </Grid>
+      <DashboardTable {...fakeTrpcDashboardData} />
     </Box>
   );
 };
 
 export default StakePositions;
+
+
+
+
+
+
+const fakeTrpcDashboardData = {
+  isLoading: false,
+  error: false,
+  data: [
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(),
+      action: {
+        value: "Unlock",
+        render: (value: any, item: any) => <Button size="small" variant="contained" onClick={() => console.log(item)}>{value}</Button>
+      },
+      initial: 5000,
+      rewards: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      amount: 5125,
+      unlockDate: new Date(1717393753000),
+      action: {
+        value: "",
+        render: null
+      },
+      initial: 5000,
+      rewards: 125,
+      apy: "12%"
+    }
+  ]
+}
