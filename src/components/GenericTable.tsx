@@ -1,9 +1,7 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import {
   Avatar,
   Box,
-  Button,
-  Checkbox,
   Paper,
   Table,
   TableBody,
@@ -15,61 +13,27 @@ import {
   useTheme
 } from '@mui/material';
 import dayjs from 'dayjs';
-import ActionBar, { IActionBarButton } from './ActionBar';
 
-interface IDashboardTableProps<T> {
+interface IGenericTableProps<T> {
   title?: string;
   data: T[];
   isLoading: boolean;
   error: boolean;
-  actions?: IActionBarButton[];
-  selectedRows?: Set<number>;
-  setSelectedRows?: React.Dispatch<React.SetStateAction<Set<number>>>
 }
 
 // NOTE: YOU MAY HAVE TO SET THE PARENT CONTAINER TO overflow: 'clip' TO FIX IPHONE ISSUES
 
-// if you want an action bar (buttons to do actions on specific rows) you need to include
-// actions, selectedRows, and setSelectedRows
-
-const DashboardTable = <T extends Record<string, any>>({
-  title,
-  data,
-  isLoading,
-  error,
-  actions,
-  selectedRows,
-  setSelectedRows
-}: IDashboardTableProps<T>) => {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [paperWidth, setPaperWidth] = useState(0);
+const GenericTable = <T extends Record<string, any>>({ title, data, isLoading, error }: IGenericTableProps<T>) => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
   const [translateX, setTranslateX] = useState(0);
   const tableRef = useRef<HTMLDivElement>(null);
-  const paperRef = useRef<HTMLDivElement>(null);
 
   const sensitivityThreshold = 2;
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-      if (paperRef.current) {
-        setPaperWidth(paperRef.current.offsetWidth);
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  const isTableWiderThanWindow = windowWidth < paperWidth
-
   const onDragStart = (clientX: number, clientY: number) => {
-    if (tableRef.current && isTableWiderThanWindow) {
+    if (tableRef.current) {
       setIsDragging(true);
       setStartX(clientX - translateX)
       setStartY(clientY);
@@ -90,13 +54,12 @@ const DashboardTable = <T extends Record<string, any>>({
       const maxTranslate = tableRef.current.offsetWidth - tableRef.current.scrollWidth;
       deltaX = Math.min(Math.max(deltaX, maxTranslate), 0);
       setTranslateX(deltaX);
-      tableRef.current.style.cursor = 'grabbing'
       tableRef.current.style.transform = `translateX(${deltaX}px)`;
     }
   };
 
   const onDragEnd = () => {
-    if (tableRef.current && isTableWiderThanWindow) {
+    if (tableRef.current) {
       setIsDragging(false);
       tableRef.current.style.cursor = 'grab';
       tableRef.current.style.removeProperty('user-select');
@@ -127,31 +90,6 @@ const DashboardTable = <T extends Record<string, any>>({
     }
   };
 
-  const handleSelectRow = (index: number) => {
-    if (setSelectedRows && actions) {
-      setSelectedRows((prevSelectedRows) => {
-        const newSelectedRows = new Set(prevSelectedRows);
-        if (newSelectedRows.has(index)) {
-          newSelectedRows.delete(index);
-        } else {
-          newSelectedRows.add(index);
-        }
-        return newSelectedRows;
-      });
-    }
-  };
-
-  const handleSelectAllRows = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (setSelectedRows && actions) {
-      if (event.target.checked) {
-        const newSelectedRows = new Set<number>();
-        data.forEach((_, index) => newSelectedRows.add(index));
-        setSelectedRows(newSelectedRows);
-      } else {
-        setSelectedRows(new Set());
-      }
-    }
-  };
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading</div>;
   return (
@@ -165,14 +103,13 @@ const DashboardTable = <T extends Record<string, any>>({
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
       sx={{
-        cursor: isDragging ? 'grabbing' : (isTableWiderThanWindow ? 'grab' : 'auto'),
+        cursor: isDragging ? 'grabbing' : 'grab',
         '&:active': {
-          cursor: isTableWiderThanWindow ? 'grabbing' : 'auto',
+          cursor: 'grabbing',
         },
       }}
     >
       <Paper variant="outlined"
-        ref={paperRef}
         sx={{
           mb: 2,
           overflowX: 'visible',
@@ -185,27 +122,19 @@ const DashboardTable = <T extends Record<string, any>>({
             {title}
           </Typography>
         }
-        {actions && <ActionBar actions={actions} />}
+
         <Table>
           <TableHead>
-            <TableRow sx={{
-              '& th': {
-                position: 'sticky',
-                top: actions ? '121px' : '71px',
-                zIndex: 2,
-                background: theme.palette.background.paper,
-              }
-            }}>
-              {actions && selectedRows && <TableCell padding="checkbox">
-                <Checkbox
-                  indeterminate={selectedRows.size > 0 && selectedRows.size < data.length}
-                  checked={data.length > 0 && selectedRows.size === data.length}
-                  onChange={handleSelectAllRows}
-                />
-              </TableCell>}
-
+            <TableRow>
               {columns.map((column) => (
-                <TableCell key={String(column)}>
+                <TableCell key={String(column)}
+                  sx={{
+                    position: 'sticky',
+                    top: '71px',
+                    zIndex: 2,
+                    background: theme.palette.background.paper,
+                  }}
+                >
                   {camelCaseToTitle(String(column))}
                 </TableCell>
               ))}
@@ -219,12 +148,6 @@ const DashboardTable = <T extends Record<string, any>>({
                   '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)' }
                 }}
               >
-                {actions && selectedRows && <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedRows.has(index)}
-                    onChange={() => handleSelectRow(index)}
-                  />
-                </TableCell>}
                 {Object.keys(item).map((key, colIndex) => (
                   <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
                     {renderCellContent(item, key)}
@@ -239,7 +162,7 @@ const DashboardTable = <T extends Record<string, any>>({
   );
 };
 
-export default DashboardTable;
+export default GenericTable;
 
 const formatData = <T,>(data: T, key: keyof T): string => {
   const value = data[key];

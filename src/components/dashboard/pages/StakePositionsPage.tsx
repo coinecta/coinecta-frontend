@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -9,8 +9,56 @@ import Grid from '@mui/system/Unstable_Grid/Grid';
 import DashboardCard from '../DashboardCard';
 import DataSpread from '@components/DataSpread';
 import DashboardTable from '../DashboardTable';
+import { IActionBarButton } from '../ActionBar';
 
 const StakePositions: FC = () => {
+  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
+  const [redeemableRows, setRedeemableRows] = useState<Set<number>>(new Set());
+  const [lockedRows, setLockedRows] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    const newRedeemableRows = new Set<number>();
+    const newLockedRows = new Set<number>();
+    const now = new Date();
+
+    selectedRows.forEach((index) => {
+      const item = fakeTrpcDashboardData.data[index];
+      if (item && item.unlockDate) {
+        if (item.unlockDate <= now) {
+          newRedeemableRows.add(index);
+        } else {
+          newLockedRows.add(index);
+        }
+      }
+    });
+
+    setRedeemableRows(newRedeemableRows);
+    setLockedRows(newLockedRows);
+
+  }, [selectedRows, fakeTrpcDashboardData]);
+
+  const handleRedeem = () => {
+
+  }
+
+  const actions: IActionBarButton[] = [
+    {
+      label: 'Redeem',
+      count: redeemableRows.size,
+      handler: handleRedeem
+    },
+    {
+      label: 'Combine',
+      count: lockedRows.size,
+      handler: handleRedeem
+    },
+    {
+      label: 'Split',
+      count: lockedRows.size,
+      handler: handleRedeem
+    }
+  ]
+
   return (
     <Box sx={{ position: 'relative' }}>
       <Typography variant="h5" sx={{ mb: 1 }}>
@@ -64,7 +112,7 @@ const StakePositions: FC = () => {
           </DashboardCard>
         </Grid>
       </Grid>
-      <DashboardTable {...fakeTrpcDashboardData} />
+      <DashboardTable {...fakeTrpcDashboardData} selectedRows={selectedRows} setSelectedRows={setSelectedRows} actions={actions} />
     </Box>
   );
 };
@@ -84,24 +132,112 @@ const fakeTrpcDashboardData = {
       name: 'CNCT',
       total: 5125,
       unlockDate: new Date(),
-      action: {
-        value: "Unlock",
-        render: (value: any, item: any) => <Button size="small" variant="contained" onClick={() => console.log(item)}>{value}</Button>
-      },
       initial: 5000,
-      rewards: 125,
+      bonus: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(),
+      initial: 5000,
+      bonus: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(),
+      initial: 5000,
+      bonus: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(),
+      initial: 5000,
+      bonus: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(),
+      initial: 5000,
+      bonus: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(),
+      initial: 5000,
+      bonus: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(),
+      initial: 5000,
+      bonus: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(),
+      initial: 5000,
+      bonus: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(1717393753000),
+      initial: 5000,
+      bonus: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(1717393753000),
+      initial: 5000,
+      bonus: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(1717393753000),
+      initial: 5000,
+      bonus: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(1717393753000),
+      initial: 5000,
+      bonus: 125,
+      apy: "12%"
+    },
+    {
+      name: 'CNCT',
+      total: 5125,
+      unlockDate: new Date(1717393753000),
+      initial: 5000,
+      bonus: 125,
       apy: "12%"
     },
     {
       name: 'CNCT',
       amount: 5125,
       unlockDate: new Date(1717393753000),
-      action: {
-        value: "",
-        render: null
-      },
       initial: 5000,
-      rewards: 125,
+      bonus: 125,
       apy: "12%"
     }
   ]
