@@ -55,12 +55,12 @@ const UserMenu: FC<IUserMenuProps> = () => {
     // console.log(`sessionStatus: ${sessionStatus}`)
     // console.log(`sessionData: ${sessionData?.user.walletType}`)
 
-    // user has a wallet connected, we've got the reward address, but they still need to sign in
     if (connected && !rewardAddress && sessionStatus === 'unauthenticated') {
       // console.log('getting addresses')
       getAddresses()
     }
 
+    // user has a wallet connected, we've got the reward address, but they still need to sign in
     if (connected && rewardAddress && sessionStatus === 'unauthenticated') {
       // console.log('refetching (initiate login flow)')
       refetchData()

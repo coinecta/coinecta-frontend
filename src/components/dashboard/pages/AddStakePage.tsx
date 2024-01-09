@@ -11,6 +11,7 @@ import DashboardCard from '@components/dashboard/DashboardCard';
 import StakeInput from '@components/dashboard/staking/StakeInput';
 import StakeDuration from '../staking/StakeDuration';
 import DataSpread from '@components/DataSpread';
+import DashboardHeader from '../DashboardHeader';
 
 const options = [
   {
@@ -57,10 +58,7 @@ const AddStakePage: FC = () => {
 
   return (
     <Box sx={{ mb: 4 }}>
-      <Typography variant="h5" sx={{ mb: 1 }}>
-        Add Stake
-      </Typography>
-      <Divider sx={{ mb: 2 }} />
+      <DashboardHeader title="Add stake" />
       <Grid container spacing={2}>
         <Grid xs={12} md={7}>
           <DashboardCard sx={{

@@ -179,6 +179,8 @@ const DashboardMenu: FC<IDashboardMenuProps> = ({ children }) => {
               pt: 3,
               position: 'relative',
               flexShrink: 0,
+              zIndex: 5,
+              background: theme.palette.background.default
             }}
           >
             <Box sx={{ position: 'sticky', top: '90px' }}>

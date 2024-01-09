@@ -25,6 +25,7 @@ interface IDashboardTableProps<T> {
   actions?: IActionBarButton[];
   selectedRows?: Set<number>;
   setSelectedRows?: React.Dispatch<React.SetStateAction<Set<number>>>
+  parentContainerRef: React.RefObject<HTMLDivElement>;
 }
 
 // NOTE: YOU MAY HAVE TO SET THE PARENT CONTAINER TO overflow: 'clip' TO FIX IPHONE ISSUES
@@ -39,9 +40,10 @@ const DashboardTable = <T extends Record<string, any>>({
   error,
   actions,
   selectedRows,
-  setSelectedRows
+  setSelectedRows,
+  parentContainerRef
 }: IDashboardTableProps<T>) => {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [parentWidth, setParentWidth] = useState(0);
   const [paperWidth, setPaperWidth] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -54,9 +56,9 @@ const DashboardTable = <T extends Record<string, any>>({
 
   useEffect(() => {
     const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-      if (paperRef.current) {
+      if (paperRef?.current && parentContainerRef?.current) {
         setPaperWidth(paperRef.current.offsetWidth);
+        setParentWidth(parentContainerRef.current.offsetWidth);
       }
     };
     window.addEventListener('resize', handleResize);
@@ -66,10 +68,10 @@ const DashboardTable = <T extends Record<string, any>>({
     };
   }, []);
 
-  const isTableWiderThanWindow = windowWidth < paperWidth
+  const isTableWiderThanParent = parentWidth < paperWidth
 
   const onDragStart = (clientX: number, clientY: number) => {
-    if (tableRef.current && isTableWiderThanWindow) {
+    if (tableRef.current && isTableWiderThanParent) {
       setIsDragging(true);
       setStartX(clientX - translateX)
       setStartY(clientY);
@@ -96,7 +98,7 @@ const DashboardTable = <T extends Record<string, any>>({
   };
 
   const onDragEnd = () => {
-    if (tableRef.current && isTableWiderThanWindow) {
+    if (tableRef.current && isTableWiderThanParent) {
       setIsDragging(false);
       tableRef.current.style.cursor = 'grab';
       tableRef.current.style.removeProperty('user-select');
@@ -152,6 +154,7 @@ const DashboardTable = <T extends Record<string, any>>({
       }
     }
   };
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading</div>;
   return (
@@ -165,10 +168,11 @@ const DashboardTable = <T extends Record<string, any>>({
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
       sx={{
-        cursor: isDragging ? 'grabbing' : (isTableWiderThanWindow ? 'grab' : 'auto'),
+        cursor: isDragging ? 'grabbing' : (isTableWiderThanParent ? 'grab' : 'auto'),
         '&:active': {
-          cursor: isTableWiderThanWindow ? 'grabbing' : 'auto',
+          cursor: isTableWiderThanParent ? 'grabbing' : 'auto',
         },
+        zIndex: 0
       }}
     >
       <Paper variant="outlined"

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -10,8 +10,10 @@ import DashboardCard from '../DashboardCard';
 import DataSpread from '@components/DataSpread';
 import DashboardTable from '../DashboardTable';
 import { IActionBarButton } from '../ActionBar';
+import DashboardHeader from '../DashboardHeader';
 
 const UnlockVested: FC = () => {
+  const parentRef = useRef<HTMLDivElement>(null);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
   const [redeemableRows, setRedeemableRows] = useState<Set<number>>(new Set());
 
@@ -43,11 +45,8 @@ const UnlockVested: FC = () => {
   ]
 
   return (
-    <Box sx={{ position: 'relative' }}>
-      <Typography variant="h5" sx={{ mb: 1 }}>
-        Unlock Vested Tokens
-      </Typography>
-      <Divider sx={{ mb: 2 }} />
+    <Box sx={{ position: 'relative' }} ref={parentRef}>
+      <DashboardHeader title="Unlock Vested Tokens" />
       <Grid container spacing={2} sx={{ mb: 1 }}>
         <Grid xs={12} md={4}>
           <DashboardCard sx={{
@@ -95,7 +94,13 @@ const UnlockVested: FC = () => {
           </DashboardCard>
         </Grid>
       </Grid>
-      <DashboardTable {...fakeTrpcDashboardData} selectedRows={selectedRows} setSelectedRows={setSelectedRows} actions={actions} />
+      <DashboardTable
+        {...fakeTrpcDashboardData}
+        selectedRows={selectedRows}
+        setSelectedRows={setSelectedRows}
+        actions={actions}
+        parentContainerRef={parentRef}
+      />
     </Box>
   );
 };
