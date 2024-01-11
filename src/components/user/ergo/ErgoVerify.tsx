@@ -248,7 +248,7 @@ const ErgoVerify: FC = () => {
     try {
       const isConnected = await connectWallet();
       if (isConnected) {
-        console.log(isConnected)
+        // console.log(isConnected)
         const addresses = await fetchAndSetAddresses();
         const init = await initializeVerification(walletType, addresses.defaultAddress);
 

@@ -5,18 +5,16 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  CircularProgress,
   useTheme,
   useMediaQuery,
   Typography,
   Box,
   Collapse
 } from "@mui/material";
-import { useWalletList, useWallet } from '@meshsdk/react';
+import { useWallet } from '@meshsdk/react';
 import Link from "@components/Link";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { WalletListItemComponent } from "./WalletListItem";
-import { walletsList, filterInstalledWallets } from "@lib/walletsList";
+import WalletList from "./WalletList";
 
 interface ISignIn {
   open: boolean;
@@ -27,33 +25,16 @@ interface ISignIn {
 export const SignIn: FC<ISignIn> = ({ open, setOpen, setLoading }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const wallets = useWalletList();
   const walletContext = useWallet()
-  const [openAddWallet, setOpenAddWallet] = useState(false)
   const [openNewUserInfo, setOpenNewUserInfo] = useState(false)
 
   const handleClose = () => {
     setOpen(false)
   }
 
-  const handleConnect = (walletName: string) => {
-    setLoading(true)
-    walletContext.connect(walletName)
-    handleClose()
-  }
-
-  const handleOpenAddWallet = () => {
-    setOpenAddWallet(!openAddWallet)
-  }
   const handleOpenNewUserInfo = () => {
     setOpenNewUserInfo(!openNewUserInfo)
   }
-
-  const installedWallets = filterInstalledWallets(wallets)
-
-  const notInstalledWallets = walletsList.filter(walletListEntry =>
-    !installedWallets.includes(walletListEntry)
-  );
 
   return (
     <>
@@ -62,7 +43,8 @@ export const SignIn: FC<ISignIn> = ({ open, setOpen, setLoading }) => {
         onClose={handleClose}
         fullScreen={fullScreen}
         PaperProps={{
-          variant: 'outlined'
+          variant: 'outlined',
+          elevation: 0
         }}
       >
         <DialogTitle
@@ -115,52 +97,7 @@ export const SignIn: FC<ISignIn> = ({ open, setOpen, setLoading }) => {
           <Typography sx={{ fontSize: '0.9rem !important', color: theme.palette.text.secondary, mb: 2, textAlign: 'center' }}>
             By connecting, you agree to the&nbsp;<Link href="/terms">Terms &amp; Conditions</Link>&nbsp;and&nbsp;<Link href="/privacy">Privacy Policy</Link>.
           </Typography>
-          {walletContext.connecting ? (
-            <CircularProgress sx={{ ml: 2, color: "black" }} size={"1.2rem"} />
-          ) : (
-            <>
-              {installedWallets.map((wallet) => (
-                <WalletListItemComponent {...wallet} key={wallet.name} handleConnect={handleConnect} />
-              ))}
-              {notInstalledWallets.length > 0 && (
-                <>
-                  <Collapse in={openAddWallet}>
-                    <Typography sx={{ fontSize: '1rem !important', mb: 1, textAlign: 'center' }}>
-                      Add a wallet:
-                    </Typography>
-
-                    {notInstalledWallets.map((walletListEntry) => (
-                      <WalletListItemComponent {...walletListEntry} link key={walletListEntry.name} handleConnect={handleConnect} />
-                    ))}
-                  </Collapse>
-                  <Button
-                    endIcon={<ExpandMoreIcon sx={{ transform: openAddWallet ? 'rotate(180deg)' : null }} />}
-                    startIcon={
-                      <Box>
-                        <Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.primary }}>
-                          {`${openAddWallet ? 'Hide uninstalled wallets' : `View other wallet options (${notInstalledWallets.length})`}`}
-                        </Typography>
-                      </Box>}
-                    sx={{
-                      background: theme.palette.background.paper,
-                      border: `1px solid ${theme.palette.divider}`,
-                      borderRadius: '6px',
-                      mb: 1,
-                      px: 2,
-                      textTransform: 'none',
-                      '& .MuiListItemSecondaryAction-root': {
-                        height: '24px'
-                      },
-                      color: theme.palette.text.secondary,
-                      justifyContent: "space-between"
-                    }}
-                    fullWidth
-                    onClick={() => handleOpenAddWallet()}
-                  />
-                </>
-              )}
-            </>
-          )}
+          <WalletList setOpen={setOpen} setLoading={setLoading} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Close Window</Button>

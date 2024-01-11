@@ -1,4 +1,4 @@
-import React, { FC, useContext } from "react";
+import React, { FC } from "react";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
@@ -7,7 +7,7 @@ import Link from "@components/Link"
 import SocialGrid from "@components/layout/SocialGrid";
 import Logo from "@components/svgs/Logo";
 import { useMediaQuery, useTheme } from "@mui/material";
-import { useWalletContext } from "@contexts/WalletContext";
+import { useWalletContext } from '@contexts/WalletContext';
 
 const titleFont = {
   fontFamily: ['"Space Grotesk"', "sans-serif"].join(","),
@@ -89,36 +89,10 @@ const fourthPages = {
   ],
 };
 
-const LinkList: FC<IPageLinkList> = ({ title, links }) => {
-  const theme = useTheme()
-  return (
-    <Grid item xs={6} md={3} sx={{}} zeroMinWidth>
-      <Typography sx={titleFont}>{title}</Typography>
-      {links.map((page, i) => (
-        <Typography key={i}><Link
-          href={page.link}
-          sx={{
-            color: theme.palette.text.primary,
-            textDecoration: "none",
-            "&:hover": {
-              // textDecoration: "underline",
-              color: theme.palette.primary.main,
-            },
-            // fontSize: "16px",
-            lineHeight: '1.625',
-          }}
-        >
-          {page.name}
-        </Link></Typography>
-      ))}
-    </Grid>
-  )
-}
-
 const Footer: FC = () => {
+  const { sessionStatus } = useWalletContext()
   const theme = useTheme()
   const upMd = useMediaQuery(theme.breakpoints.up('md'))
-  const { sessionStatus } = useWalletContext()
 
   return (
     <Box sx={{ borderTop: `1px solid ${theme.palette.divider}` }}>
@@ -172,10 +146,12 @@ const Footer: FC = () => {
           </Grid>
           <Grid item xs={12} md={7}>
             <Grid container direction="row" justifyContent="flex-end" spacing={4} sx={{ flexWrap: 'wrap' }}>
-              {firstPages.links.length !== 0 && LinkList(firstPages)}
-              {secondPages.links.length !== 0 && LinkList(secondPages)}
-              {thirdPages.links.length !== 0 && LinkList(thirdPages)}
-              {fourthPages.links.length !== 0 && sessionStatus === 'authenticated' && LinkList(fourthPages)}
+              {firstPages.links.length !== 0 && <LinkList {...firstPages} />}
+              {secondPages.links.length !== 0 && <LinkList {...secondPages} />}
+              {thirdPages.links.length !== 0 && <LinkList {...thirdPages} />}
+              {sessionStatus === 'authenticated'
+                && fourthPages.links.length !== 0
+                && <LinkList {...fourthPages} />}
               <Grid item xs={6} md={3} sx={{}} zeroMinWidth>
                 <Typography sx={titleFont}>Socials</Typography>
                 <Grid
@@ -238,3 +214,31 @@ const Footer: FC = () => {
 }
 
 export default Footer;
+
+
+
+const LinkList: FC<IPageLinkList> = ({ title, links }) => {
+  const theme = useTheme()
+  return (
+    <Grid item xs={6} md={3} sx={{}} zeroMinWidth>
+      <Typography sx={titleFont}>{title}</Typography>
+      {links.map((page, i) => (
+        <Typography key={i}><Link
+          href={page.link}
+          sx={{
+            color: theme.palette.text.primary,
+            textDecoration: "none",
+            "&:hover": {
+              // textDecoration: "underline",
+              color: theme.palette.primary.main,
+            },
+            // fontSize: "16px",
+            lineHeight: '1.625',
+          }}
+        >
+          {page.name}
+        </Link></Typography>
+      ))}
+    </Grid>
+  )
+}
