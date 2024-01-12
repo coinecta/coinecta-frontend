@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Select,
   MenuItem,
@@ -13,12 +13,21 @@ import {
 } from '@mui/material';
 import { getShorterAddress } from '@lib/utils/general';
 import { useRouter } from 'next/router';
+import { trpc } from '@lib/utils/trpc';
 
 const WalletSelectDropdown = () => {
   const theme = useTheme()
   const router = useRouter()
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const items = ['addr1qy0yswstqah6zwxvd5csh0gyty80pc243672347234572345707hdz6r6fp6z96rgh8dvu6yjx8smmany40anu8264r0ek3ssuabc9', 'addr1qy0yswstqah6zwxvd5csh0gyty80pc243672347234572345707hdz6r6fp6z96rgh8dvu6yjx8smmany40anu8264r0ek3ssgdsfg2', 'addr1qy0yswstqah6zwxvd5csh0gyty80pc243672347234572345707hdz6r6fp6z96rgh8dvu6yjx8smmany40anu8264r0ek3ssutvwy', 'addr1qy0yswstqah6zwxvd5csh0gyty80pc243672347234572345707hdz6r6fp6z96rgh8dvu6yjx8smmany40anu8264r0ek3ss322as1'];
+
+  const getWallets = trpc.user.getWallets.useQuery()
+  const items = getWallets.data && getWallets.data.wallets.map((item) => (
+    item.changeAddress
+  ))
+
+  useEffect(() => {
+    if (items) setSelectedItems(items)
+  }, [items])
 
   const handleChange = (event: SelectChangeEvent<typeof selectedItems>) => {
     const {
@@ -83,7 +92,7 @@ const WalletSelectDropdown = () => {
             Add wallet
           </Button>
         </ListSubheader>
-        {items.map((item, i) => (
+        {items && items.map((item, i) => (
           <MenuItem key={item} value={item}>
             <Checkbox checked={selectedItems.indexOf(item) > -1} />
             <ListItemText primary={getShorterAddress(item, 6)} />

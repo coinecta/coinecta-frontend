@@ -25,6 +25,7 @@ import { trpc } from "@lib/utils/trpc";
 import { getShorterAddress } from "@lib/utils/general";
 import ClearIcon from '@mui/icons-material/Clear';
 import { useWalletContext } from '@contexts/WalletContext';
+import { TRPCClientError } from "@trpc/client";
 
 interface IAddWallet {
 
@@ -34,35 +35,48 @@ export const AddWallet: FC<IAddWallet> = () => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const { addAlert } = useAlert()
-  const [modalOpen, setModalOpen] = useState(false)
   const { wallet, connected, name, connecting, connect, disconnect, error } = useWallet()
-  const [rewardAddress, setRewardAddress] = useState<string | undefined>(undefined);
-  const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined)
-  const [usedAddresses, setUsedAddresses] = useState<string[] | undefined>(undefined)
-  const [unusedAddresses, setUnusedAddresses] = useState<string[] | undefined>(undefined)
   const [openAddWallet, setOpenAddWallet] = useState(false)
+  const [walletSelected, setWalletSelected] = useState(true) // true to use a "false" trigger when a wallet is selected
   const [openManageWallets, setOpenManageWallets] = useState(false)
+  const [shouldRefetch, setShouldRefetch] = useState(false)
   const [loading, setLoading] = useState(false)
   const { sessionData } = useWalletContext()
 
   const getWallets = trpc.user.getWallets.useQuery()
 
   useEffect(() => {
-    if (connected) {
-      getAddresses()
+    if (connected && !walletSelected) {
+      addNewWallet()
+      setWalletSelected(true)
     }
     else { console.log('not connected') }
-  }, [disconnect, connected]);
+  }, [connected, walletSelected]);
 
-  const getAddresses = async () => {
+  const mutateAddWallet = trpc.user.addWallet.useMutation()
+
+  const addNewWallet = async () => {
     const thisChangeAddress = await wallet.getChangeAddress();
     const thisRewardAddress = await wallet.getRewardAddresses();
     const thisUnusedAddresses = await wallet.getUnusedAddresses();
     const thisUsedAddresses = await wallet.getUsedAddresses();
-    setRewardAddress(thisRewardAddress[0]);
-    setChangeAddress(thisChangeAddress)
-    setUsedAddresses(thisUsedAddresses)
-    setUnusedAddresses(thisUnusedAddresses)
+    try {
+      await mutateAddWallet.mutateAsync({
+        type: name,
+        changeAddress: thisChangeAddress,
+        rewardAddress: thisRewardAddress[0],
+        unusedAddresses: thisUnusedAddresses,
+        usedAddresses: thisUsedAddresses
+      })
+      addAlert("success", `Successfully added wallet ${getShorterAddress(thisChangeAddress, 6)}`)
+      setShouldRefetch(true)
+      setOpenManageWallets(true)
+      setOpenAddWallet(false)
+    } catch (e) {
+      console.error(e);
+      const errorMessage = e instanceof TRPCClientError ? e.message : 'Failed to add wallet.';
+      addAlert('error', errorMessage);
+    } finally { setWalletSelected(true) }
   }
 
   const handleOpenAddWallet = () => {
@@ -78,7 +92,6 @@ export const AddWallet: FC<IAddWallet> = () => {
     setOpenManageWallets(!openManageWallets)
   }
 
-  const [shouldRefetch, setShouldRefetch] = useState(false)
   useEffect(() => {
     if (shouldRefetch) {
       const doRefetch = async () => {
@@ -128,9 +141,8 @@ export const AddWallet: FC<IAddWallet> = () => {
         onClick={() => handleOpenAddWallet()}
       />
       <Collapse in={openAddWallet}>
-        <WalletList setOpen={setModalOpen} setLoading={setLoading} />
+        <WalletList setOpen={setWalletSelected} setLoading={setLoading} />
       </Collapse>
-      {/* <Divider sx={{ mb: 2, mt: 1 }} /> */}
       <Button
         endIcon={<ExpandMoreIcon sx={{ transform: openManageWallets ? 'rotate(180deg)' : null }} />}
         startIcon={
@@ -177,14 +189,23 @@ export const AddWallet: FC<IAddWallet> = () => {
                 gap: 2,
               }}
             >
-              <Box>
-                <Avatar
-                  src={theme.palette.mode === 'dark' ? wallet?.iconDark : wallet?.icon}
-                  sx={{ height: '24px', width: '24px' }}
-                />
-              </Box>
-              <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {item.rewardAddress}
+              <Box sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                gap: 3
+              }}>
+                <Box>
+                  <Avatar
+                    src={theme.palette.mode === 'dark' ? wallet?.iconDark : wallet?.icon}
+                    sx={{ height: '24px', width: '24px' }}
+                    variant="square"
+                  />
+                </Box>
+                <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {getShorterAddress(item.changeAddress, 12)}
+                </Box>
               </Box>
 
               <Box>
@@ -201,6 +222,7 @@ export const AddWallet: FC<IAddWallet> = () => {
           )
         })}
       </Collapse>
+
     </Box>
   );
 };

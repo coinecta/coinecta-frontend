@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Box, Button, Divider, Typography, useTheme } from '@mui/material';
-import WalletSelectDropdown from '@components/WalletSelect';
+import WalletSelectDropdown from '@components/WalletSelectDropdown';
 
 interface IDashboardHeaderProps {
   title: string;

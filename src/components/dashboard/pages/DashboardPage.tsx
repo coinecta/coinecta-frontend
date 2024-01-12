@@ -8,7 +8,7 @@ import {
 import DataSpread from '@components/DataSpread';
 import DashboardCard from '../DashboardCard';
 import Grid from '@mui/system/Unstable_Grid/Grid';
-import WalletSelectDropdown from '@components/WalletSelect';
+import WalletSelectDropdown from '@components/WalletSelectDropdown';
 import DashboardHeader from '../DashboardHeader';
 
 const Dashboard: FC = () => {

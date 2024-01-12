@@ -17,7 +17,7 @@ const ConnectedWallets: NextPage = () => {
         Add ADA wallets
       </Typography>
       <Typography sx={{ mb: 4 }}>
-        Add ADA wallets to display their info on your dashboard.
+        Add ADA wallets to display their info on your dashboard. You still need to sign in with your main wallet. If you sign in with one of the other wallet, it will create a separate account.
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', mb: 3 }}>
         <Box sx={{ position: 'relative', display: 'block', maxWidth: '100%' }}>

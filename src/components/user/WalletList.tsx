@@ -28,17 +28,15 @@ export const WalletList: FC<IWalletList> = ({ setOpen, setLoading }) => {
   }
 
   const handleConnect = (walletName: string) => {
-    setLoading(true)
-    if (connected) {
-      try {
-        disconnect()
-      } catch (e: any) {
-        console.log(e)
-      } finally {
-        connect(walletName)
-      }
-    } else connect(walletName)
-    handleClose()
+    try {
+      setLoading(true)
+      connect(walletName)
+    } catch {
+
+    } finally {
+      handleClose()
+      setLoading(false)
+    }
   }
 
   const handleOpenAddWallet = () => {
@@ -53,54 +51,53 @@ export const WalletList: FC<IWalletList> = ({ setOpen, setLoading }) => {
 
   return (
     <>
-      {
-        connecting ? (
-          <CircularProgress sx={{ ml: 2, color: "black" }} size={"1.2rem"} />
-        ) : (
+      {connecting && (
+        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+          <CircularProgress sx={{ color: "black" }} size={"1.2rem"} />
+        </Box>
+      )}
+      <>
+        {installedWallets.map((wallet) => (
+          <WalletListItemComponent {...wallet} key={wallet.name} handleConnect={handleConnect} />
+        ))}
+        {notInstalledWallets.length > 0 && (
           <>
-            {installedWallets.map((wallet) => (
-              <WalletListItemComponent {...wallet} key={wallet.name} handleConnect={handleConnect} />
-            ))}
-            {notInstalledWallets.length > 0 && (
-              <>
-                <Collapse in={openAddWallet}>
-                  <Typography sx={{ fontSize: '1rem !important', mb: 1, textAlign: 'center' }}>
-                    Install a wallet:
-                  </Typography>
+            <Collapse in={openAddWallet}>
+              <Typography sx={{ fontSize: '1rem !important', mb: 1, textAlign: 'center' }}>
+                Install a wallet:
+              </Typography>
 
-                  {notInstalledWallets.map((walletListEntry) => (
-                    <WalletListItemComponent {...walletListEntry} link key={walletListEntry.name} handleConnect={handleConnect} />
-                  ))}
-                </Collapse>
-                <Button
-                  endIcon={<ExpandMoreIcon sx={{ transform: openAddWallet ? 'rotate(180deg)' : null }} />}
-                  startIcon={
-                    <Box>
-                      <Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.primary }}>
-                        {`${openAddWallet ? 'Hide uninstalled wallets' : `View other wallet options (${notInstalledWallets.length})`}`}
-                      </Typography>
-                    </Box>}
-                  sx={{
-                    background: theme.palette.background.paper,
-                    border: `1px solid ${theme.palette.divider}`,
-                    borderRadius: '6px',
-                    mb: 1,
-                    px: 2,
-                    textTransform: 'none',
-                    '& .MuiListItemSecondaryAction-root': {
-                      height: '24px'
-                    },
-                    color: theme.palette.text.secondary,
-                    justifyContent: "space-between"
-                  }}
-                  fullWidth
-                  onClick={() => handleOpenAddWallet()}
-                />
-              </>
-            )}
+              {notInstalledWallets.map((walletListEntry, i) => (
+                <WalletListItemComponent {...walletListEntry} link key={walletListEntry.name} handleConnect={handleConnect} />
+              ))}
+            </Collapse>
+            <Button
+              endIcon={<ExpandMoreIcon sx={{ transform: openAddWallet ? 'rotate(180deg)' : null }} />}
+              startIcon={
+                <Box>
+                  <Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.primary }}>
+                    {`${openAddWallet ? 'Hide uninstalled wallets' : `View other wallet options (${notInstalledWallets.length})`}`}
+                  </Typography>
+                </Box>}
+              sx={{
+                background: theme.palette.background.paper,
+                border: `1px solid ${theme.palette.divider}`,
+                borderRadius: '6px',
+                mb: 1,
+                px: 2,
+                textTransform: 'none',
+                '& .MuiListItemSecondaryAction-root': {
+                  height: '24px'
+                },
+                color: theme.palette.text.secondary,
+                justifyContent: "space-between"
+              }}
+              fullWidth
+              onClick={() => handleOpenAddWallet()}
+            />
           </>
-        )
-      }
+        )}
+      </>
     </>
   )
 }
