@@ -1,5 +1,4 @@
 import { prisma } from '@server/prisma';
-import { checkAddressAvailability } from '@server/utils/checkAddress';
 import { deleteEmptyUser } from '@server/utils/deleteEmptyUser';
 import { generateNonceForLogin } from '@server/utils/nonce';
 import { TRPCError } from '@trpc/server';
@@ -42,27 +41,6 @@ export const userRouter = createTRPCRouter({
       }
 
       return { nonce };
-    }),
-  checkAddressAvailable: publicProcedure
-    .input(z.object({
-      address: z.string().optional(),
-    }))
-    .query(async ({ input }) => {
-      const { address } = input;
-
-      if (!address) {
-        return { status: "error", message: "Address not provided" };
-      }
-
-      const result = await checkAddressAvailability(address);
-      if (result.status === "unavailable") {
-        return {
-          status: "unavailable",
-          message: "Address is in use"
-        };
-      }
-
-      return { status: "available", message: "Address is not in use" };
     }),
   getWallets: protectedProcedure
     .query(async ({ ctx }) => {

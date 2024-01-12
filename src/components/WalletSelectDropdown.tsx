@@ -18,6 +18,7 @@ import { trpc } from '@lib/utils/trpc';
 const WalletSelectDropdown = () => {
   const theme = useTheme()
   const router = useRouter()
+  const [itemList, setItemList] = useState<string[]>([])
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const getWallets = trpc.user.getWallets.useQuery()
@@ -26,7 +27,10 @@ const WalletSelectDropdown = () => {
   ))
 
   useEffect(() => {
-    if (items) setSelectedItems(items)
+    if (items && itemList.length < 1) {
+      setSelectedItems(items)
+      setItemList(items)
+    }
   }, [items])
 
   const handleChange = (event: SelectChangeEvent<typeof selectedItems>) => {
@@ -34,7 +38,6 @@ const WalletSelectDropdown = () => {
       target: { value },
     } = event;
     setSelectedItems(
-      // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
   };
@@ -92,7 +95,7 @@ const WalletSelectDropdown = () => {
             Add wallet
           </Button>
         </ListSubheader>
-        {items && items.map((item, i) => (
+        {itemList.map((item, i) => (
           <MenuItem key={item} value={item}>
             <Checkbox checked={selectedItems.indexOf(item) > -1} />
             <ListItemText primary={getShorterAddress(item, 6)} />
