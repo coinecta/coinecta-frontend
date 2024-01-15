@@ -14,6 +14,9 @@ import {
   Collapse,
   Alert,
   Chip,
+  Modal,
+  Dialog,
+  DialogContent,
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import Link from "@components/Link";
@@ -32,18 +35,24 @@ import { mapFisoObject } from "@server/utils/mapProjectObject";
 import { ContainedTabs, ContainedTab } from "@components/styled-components/ContainedTabs";
 import LinkIcon from '@mui/icons-material/Link';
 import FeedIcon from '@mui/icons-material/Feed';
+import Swap from '@dexhunterio/swaps'
+import '@dexhunterio/swaps/lib/assets/style.css'
+import { ensureHexColor } from '@lib/utils/general';
+import { toTokenId } from '@lib/utils/assets';
+import DexhunterLogomark from "@components/svgs/DexhunterLogomark";
 
 type TTabs = 'summary' | 'tokenomics' | 'whitelist' | 'contribute' | 'fiso'
 
 const Project = () => {
   const theme = useTheme()
   const upMd = useMediaQuery(theme.breakpoints.up('md'))
+  const upSm = useMediaQuery(theme.breakpoints.up('sm'))
   const router = useRouter();
   const { project_slug, tab } = router.query;
   const [projectData, setProjectData] = useState<TProject | undefined>(undefined)
-  const [isLoading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState<TTabs>('summary');
   const [fisoData, setFisoData] = useState<TFiso[]>([])
+  const [dexhunterModal, setDexhunterModal] = useState(false)
 
   const project = trpc.project.getProject.useQuery(
     { slug: project_slug?.toString() },
@@ -212,6 +221,20 @@ const Project = () => {
                       />
                     </Grid>
                   }
+                  {projectData.tokenomics.tokenPolicyId.length > 0 &&
+                    <Grid item>
+                      <Chip
+                        label="Buy CNCT"
+                        icon={<DexhunterLogomark sx={{ width: '16px', height: '16px', mr: -1, ml: 1 }} />}
+                        // component="button"
+                        clickable
+                        color="secondary"
+                        sx={{ borderRadius: '6px', border: `1px solid ${theme.palette.divider}` }}
+                        onClick={() => setDexhunterModal(true)}
+                        aria-label={`${projectData.name} DexHunter Swap`}
+                      />
+                    </Grid>
+                  }
                 </Grid>
               </Grid>
             </Grid>
@@ -264,6 +287,49 @@ const Project = () => {
               Back to projects page
             </Link>
           </Container>}
+      {projectData?.tokenomics && projectData.tokenomics.tokenPolicyId.length > 0 &&
+        <Dialog
+          open={dexhunterModal}
+          onClose={() => setDexhunterModal(false)}
+          aria-labelledby="dexhunter-modal"
+          aria-describedby="dexhunter-swap-window"
+          sx={{
+            p: 0,
+            '& .MuiPaper-root': {
+              background: 'none',
+              lineHeight: 0,
+              borderRadius: '26px'
+            },
+            '& .MuiBackdrop-root': {
+              backdropFilter: 'blur(5px)',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }}
+          scroll="body"
+        >
+          <DialogContent sx={{ p: 0, borderRadius: '26px' }}>
+            <Swap
+              orderTypes={["SWAP", "LIMIT"]}
+              defaultToken={toTokenId(projectData.tokenomics.tokenPolicyId, projectData.tokenomics.tokenTicker)}
+              // @ts-ignore
+              supportedTokens={[toTokenId(projectData.tokenomics.tokenPolicyId, projectData.tokenomics.tokenTicker)]}
+              colors={{
+                "background": ensureHexColor(theme.palette.background.paper),
+                "containers": theme.palette.mode === 'dark' ? ensureHexColor('rgb(20, 24, 35)') : ensureHexColor('rgb(227, 229, 228)'),
+                "subText": ensureHexColor(theme.palette.text.secondary),
+                "mainText": ensureHexColor(theme.palette.text.primary),
+                "buttonText": ensureHexColor(theme.palette.background.default),
+                "accent": ensureHexColor(theme.palette.secondary.main)
+              }}
+              theme={theme.palette.mode === 'dark' ? 'dark' : 'light'}
+              width={upSm ? "420px" : "300px"}
+              partnerCode="coinecta61646472317179307973777374716168367a7778766435637368306779747938307063706671663067686532346e37393872303768647a3672366670367a39367267683864767536796a7838736d6d616e793430616e75383236347230656b337373756a747739da39a3ee5e6b4b0d3255bfef95601890afd80709"
+              partnerName="Coinecta"
+              displayType="DEFAULT"
+            />
+          </DialogContent>
+        </Dialog>
+      }
     </>
   );
 };
