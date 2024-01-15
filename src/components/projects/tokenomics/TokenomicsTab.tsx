@@ -4,6 +4,10 @@ import LinearTokenomics from './LinearTokenomics';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import { useTheme, Typography, Box, Paper, } from '@mui/material';
 import Link from '@components/Link';
+import Swap from '@dexhunterio/swaps'
+import '@dexhunterio/swaps/lib/assets/style.css'
+import { ensureHexColor } from '@lib/utils/general';
+import { toTokenId } from '@lib/utils/assets';
 
 const TokenomicsTab: FC<{ tokenomics: TTokenomics }> = ({ tokenomics }) => {
   const theme = useTheme()
@@ -61,7 +65,7 @@ const TokenomicsTab: FC<{ tokenomics: TTokenomics }> = ({ tokenomics }) => {
             </Grid>
           </Grid>
           <Grid container>
-            <Grid xs={6} sx={{ p: 1, textAlign: 'right' }}>
+            <Grid xs={6} sx={{ p: 1, textAlign: 'right', mb: 1 }}>
               <Typography color="text.secondary">
                 Policy ID:
               </Typography>
@@ -80,6 +84,27 @@ const TokenomicsTab: FC<{ tokenomics: TTokenomics }> = ({ tokenomics }) => {
               </Typography>
             </Grid>
           </Grid>
+          <Box sx={{ textAlign: 'center' }}>
+            <Swap
+              orderTypes={["SWAP", "LIMIT"]}
+              defaultToken={toTokenId(tokenomics.tokenPolicyId, tokenomics.tokenTicker)}
+              colors={{
+                "background": ensureHexColor(theme.palette.background.default),
+                "containers": ensureHexColor(theme.palette.background.paper),
+                "subText": ensureHexColor(theme.palette.text.secondary),
+                "mainText": ensureHexColor(theme.palette.text.primary),
+                "buttonText": ensureHexColor(theme.palette.background.default),
+                "accent": ensureHexColor(theme.palette.secondary.main)
+              }}
+              theme={theme.palette.mode === 'dark' ? 'dark' : 'light'}
+              width="450"
+              partnerCode="coinecta61646472317179307973777374716168367a7778766435637368306779747938307063706671663067686532346e37393872303768647a3672366670367a39367267683864767536796a7838736d6d616e793430616e75383236347230656b337373756a747739da39a3ee5e6b4b0d3255bfef95601890afd80709"
+              partnerName="Coinecta"
+              displayType="BUTTON"
+              buttonStyle={{ width: '100%', borderRadius: '8px' }}
+              buttonText="Swap with DexHunter"
+            />
+          </Box>
         </Paper>
       </Box>
       <Box sx={{ mb: 3 }}>
