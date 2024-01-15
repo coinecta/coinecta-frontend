@@ -1,29 +1,21 @@
-import { useEffect, useState, useMemo, SetStateAction } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
   Container,
   Typography,
-  Divider,
   Box,
   Avatar,
   useTheme,
   Grid,
   useMediaQuery,
-  Tabs,
-  Tab,
-  Collapse,
-  Alert,
   Chip,
-  Modal,
   Dialog,
   DialogContent,
 } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
 import Link from "@components/Link";
 import DiscordIcon from "@components/svgs/DiscordIcon";
 import TwitterIcon from "@components/svgs/TwitterIcon";
 import TelegramIcon from "@components/svgs/TelegramIcon";
-import WebIcon from "@components/svgs/WebIcon";
 import GithubIcon from "@components/svgs/GithubIcon";
 import TokenomicsTab from "@components/projects/tokenomics/TokenomicsTab";
 import WhitelistTab from "@components/projects/whitelist/WhitelistTab";
