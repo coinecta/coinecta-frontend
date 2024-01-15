@@ -20,27 +20,25 @@ a {
   box-sizing: border-box;
 }
 
+
 ::-webkit-scrollbar {
-  background-color: transparent;
-  width: 11px;
+  background: transparent!important;
+  width: 8px!important;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
-  background-color: transparent;
+  background: transparent!important;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(100,100,100,0.3);
+  background: rgba(100,100,100,0.3)!important;
   border-radius: 20px;
-  border: 3px solid transparent;
+  /* border: 1px solid rgba(100,100,100,0.5)!important; */
   background-clip: content-box;
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100,100,100,0.6);
+  background: rgba(140,140,140,0.6)!important;
   border-radius: 20px;
   border: 3px solid transparent;
   background-clip: content-box;
