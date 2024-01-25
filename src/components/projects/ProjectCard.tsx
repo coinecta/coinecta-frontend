@@ -9,7 +9,6 @@ import {
   Box,
   Chip,
 } from '@mui/material'
-import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/router';
 
 interface IProjectCard {
@@ -57,9 +56,8 @@ const ProjectCard: FC<IProjectCard> = ({
         </Typography>
         <MuiGrid container justifyContent="space-between" alignItems="center">
           <MuiGrid item>
-            {blockchains.map((item, i) => {
-              const key = uuidv4()
-              return <Chip variant="outlined" label={item} key={key} sx={{ mr: 1 }} />
+            {blockchains.map((item) => {
+              return <Chip variant="outlined" label={item} key={item} sx={{ mr: 1 }} />
             })}
           </MuiGrid>
           <MuiGrid item>

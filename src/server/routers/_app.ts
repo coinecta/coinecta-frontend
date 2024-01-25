@@ -10,6 +10,7 @@ import { stakepoolRouter } from "./stakepools";
 import { tokensRouter } from "./tokens";
 import { userRouter } from "./user";
 import { whitelistRouter } from "./whitelist";
+import { xerberusRouter } from "./xerberus";
 
 /**
  * This is the primary router for the server.
@@ -27,7 +28,8 @@ export const appRouter = createTRPCRouter({
   ergo: ergoRouter,
   price: priceRouter,
   contributions: contributionRouter,
-  tokens: tokensRouter
+  tokens: tokensRouter,
+  xerberus: xerberusRouter
 });
 
 // export type definition of API

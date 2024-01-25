@@ -1,0 +1,89 @@
+.matext {
+    color: red;
+    font-size: 80%;
+  }
+  
+  .magreentext {
+    color: green;
+    font-size: 80%;
+  }
+  
+  .history1 {
+    color: blue;
+  }
+  
+  .history2 {
+    color: red;
+  }
+  
+  .redLine {
+    width: 20px;
+    height: 1px;
+    border: 1px solid red;
+  }
+  
+  .blueLine {
+    width: 20px;
+    height: 1px;
+    border: 1px solid blue;
+  }
+  
+  .blueDashedLine {
+    width: 20px;
+    height: 1px;
+    border: 1px dashed blue;
+  }
+  
+  .greenLine {
+    width: 20px;
+    height: 1px;
+    border: 1px solid green;
+  }
+  
+  .whiteLine {
+    width: 20px;
+    height: 10px;
+    border-bottom: 2px solid white;
+  }
+  
+  .whiteDashedLine {
+    width: 20px;
+    height: 10px;
+    border-bottom: 2px dashed white;
+  }
+  
+  .line {
+    width: 20px;
+    height: 10px;
+    border-bottom: 2px solid black;
+  }
+  
+  .dashedLine {
+    width: 20px;
+    height: 10px;
+    border-bottom: 2px dashed black;
+  }
+  
+  .greenSquare {
+    width: 10px;
+    height: 10px;
+    background-color: #43A047;
+  }
+  
+  .orangeSquare {
+    width: 10px;
+    height: 10px;
+    background-color: #FFA726;
+  }
+  
+  .redSquare {
+    width: 10px;
+    height: 10px;
+    background-color: #E53935;
+  }
+  
+  .blueSquare {
+    width: 10px;
+    height: 10px;
+    background-color: #0000FF;
+  }

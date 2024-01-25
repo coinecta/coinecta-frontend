@@ -15,11 +15,11 @@ import {
   Button
 } from '@mui/material'
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { v4 as uuidv4 } from 'uuid';
 import EastIcon from '@mui/icons-material/East';
 import { IImportMenuItem } from '@pages/notifications';
 import CustomMenuItem from "@components/notifications/CustomMenuItem";
 import { useRouter } from 'next/router';
+import { nanoid } from 'nanoid';
 
 const NotificationsMenu: FC = ({ }) => {
   const theme = useTheme()
@@ -94,7 +94,7 @@ const NotificationsMenu: FC = ({ }) => {
           <MenuList sx={{ py: 0 }}>
             {currentMenuItems.length > 0
               ? currentMenuItems.map((item, i) => {
-                const key = uuidv4()
+                const key = nanoid()
                 return (
                   <CustomMenuItem
                     key={key}
@@ -221,7 +221,7 @@ const sampleMenuItems: IImportMenuItem[] = [
     message: 'Ornella just updated the status on your transaction. Check it out!',
     userName: 'Ornella May',
     userPfp: '',
-    id: uuidv4(),
+    id: nanoid(),
     userVerfied: false,
     time: new Date(),
     unread: true
@@ -230,7 +230,7 @@ const sampleMenuItems: IImportMenuItem[] = [
     message: 'Jake just updated the status on your transaction. Check it out!',
     userName: 'Jake Jones',
     userPfp: '/thoreau.png',
-    id: uuidv4(),
+    id: nanoid(),
     userVerfied: true,
     time: new Date(),
     unread: true
@@ -239,7 +239,7 @@ const sampleMenuItems: IImportMenuItem[] = [
     message: 'Ornella just updated the status on your transaction. Check it out!',
     userName: 'Ornella May',
     userPfp: '',
-    id: uuidv4(),
+    id: nanoid(),
     userVerfied: false,
     time: new Date(),
     unread: false

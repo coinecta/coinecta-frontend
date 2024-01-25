@@ -32,8 +32,9 @@ import '@dexhunterio/swaps/lib/assets/style.css'
 import { ensureHexColor } from '@lib/utils/general';
 import { toTokenId } from '@lib/utils/assets';
 import DexhunterLogomark from "@components/svgs/DexhunterLogomark";
+import XerberusTab from "@components/projects/xerberus/XerberusTab";
 
-type TTabs = 'summary' | 'tokenomics' | 'whitelist' | 'contribute' | 'fiso'
+type TTabs = 'summary' | 'tokenomics' | 'whitelist' | 'contribute' | 'fiso' | 'xerberus'
 
 const Project = () => {
   const theme = useTheme()
@@ -74,20 +75,20 @@ const Project = () => {
   }, [tab]);
 
   const isTTabs = (value: string): value is TTabs => {
-    return ['summary', 'tokenomics', 'whitelist', 'contribute', 'fiso'].includes(value);
+    return ['summary', 'tokenomics', 'whitelist', 'contribute', 'fiso', 'xerberus'].includes(value);
   }
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: TTabs) => {
     event.preventDefault()
     setTabValue(newValue);
     router.push({
-      pathname: router.pathname, // keeps you on the current page
+      pathname: router.pathname,
       query: {
-        ...router.query, // preserves existing query parameters
-        tab: newValue // adds the new tab value as a query parameter
+        ...router.query,
+        tab: newValue
       },
     },
-      undefined, // asPath
+      undefined,
       { scroll: false });
   };
 
@@ -238,24 +239,13 @@ const Project = () => {
               allowScrollButtonsMobile
               variant="scrollable"
               color={theme.palette.primary.main}
-            // sx={{
-            //   '& .MuiTabs-flexContainer': {
-            //     justifyContent: upMd ? 'center' : null,
-            //     '& .MuiButtonBase-root': {
-            //       fontWeight: 700,
-            //       textTransform: 'none'
-            //     }
-            //   },
-            //   background: theme.palette.background.paper,
-            //   border: `1px solid ${theme.palette.divider}`,
-            //   borderRadius: '6px'
-            // }}
             >
               <ContainedTab label="Summary" value={'summary'} />
               <ContainedTab label="Tokenomics" value={'tokenomics'} />
               <ContainedTab label="Whitelist" value={'whitelist'} />
               <ContainedTab label="Contribute" value={'contribute'} />
               {fisoData.length > 0 && <ContainedTab label="FISO" value={'fiso'} />}
+              <ContainedTab label="Xerberus" value={'xerberus'} />
             </ContainedTabs>
             <Box sx={{ mb: 12, mt: 2 }}>
               {tabValue === 'summary' && <ProjectInfoTab project={projectData} />}
@@ -263,6 +253,7 @@ const Project = () => {
               {tabValue === 'whitelist' && <WhitelistTab whitelists={projectData.whitelists} projectSlug={projectData.slug} />}
               {tabValue === 'contribute' && <ContributeTab projectSlug={projectData.slug} projectName={projectData.name} projectIcon={projectData.avatarImgUrl} />}
               {tabValue === 'fiso' && <FisoTab projectSlug={projectData.slug} fisos={fisoData} />}
+              {tabValue === 'xerberus' && <XerberusTab project={projectData} />}
             </Box>
           </Container >
           : project.status === 'error' && <Container sx={{ textAlign: 'center', py: '20vh' }}>

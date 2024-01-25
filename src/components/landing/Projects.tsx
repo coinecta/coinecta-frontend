@@ -1,5 +1,4 @@
 import React, { FC, useRef, useState, useEffect } from 'react';
-import type { NextPage } from 'next'
 import {
   Container,
   Typography,
@@ -7,14 +6,8 @@ import {
   useMediaQuery,
   Grid as MuiGrid,
   Button,
-  Card,
-  CardActions,
-  CardHeader,
-  CardContent,
-  CardMedia,
   Box,
-  IconButton,
-  Chip,
+  IconButton
 } from '@mui/material'
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from 'swiper';
@@ -24,8 +17,6 @@ import "swiper/css/grid";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import { v4 as uuidv4 } from 'uuid';
-import axios from "axios";
 import ProjectCard from '@components/projects/ProjectCard';
 import { trpc } from '@lib/utils/trpc';
 import { slugify } from '@lib/utils/general';
@@ -66,11 +57,11 @@ const Projects: FC<IProjectsProps> = ({ }) => {
     }
   }, [projectList]);
 
-  const handlePrev = () => {
-    if (swiperRef.current) {
-      swiperRef.current.swiper.slidePrev();
-    }
-  };
+  // const handlePrev = () => {
+  //   if (swiperRef.current) {
+  //     swiperRef.current.swiper.slidePrev();
+  //   }
+  // };
 
   const handleNext = () => {
     if (swiperRef.current) {
@@ -79,7 +70,6 @@ const Projects: FC<IProjectsProps> = ({ }) => {
   };
   return (
     <>
-
       <Container sx={{ mb: 12, display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}>
         <Box sx={{ width: upMd ? '97%' : '100%' }}>
           <MuiGrid container spacing={3} sx={{ mb: 3 }}>
@@ -161,7 +151,6 @@ const Projects: FC<IProjectsProps> = ({ }) => {
           </IconButton>
         </Box>
       </Container >
-
     </>
   );
 };
