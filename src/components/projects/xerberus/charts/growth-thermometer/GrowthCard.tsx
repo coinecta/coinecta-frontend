@@ -2,7 +2,8 @@ import React, { FC, useEffect } from "react";
 import ratingColor from "@lib/utils/ratingColor";
 import ThermometerGraph from "./ThermometerGraph";
 import Tagline from "@components/projects/xerberus/tagline/Tagline";
-import { Box } from "@mui/material";
+import { Box, IconButton, Paper, Typography } from "@mui/material";
+import InfoButton from "@components/projects/xerberus/InfoButton";
 
 interface GrowthCardProps {
   token: string;
@@ -11,19 +12,6 @@ interface GrowthCardProps {
 }
 
 const GrowthCard: FC<GrowthCardProps> = ({ token, growthScore, loading }) => {
-  // Card sx with responsive width and padding adjustments
-  const cardStyle = {
-    backgroundColor: "white",
-    border: "1px solid black",
-    borderRadius: "10px",
-    color: "black",
-    width: "100%",
-    height: "100%",
-    margin: "auto",
-    position: "relative",
-    padding: "20px",
-  };
-
   // Flexbox layout for the main content
   const flexStyle = {
     display: "flex",
@@ -47,92 +35,74 @@ const GrowthCard: FC<GrowthCardProps> = ({ token, growthScore, loading }) => {
 
   // Hover effect for links
   const hoverStyle = {
-    ":hover": {
-      color: "blue.300",
-      transform: "scale(1.05)",
-      transition: "transform 0.2s",
-    },
+
   };
-  console.log(`Growth score: ${growthScore}`)
 
   return (
-    <>
-      <Box sx={cardStyle}>
-        <Box sx={flexStyle}>
-          <Box sx={boxStyle}>
-
-
-            <Box>
-              <Box sx={{ marginBottom: "20px" }}>
-                <Box sx={{ ...linkStyle, ...hoverStyle }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
-                    <h4>Growth Score</h4>
-                    {/* Replace with an appropriate arrow icon */}
-                    <span
-                      style={{
-                        fontSize: "0.8em",
-                        color: ratingColor(growthScore ?? "#43A047"),
-                      }}
-                    >
-                      {growthScore}
-                    </span>
-                  </Box>
-                </Box>
-              </Box>
-
-              {/* Additional content goes here */}
-            </Box>
-          </Box>
-
-          {loading
-            ? (
-              <>
-                Loading...</>
-            )
-            : (
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  position: "relative",
-                }}
-              >
+    <Paper variant="outlined" sx={{
+      position: "relative",
+      padding: "20px",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      height: '100%'
+    }}>
+      <InfoButton link="https://documentation.xerberus.io/xerberus-app/token-explorer/growth-thermometer" />
+      <Box sx={flexStyle}>
+        <Box sx={boxStyle}>
+          <Box>
+            <Box sx={{ marginBottom: "20px" }}>
+              <Box>
                 <Box
                   sx={{
-                    position: "absolute",
-                    top: "5px",
-                    right: "5px",
-                    cursor: "pointer",
-                    color: "blue.500",
-                    ...hoverStyle,
-                  }}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    window.open(
-                      "https://documentation.xerberus.io/xerberus-app/token-explorer/growth-thermometer",
-                      "_blank"
-                    );
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexDirection: "column",
+                    width: "100%",
+                    mb: 2
                   }}
                 >
-                  {/* Replace with an appropriate info icon */}
+                  <Typography variant="h6">Growth Score</Typography>
+                  <Typography
+                    style={{
+                      fontSize: "1.2em",
+                      color: ratingColor(growthScore ?? "#43A047"),
+                    }}
+                  >
+                    {growthScore}
+                  </Typography>
                 </Box>
-                {/* ThermometerGraph component */}
-                <ThermometerGraph data={growthScore} />
               </Box>
-            )}
+            </Box>
+
+            {/* Additional content goes here */}
+          </Box>
         </Box>
-        <Tagline />
-      </Box >
-    </>
+
+        {loading
+          ? (
+            <>
+              Loading...</>
+          )
+          : (
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+                position: "relative",
+
+              }}
+            >
+
+              {/* ThermometerGraph component */}
+              <ThermometerGraph data={growthScore} />
+            </Box>
+          )}
+      </Box>
+      <Tagline link={`https://app.xerberus.io/token/growth?token=${token}`} />
+    </Paper>
   );
 };
 

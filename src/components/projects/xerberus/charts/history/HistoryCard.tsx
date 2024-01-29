@@ -1,7 +1,10 @@
 import React, { FC, } from "react";
 import HistoryGraph from "./HistoryGraph";
-import { Box } from "@mui/material";
+import { Box, Paper, IconButton } from "@mui/material";
 import { HistoryDataEntry, HistoryCardDetails } from "@server/services/xerberusApi";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import Tagline from "@components/projects/xerberus/tagline/Tagline";
+import InfoButton from "@components/projects/xerberus/InfoButton";
 
 interface HistoryCardProps {
   token: string;
@@ -10,32 +13,34 @@ interface HistoryCardProps {
   loading: boolean;
 }
 
-const HistoryCard: FC<HistoryCardProps> = ({ token, data, details, loading }) => {
-  const cardStyle = {
-    backgroundColor: "white",
-    borderRadius: "10px",
-    color: "black", // replace 'foregroundColor' with the actual color value
-    border: "1px solid black", // replace 'border' with the actual border value
-    marginTop: "2", // Adjust based on 'md' and 'base' values
-    marginBottom: "1", // Adjust based on 'md' and 'base' values
-    position: "relative",
-    padding: "20px", // Adjust as needed
-  };
+const hoverStyle = {
+  transition: "transform 0.2s",
+  ":hover": {
+    transform: "scale(1.2)",
+  }
+};
 
+const HistoryCard: FC<HistoryCardProps> = ({ token, data, details, loading }) => {
   return (
-    <>
-      {/* The API provides a link for this purpose. Insert the relevant variable from the API at this location. Do pass */}
-      <Box sx={cardStyle}>
-        {loading
-          ? (
-            <>
-              Loading...</>
-          )
-          : (
-            <HistoryGraph data={data} details={details} ticks={8} />
-          )}
-      </Box>
-    </>
+    <Paper sx={{
+      position: "relative",
+      padding: "20px",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      height: '100%'
+    }}>
+      <InfoButton link="https://documentation.xerberus.io/xerberus-app/token-explorer/risk-rating-history" />
+      {loading
+        ? (
+          <>
+            Loading...</>
+        )
+        : (
+          <HistoryGraph data={data} details={details} ticks={4} />
+        )}
+      <Tagline link={`https://app.xerberus.io/token/explorer?token=${token}`} />
+    </Paper>
   );
 };
 

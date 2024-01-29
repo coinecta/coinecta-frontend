@@ -2,8 +2,10 @@ import React, { FC, useEffect, useState } from "react";
 import ratingColor from "@lib/utils/ratingColor";
 import Tagline from "@components/projects/xerberus/tagline/Tagline";
 import RadarChart from "./RadarChart";
-import { Box } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import { RadarChartDataScores } from "@server/services/xerberusApi";
+import InfoButton from "@components/projects/xerberus/InfoButton";
+
 
 interface RadarCardProps {
   token: string;
@@ -25,50 +27,14 @@ const RadarCard: FC<RadarCardProps> = ({ token, scores, loading }) => {
     if (scores) setRadarScores(scores)
   }, [scores])
 
-  const cardStyle = {
-    backgroundColor: "white",
-    border: "1px solid black",
-    borderRadius: "10px",
-    color: "black",
-    width: "100%",
-    margin: "auto",
-    position: "relative",
-    padding: "20px",
-  };
-
-  const contentStyle = {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "start",
-    justifyContent: "space-between",
-  };
-
   const riskStyle = {
     marginBottom: "5px",
-    width: "100%",
-  };
-
-  const scoreStyle = {
-    display: "flex",
-    justifyContent: "space-between",
-    flexWrap: "wrap",
     width: "100%",
   };
 
   const scoreTextStyle = {
     margin: "5px",
     fontSize: "1.2em",
-  };
-
-  const radarStyle = {
-    width: "100%",
-    display: "flex",
-    justifyContent: "start",
-    alignItems: "center",
-  };
-
-  const scoreSectionStyle = {
-    marginBottom: "10px", // Space between each risk section
   };
 
   const riskLabelStyle = {
@@ -96,10 +62,21 @@ const RadarCard: FC<RadarCardProps> = ({ token, scores, loading }) => {
 
   return (
     <>
-      {/* The API provides a link for this purpose. Insert the relevant variable from the API at this location */}
-      <Box sx={cardStyle}>
-        <Box sx={contentStyle}>
-          <Box style={{ width: "40%" }}>
+      <Paper variant="outlined" sx={{
+        position: "relative",
+        padding: "20px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        height: '100%'
+      }}>
+        <InfoButton link="https://documentation.xerberus.io/xerberus-app/token-explorer/risk-rating-triangle" />
+        <Box sx={{
+          display: "flex",
+          flexDirection: { xs: 'column', sm: "row" },
+          alignItems: 'flex-start',
+        }}>
+          <Box sx={{ width: { xs: '100%', sm: '40%' } }}>
             <Box style={riskStyle}>
               <h3>
                 Risk Rating:{" "}
@@ -113,21 +90,27 @@ const RadarCard: FC<RadarCardProps> = ({ token, scores, loading }) => {
                 </span>
               </h3>
             </Box>
-
-            {Object.entries(radarScores).map(([key, value]) => (
-              key !== 'overallRiskScore' &&
-              <Box style={scoreSectionStyle} key={key}>
-                <Box style={{ ...riskLabelStyle }}>{formatLabel(key)}</Box>
-                <span
-                  style={{
-                    ...riskScoreStyle,
-                    color: ratingColor(value),
-                  }}
-                >
-                  {!loading ? value : 'Loading...'}
-                </span>
-              </Box>
-            ))}
+            <Box sx={{
+              display: 'flex',
+              width: '100%',
+              flexDirection: { xs: 'row', sm: 'column' },
+              justifyContent: 'space-around'
+            }}>
+              {Object.entries(radarScores).map(([key, value]) => (
+                key !== 'overallRiskScore' &&
+                <Box key={key}>
+                  <Typography sx={{ ...riskLabelStyle }}>{formatLabel(key)}</Typography>
+                  <span
+                    style={{
+                      ...riskScoreStyle,
+                      color: ratingColor(value),
+                    }}
+                  >
+                    {!loading ? value : 'Loading...'}
+                  </span>
+                </Box>
+              ))}
+            </Box>
           </Box>
           {loading
             ? (
@@ -135,21 +118,16 @@ const RadarCard: FC<RadarCardProps> = ({ token, scores, loading }) => {
                 Loading...
               </>
             )
-            : (
-              <Box style={radarStyle}>
-                {scores &&
-                  <RadarChart
-                    rawData={scores}
-                    labels={["Price", "Network", "Liquidity"]}
-                    color={ratingColor(radarScores.overallRiskScore)}
-                  />}
-              </Box>
-            )}
+            : scores &&
+            <RadarChart
+              rawData={scores}
+              labels={["Price", "Network", "Liquidity"]}
+              color={ratingColor(radarScores.overallRiskScore)}
+            />
+          }
         </Box>
-        <hr />
-        <br />
-        <Tagline />
-      </Box>
+        <Tagline link={`https://app.xerberus.io/token/explorer?token=${token}`} />
+      </Paper>
     </>
   );
 };

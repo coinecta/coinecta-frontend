@@ -1,5 +1,6 @@
 import React, { FC, useEffect } from "react";
 import * as d3 from "d3";
+import { useTheme } from "@mui/material";
 
 const getMercuryColor = (temp: number) => {
   if (temp >= 8) {
@@ -44,7 +45,9 @@ interface ThermometerGraphProps {
 }
 
 const ThermometerGraph: FC<ThermometerGraphProps> = ({ data }) => {
+  const theme = useTheme()
   useEffect(() => {
+    const thermometerColor = theme.palette.mode === "dark" ? theme.palette.background.paper : "#FFFFFF"
     const max = 9,
       min = 1,
       width = 200,
@@ -99,7 +102,7 @@ const ThermometerGraph: FC<ThermometerGraphProps> = ({ data }) => {
       .attr("r", tubeWidth / 2)
       .attr("cx", width / 2)
       .attr("cy", top_cy)
-      .style("fill", "#FFFFFF")
+      .style("fill", thermometerColor)
       .style("stroke", tubeBorderColor)
       .style("stroke-width", tubeBorderWidth + "px");
 
@@ -111,7 +114,7 @@ const ThermometerGraph: FC<ThermometerGraphProps> = ({ data }) => {
       .attr("height", bulb_cy - top_cy)
       .attr("width", tubeWidth)
       .style("shape-rendering", "crispEdges")
-      .style("fill", "#FFFFFF")
+      .style("fill", thermometerColor)
       .style("stroke", tubeBorderColor)
       .style("stroke-width", tubeBorderWidth + "px");
 
@@ -122,7 +125,7 @@ const ThermometerGraph: FC<ThermometerGraphProps> = ({ data }) => {
       .attr("r", tubeWidth / 2 - tubeBorderWidth / 2)
       .attr("cx", width / 2)
       .attr("cy", top_cy)
-      .style("fill", "#FFFFFF")
+      .style("fill", thermometerColor)
       .style("stroke", "none");
 
     // Main bulb of thermometer (empty), white fill
@@ -131,7 +134,7 @@ const ThermometerGraph: FC<ThermometerGraphProps> = ({ data }) => {
       .attr("r", bulbRadius)
       .attr("cx", bulb_cx)
       .attr("cy", bulb_cy)
-      .style("fill", "#FFFFFF")
+      .style("fill", thermometerColor)
       .style("stroke", tubeBorderColor)
       .style("stroke-width", tubeBorderWidth + "px");
 
@@ -143,7 +146,7 @@ const ThermometerGraph: FC<ThermometerGraphProps> = ({ data }) => {
       .attr("height", bulb_cy - top_cy)
       .attr("width", tubeWidth - tubeBorderWidth)
       .style("shape-rendering", "crispEdges")
-      .style("fill", "#FFFFFF")
+      .style("fill", thermometerColor)
       .style("stroke", "none");
 
     // Scale step size
@@ -273,7 +276,7 @@ const ThermometerGraph: FC<ThermometerGraphProps> = ({ data }) => {
     return () => {
       svg.remove();
     };
-  }, [data]);
+  }, [data, theme]);
 
   return (
     <div style={{ marginLeft: "20px" }}>

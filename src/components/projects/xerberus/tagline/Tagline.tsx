@@ -1,57 +1,56 @@
 // Mandatory Component that has to be shown
 
-import { Box } from "@mui/material";
+import { Box, Button, Divider, Link, Typography, useTheme } from "@mui/material";
 import React, { FC } from "react";
 
-interface TaglineProps {
-
+interface TagProps {
+  link?: string;
 }
 
-const Tagline: FC<TaglineProps> = () => {
-  const logoContainerStyle = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center", // Center the contents horizontally
-    position: "absolute",
-    bottom: "10px", // Position the container at the bottom
-    left: "50%", // Center the container horizontally
-    transform: "translateX(-50%)", // Adjust for perfect horizontal centering
-    width: "100%", // Ensuring the container spans the entire width
-    marginTop: "10px",
-  };
-
-  // Style for the separating line
-  const lineStyle = {
-    height: "1px",
-    backgroundColor: "#ddd", // Line color, adjust as needed
-    width: "90%", // Width of the line, adjust as per design
-    margin: "0 auto 10px", // Margin to separate from content above
-  };
-
-  // Style for the logo
+const Tagline: FC<TagProps> = ({ link }) => {
   const logoStyle = {
-    width: "25px", // Adjust this as needed
+    width: "25px",
     height: "auto",
-    marginRight: "10px", // Space between logo and text
-  };
-
-  // Style for the tagline text
-  const taglineStyle = {
-    fontSize: "14px", // Match the size with logo
-    color: "#333", // Adjust color as needed
+    marginRight: "10px",
   };
 
   return (
-    <>
-      <Box sx={logoContainerStyle}>
-        <img
-          src={"/xerberus/white_logo.png"}
-          style={logoStyle}
-          alt="Xerberus logo"
-        />
-        <span style={taglineStyle}>Risk Ratings By Xerberus.io</span>
+    <Box>
+      <Divider sx={{ mb: 2 }} />
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: link ? 'space-between' : 'center'
+      }}>
+
+        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <img
+            src={"/xerberus/white_logo.png"}
+            style={logoStyle}
+            alt="Xerberus logo"
+          />
+          <Typography component="span" sx={{ fontSize: '14px!important' }}>Risk Ratings By <Link href="https://xerberus.io" target="_blank">Xerberus.io</Link></Typography>
+        </Box>
+        <Box>
+          {link && (
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={(event) => {
+                event.stopPropagation();
+                window.open(
+                  link,
+                  "_blank"
+                );
+              }}
+            >
+              More details
+            </Button>
+          )}
+        </Box>
       </Box>
-    </>
+    </Box>
   );
 };
 

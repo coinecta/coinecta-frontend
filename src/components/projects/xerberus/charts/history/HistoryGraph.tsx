@@ -2,8 +2,7 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import ratingColor from "@lib/utils/ratingColor";
 import styles from "@styles/xerberus/chart.module.css"
-import Tagline from "@components/projects/xerberus/tagline/Tagline";
-import { useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import { HistoryCardDetails, HistoryDataEntry } from "@server/services/xerberusApi";
 
 interface HistoryGraphProps {
@@ -15,29 +14,25 @@ interface HistoryGraphProps {
 const customOrder = ["AAA", "AA", "A", "BBB", "BB", "B", "CCC", "CC", "C", "D"];
 
 const HistoryGraph: FC<HistoryGraphProps> = ({ data, details, ticks }) => {
-  const theme = useTheme()
   const svgRef = useRef<SVGSVGElement>(null);
-  const tooltipRef = useRef<HTMLDivElement | null>(null);
-  const [tooltipContent, setTooltipContent] = useState('');
-  const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-
+  const tooltipRef = useRef(null);
+  const theme = useTheme()
 
   useEffect(() => {
-    const color = "black";
-    const bg = "white";
+    const color = theme.palette.text.primary;
 
     const svg = d3.select(svgRef.current);
-    const margin = { top: 60, right: 30, bottom: 0, left: 60 };
+    const margin = { top: 30, right: 30, bottom: 30, left: 60 };
 
     const drawChart = () => {
       const svgNode = svg.node()
       if (svgNode && data && data.length > 0) {
         const container = svgNode.parentNode as HTMLElement;
         const width = container.clientWidth;
-        const height = 400 - margin.top - margin.bottom;
+        const height = 400 - margin.top;
         const word = details?.title.split(" ");
-        // const tooltipWord = word[0];
+        // @ts-ignore
+        const tooltipWord = word[0];
 
         // X scale
         const x = d3
@@ -52,29 +47,25 @@ const HistoryGraph: FC<HistoryGraphProps> = ({ data, details, ticks }) => {
           .domain(customOrder)
           .range([margin.top, height - margin.bottom]); // Non-reversed range
 
-        const line = d3.line<HistoryDataEntry>()
-          .x((d) => {
-            const xValue = x(d.date);
-            // Provide a fallback value if xValue is undefined
-            return xValue !== undefined ? xValue + x.bandwidth() / 2 : 0;
-          })
-          .y((d) => {
-            // Check if y(d.line1) is undefined and provide a fallback value
-            const yValue = y(d.line1);
-            return yValue !== undefined ? yValue : 0;
-          })
-          .curve(d3.curveMonotoneX);
+        // Line generator for graph
+        // @ts-ignore
+        const line = d3
+          .line()
+          // @ts-ignore
+          .x((d) => x(d.date) + x.bandwidth() / 2)
+          // @ts-ignore
+          .y((d) => y(d.line1))
+          // .curve(d3.curveStepAfter); // Use stepAfter curve for step graph
+          .curve(d3.curveMonotoneX); // Smoothing curve
 
-        const secondaryLine = d3.line<HistoryDataEntry>()
-          .x((d) => {
-            const xValue = x(d.date);
-            return xValue !== undefined ? xValue + x.bandwidth() / 2 : 0;
-          })
-          .y((d) => {
-            const yValue = y(d.line2);
-            return yValue !== undefined ? yValue : 0;
-          })
-          .curve(d3.curveMonotoneX);
+        // @ts-ignore
+        const secondaryLine = d3
+          .line()
+          // @ts-ignore
+          .x((d) => x(d.date) + x.bandwidth() / 2)
+          // @ts-ignore
+          .y((d) => y(d.line2))
+          .curve(d3.curveMonotoneX); // Smoothing curve
 
         // Remove existing chart elements
         svg.selectAll(".axis").remove();
@@ -91,11 +82,13 @@ const HistoryGraph: FC<HistoryGraphProps> = ({ data, details, ticks }) => {
           .attr("class", "axis")
           .attr("transform", `translate(0,${height - margin.bottom})`)
           .call(
-            d3.axisBottom(x)
+            d3
+              .axisBottom(x)
               .tickValues(
+                // @ts-ignore
                 data
-                  .map((d, i) => i % stepSize === 0 ? d.date : null)
-                  .filter((d): d is string => d !== null) // Ensuring that the array only contains strings
+                  .map((d, i) => (i % stepSize === 0 ? d.date : null))
+                  .filter((d) => d !== null)
               )
               .tickSizeOuter(0)
           ); // Custom tick format to show only 1 month every 6 months
@@ -106,20 +99,6 @@ const HistoryGraph: FC<HistoryGraphProps> = ({ data, details, ticks }) => {
           .attr("transform", `translate(${margin.left},0)`)
           .call(d3.axisLeft(y));
 
-        // Create a tooltip container
-        // const tooltipDiv = d3.select("body")
-        //   .append("div")
-        //   .attr("class", "tooltip")
-        //   .style("opacity", 0)
-        //   .style("position", "absolute")
-        //   .style("pointer-events", "none")
-        //   .style("background-color", bg)
-        //   .style("padding", "10px")
-        //   .style("border", "1px solid #ccc")
-        //   .node(); // Get the underlying DOM node
-
-        // tooltipRef.current = tooltipDiv as HTMLDivElement; // Assign the DOM element to the ref
-
         // Draw the step graph for "value" data
         svg
           .append("path")
@@ -128,6 +107,7 @@ const HistoryGraph: FC<HistoryGraphProps> = ({ data, details, ticks }) => {
           .attr("class", "line") // Add class attribute for CSS styling
           .attr("stroke", color)
           .attr("stroke-width", 1)
+          // @ts-ignore
           .attr("d", line);
 
         // Draw the line with smoothened curve for "ma" data
@@ -138,6 +118,7 @@ const HistoryGraph: FC<HistoryGraphProps> = ({ data, details, ticks }) => {
           .attr("class", "line") // Add class attribute for CSS styling
           .attr("stroke", "red")
           .attr("stroke-width", 1)
+          // @ts-ignore
           .attr("d", secondaryLine);
 
         // Draw the dashed line initially hidden
@@ -152,90 +133,98 @@ const HistoryGraph: FC<HistoryGraphProps> = ({ data, details, ticks }) => {
         // Create a group for the dots and append it after the line's group
         const dotsGroup = svg.append("g");
 
-        dotsGroup
-          .selectAll(".dot-overlay")
+        // Draw dots at data points with custom colors and create overlay rectangles
+        const dots = dotsGroup
+          .selectAll(".dot")
           .data(data)
           .enter()
-          .append("rect")
-          .attr("class", "dot-overlay")
-          // ... (Other attributes)
-          .on("mouseover", (event, d) => {
-            setTooltipContent(`${details?.title} Score: ${d.line1}<br/><span class=${styles.matext}>Moving Avg : ${d.line2}</span><br/><br/>${d.date}`);
-            setTooltipPosition({ x: event.pageX, y: event.pageY });
-            setTooltipVisible(true);
-          })
-          .on("mouseout", () => {
-            setTooltipVisible(false);
-          });
+          .append("circle")
+          .attr("class", "dot")
+          // @ts-ignore
+          .attr("cx", (d) => x(d.date) + x.bandwidth() / 2)
+          // @ts-ignore
+          .attr("cy", (d) => y(d.line1))
+          .attr("r", 6)
+          .attr("fill", (d) => ratingColor(d.line1))
+          .style("fill", (d) => ratingColor(d.line1))
+          .style("stroke", (d) => color); // Apply custom colors directly
 
-        // // Draw dots at data points with custom colors and create overlay rectangles
-        // const dots = dotsGroup
-        //   .selectAll(".dot")
-        //   .data(data)
-        //   .enter()
-        //   .append("circle")
-        //   .attr("class", "dot")
-        //   .attr("cx", (d) => x(d.date) + x.bandwidth() / 2)
-        //   .attr("cy", (d) => y(d.line1))
-        //   .attr("r", 6)
-        //   .attr("fill", (d) => ratingColor(d.line1))
-        //   .style("fill", (d) => ratingColor(d.line1))
-        //   .style("stroke", (d) => color); // Apply custom colors directly
+        if (tooltipRef.current) {
+          // Update the overlay rectangle height and y position to cover the full vertical space
+          dotsGroup.selectAll(".dot-overlay")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class", "dot-overlay")
+            // @ts-ignore
+            .attr("x", d => x(d.date))
+            .attr("y", margin.top)
+            .attr("width", x.bandwidth())
+            .attr("height", height - margin.top - margin.bottom)
+            .attr("opacity", 0)
+            .on("mouseover", (event, d) => {
+              d3.select(tooltipRef.current)
+                .style("opacity", 0.9)
+                .html(
+                  `${tooltipWord} Score: ${d.line1}<br/><span class=${styles.matext}>Moving Avg: ${d.line2}</span><br/><br/>${d.date}`
+                );
 
-        // // Update the overlay rectangle height and y position to cover the full vertical space
-        // dotsGroup
-        //   .selectAll(".dot-overlay")
-        //   .data(data)
-        //   .enter()
-        //   .append("rect")
-        //   .attr("class", "dot-overlay")
-        //   .attr("x", (d) => x(d.date))
-        //   .attr("y", margin.top) // Set y position to the top of the chart area
-        //   .attr("width", x.bandwidth())
-        //   .attr("height", height - margin.top - margin.bottom) // Set height to cover the full vertical space
-        //   .attr("opacity", 0) // Make the overlay rectangle invisible
-        //   .on("mouseover", (event, d) => {
-        //     // Show the tooltip and dashed line when mouseover event occurs on the overlay rectangle
-        //     tooltipRef.current.transition().duration(200).style("opacity", 0.9);
-        //     dashedLine
-        //       .attr("x1", x(d.date) + x.bandwidth() / 2)
-        //       .attr("y1", y(d.line1))
-        //       .attr("x2", x(d.date) + x.bandwidth() / 2)
-        //       .attr("y2", height - margin.bottom)
-        //       .style("opacity", 1); // Make the dashed line visible
-        //     tooltipRef.current
-        //       .html(
-        //         `${tooltipWord} Score: ${d.line1}<br/><span class=${styles.matext}>Moving Avg : ${d.line2}</span><br/><br/>${d.date}`
-        //       ) // Customize the content of the tooltip as needed
-        //       .style("left", event.pageX + "px")
-        //       .style("top", event.pageY + "px");
-        //   })
-        //   .on("mouseout", () => {
-        //     // Hide the tooltip and dashed line when mouseout event occurs on the overlay rectangle
-        //     tooltipRef.current.transition().duration(200).style("opacity", 0);
-        //     dashedLine.style("opacity", 0); // Hide the dashed line
-        //   });
+              // Get the actual width of the tooltip after rendering content
+              // @ts-ignore
+              const tooltipWidth = d3.select(tooltipRef.current).node().getBoundingClientRect().width;
+              // @ts-ignore
+              const svgWidth = d3.select(svgRef.current).node().getBoundingClientRect().width;
+              // @ts-ignore
+              const xPosition = x(d.date) + x.bandwidth() / 2; // x-coordinate of the dot
+              const yPosition = y(d.line1); // y-coordinate of the dot
+              const offset = 12; // Offset to prevent the tooltip from overlapping the dot
 
-        svg
-          .append("svg:text")
-          .attr("text-anchor", "middle")
-          .style("font-size", "18px")
-          .style("fill", color)
-          .attr("x", width / 2)
-          .attr("y", height / 7)
-          .text(details?.title ?? "");
+              // Calculate the position of the tooltip
+              let tooltipX = xPosition + offset;
+              if (xPosition + tooltipWidth + offset > svgWidth) {
+                // If the tooltip overflows the SVG boundary, position it to the left of the dot
+                tooltipX = xPosition - tooltipWidth - offset;
+              }
+
+              // Apply the calculated position
+              d3.select(tooltipRef.current)
+                .style("left", tooltipX + "px")
+                // @ts-ignore
+                .style("top", (yPosition + offset) + "px");
+
+              // Other mouseover actions like showing the dashed line
+              dashedLine
+                // @ts-ignore
+                .attr("x1", x(d.date) + x.bandwidth() / 2)
+                // @ts-ignore
+                .attr("y1", y(d.line1))
+                // @ts-ignore
+                .attr("x2", x(d.date) + x.bandwidth() / 2)
+                .attr("y2", height - margin.bottom)
+                .style("opacity", 1);
+            })
+            .on("mouseout", () => {
+              // Hide the tooltip when mouseout
+              d3.select(tooltipRef.current)
+                .style("opacity", 0);
+
+              // Other mouseout actions like hiding the dashed line
+              dashedLine.style("opacity", 0);
+            });
+        }
 
         // Rotate the y-axis title
         svg
           .append("g")
           .append("text")
           .attr("transform", "rotate(-90)") // Rotate text 90 degrees counterclockwise
-          .attr("x", -height / 1.7) // Adjust the position if needed
+          .attr("x", -height / 2) // Adjust the position if needed
           .attr("y", margin.left - 40) // Adjust the position if needed
           .style("text-anchor", "middle")
           .style("font-size", "14px")
           .style("fill", color)
-          .text(details?.y_axis ?? "");
+          // @ts-ignore
+          .text(details.y_axis);
 
         svg
           .append("text")
@@ -244,9 +233,11 @@ const HistoryGraph: FC<HistoryGraphProps> = ({ data, details, ticks }) => {
           .style("fill", color)
           .attr("x", width / 2)
           .attr("y", height + margin.top - 15)
-          .text(details?.x_axis ?? ""); // Use details.x_axis for the title text
-      };
-    }
+          // @ts-ignore
+          .text(details.x_axis); // Use details.x_axis for the title text
+
+      }
+    };
 
     drawChart();
 
@@ -257,42 +248,41 @@ const HistoryGraph: FC<HistoryGraphProps> = ({ data, details, ticks }) => {
     window.addEventListener("resize", resizeListener);
 
     return () => {
-      tooltipRef.current?.remove();
+      // tooltipRef.current.remove();
       window.removeEventListener("resize", resizeListener);
     };
-  }, [data, details]);
+  }, [data, details, theme]);
 
   return (
-    <>
-      <svg ref={svgRef} width="100%" height="400"></svg>
-      <div className="responsive-container">
+    <Box>
+      <Typography variant="h6" sx={{ textAlign: 'center' }}>
+        {details?.title}
+      </Typography>
+      <Box sx={{ display: 'block', position: 'relative', mb: 2 }}>
+        <svg ref={svgRef} width="100%" height="400"></svg>
+        <div ref={tooltipRef} className="tooltip" style={{
+          opacity: 0,
+          position: "absolute",
+          pointerEvents: "none",
+          backgroundColor: theme.palette.background.paper,
+          padding: "10px",
+          border: `1px solid ${theme.palette.divider}`,
+          zIndex: 1000
+        }}></div>
+      </Box>
+      <Box>
         {details?.description && (
-          <div className="info-box">
-            <h1>
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="h4" sx={{ mb: 1 }}>
               {details.title}
-              <span className="badge" style={{ backgroundColor: ratingColor(details.rating), marginLeft: '10px' }}>
+              <span className="badge" style={{ color: ratingColor(details.rating), marginLeft: '10px' }}>
                 {details.rating}
               </span>
-            </h1>
-            <p style={{ marginTop: '5px' }}>{details.description}</p>
-          </div>
+            </Typography>
+            <Typography>{details.description}</Typography>
+          </Box>
         )}
-        <div
-          className="tooltip"
-          style={{
-            opacity: tooltipVisible ? 0.9 : 0,
-            position: 'absolute',
-            left: `${tooltipPosition.x}px`,
-            top: `${tooltipPosition.y}px`,
-            backgroundColor: theme.palette.background.paper,
-            padding: '10px',
-            border: '1px solid #ccc',
-            pointerEvents: 'none',
-            display: tooltipVisible ? 'block' : 'none',
-          }}
-          dangerouslySetInnerHTML={{ __html: tooltipContent }}
-        ></div>
-        {/* {details.name1 && (
+        {/* {details?.name1 && (
           <div className="legend-box">
             <div className="legend-item">
               <span className={styles.whiteLine}></span>
@@ -306,13 +296,8 @@ const HistoryGraph: FC<HistoryGraphProps> = ({ data, details, ticks }) => {
             )}
           </div>
         )} */}
-      </div>
-      <br />
-      <hr />
-      <br />
-
-      <Tagline />
-    </>
+      </Box>
+    </Box>
   );
 
 };

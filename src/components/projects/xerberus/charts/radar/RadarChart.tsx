@@ -1,6 +1,8 @@
-import React, { useRef, useEffect, FC } from "react";
+import React, { useRef, useEffect, FC, useState } from "react";
 import * as d3 from "d3";
 import { RadarChartDataScores } from "@server/services/xerberusApi";
+import { Box, useTheme } from "@mui/material";
+import { ensureHexColor } from "@lib/utils/general";
 
 const convertData = (data: RadarChartDataScores) => {
   const dataArray = [data.priceScore, data.networkScore, data.liquidityScore]
@@ -28,9 +30,14 @@ interface RararChartProps {
 }
 
 const RadarChart: FC<RararChartProps> = ({ rawData, labels, color }) => {
-  const svgRef = useRef(null);
-  const radarColor = color; // Change as needed
-  const textColor = "black"; // Change as needed
+  const theme = useTheme()
+  const svgRef = useRef<SVGSVGElement>(null);
+  const boxRef = useRef<HTMLDivElement>(null)
+  const radarColor = color;
+  const textColor = theme.palette.text.primary;
+  const margin = { top: 60, right: 60, bottom: 0, left: 60 };
+  const [width, setWidth] = useState(400);
+  const [height, setHeight] = useState(350);
 
   const data = convertData(rawData);
 
@@ -38,9 +45,20 @@ const RadarChart: FC<RararChartProps> = ({ rawData, labels, color }) => {
     // Clear the previous chart
     d3.select(svgRef.current).selectAll("*").remove();
 
-    const margin = { top: 70, right: 60, bottom: 0, left: 60 };
-    const width = 400 - margin.left - margin.right;
-    const height = 350 - margin.top - margin.bottom;
+    // let width = 400 - margin.left - margin.right;
+    // let height = 350 - margin.top - margin.bottom;
+
+    const updateDimensions = () => {
+      if (boxRef.current) {
+        const maxWidth = 400;
+        const newWidth = Math.min(boxRef.current.clientWidth, maxWidth) - margin.left - margin.right;
+        setWidth(newWidth);
+        setHeight(newWidth);
+      }
+    };
+
+    window.addEventListener('resize', updateDimensions);
+    updateDimensions()
 
     const svg = d3
       .select(svgRef.current)
@@ -94,7 +112,7 @@ const RadarChart: FC<RararChartProps> = ({ rawData, labels, color }) => {
           .attr("x2", x1 + width / 2)
           .attr("y2", y1 + height / 2)
           .attr("class", "radarStroke")
-          .attr("stroke", radarColor);
+          .attr("stroke", theme.palette.mode === "dark" ? "#333333" : "#cccccc");
       });
     }
     // Create the radar chart line (data shape)
@@ -248,10 +266,26 @@ const RadarChart: FC<RararChartProps> = ({ rawData, labels, color }) => {
 
       //Calculate the position for labels
 
-      const Dy = -13;
-      const CCCy = -55;
-      const BBBy = -97;
-      const AAAy = -139.5;
+      // const Dy = -13;
+      // const CCCy = -55;
+      // const BBBy = -97;
+      // const AAAy = -139.5;
+
+      const baseHeight = 350 - margin.top - margin.bottom;
+      const scaleFactor = height / baseHeight;
+
+      const basePositions = {
+        D: -13,
+        CCC: -55,
+        BBB: -100,
+        AAA: -145
+      };
+
+      // Scale positions based on the current height
+      const Dy = basePositions.D * scaleFactor;
+      const CCCy = basePositions.CCC * scaleFactor;
+      const BBBy = basePositions.BBB * scaleFactor;
+      const AAAy = basePositions.AAA * scaleFactor;
 
       // Add label "D" to the center of the radar chart
       svg
@@ -290,9 +324,25 @@ const RadarChart: FC<RararChartProps> = ({ rawData, labels, color }) => {
         .attr("font-size", 12) // Adjust the font size as needed
         .text("- - - - - - - - - - AAA");
     });
-  }, [data, labels, color, radarColor, textColor]);
 
-  return <svg ref={svgRef}></svg>;
+    return () => {
+      window.removeEventListener('resize', updateDimensions);
+    };
+  }, [data, labels, color, radarColor, textColor, theme]);
+
+  return <Box
+    sx={{
+      width: "100%",
+      overflow: "hidden",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: '100%'
+    }}
+    ref={boxRef}
+  >
+    <svg ref={svgRef}></svg>
+  </Box>;
 };
 
 export default RadarChart;
