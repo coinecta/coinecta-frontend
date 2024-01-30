@@ -8,7 +8,7 @@ export async function checkAddressAvailability(address: string) {
       },
       select: { id: true }
     }),
-    prisma.wallet.findUnique({
+    prisma.wallet.findFirst({
       where: {
         changeAddress: address
       },
@@ -33,7 +33,7 @@ export async function checkAddressAvailability(address: string) {
 
 export async function getUserIdByAddress(address: string) {
   const [walletWithChangeAddress, walletWithAddressInArrays] = await prisma.$transaction([
-    prisma.wallet.findUnique({
+    prisma.wallet.findFirst({
       where: {
         changeAddress: address
       },
@@ -72,7 +72,7 @@ export const getUserIdByRewardAddress = async (address: string) => {
       },
       select: { id: true }
     }),
-    prisma.wallet.findUnique({
+    prisma.wallet.findFirst({
       where: {
         rewardAddress: address
       },
