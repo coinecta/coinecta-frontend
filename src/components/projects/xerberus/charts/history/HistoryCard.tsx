@@ -13,16 +13,9 @@ interface HistoryCardProps {
   loading: boolean;
 }
 
-const hoverStyle = {
-  transition: "transform 0.2s",
-  ":hover": {
-    transform: "scale(1.2)",
-  }
-};
-
 const HistoryCard: FC<HistoryCardProps> = ({ token, data, details, loading }) => {
   return (
-    <Paper sx={{
+    <Paper variant="outlined" sx={{
       position: "relative",
       padding: "20px",
       display: "flex",
@@ -33,8 +26,16 @@ const HistoryCard: FC<HistoryCardProps> = ({ token, data, details, loading }) =>
       <InfoButton link="https://documentation.xerberus.io/xerberus-app/token-explorer/risk-rating-history" />
       {loading
         ? (
-          <>
-            Loading...</>
+          <Box sx={{
+            height: '100%',
+            minHeight: '350px',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            Loading chart...
+          </Box>
         )
         : (
           <HistoryGraph data={data} details={details} ticks={4} />

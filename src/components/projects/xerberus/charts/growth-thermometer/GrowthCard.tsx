@@ -74,15 +74,22 @@ const GrowthCard: FC<GrowthCardProps> = ({ token, growthScore, loading }) => {
                 </Box>
               </Box>
             </Box>
-
             {/* Additional content goes here */}
           </Box>
         </Box>
 
         {loading
           ? (
-            <>
-              Loading...</>
+            <Box sx={{
+              height: '100%',
+              minHeight: '300px',
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              Loading chart...
+            </Box>
           )
           : (
             <Box

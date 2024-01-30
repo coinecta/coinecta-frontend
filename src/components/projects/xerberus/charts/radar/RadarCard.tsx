@@ -114,9 +114,16 @@ const RadarCard: FC<RadarCardProps> = ({ token, scores, loading }) => {
           </Box>
           {loading
             ? (
-              <>
-                Loading...
-              </>
+              <Box sx={{
+                height: '100%',
+                minHeight: '300px',
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                Loading chart...
+              </Box>
             )
             : scores &&
             <RadarChart
