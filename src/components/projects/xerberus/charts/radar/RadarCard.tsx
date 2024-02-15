@@ -2,9 +2,10 @@ import React, { FC, useEffect, useState } from "react";
 import ratingColor from "@lib/utils/ratingColor";
 import Tagline from "@components/projects/xerberus/tagline/Tagline";
 import RadarChart from "./RadarChart";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography, useTheme } from "@mui/material";
 import { RadarChartDataScores } from "@server/services/xerberusApi";
 import InfoButton from "@components/projects/xerberus/InfoButton";
+import { ThemeContext } from "@emotion/react";
 
 
 interface RadarCardProps {
@@ -14,14 +15,7 @@ interface RadarCardProps {
 }
 
 const RadarCard: FC<RadarCardProps> = ({ token, scores, loading }) => {
-  const defaultScores: RadarChartDataScores = {
-    overallRiskScore: "AAA",
-    priceScore: "AAA",
-    liquidityScore: "AAA",
-    networkScore: "AAA",
-  };
-
-  const [radarScores, setRadarScores] = useState(defaultScores)
+  const [radarScores, setRadarScores] = useState<RadarChartDataScores | undefined>(undefined)
 
   useEffect(() => {
     if (scores) setRadarScores(scores)
@@ -60,6 +54,8 @@ const RadarCard: FC<RadarCardProps> = ({ token, scores, loading }) => {
     }
   };
 
+  const theme = useTheme()
+
   return (
     <>
       <Paper variant="outlined" sx={{
@@ -76,42 +72,47 @@ const RadarCard: FC<RadarCardProps> = ({ token, scores, loading }) => {
           flexDirection: { xs: 'column', sm: "row" },
           alignItems: 'flex-start',
         }}>
-          <Box sx={{ width: { xs: '100%', sm: '40%' } }}>
-            <Box style={riskStyle}>
-              <h3>
-                Risk Rating:{" "}
-                <span
-                  style={{
-                    ...scoreTextStyle,
-                    color: ratingColor(radarScores.overallRiskScore),
-                  }}
-                >
-                  {!loading ? radarScores.overallRiskScore : 'Loading...'}
-                </span>
-              </h3>
-            </Box>
-            <Box sx={{
-              display: 'flex',
-              width: '100%',
-              flexDirection: { xs: 'row', sm: 'column' },
-              justifyContent: 'space-around'
-            }}>
-              {Object.entries(radarScores).map(([key, value]) => (
-                key !== 'overallRiskScore' &&
-                <Box key={key}>
-                  <Typography sx={{ ...riskLabelStyle }}>{formatLabel(key)}</Typography>
+          {radarScores &&
+            <Box sx={{ width: { xs: '100%', sm: '40%' } }}>
+              <Box style={riskStyle}>
+                <h3>
+                  Risk Rating:{" "}
                   <span
                     style={{
-                      ...riskScoreStyle,
-                      color: ratingColor(value),
+                      ...scoreTextStyle,
+                      color: ratingColor(radarScores.overallRiskScore),
                     }}
                   >
-                    {!loading ? value : 'Loading...'}
+                    {loading
+                      ? 'Loading...'
+                      : radarScores.overallRiskScore
+                    }
                   </span>
-                </Box>
-              ))}
+                </h3>
+              </Box>
+              <Box sx={{
+                display: 'flex',
+                width: '100%',
+                flexDirection: { xs: 'row', sm: 'column' },
+                justifyContent: 'space-around'
+              }}>
+                {radarScores && Object.entries(radarScores).map(([key, value]) => (
+                  key !== 'overallRiskScore' &&
+                  <Box key={key}>
+                    <Typography sx={{ ...riskLabelStyle }}>{formatLabel(key)}</Typography>
+                    <span
+                      style={{
+                        ...riskScoreStyle,
+                        color: ratingColor(value),
+                      }}
+                    >
+                      {!loading ? value : 'Loading...'}
+                    </span>
+                  </Box>
+                ))}
+              </Box>
             </Box>
-          </Box>
+          }
           {loading
             ? (
               <Box sx={{
@@ -125,12 +126,22 @@ const RadarCard: FC<RadarCardProps> = ({ token, scores, loading }) => {
                 Loading chart...
               </Box>
             )
-            : scores &&
-            <RadarChart
-              rawData={scores}
-              labels={["Price", "Network", "Liquidity"]}
-              color={ratingColor(radarScores.overallRiskScore)}
-            />
+            : scores && radarScores
+              ? <RadarChart
+                rawData={scores}
+                labels={["Price", "Network", "Liquidity"]}
+                color={ratingColor(radarScores.overallRiskScore)}
+              />
+              : <Box sx={{
+                height: '100%',
+                minHeight: '300px',
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                Api Unavailable
+              </Box>
           }
         </Box>
         <Tagline link={`https://app.xerberus.io/token/explorer?token=${token}`} />
