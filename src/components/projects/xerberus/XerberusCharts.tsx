@@ -7,7 +7,7 @@ import Grid from "@mui/system/Unstable_Grid/Grid";
 
 const XerberusCharts: FC<{ token: string }> = ({ token }) => {
   const xerberusData = trpc.xerberus.getSpecificTokenInfo.useQuery({ token })
-  console.log(xerberusData.data?.data)
+  // console.log(xerberusData.data?.data)
   return (
     <Grid container spacing={2}>
       <Grid xs={12} md={6}>
@@ -32,7 +32,6 @@ const XerberusCharts: FC<{ token: string }> = ({ token }) => {
         />
       </Grid>
     </Grid>
-
   );
 };
 
