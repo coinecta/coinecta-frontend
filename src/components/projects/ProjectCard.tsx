@@ -9,8 +9,8 @@ import {
   Box,
   Chip,
 } from '@mui/material'
-import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/router';
+import { nanoid } from 'nanoid';
 
 interface IProjectCard {
   title: string;
@@ -58,7 +58,7 @@ const ProjectCard: FC<IProjectCard> = ({
         <MuiGrid container justifyContent="space-between" alignItems="center">
           <MuiGrid item>
             {blockchains.map((item, i) => {
-              const key = uuidv4()
+              const key = nanoid()
               return <Chip variant="outlined" label={item} key={key} sx={{ mr: 1 }} />
             })}
           </MuiGrid>
