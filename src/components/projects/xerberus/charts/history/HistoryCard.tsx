@@ -37,9 +37,22 @@ const HistoryCard: FC<HistoryCardProps> = ({ token, data, details, loading }) =>
             Loading chart...
           </Box>
         )
-        : (
-          <HistoryGraph data={data} details={details} ticks={4} />
-        )}
+        : data.length > 0
+          ? (
+            <HistoryGraph data={data} details={details} ticks={4} />
+          )
+          : <Box sx={{
+            height: '100%',
+            minHeight: '300px',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            Api Unavailable
+          </Box>
+
+      }
       <Tagline link={`https://app.xerberus.io/token/explorer?token=${token}`} />
     </Paper>
   );

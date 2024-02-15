@@ -49,34 +49,36 @@ const GrowthCard: FC<GrowthCardProps> = ({ token, growthScore, loading }) => {
     }}>
       <InfoButton link="https://documentation.xerberus.io/xerberus-app/token-explorer/growth-thermometer" />
       <Box sx={flexStyle}>
-        <Box sx={boxStyle}>
-          <Box>
-            <Box sx={{ marginBottom: "20px" }}>
-              <Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    flexDirection: "column",
-                    width: "100%",
-                    mb: 2
-                  }}
-                >
-                  <Typography variant="h6">Growth Score</Typography>
-                  <Typography
-                    style={{
-                      fontSize: "1.2em",
-                      color: ratingColor(growthScore ?? "#43A047"),
+        {growthScore &&
+          <Box sx={boxStyle}>
+            <Box>
+              <Box sx={{ marginBottom: "20px" }}>
+                <Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      flexDirection: "column",
+                      width: "100%",
+                      mb: 2
                     }}
                   >
-                    {growthScore}
-                  </Typography>
+                    <Typography variant="h6">Growth Score</Typography>
+                    <Typography
+                      style={{
+                        fontSize: "1.2em",
+                        color: ratingColor(growthScore ?? "#43A047"),
+                      }}
+                    >
+                      {growthScore}
+                    </Typography>
+                  </Box>
                 </Box>
               </Box>
+              {/* Additional content goes here */}
             </Box>
-            {/* Additional content goes here */}
           </Box>
-        </Box>
+        }
 
         {loading
           ? (
@@ -91,7 +93,7 @@ const GrowthCard: FC<GrowthCardProps> = ({ token, growthScore, loading }) => {
               Loading chart...
             </Box>
           )
-          : (
+          : growthScore ? (
             <Box
               sx={{
                 width: "100%",
@@ -102,11 +104,20 @@ const GrowthCard: FC<GrowthCardProps> = ({ token, growthScore, loading }) => {
 
               }}
             >
-
               {/* ThermometerGraph component */}
               <ThermometerGraph data={growthScore} />
             </Box>
-          )}
+          ) : <Box sx={{
+            height: '100%',
+            minHeight: '300px',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            Api Unavailable
+          </Box>
+        }
       </Box>
       <Tagline link={`https://app.xerberus.io/token/growth?token=${token}`} />
     </Paper>
