@@ -57,9 +57,14 @@ const ProjectCard: FC<IProjectCard> = ({
         </Typography>
         <MuiGrid container justifyContent="space-between" alignItems="center">
           <MuiGrid item>
+<<<<<<< HEAD
             {blockchains.map((item, i) => {
               const key = nanoid()
               return <Chip variant="outlined" label={item} key={key} sx={{ mr: 1 }} />
+=======
+            {blockchains.map((item) => {
+              return <Chip variant="outlined" label={item} key={item} sx={{ mr: 1 }} />
+>>>>>>> origin/main
             })}
           </MuiGrid>
           <MuiGrid item>
