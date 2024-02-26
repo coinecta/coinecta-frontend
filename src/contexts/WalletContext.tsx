@@ -9,7 +9,6 @@ import React, {
 } from 'react';
 import { Session } from 'next-auth';
 import { getSession } from 'next-auth/react';
-import { string } from 'zod';
 
 type Wallet = {
   connected: boolean;
@@ -68,7 +67,7 @@ const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     fetchSessionData();
-  }, []);
+  }, [fetchSessionData]);
 
   // Context values passed to consumer
   const value = {

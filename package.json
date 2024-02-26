@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "node server.js",
-    "watch": "next dev",
+    "watch": "next dev -p 8181",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

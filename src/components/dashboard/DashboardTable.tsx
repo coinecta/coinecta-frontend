@@ -250,7 +250,7 @@ const formatData = <T,>(data: T, key: keyof T): string => {
   if (typeof value === 'number') {
     return value.toLocaleString();
   } else if (value instanceof Date) {
-    return dayjs(value).format('YYYY/MM/DD');
+    return dayjs(value).format('YYYY/MM/DD HH:mm:ss a');
   }
   // Default to string conversion
   return String(value);

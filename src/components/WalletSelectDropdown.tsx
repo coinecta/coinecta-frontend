@@ -31,7 +31,7 @@ const WalletSelectDropdown = () => {
       setSelectedItems(items)
       setItemList(items)
     }
-  }, [items])
+  }, [itemList.length, items])
 
   const handleChange = (event: SelectChangeEvent<typeof selectedItems>) => {
     const {
