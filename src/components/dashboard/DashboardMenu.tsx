@@ -37,6 +37,10 @@ const links = {
     {
       name: 'Overview',
       link: '/dashboard'
+    },
+    {
+      name: 'Transaction History',
+      link: '/dashboard/transaction-history'
     }
   ],
   Staking: [

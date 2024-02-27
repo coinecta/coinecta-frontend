@@ -8,6 +8,7 @@ import StakePositionsPage from '@components/dashboard/pages/StakePositionsPage';
 import AddStakePage from '@components/dashboard/pages/AddStakePage';
 import UnlockVested from '@components/dashboard/pages/UnlockVested';
 import ClaimTokens from '@components/dashboard/pages/ClaimTokens';
+import TransactionHistory from '@components/dashboard/pages/TransactionHistoryPage';
 
 const Dashboard: NextPage = () => {
   const router = useRouter()
@@ -15,6 +16,7 @@ const Dashboard: NextPage = () => {
   const route = dashboard_page?.toString()
 
   const pageMapper: { [key: string]: React.ReactElement } = {
+    "transaction-history": <TransactionHistory />,
     "add-stake": <AddStakePage />,
     "manage-stake": <StakePositionsPage />,
     "unlock-vested": <UnlockVested />,
