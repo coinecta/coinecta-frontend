@@ -79,6 +79,7 @@ const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
         </Typography>
         {unstakeList.map((item, i) => (
           <DataSpread
+            key={`${item.currency}-${i}`}
             title={item.currency}
             data={`${item.amount}`}
           />
