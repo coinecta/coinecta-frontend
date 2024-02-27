@@ -81,7 +81,7 @@ const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
           <DataSpread
             key={`${item.currency}-${i}`}
             title={item.currency}
-            data={`${item.amount}`}
+            data={`${Number(item.amount).toLocaleString(undefined, { maximumFractionDigits: 2 })}`}
           />
         ))}
       </DialogContent>
