@@ -49,16 +49,16 @@ const StakePositions: FC = () => {
       count: redeemableRows.size,
       handler: handleRedeem
     },
-    {
-      label: 'Combine',
-      count: lockedRows.size,
-      handler: handleRedeem
-    },
-    {
-      label: 'Split',
-      count: lockedRows.size,
-      handler: handleRedeem
-    }
+    // {
+    //   label: 'Combine',
+    //   count: lockedRows.size,
+    //   handler: handleRedeem
+    // },
+    // {
+    //   label: 'Split',
+    //   count: lockedRows.size,
+    //   handler: handleRedeem
+    // }
   ]
 
   return (
@@ -76,7 +76,7 @@ const StakePositions: FC = () => {
               Total value staked
             </Typography>
             <Typography variant="h5">
-              $620,032
+              25,391 ₳ ($15,644)
             </Typography>
           </DashboardCard>
         </Grid>
@@ -90,23 +90,7 @@ const StakePositions: FC = () => {
           }}>
             <DataSpread
               title="CNCT"
-              data={`231,032 ($4,300)`}
-            />
-            <DataSpread
-              title="Optim"
-              data={`23,012 ($1,300)`}
-            />
-            <DataSpread
-              title="Crux"
-              data={`13,023,120 ($6,000)`}
-            />
-            <DataSpread
-              title="Paideia"
-              data={`231,032 ($4,300)`}
-            />
-            <DataSpread
-              title="Ergopad"
-              data={`231,032 ($4,300)`}
+              data={`230,660 ($15,644)`}
             />
           </DashboardCard>
         </Grid>
@@ -124,126 +108,33 @@ const StakePositions: FC = () => {
 
 export default StakePositions;
 
-
-
-
-
-
 const fakeTrpcDashboardData = {
   isLoading: false,
   error: false,
   data: [
     {
       name: 'CNCT',
-      total: 5125,
+      total: 63000,
       unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
+      initial: 60000,
+      bonus: 3000,
+      apy: "21.6%"
     },
     {
       name: 'CNCT',
-      total: 5125,
+      total: 46000,
       unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
+      initial: 40000,
+      bonus: 6000,
+      apy: "32.2%"
     },
     {
       name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(1717393753000),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(1717393753000),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(1717393753000),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(1717393753000),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(1717393753000),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      amount: 5125,
-      unlockDate: new Date(1717393753000),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
+      total: 121660,
+      unlockDate: new Date(1718344201000),
+      initial: 86900,
+      bonus: 34760,
+      apy: "40%"
     }
   ]
 }

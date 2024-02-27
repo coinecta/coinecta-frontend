@@ -16,27 +16,19 @@ import DashboardHeader from '../DashboardHeader';
 const options = [
   {
     duration: 1,
-    interest: 0.0153
-  },
-  {
-    duration: 2,
-    interest: 0.0337
+    interest: 0.01
   },
   {
     duration: 3,
-    interest: 0.0549
+    interest: 0.05
   },
   {
     duration: 6,
-    interest: 0.1191
-  },
-  {
-    duration: 9,
-    interest: 0.20
+    interest: 0.15
   },
   {
     duration: 12,
-    interest: 0.30
+    interest: 0.40
   },
 ]
 
@@ -61,23 +53,18 @@ const AddStakePage: FC = () => {
       <DashboardHeader title="Add stake" />
       <Grid container spacing={2}>
         <Grid xs={12} md={7}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'space-between',
-            py: 4
-          }}>
-            <Typography variant="h3" sx={{ mb: 1 }}>
+          <DashboardCard center>
+            <Typography variant="h3" sx={{ mb: 2 }}>
               Stake Coinecta
             </Typography>
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: '100%', mb: 3 }}>
               <StakeDuration
                 duration={stakeDuration}
                 setDuration={setStakeDuration}
                 durations={durations}
               />
             </Box>
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: '100%', mb: 3 }}>
               <StakeInput
                 inputValue={cnctAmount}
                 setInputValue={setCnctAmount}
@@ -96,27 +83,39 @@ const AddStakePage: FC = () => {
                 }}
               // onClick={() => setOpenContribution(true)}
               >
-                Contribute now
+                Stake now
               </Button>
             </Box>
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={5} sx={{ display: 'flex', gap: 2, flexDirection: 'column' }}>
-          <DashboardCard>
-            <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              Base APY
-            </Typography>
-            <Typography variant="h3" sx={{ fontWeight: 700 }}>
-              {`${calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1)).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
-            </Typography>
-          </DashboardCard>
-          <DashboardCard>
-            <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              APY Boost
-            </Typography>
-            <Typography variant="h3" sx={{ fontWeight: 700 }}>
-              {`${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1)) - calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
-            </Typography>
+          <DashboardCard center>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                Total APY
+              </Typography>
+              <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                {`${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-around', width: '100%' }}>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography sx={{ fontWeight: 700 }}>
+                  Base APY
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  {`${calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1)).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography sx={{ fontWeight: 700 }}>
+                  APY Boost
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                  {`${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1)) - calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+                </Typography>
+              </Box>
+            </Box>
           </DashboardCard>
           <DashboardCard>
             <DataSpread
@@ -128,14 +127,10 @@ const AddStakePage: FC = () => {
               data={`${((options.find(option => option.duration === stakeDuration)?.interest || 0) * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
             />
             <DataSpread
-              title="APY"
-              data={`${calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1)).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
-            />
-            <DataSpread
               title="Principal plus rewards"
+              margin={0}
               data={`${(Number(cnctAmount) ? (Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0)) + Number(cnctAmount) : 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} CNCT`}
             />
-
           </DashboardCard>
         </Grid>
       </Grid>

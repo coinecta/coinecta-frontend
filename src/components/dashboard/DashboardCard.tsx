@@ -5,25 +5,37 @@ import { useWalletContext } from '@contexts/WalletContext';
 interface DashboardCardProps {
   children?: ReactNode;
   sx?: SxProps<Theme>;
+  center?: true
 }
 
-const DashboardCard: FC<DashboardCardProps> = ({ children, sx }) => {
+const DashboardCard: FC<DashboardCardProps> = ({ children, sx, center }) => {
   const { sessionStatus } = useWalletContext();
 
-  const defaultStyles: SxProps<Theme> = {
-    py: 1,
-    px: 2,
-    // height: '100%',
-    position: 'relative',
+  const baseStyles: SxProps<Theme> = {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-start',
     justifyContent: 'center',
-    ...sx,
+    p: 2
   };
 
+  const typeStyles: SxProps<Theme> = center
+    ? {
+      alignItems: 'center',
+      height: '100%'
+    }
+    : {
+      alignItems: 'flex-start',
+    };
+
+  const finalStyles: SxProps<Theme> = {
+    ...baseStyles,
+    ...typeStyles,
+    ...sx, // Custom styles passed via sx prop, allowing default override
+  };
+
+
   return (
-    <Paper variant="outlined" sx={defaultStyles}>
+    <Paper variant="outlined" sx={finalStyles}>
       {sessionStatus === 'loading'
         ? 'Loading...'
         : sessionStatus === 'unauthenticated'

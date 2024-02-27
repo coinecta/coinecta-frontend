@@ -29,7 +29,7 @@ const ActionBar: FC<IActionBarProps> = ({ actions }) => {
       }}
     >
       {actions.map((action, index) => (
-        <Button key={index} variant="contained" onClick={() => action.handler()}>
+        <Button key={index} variant="contained" color="secondary" onClick={() => action.handler()}>
           {action.label} {action.count}
         </Button>
       ))}

@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
-import { Box, ToggleButton, ToggleButtonGroup, useTheme } from '@mui/material';
+import { Box, Button, useTheme } from '@mui/material';
 
 interface IStakeInputProps {
   duration: number;
@@ -13,63 +13,40 @@ const StakeInput: FC<IStakeInputProps> = ({
   durations
 }) => {
   const theme = useTheme();
-
-  const [localDuration, setLocalDuration] = useState<string>(duration.toString());
+  const [localDuration, setLocalDuration] = useState<number>(duration);
 
   useEffect(() => {
-    setLocalDuration(duration.toString());
+    setLocalDuration(duration);
   }, [duration]);
 
-  const handleDurationChange = (
-    event: React.MouseEvent<HTMLElement>,
-    newDuration: string | null
-  ) => {
-    if (newDuration !== null) {
-      setLocalDuration(newDuration);
-      setDuration(Number(newDuration));
-    }
+  const handleDurationChange = (newDuration: number) => {
+    setLocalDuration(newDuration);
+    setDuration(newDuration);
   };
 
   return (
-    <Box sx={{ position: 'relative' }}>
-      <ToggleButtonGroup
-        value={localDuration}
-        exclusive
-        onChange={handleDurationChange}
-        sx={{
-          mb: 1,
-          borderRadius: '8px',
-          flexWrap: 'wrap',
-          gap: 1,
-          justifyContent: 'space-evenly',
-          '& .MuiToggleButtonGroup-grouped': {
-            margin: theme.spacing(0.5),
-            border: 0,
-            '&.Mui-disabled': {
-              border: 0,
-            },
-            '&:not(:first-of-type)': {
-              borderRadius: theme.shape.borderRadius,
-            },
-            '&:first-of-type': {
-              borderRadius: theme.shape.borderRadius,
-            },
-          },
-        }}
-      >
-        {durations.map((option, index) => (
-          <ToggleButton
-            key={`duration-${index}`}
-            value={option.toString()}
-            sx={{
-              border: 'none',
-              borderRadius: '8px',
-            }}
-          >
-            {option} month{option > 1 ? 's' : ''}
-          </ToggleButton>
-        ))}
-      </ToggleButtonGroup>
+    <Box sx={{
+      position: 'relative', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 2,
+    }}>
+      {durations.map((option, index) => (
+        <Button
+          key={option}
+          variant="text"
+          onClick={() => handleDurationChange(option)}
+          sx={{
+            border: localDuration === option ? '1px solid rgba(99, 161, 199, 0.4)' : 'inherit',
+            background: localDuration === option ? 'rgba(99, 161, 199, 0.2)' : 'inherit',
+            fontWeight: localDuration === option ? '700' : 'inherit',
+            color: localDuration === option ? 'secondary.main' : 'inherit',
+            '&:hover': {
+              background: localDuration === option ? 'rgba(99, 161, 199, 0.3)' : 'rgba(99, 161, 199, 0.1)',
+              borderColor: 'rgba(99, 161, 199, 0.4)',
+            }
+          }}
+        >
+          {option} month{option > 1 ? 's' : ''}
+        </Button>
+      ))}
     </Box>
   );
 };

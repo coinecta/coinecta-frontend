@@ -239,7 +239,8 @@ const UserMenu: FC<IUserMenuProps> = () => {
                   <Avatar src={sessionData.user.image ?? walletIcon} sx={{ width: '24px', height: '24px', mr: desktop ? 1 : null }} variant="square" />
                   {changeAddress && desktop &&
                     <Typography>
-                      {getShortAddress(changeAddress)}
+                      {/* {getShortAddress(changeAddress)} */}
+                      {getShortAddress('addr1qalksjdflkasdjfeiq8')}
                     </Typography>
                   }
                 </>

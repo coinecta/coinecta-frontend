@@ -205,6 +205,7 @@ const DashboardTable = <T extends Record<string, any>>({
                   indeterminate={selectedRows.size > 0 && selectedRows.size < data.length}
                   checked={data.length > 0 && selectedRows.size === data.length}
                   onChange={handleSelectAllRows}
+                  color="secondary"
                 />
               </TableCell>}
 
@@ -227,6 +228,7 @@ const DashboardTable = <T extends Record<string, any>>({
                   <Checkbox
                     checked={selectedRows.has(index)}
                     onChange={() => handleSelectRow(index)}
+                    color="secondary"
                   />
                 </TableCell>}
                 {Object.keys(item).map((key, colIndex) => (

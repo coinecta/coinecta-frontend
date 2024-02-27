@@ -17,103 +17,71 @@ const Dashboard: FC = () => {
       <DashboardHeader title="Overview" />
       <Grid container spacing={2} sx={{ mb: 1 }}>
         <Grid xs={12} md={5}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'center',
-            py: 4
-          }}>
+          <DashboardCard center>
             <Typography>
               Total portfolio value
             </Typography>
             <Typography variant="h5">
-              10,309 ₳ ($6,000)
+              31,463 ₳ ($19,438)
             </Typography>
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={7}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'space-between',
-            pt: 4,
-            pb: 2
-          }}>
+          <DashboardCard center>
             <DataSpread
               title="CNCT"
-              data={`231,032 ($4,300)`}
+              data={`28,612 ($1,736)`}
             />
             <DataSpread
-              title="Optim"
-              data={`23,012 ($1,300)`}
+              title="CHIP"
+              data={`231,032 ($1,291)`}
             />
             <DataSpread
-              title="Crux"
-              data={`13,023,120 ($6,000)`}
+              title="BANA"
+              data={`42,648 ($807)`}
             />
             <DataSpread
-              title="Paideia"
-              data={`231,032 ($4,300)`}
-            />
-            <DataSpread
-              title="Ergopad"
-              data={`231,032 ($4,300)`}
+              title="rsPAI"
+              margin={0}
+              data={`725,048 ($5,885)`}
             />
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={4}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'space-between',
-            pt: 4,
-            pb: 2
-          }}>
+          <DashboardCard center>
             <Typography>
               Total Vested
             </Typography>
-            <Typography variant="h5">
-              10,309 ₳ ($6,000)
+            <Typography variant="h5" sx={{ mb: 1 }}>
+              2,431 ₳ ($1,504)
             </Typography>
-            <Button>
+            <Button variant="contained" color="secondary" size="small">
               Unlock now
             </Button>
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={4}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'space-between',
-            pt: 4,
-            pb: 2
-          }}>
+          <DashboardCard center>
             <Typography>
               Total Staked
             </Typography>
-            <Typography variant="h5">
-              10,309 ₳ ($6,000)
+            <Typography variant="h5" sx={{ mb: 1 }}>
+              6,132 ₳ ($3,795)
             </Typography>
-            <Button>
+            <Button variant="contained" color="secondary" size="small">
               Manage positions
             </Button>
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={4}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'space-between',
-            pt: 4,
-            pb: 2
-          }}>
+          <DashboardCard center>
             <Typography>
               Unclaimed tokens
             </Typography>
-            <Typography variant="h5">
-              10,309 ₳ ($6,000)
+            <Typography variant="h5" sx={{ mb: 1 }}>
+              467 ₳ ($289)
             </Typography>
-            <Button>
+            <Button variant="contained" color="secondary" size="small">
               Claim now
             </Button>
           </DashboardCard>
