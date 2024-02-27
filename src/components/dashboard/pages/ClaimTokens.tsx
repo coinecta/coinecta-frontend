@@ -33,7 +33,9 @@ const ClaimTokens: FC = () => {
       <Typography variant="subtitle1" sx={{ mb: 2 }}>
         Here you can claim your vesting NFTs, which allow you to redeem tokens as they unlock. If the tokens in the vesting key are already redeemable, they will automatically be redeemed when you claim your vesting key here.
       </Typography>
-      {sessionStatus !== 'authenticated' && <LoginWarning />}
+      {/* {sessionStatus !== 'authenticated'
+        ? <LoginWarning />
+        :  */}
       <DashboardTable
         {...fakeTrpcDashboardData}
         selectedRows={selectedRows}
@@ -41,6 +43,8 @@ const ClaimTokens: FC = () => {
         actions={actions}
         parentContainerRef={parentRef}
       />
+      {/* } */}
+
     </Box>
   );
 };

@@ -12,7 +12,7 @@ import {
   MenuList,
   Chip
 } from "@mui/material";
-import { v4 as uuidv4 } from 'uuid';
+import { nanoid } from "nanoid";
 import CustomMenuItem from "@components/notifications/CustomMenuItem";
 
 export interface IImportMenuItem {
@@ -57,7 +57,7 @@ const NotificationsPage: NextPage = () => {
 
   return (
     <Container>
-      
+
       {!loading &&
         (
           <Grid
@@ -154,7 +154,7 @@ const sampleMenuItems: IImportMenuItem[] = [
     message: 'Ornella just updated the status on your transaction. Check it out!',
     userName: 'Ornella May',
     userPfp: '',
-    id: uuidv4(),
+    id: nanoid(),
     userVerfied: false,
     time: new Date(),
     unread: true
@@ -163,7 +163,7 @@ const sampleMenuItems: IImportMenuItem[] = [
     message: 'Jake just updated the status on your transaction. Check it out!',
     userName: 'Jake Jones',
     userPfp: '/thoreau.png',
-    id: uuidv4(),
+    id: nanoid(),
     userVerfied: true,
     time: new Date(),
     unread: true
@@ -172,7 +172,7 @@ const sampleMenuItems: IImportMenuItem[] = [
     message: 'Ornella just updated the status on your transaction. Check it out!',
     userName: 'Ornella May',
     userPfp: '',
-    id: uuidv4(),
+    id: nanoid(),
     userVerfied: false,
     time: new Date(),
     unread: false
@@ -181,7 +181,7 @@ const sampleMenuItems: IImportMenuItem[] = [
     message: 'Jake just updated the status on your transaction. Check it out!',
     userName: 'Jake Jones',
     userPfp: '/thoreau.png',
-    id: uuidv4(),
+    id: nanoid(),
     userVerfied: true,
     time: new Date(),
     unread: true
@@ -190,7 +190,7 @@ const sampleMenuItems: IImportMenuItem[] = [
     message: 'Ornella just updated the status on your transaction. Check it out!',
     userName: 'Ornella May',
     userPfp: '',
-    id: uuidv4(),
+    id: nanoid(),
     userVerfied: false,
     time: new Date(),
     unread: false
@@ -199,7 +199,7 @@ const sampleMenuItems: IImportMenuItem[] = [
     message: 'Ornella just updated the status on your transaction. Check it out!',
     userName: 'Ornella May',
     userPfp: '',
-    id: uuidv4(),
+    id: nanoid(),
     userVerfied: false,
     time: new Date(),
     unread: false
@@ -208,7 +208,7 @@ const sampleMenuItems: IImportMenuItem[] = [
     message: 'Jake just updated the status on your transaction. Check it out!',
     userName: 'Jake Jones',
     userPfp: '/thoreau.png',
-    id: uuidv4(),
+    id: nanoid(),
     userVerfied: true,
     time: new Date(),
     unread: true
@@ -217,7 +217,7 @@ const sampleMenuItems: IImportMenuItem[] = [
     message: 'Ornella just updated the status on your transaction. Check it out!',
     userName: 'Ornella May',
     userPfp: '',
-    id: uuidv4(),
+    id: nanoid(),
     userVerfied: false,
     time: new Date(),
     unread: false
@@ -226,7 +226,7 @@ const sampleMenuItems: IImportMenuItem[] = [
     message: 'Ornella just updated the status on your transaction. Check it out!',
     userName: 'Ornella May',
     userPfp: '',
-    id: uuidv4(),
+    id: nanoid(),
     userVerfied: false,
     time: new Date(),
     unread: false

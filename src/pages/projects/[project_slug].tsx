@@ -1,26 +1,21 @@
-import { useEffect, useState, useMemo, SetStateAction } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
   Container,
   Typography,
-  Divider,
   Box,
   Avatar,
   useTheme,
   Grid,
   useMediaQuery,
-  Tabs,
-  Tab,
-  Collapse,
-  Alert,
   Chip,
+  Dialog,
+  DialogContent,
 } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
 import Link from "@components/Link";
 import DiscordIcon from "@components/svgs/DiscordIcon";
 import TwitterIcon from "@components/svgs/TwitterIcon";
 import TelegramIcon from "@components/svgs/TelegramIcon";
-import WebIcon from "@components/svgs/WebIcon";
 import GithubIcon from "@components/svgs/GithubIcon";
 import TokenomicsTab from "@components/projects/tokenomics/TokenomicsTab";
 import WhitelistTab from "@components/projects/whitelist/WhitelistTab";
@@ -32,18 +27,25 @@ import { mapFisoObject } from "@server/utils/mapProjectObject";
 import { ContainedTabs, ContainedTab } from "@components/styled-components/ContainedTabs";
 import LinkIcon from '@mui/icons-material/Link';
 import FeedIcon from '@mui/icons-material/Feed';
+import Swap from '@dexhunterio/swaps'
+import '@dexhunterio/swaps/lib/assets/style.css'
+import { ensureHexColor } from '@lib/utils/general';
+import { toTokenId } from '@lib/utils/assets';
+import DexhunterLogomark from "@components/svgs/DexhunterLogomark";
+import XerberusTab from "@components/projects/xerberus/XerberusTab";
 
-type TTabs = 'summary' | 'tokenomics' | 'whitelist' | 'contribute' | 'fiso'
+type TTabs = 'summary' | 'tokenomics' | 'whitelist' | 'contribute' | 'fiso' | 'xerberus'
 
 const Project = () => {
   const theme = useTheme()
   const upMd = useMediaQuery(theme.breakpoints.up('md'))
+  const upSm = useMediaQuery(theme.breakpoints.up('sm'))
   const router = useRouter();
   const { project_slug, tab } = router.query;
   const [projectData, setProjectData] = useState<TProject | undefined>(undefined)
-  const [isLoading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState<TTabs>('summary');
   const [fisoData, setFisoData] = useState<TFiso[]>([])
+  const [dexhunterModal, setDexhunterModal] = useState(false)
 
   const project = trpc.project.getProject.useQuery(
     { slug: project_slug?.toString() },
@@ -73,20 +75,20 @@ const Project = () => {
   }, [tab]);
 
   const isTTabs = (value: string): value is TTabs => {
-    return ['summary', 'tokenomics', 'whitelist', 'contribute', 'fiso'].includes(value);
+    return ['summary', 'tokenomics', 'whitelist', 'contribute', 'fiso', 'xerberus'].includes(value);
   }
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: TTabs) => {
     event.preventDefault()
     setTabValue(newValue);
     router.push({
-      pathname: router.pathname, // keeps you on the current page
+      pathname: router.pathname,
       query: {
-        ...router.query, // preserves existing query parameters
-        tab: newValue // adds the new tab value as a query parameter
+        ...router.query,
+        tab: newValue
       },
     },
-      undefined, // asPath
+      undefined,
       { scroll: false });
   };
 
@@ -212,6 +214,20 @@ const Project = () => {
                       />
                     </Grid>
                   }
+                  {projectData.tokenomics.tokenPolicyId.length > 0 &&
+                    <Grid item>
+                      <Chip
+                        label="Buy CNCT"
+                        icon={<DexhunterLogomark sx={{ width: '16px', height: '16px', mr: -1, ml: 1 }} />}
+                        // component="button"
+                        clickable
+                        color="secondary"
+                        sx={{ borderRadius: '6px', border: `1px solid ${theme.palette.divider}` }}
+                        onClick={() => setDexhunterModal(true)}
+                        aria-label={`${projectData.name} DexHunter Swap`}
+                      />
+                    </Grid>
+                  }
                 </Grid>
               </Grid>
             </Grid>
@@ -223,24 +239,13 @@ const Project = () => {
               allowScrollButtonsMobile
               variant="scrollable"
               color={theme.palette.primary.main}
-            // sx={{
-            //   '& .MuiTabs-flexContainer': {
-            //     justifyContent: upMd ? 'center' : null,
-            //     '& .MuiButtonBase-root': {
-            //       fontWeight: 700,
-            //       textTransform: 'none'
-            //     }
-            //   },
-            //   background: theme.palette.background.paper,
-            //   border: `1px solid ${theme.palette.divider}`,
-            //   borderRadius: '6px'
-            // }}
             >
               <ContainedTab label="Summary" value={'summary'} />
               <ContainedTab label="Tokenomics" value={'tokenomics'} />
               <ContainedTab label="Whitelist" value={'whitelist'} />
               <ContainedTab label="Contribute" value={'contribute'} />
               {fisoData.length > 0 && <ContainedTab label="FISO" value={'fiso'} />}
+              <ContainedTab label="Xerberus" value={'xerberus'} />
             </ContainedTabs>
             <Box sx={{ mb: 12, mt: 2 }}>
               {tabValue === 'summary' && <ProjectInfoTab project={projectData} />}
@@ -248,6 +253,7 @@ const Project = () => {
               {tabValue === 'whitelist' && <WhitelistTab whitelists={projectData.whitelists} projectSlug={projectData.slug} />}
               {tabValue === 'contribute' && <ContributeTab projectSlug={projectData.slug} projectName={projectData.name} projectIcon={projectData.avatarImgUrl} />}
               {tabValue === 'fiso' && <FisoTab projectSlug={projectData.slug} fisos={fisoData} />}
+              {tabValue === 'xerberus' && <XerberusTab project={projectData} />}
             </Box>
           </Container >
           : project.status === 'error' && <Container sx={{ textAlign: 'center', py: '20vh' }}>
@@ -264,6 +270,49 @@ const Project = () => {
               Back to projects page
             </Link>
           </Container>}
+      {projectData?.tokenomics && projectData.tokenomics.tokenPolicyId.length > 0 &&
+        <Dialog
+          open={dexhunterModal}
+          onClose={() => setDexhunterModal(false)}
+          aria-labelledby="dexhunter-modal"
+          aria-describedby="dexhunter-swap-window"
+          sx={{
+            p: 0,
+            '& .MuiPaper-root': {
+              background: 'none',
+              lineHeight: 0,
+              borderRadius: '26px'
+            },
+            '& .MuiBackdrop-root': {
+              backdropFilter: 'blur(5px)',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }}
+          scroll="body"
+        >
+          <DialogContent sx={{ p: 0, borderRadius: '26px' }}>
+            <Swap
+              orderTypes={["SWAP", "LIMIT"]}
+              defaultToken={toTokenId(projectData.tokenomics.tokenPolicyId, projectData.tokenomics.tokenTicker)}
+              // @ts-ignore
+              supportedTokens={[toTokenId(projectData.tokenomics.tokenPolicyId, projectData.tokenomics.tokenTicker)]}
+              colors={{
+                "background": ensureHexColor(theme.palette.background.paper),
+                "containers": theme.palette.mode === 'dark' ? ensureHexColor('rgb(20, 24, 35)') : ensureHexColor('rgb(227, 229, 228)'),
+                "subText": ensureHexColor(theme.palette.text.secondary),
+                "mainText": ensureHexColor(theme.palette.text.primary),
+                "buttonText": ensureHexColor(theme.palette.background.default),
+                "accent": ensureHexColor(theme.palette.secondary.main)
+              }}
+              theme={theme.palette.mode === 'dark' ? 'dark' : 'light'}
+              width={upSm ? "420px" : "300px"}
+              partnerCode="coinecta61646472317179307973777374716168367a7778766435637368306779747938307063706671663067686532346e37393872303768647a3672366670367a39367267683864767536796a7838736d6d616e793430616e75383236347230656b337373756a747739da39a3ee5e6b4b0d3255bfef95601890afd80709"
+              partnerName="Coinecta"
+              displayType="DEFAULT"
+            />
+          </DialogContent>
+        </Dialog>
+      }
     </>
   );
 };

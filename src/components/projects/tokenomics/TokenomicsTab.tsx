@@ -60,7 +60,7 @@ const TokenomicsTab: FC<{ tokenomics: TTokenomics }> = ({ tokenomics }) => {
               </Typography>
             </Grid>
           </Grid>
-          <Grid container>
+          <Grid container sx={{ background: theme.palette.background.default }}>
             <Grid xs={6} sx={{ p: 1, textAlign: 'right' }}>
               <Typography color="text.secondary">
                 Policy ID:

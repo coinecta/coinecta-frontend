@@ -4,9 +4,10 @@ import { Box, Divider, Typography } from '@mui/material';
 interface DataSpreadProps {
   title: string;
   data: string;
+  margin?: number;
 }
 
-const DataSpread: FC<DataSpreadProps> = ({ title, data }) => {
+const DataSpread: FC<DataSpreadProps> = ({ title, data, margin }) => {
   return (
     <Box
       sx={{
@@ -16,10 +17,10 @@ const DataSpread: FC<DataSpreadProps> = ({ title, data }) => {
         gap: { xs: '3px', sm: 1 },
         justifyContent: 'space-between',
         width: '100%',
-        mb: 2
+        mb: margin ?? 2
       }}
     >
-      <Typography variant="overline" sx={{ mb: 0, lineHeight: 1, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+      <Typography variant="overline" sx={{ mb: 0, lineHeight: 1, fontSize: { xs: '0.9rem', sm: '1rem' }, textTransform: 'none' }}>
         {title}
       </Typography>
       <Box sx={{ flexGrow: 1 }}>

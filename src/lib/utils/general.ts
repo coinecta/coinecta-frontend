@@ -95,3 +95,32 @@ export const getShorterAddress = (address: string, substring?: number): string =
 
   return shortAddress;
 };
+
+export const ensureHexColor = (colorString: string): `#${string}` => {
+  // Check if it's already a hex color
+  if (/^#([0-9A-F]{3}){1,2}$/i.test(colorString)) {
+    return colorString as `#${string}`;
+  }
+
+  // Convert RGB or RGBA to hex
+  const match = colorString.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*\d+)?\)/);
+  if (match) {
+    const hex = match.slice(1, 4).map(num => {
+      const hexVal = parseInt(num, 10).toString(16);
+      return hexVal.length === 1 ? '0' + hexVal : hexVal;
+    }).join('');
+    return `#${hex}` as `#${string}`;
+  }
+
+  return '#000000' as `#${string}`;
+};
+
+export const calculateFutureDateMonths = (months: number): string => {
+  const currentDate = new Date();
+  currentDate.setMonth(currentDate.getMonth() + months);
+  return currentDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: '2-digit',
+  });
+};

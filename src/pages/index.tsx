@@ -1,4 +1,4 @@
-import React, { FC, useRef, useEffect, useState } from 'react';
+import React from 'react';
 import type { NextPage } from 'next'
 import {
   Container,
@@ -8,7 +8,6 @@ import {
   Grid,
   Button,
   Box,
-  Stack,
   IconButton,
   Paper,
   Grow,
@@ -16,9 +15,7 @@ import {
   useScrollTrigger
 } from '@mui/material'
 import ErgopadLogo from '@components/svgs/ErgopadLogo';
-import BlockheadsLogo from '@components/svgs/BlockheadsLogo';
 import PaideiaLogo from '@components/svgs/PaideiaLogo';
-import { v4 as uuidv4 } from 'uuid';
 import Projects from '@components/landing/Projects';
 import DiscordIcon from '@components/svgs/DiscordIcon';
 import TelegramIcon from '@components/svgs/TelegramIcon';
@@ -40,8 +37,8 @@ const inViewOptions = {
 
 const Home: NextPage = () => {
   const theme = useTheme()
-  const upMd = useMediaQuery(theme.breakpoints.up('md'))
-  const trigger = useScrollTrigger({ threshold: 800 });
+  // const upMd = useMediaQuery(theme.breakpoints.up('md'))
+  // const trigger = useScrollTrigger({ threshold: 800 });
   const [ref1, inView1] = useInView(inViewOptions);
   const [ref2, inView2] = useInView(inViewOptions);
   const [ref3, inView3] = useInView(inViewOptions);

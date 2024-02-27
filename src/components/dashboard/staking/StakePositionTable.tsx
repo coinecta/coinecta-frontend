@@ -15,9 +15,9 @@ import {
   useTheme
 } from '@mui/material';
 import dayjs from 'dayjs';
-import ActionBar, { IActionBarButton } from './ActionBar';
+import ActionBar, { IActionBarButton } from '@components/dashboard/ActionBar';
 
-interface IDashboardTableProps<T> {
+interface IStakePositionTableProps<T> {
   title?: string;
   data: T[];
   isLoading: boolean;
@@ -33,7 +33,7 @@ interface IDashboardTableProps<T> {
 // if you want an action bar (buttons to do actions on specific rows) you need to include
 // actions, selectedRows, and setSelectedRows
 
-const DashboardTable = <T extends Record<string, any>>({
+const StakePositionTable = <T extends Record<string, any>>({
   title,
   data,
   isLoading,
@@ -42,7 +42,7 @@ const DashboardTable = <T extends Record<string, any>>({
   selectedRows,
   setSelectedRows,
   parentContainerRef
-}: IDashboardTableProps<T>) => {
+}: IStakePositionTableProps<T>) => {
   const [parentWidth, setParentWidth] = useState(0);
   const [paperWidth, setPaperWidth] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -129,14 +129,24 @@ const DashboardTable = <T extends Record<string, any>>({
     }
   };
 
+  const isCheckboxDisabled = (item: T) => {
+    return item.unlockDate > new Date();
+  };
+
+  const selectableRows = data.filter(item => item.unlockDate <= new Date()).map((_, index) => index);
+
   const handleSelectRow = (index: number) => {
     if (setSelectedRows && actions) {
       setSelectedRows((prevSelectedRows) => {
         const newSelectedRows = new Set(prevSelectedRows);
-        if (newSelectedRows.has(index)) {
-          newSelectedRows.delete(index);
-        } else {
-          newSelectedRows.add(index);
+        const currentItem = data[index];
+        // Check if the checkbox for this row is not disabled
+        if (!isCheckboxDisabled(currentItem)) {
+          if (newSelectedRows.has(index)) {
+            newSelectedRows.delete(index);
+          } else {
+            newSelectedRows.add(index);
+          }
         }
         return newSelectedRows;
       });
@@ -145,15 +155,18 @@ const DashboardTable = <T extends Record<string, any>>({
 
   const handleSelectAllRows = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (setSelectedRows && actions) {
+      const newSelectedRows = new Set(selectedRows);
       if (event.target.checked) {
-        const newSelectedRows = new Set<number>();
-        data.forEach((_, index) => newSelectedRows.add(index));
-        setSelectedRows(newSelectedRows);
+        selectableRows.forEach(index => newSelectedRows.add(index));
       } else {
-        setSelectedRows(new Set());
+        selectableRows.forEach(index => newSelectedRows.delete(index));
       }
+      setSelectedRows(newSelectedRows);
     }
   };
+
+  const allSelectableSelected = selectableRows.every(index => selectedRows?.has(index));
+  const someSelectableSelected = selectableRows.some(index => selectedRows?.has(index)) && !allSelectableSelected;
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading</div>;
@@ -202,8 +215,8 @@ const DashboardTable = <T extends Record<string, any>>({
             }}>
               {actions && selectedRows && <TableCell padding="checkbox">
                 <Checkbox
-                  indeterminate={selectedRows.size > 0 && selectedRows.size < data.length}
-                  checked={data.length > 0 && selectedRows.size === data.length}
+                  indeterminate={someSelectableSelected}
+                  checked={allSelectableSelected}
                   onChange={handleSelectAllRows}
                   color="secondary"
                 />
@@ -229,6 +242,7 @@ const DashboardTable = <T extends Record<string, any>>({
                     checked={selectedRows.has(index)}
                     onChange={() => handleSelectRow(index)}
                     color="secondary"
+                    disabled={item.unlockDate > new Date()}
                   />
                 </TableCell>}
                 {Object.keys(item).map((key, colIndex) => (
@@ -245,14 +259,14 @@ const DashboardTable = <T extends Record<string, any>>({
   );
 };
 
-export default DashboardTable;
+export default StakePositionTable;
 
 const formatData = <T,>(data: T, key: keyof T): string => {
   const value = data[key];
   if (typeof value === 'number') {
     return value.toLocaleString();
   } else if (value instanceof Date) {
-    return dayjs(value).format('YYYY/MM/DD HH:mm:ss a');
+    return dayjs(value).format('YYYY/MM/DD');
   }
   // Default to string conversion
   return String(value);

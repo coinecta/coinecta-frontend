@@ -14,31 +14,25 @@ import DataSpread from '@components/DataSpread';
 import DashboardHeader from '../DashboardHeader';
 import { useWallet } from '@meshsdk/react';
 import { Data, Transaction } from '@meshsdk/core';
+import StakeConfirm from '../staking/StakeConfirm';
+import { calculateFutureDateMonths } from '@lib/utils/general'
 
 const options = [
   {
     duration: 1,
-    interest: 0.0153
-  },
-  {
-    duration: 2,
-    interest: 0.0337
+    interest: 0.01
   },
   {
     duration: 3,
-    interest: 0.0549
+    interest: 0.05
   },
   {
     duration: 6,
-    interest: 0.1191
-  },
-  {
-    duration: 9,
-    interest: 0.20
+    interest: 0.15
   },
   {
     duration: 12,
-    interest: 0.30
+    interest: 0.40
   },
 ]
 
@@ -92,37 +86,45 @@ const AddStakePage: FC = () => {
       console.error(ex);
     }
   }, [cnctAmount, walletContext.wallet]);
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false)
 
   useEffect(() => {
     const newArray = options.map(option => option.duration)
     setDurations(newArray)
   }, []) // replace with TRPC query when its available
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>): void => {
+    if (event.key === 'Enter') {
+      if (Number(cnctAmount) !== 0) {
+        setOpenConfirmationDialog(true);
+      }
+      event.preventDefault();
+    }
+  };
+
+  const total = (Number(cnctAmount) ? (Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0)) + Number(cnctAmount) : 0).toLocaleString(undefined, { maximumFractionDigits: 1 })
+
   return (
     <Box sx={{ mb: 4 }}>
       <DashboardHeader title="Add stake" />
       <Grid container spacing={2}>
         <Grid xs={12} md={7}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'space-between',
-            py: 4
-          }}>
-            <Typography variant="h3" sx={{ mb: 1 }}>
+          <DashboardCard center>
+            <Typography variant="h3" sx={{ mb: 2 }}>
               Stake Coinecta
             </Typography>
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: '100%', mb: 3 }}>
               <StakeDuration
                 duration={stakeDuration}
                 setDuration={setStakeDuration}
                 durations={durations}
               />
             </Box>
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: '100%', mb: 3 }}>
               <StakeInput
                 inputValue={cnctAmount}
                 setInputValue={setCnctAmount}
+                onKeyDown={handleKeyDown}
               />
             </Box>
             <Box>
@@ -136,31 +138,50 @@ const AddStakePage: FC = () => {
                   fontWeight: 600,
                   borderRadius: '6px'
                 }}
-                onClick={() => stakeCNCT()}
+                onClick={() => setOpenConfirmationDialog(true)}
+                disabled={Number(cnctAmount) === 0}
               >
-                Contribute now
+                Stake now
               </Button>
             </Box>
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={5} sx={{ display: 'flex', gap: 2, flexDirection: 'column' }}>
           <DashboardCard>
-            <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              Base APY
-            </Typography>
-            <Typography variant="h3" sx={{ fontWeight: 700 }}>
-              {`${calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1)).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
-            </Typography>
+            <Box sx={{ width: '100%' }}>
+              <Box sx={{ mb: 2, textAlign: 'center' }}>
+                <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                  Total APY
+                </Typography>
+                <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                  {`${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-around', width: '100%' }}>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography sx={{ fontWeight: 700 }}>
+                    Base APY
+                  </Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    {`${calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1)).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography sx={{ fontWeight: 700 }}>
+                    APY Boost
+                  </Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    {`${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1)) - calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
           </DashboardCard>
           <DashboardCard>
-            <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              APY Boost
-            </Typography>
-            <Typography variant="h3" sx={{ fontWeight: 700 }}>
-              {`${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1)) - calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
-            </Typography>
-          </DashboardCard>
-          <DashboardCard>
+            <DataSpread
+              title="Unlock Date"
+              data={`${calculateFutureDateMonths(stakeDuration)}`}
+            />
             <DataSpread
               title="Rewards"
               data={`${(Number(cnctAmount) ? Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0) : 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} CNCT`}
@@ -170,17 +191,21 @@ const AddStakePage: FC = () => {
               data={`${((options.find(option => option.duration === stakeDuration)?.interest || 0) * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
             />
             <DataSpread
-              title="APY"
-              data={`${calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1)).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
-            />
-            <DataSpread
               title="Principal plus rewards"
-              data={`${(Number(cnctAmount) ? (Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0)) + Number(cnctAmount) : 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} CNCT`}
+              margin={0}
+              data={`${total} CNCT`}
             />
-
           </DashboardCard>
         </Grid>
       </Grid>
+      <StakeConfirm
+        open={openConfirmationDialog}
+        setOpen={setOpenConfirmationDialog}
+        paymentAmount={cnctAmount}
+        paymentCurrency={'CNCT'}
+        duration={stakeDuration}
+        total={total}
+      />
     </Box >
   );
 };

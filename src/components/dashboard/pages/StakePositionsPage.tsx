@@ -8,17 +8,34 @@ import {
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import DashboardCard from '../DashboardCard';
 import DataSpread from '@components/DataSpread';
-import DashboardTable from '../DashboardTable';
 import { IActionBarButton } from '../ActionBar';
 import DashboardHeader from '../DashboardHeader';
 import { useWallet } from '@meshsdk/react';
 import { StakePosition, StakeSummary, coinectaApi } from '@server/services/syncApi';
+import UnstakeConfirm from '../staking/UnstakeConfirm';
+import StakePositionTable from '../staking/StakePositionTable';
+import { useWalletContext } from '@contexts/WalletContext';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
+  const { sessionStatus } = useWalletContext();
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
   const [redeemableRows, setRedeemableRows] = useState<Set<number>>(new Set());
   const [lockedRows, setLockedRows] = useState<Set<number>>(new Set());
+  const [openUnstakeDialog, setOpenUnstakeDialog] = useState(false)
+  const [unstakeRowData, setUnstakeRowData] = useState<IUnstakeListItem[]>([])
+
+  useEffect(() => {
+    const newData = Array.from(selectedRows).filter(index => redeemableRows.has(index)).map(index => {
+      const item = fakeTrpcDashboardData.data[index];
+      return {
+        currency: item.name,
+        amount: item.total.toString(),
+      };
+    });
+
+    setUnstakeRowData(newData);
+  }, [selectedRows, redeemableRows, fakeTrpcDashboardData])
 
   useEffect(() => {
     const newRedeemableRows = new Set<number>();
@@ -42,7 +59,7 @@ const StakePositions: FC = () => {
   }, [selectedRows, fakeTrpcDashboardData]);
 
   const handleRedeem = () => {
-
+    setOpenUnstakeDialog(true)
   }
 
   const actions: IActionBarButton[] = [
@@ -51,16 +68,16 @@ const StakePositions: FC = () => {
       count: redeemableRows.size,
       handler: handleRedeem
     },
-    {
-      label: 'Combine',
-      count: lockedRows.size,
-      handler: handleRedeem
-    },
-    {
-      label: 'Split',
-      count: lockedRows.size,
-      handler: handleRedeem
-    }
+    // {
+    //   label: 'Combine',
+    //   count: lockedRows.size,
+    //   handler: handleRedeem
+    // },
+    // {
+    //   label: 'Split',
+    //   count: lockedRows.size,
+    //   handler: handleRedeem
+    // }
   ]
 
   /* Staking API */
@@ -144,46 +161,33 @@ const StakePositions: FC = () => {
               Total value staked
             </Typography>
             <Typography variant="h5">
-              {formatNumber(summary?.totalStats.totalStaked ?? 0, 'CNCT')}
+              25,391 ₳ ($15,644)
             </Typography>
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={8}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'space-between',
-            pt: 4,
-            pb: 2
+          <DashboardCard center sx={{
+            justifyContent: sessionStatus === 'unauthenticated' ? 'center' : 'space-between',
           }}>
-            {summary?.poolStats && Object.entries(summary.poolStats).map(([key, stats]) => (
-              <>
-                <DataSpread
-                  title={key}
-                  data={formatNumber(stats.totalPortfolio, 'CNCT')}
-                />
-              </>
-            ))}
+            <DataSpread
+              title="CNCT"
+              margin={0} // last item needs margin 0, the rest don't include the margin prop
+              data={`230,660 ($15,644)`}
+            />
           </DashboardCard>
         </Grid>
       </Grid>
-      <DashboardTable
-        isLoading={false}
-        error={false}
-        data={positions.map((position) => {
-          return {
-            name: position.name,
-            total: position.total,
-            unlockDate: new Date(position.unlockDate),
-            initial: position.initial,
-            bonus: position.bonus,
-            apy: (position.interest * 100).toString() + "%"
-          }
-        })}
+      <StakePositionTable
+        {...fakeTrpcDashboardData}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={actions}
         parentContainerRef={parentRef}
+      />
+      <UnstakeConfirm
+        open={openUnstakeDialog}
+        setOpen={setOpenUnstakeDialog}
+        unstakeList={unstakeRowData}
       />
     </Box>
   );
@@ -191,126 +195,33 @@ const StakePositions: FC = () => {
 
 export default StakePositions;
 
-
-
-
-
-
 const fakeTrpcDashboardData = {
   isLoading: false,
   error: false,
   data: [
     {
       name: 'CNCT',
-      total: 5125,
+      total: 63000,
       unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
+      initial: 60000,
+      bonus: 3000,
+      apy: "21.6%"
     },
     {
       name: 'CNCT',
-      total: 5125,
+      total: 46000,
       unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
+      initial: 40000,
+      bonus: 6000,
+      apy: "32.2%"
     },
     {
       name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(1717393753000),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(1717393753000),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(1717393753000),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(1717393753000),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      total: 5125,
-      unlockDate: new Date(1717393753000),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
-    },
-    {
-      name: 'CNCT',
-      amount: 5125,
-      unlockDate: new Date(1717393753000),
-      initial: 5000,
-      bonus: 125,
-      apy: "12%"
+      total: 121660,
+      unlockDate: new Date(1718344201000),
+      initial: 86900,
+      bonus: 34760,
+      apy: "40%"
     }
   ]
 }

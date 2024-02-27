@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import SvgIcon from "@mui/material/SvgIcon";
 import { SxProps } from "@mui/material";
 
-const BlockheadsLogo: FC<{ sx?: SxProps }> = ({ sx }) => {
+const PaideiaLogo: FC<{ sx?: SxProps }> = ({ sx }) => {
   return (
     <SvgIcon sx={{ fontSize: '120px', ...sx }} width="662" height="184" viewBox="0 0 662 184" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M226.58 46.1518C232.288 51.5863 235.142 59.5609 235.142 70.0756C235.142 80.5902 232.288 88.5648 226.58 93.9993C220.874 99.4356 212.822 102.153 202.425 102.151H183.353V132.373H164V38H202.425C212.816 38 220.868 40.7173 226.58 46.1518ZM215.79 70.0756C215.79 59.6499 211.01 54.4371 201.451 54.4371H183.353V85.5909H201.451C206.09 85.5909 209.64 84.3986 212.099 82.0139C214.557 79.6292 215.788 75.6497 215.79 70.0756Z" />
@@ -20,4 +20,4 @@ const BlockheadsLogo: FC<{ sx?: SxProps }> = ({ sx }) => {
   );
 };
 
-export default BlockheadsLogo;
+export default PaideiaLogo;

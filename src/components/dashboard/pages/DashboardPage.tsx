@@ -7,10 +7,10 @@ import {
 import DataSpread from '@components/DataSpread';
 import DashboardCard from '../DashboardCard';
 import Grid from '@mui/system/Unstable_Grid/Grid';
-import WalletSelectDropdown from '@components/WalletSelectDropdown';
 import DashboardHeader from '../DashboardHeader';
 import { useWallet } from '@meshsdk/react';
 import { StakeSummary, coinectaApi } from '@server/services/syncApi';
+import { useRouter } from 'next/router';
 
 const Dashboard: FC = () => {
 
@@ -63,17 +63,14 @@ const Dashboard: FC = () => {
     querySummary();
   }, [querySummary]);
 
+  const router = useRouter()
+
   return (
     <Box sx={{ position: 'relative' }} >
       <DashboardHeader title="Overview" />
       <Grid container spacing={2} sx={{ mb: 1 }}>
         <Grid xs={12} md={5}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'center',
-            py: 4
-          }}>
+          <DashboardCard center>
             <Typography>
               Total portfolio value
             </Typography>
@@ -83,76 +80,66 @@ const Dashboard: FC = () => {
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={7}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'space-between',
-            pt: 4,
-            pb: 2
-          }}>
-            {summary?.poolStats && Object.entries(summary.poolStats).map(([key, stats]) => (
-              <>
-              <DataSpread
-                title={key}
-                data={formatNumber(stats.totalPortfolio, 'CNCT')}
-              />
-              </>  
-            ))}
+          <DashboardCard center>
+            <DataSpread
+              title="CNCT"
+              data={`28,612 ($1,736)`}
+            />
+            <DataSpread
+              title="CHIP"
+              data={`231,032 ($1,291)`}
+            />
+            <DataSpread
+              title="BANA"
+              data={`42,648 ($807)`}
+            />
+            <DataSpread
+              title="rsPAI"
+              margin={0}
+              data={`725,048 ($5,885)`}
+            />
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={4}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'space-between',
-            pt: 4,
-            pb: 2
-          }}>
+          <DashboardCard center>
             <Typography>
               Total Vested
             </Typography>
-            <Typography variant="h5">
-              {formatNumber(summary?.totalStats.totalVested ?? 0, 'CNCT')}
+            <Typography variant="h5" sx={{ mb: 1 }}>
+              2,431 ₳ ($1,504)
             </Typography>
-            <Button>
+            <Button variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/unlock-vested")}>
               Unlock now
             </Button>
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={4}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'space-between',
-            pt: 4,
-            pb: 2
-          }}>
+          <DashboardCard center>
             <Typography>
               Total Staked
             </Typography>
-            <Typography variant="h5">
-              {formatNumber(summary?.totalStats.totalStaked ?? 0, 'CNCT')}
+            <Typography variant="h5" sx={{ mb: 1 }}>
+              6,132 ₳ ($3,795)
             </Typography>
-            <Button>
-              Manage positions
-            </Button>
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+              <Button variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/add-stake")}>
+                Stake now
+              </Button>
+              <Button variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
+                Manage positions
+              </Button>
+            </Box>
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={4}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'space-between',
-            pt: 4,
-            pb: 2
-          }}>
+          <DashboardCard center>
             <Typography>
               Unclaimed tokens
             </Typography>
-            <Typography variant="h5">
-              {formatNumber(summary?.totalStats.unclaimedTokens ?? 0, 'CNCT')}
+            <Typography variant="h5" sx={{ mb: 1 }}>
+              467 ₳ ($289)
             </Typography>
-            <Button>
+            <Button variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/claim-tokens")}>
               Claim now
             </Button>
           </DashboardCard>

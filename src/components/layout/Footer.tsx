@@ -94,6 +94,8 @@ const Footer: FC = () => {
   const theme = useTheme()
   const upMd = useMediaQuery(theme.breakpoints.up('md'))
 
+  const year = new Date().getFullYear()
+
   return (
     <Box sx={{ borderTop: `1px solid ${theme.palette.divider}` }}>
       <Container sx={{ display: 'block', position: 'relative', zIndex: 100 }}>
@@ -177,7 +179,7 @@ const Footer: FC = () => {
         <Grid container direction={upMd ? 'row' : 'column-reverse'} justifyContent="space-between" sx={{ py: 2 }} spacing={1}>
           <Grid item xs={12} md sx={{ textAlign: { xs: 'center', md: 'left' } }}>
             <Typography>
-              &copy; 2023 Coinecta Finance. All rights reserved.
+              &copy; {year} Coinecta Finance. All rights reserved.
             </Typography>
           </Grid>
           <Grid item xs={12} md sx={{ textAlign: { xs: 'center', md: 'right' } }}>

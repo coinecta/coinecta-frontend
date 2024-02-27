@@ -38,11 +38,10 @@ export const fileRouter = createTRPCRouter({
         region: awsRegion,
       });
 
-      // Decode the base64 file content
       const fileBuffer = Buffer.from(input.fileContent, 'base64');
 
       const bucketName = process.env.AWS_S3_BUCKET_NAME!;
-      const fileName = input.fileName; // Using the provided file name
+      const fileName = input.fileName;
 
       const putObjectParams = {
         Bucket: bucketName,
