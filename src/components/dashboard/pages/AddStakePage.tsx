@@ -105,31 +105,33 @@ const AddStakePage: FC = () => {
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={5} sx={{ display: 'flex', gap: 2, flexDirection: 'column' }}>
-          <DashboardCard center>
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Total APY
-              </Typography>
-              <Typography variant="h3" sx={{ fontWeight: 700 }}>
-                {`${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
-              </Typography>
-            </Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-around', width: '100%' }}>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography sx={{ fontWeight: 700 }}>
-                  Base APY
+          <DashboardCard>
+            <Box sx={{ width: '100%' }}>
+              <Box sx={{ mb: 2, textAlign: 'center' }}>
+                <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                  Total APY
                 </Typography>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  {`${calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1)).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+                <Typography variant="h3" sx={{ fontWeight: 700 }}>
+                  {`${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
                 </Typography>
               </Box>
-              <Box>
-                <Typography sx={{ fontWeight: 700 }}>
-                  APY Boost
-                </Typography>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  {`${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1)) - calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
-                </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-around', width: '100%' }}>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography sx={{ fontWeight: 700 }}>
+                    Base APY
+                  </Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    {`${calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1)).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography sx={{ fontWeight: 700 }}>
+                    APY Boost
+                  </Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    {`${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1)) - calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+                  </Typography>
+                </Box>
               </Box>
             </Box>
           </DashboardCard>

@@ -12,9 +12,11 @@ import { IActionBarButton } from '../ActionBar';
 import DashboardHeader from '../DashboardHeader';
 import UnstakeConfirm from '../staking/UnstakeConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
+import { useWalletContext } from '@contexts/WalletContext';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
+  const { sessionStatus } = useWalletContext();
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
   const [redeemableRows, setRedeemableRows] = useState<Set<number>>(new Set());
   const [lockedRows, setLockedRows] = useState<Set<number>>(new Set());
@@ -96,15 +98,12 @@ const StakePositions: FC = () => {
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={8}>
-          <DashboardCard sx={{
-            alignItems: 'center',
-            height: '100%',
-            justifyContent: 'space-between',
-            pt: 4,
-            pb: 2
+          <DashboardCard center sx={{
+            justifyContent: sessionStatus === 'unauthenticated' ? 'center' : 'space-between',
           }}>
             <DataSpread
               title="CNCT"
+              margin={0} // last item needs margin 0, the rest don't include the margin prop
               data={`230,660 ($15,644)`}
             />
           </DashboardCard>

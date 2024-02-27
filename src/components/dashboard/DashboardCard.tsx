@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react';
-import { Paper, SxProps, Theme } from '@mui/material';
+import { Box, Paper, SxProps, Theme } from '@mui/material';
 import { useWalletContext } from '@contexts/WalletContext';
 
 interface DashboardCardProps {
@@ -15,10 +15,12 @@ const DashboardCard: FC<DashboardCardProps> = ({ children, sx, center }) => {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    p: 2
+    px: 2,
+    py: 3,
+    minHeight: '120px'
   };
 
-  const typeStyles: SxProps<Theme> = center
+  const typeStyles: SxProps<Theme> = center || sessionStatus === 'unauthenticated'
     ? {
       alignItems: 'center',
       height: '100%'
@@ -36,12 +38,11 @@ const DashboardCard: FC<DashboardCardProps> = ({ children, sx, center }) => {
 
   return (
     <Paper variant="outlined" sx={finalStyles}>
-      {/* {sessionStatus === 'loading'
+      {sessionStatus === 'loading'
         ? 'Loading...'
         : sessionStatus === 'unauthenticated'
-          ? 'Please login'
-          : children} */}
-      {children}
+          ? 'Sign in to see positions'
+          : children}
     </Paper>
   );
 };
