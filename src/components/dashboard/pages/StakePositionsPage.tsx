@@ -8,15 +8,30 @@ import {
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import DashboardCard from '../DashboardCard';
 import DataSpread from '@components/DataSpread';
-import DashboardTable from '../DashboardTable';
 import { IActionBarButton } from '../ActionBar';
 import DashboardHeader from '../DashboardHeader';
+import UnstakeConfirm from '../staking/UnstakeConfirm';
+import StakePositionTable from '../staking/StakePositionTable';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
   const [redeemableRows, setRedeemableRows] = useState<Set<number>>(new Set());
   const [lockedRows, setLockedRows] = useState<Set<number>>(new Set());
+  const [openUnstakeDialog, setOpenUnstakeDialog] = useState(false)
+  const [unstakeRowData, setUnstakeRowData] = useState<IUnstakeListItem[]>([])
+
+  useEffect(() => {
+    const newData = Array.from(selectedRows).filter(index => redeemableRows.has(index)).map(index => {
+      const item = fakeTrpcDashboardData.data[index];
+      return {
+        currency: item.name,
+        amount: item.total.toString(),
+      };
+    });
+
+    setUnstakeRowData(newData);
+  }, [selectedRows, redeemableRows, fakeTrpcDashboardData])
 
   useEffect(() => {
     const newRedeemableRows = new Set<number>();
@@ -40,7 +55,7 @@ const StakePositions: FC = () => {
   }, [selectedRows, fakeTrpcDashboardData]);
 
   const handleRedeem = () => {
-
+    setOpenUnstakeDialog(true)
   }
 
   const actions: IActionBarButton[] = [
@@ -95,12 +110,17 @@ const StakePositions: FC = () => {
           </DashboardCard>
         </Grid>
       </Grid>
-      <DashboardTable
+      <StakePositionTable
         {...fakeTrpcDashboardData}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={actions}
         parentContainerRef={parentRef}
+      />
+      <UnstakeConfirm
+        open={openUnstakeDialog}
+        setOpen={setOpenUnstakeDialog}
+        unstakeList={unstakeRowData}
       />
     </Box>
   );

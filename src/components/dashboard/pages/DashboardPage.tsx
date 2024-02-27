@@ -10,8 +10,10 @@ import DashboardCard from '../DashboardCard';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import WalletSelectDropdown from '@components/WalletSelectDropdown';
 import DashboardHeader from '../DashboardHeader';
+import { useRouter } from 'next/router';
 
 const Dashboard: FC = () => {
+  const router = useRouter()
   return (
     <Box sx={{ position: 'relative' }} >
       <DashboardHeader title="Overview" />
@@ -55,7 +57,7 @@ const Dashboard: FC = () => {
             <Typography variant="h5" sx={{ mb: 1 }}>
               2,431 ₳ ($1,504)
             </Typography>
-            <Button variant="contained" color="secondary" size="small">
+            <Button variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/unlock-vested")}>
               Unlock now
             </Button>
           </DashboardCard>
@@ -68,9 +70,14 @@ const Dashboard: FC = () => {
             <Typography variant="h5" sx={{ mb: 1 }}>
               6,132 ₳ ($3,795)
             </Typography>
-            <Button variant="contained" color="secondary" size="small">
-              Manage positions
-            </Button>
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+              <Button variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/add-stake")}>
+                Stake now
+              </Button>
+              <Button variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
+                Manage positions
+              </Button>
+            </Box>
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={4}>
@@ -81,7 +88,7 @@ const Dashboard: FC = () => {
             <Typography variant="h5" sx={{ mb: 1 }}>
               467 ₳ ($289)
             </Typography>
-            <Button variant="contained" color="secondary" size="small">
+            <Button variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/claim-tokens")}>
               Claim now
             </Button>
           </DashboardCard>

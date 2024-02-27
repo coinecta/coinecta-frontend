@@ -36,11 +36,12 @@ const DashboardCard: FC<DashboardCardProps> = ({ children, sx, center }) => {
 
   return (
     <Paper variant="outlined" sx={finalStyles}>
-      {sessionStatus === 'loading'
+      {/* {sessionStatus === 'loading'
         ? 'Loading...'
         : sessionStatus === 'unauthenticated'
           ? 'Please login'
-          : children}
+          : children} */}
+      {children}
     </Paper>
   );
 };

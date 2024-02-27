@@ -114,3 +114,13 @@ export const ensureHexColor = (colorString: string): `#${string}` => {
 
   return '#000000' as `#${string}`;
 };
+
+export const calculateFutureDateMonths = (months: number): string => {
+  const currentDate = new Date();
+  currentDate.setMonth(currentDate.getMonth() + months);
+  return currentDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: '2-digit',
+  });
+};

@@ -12,6 +12,8 @@ import StakeInput from '@components/dashboard/staking/StakeInput';
 import StakeDuration from '../staking/StakeDuration';
 import DataSpread from '@components/DataSpread';
 import DashboardHeader from '../DashboardHeader';
+import StakeConfirm from '../staking/StakeConfirm';
+import { calculateFutureDateMonths } from '@lib/utils/general'
 
 const options = [
   {
@@ -42,11 +44,23 @@ const AddStakePage: FC = () => {
   const [cnctAmount, setCnctAmount] = useState('')
   const [stakeDuration, setStakeDuration] = useState<number>(1)
   const [durations, setDurations] = useState<number[]>([])
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false)
 
   useEffect(() => {
     const newArray = options.map(option => option.duration)
     setDurations(newArray)
   }, [options]) // replace with TRPC query when its available
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>): void => {
+    if (event.key === 'Enter') {
+      if (Number(cnctAmount) !== 0) {
+        setOpenConfirmationDialog(true);
+      }
+      event.preventDefault();
+    }
+  };
+
+  const total = (Number(cnctAmount) ? (Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0)) + Number(cnctAmount) : 0).toLocaleString(undefined, { maximumFractionDigits: 1 })
 
   return (
     <Box sx={{ mb: 4 }}>
@@ -68,6 +82,7 @@ const AddStakePage: FC = () => {
               <StakeInput
                 inputValue={cnctAmount}
                 setInputValue={setCnctAmount}
+                onKeyDown={handleKeyDown}
               />
             </Box>
             <Box>
@@ -81,7 +96,8 @@ const AddStakePage: FC = () => {
                   fontWeight: 600,
                   borderRadius: '6px'
                 }}
-              // onClick={() => setOpenContribution(true)}
+                onClick={() => setOpenConfirmationDialog(true)}
+                disabled={Number(cnctAmount) === 0}
               >
                 Stake now
               </Button>
@@ -119,6 +135,10 @@ const AddStakePage: FC = () => {
           </DashboardCard>
           <DashboardCard>
             <DataSpread
+              title="Unlock Date"
+              data={`${calculateFutureDateMonths(stakeDuration)}`}
+            />
+            <DataSpread
               title="Rewards"
               data={`${(Number(cnctAmount) ? Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0) : 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} CNCT`}
             />
@@ -129,11 +149,19 @@ const AddStakePage: FC = () => {
             <DataSpread
               title="Principal plus rewards"
               margin={0}
-              data={`${(Number(cnctAmount) ? (Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0)) + Number(cnctAmount) : 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} CNCT`}
+              data={`${total} CNCT`}
             />
           </DashboardCard>
         </Grid>
       </Grid>
+      <StakeConfirm
+        open={openConfirmationDialog}
+        setOpen={setOpenConfirmationDialog}
+        paymentAmount={cnctAmount}
+        paymentCurrency={'CNCT'}
+        duration={stakeDuration}
+        total={total}
+      />
     </Box >
   );
 };

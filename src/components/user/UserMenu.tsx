@@ -211,7 +211,7 @@ const UserMenu: FC<IUserMenuProps> = () => {
 
   return (
     <>
-      {(sessionStatus === 'unauthenticated' || sessionStatus === 'loading') && (
+      {/* {(sessionStatus === 'unauthenticated' || sessionStatus === 'loading') && (
         <Button
           className="btn-ghost rounded-btn btn"
           onClick={() => setModalOpen(true)}
@@ -220,71 +220,72 @@ const UserMenu: FC<IUserMenuProps> = () => {
         >
           {providerLoading ? 'Loading...' : 'Sign in'}
         </Button>
-      )}
-      {sessionStatus === 'authenticated' && sessionData && (
-        <>
-          <IconButton
-            sx={{
-              color: theme.palette.text.primary,
-              border: `1px solid ${theme.palette.divider}`,
-              borderRadius: '4px',
-              mr: desktop ? 0 : 1
-            }}
-            disabled={providerLoading}
-            onClick={handleClick}
-          >
-            {providerLoading ? <Typography>Loading...</Typography> :
-              (
-                <>
-                  <Avatar src={sessionData.user.image ?? walletIcon} sx={{ width: '24px', height: '24px', mr: desktop ? 1 : null }} variant="square" />
-                  {changeAddress && desktop &&
-                    <Typography>
-                      {/* {getShortAddress(changeAddress)} */}
-                      {getShortAddress('addr1qalksjdflkasdjfeiq8')}
-                    </Typography>
-                  }
-                </>
-              )}
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            id="account-menu"
-            open={open}
-            onClose={handleClose}
-            onClick={handleClose}
-            slotProps={{
-              paper: {
-                elevation: 1,
-                sx: {
-                  overflow: 'visible',
-                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                  minWidth: '230px',
-                  mt: 0,
-                  '& .MuiAvatar-root': {
-                    width: 32,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  '&:before': {
-                    content: '""',
-                    display: 'block',
-                    position: 'absolute',
-                    top: 0,
-                    right: 15,
-                    width: 10,
-                    height: 10,
-                    bgcolor: 'background.paper',
-                    transform: 'translateY(-50%) rotate(45deg)',
-                    zIndex: 0,
-                  },
+      )} */}
+      {/* {sessionStatus === 'authenticated' && sessionData && ( */}
+      <>
+        <IconButton
+          sx={{
+            color: theme.palette.text.primary,
+            border: `1px solid ${theme.palette.divider}`,
+            borderRadius: '4px',
+            mr: desktop ? 0 : 1
+          }}
+          disabled={providerLoading}
+          onClick={handleClick}
+        >
+          {/* {providerLoading ? <Typography>Loading...</Typography> : */}
+          {/* ( */}
+          <>
+            {/* <Avatar src={sessionData.user.image ?? walletIcon} sx={{ width: '24px', height: '24px', mr: desktop ? 1 : null }} variant="square" /> */}
+            <Avatar src={'/wallets/eternl-light.svg'} sx={{ width: '24px', height: '24px', mr: desktop ? 1 : null }} variant="square" />
+            {/* {changeAddress && desktop && */}
+            <Typography>
+              {/* {getShortAddress(changeAddress)} */}
+              {getShortAddress('addr1qalksjdflkasdjfeiq8')}
+            </Typography>
+            {/* } */}
+          </>
+          {/* )} */}
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          id="account-menu"
+          open={open}
+          onClose={handleClose}
+          onClick={handleClose}
+          slotProps={{
+            paper: {
+              elevation: 1,
+              sx: {
+                overflow: 'visible',
+                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                minWidth: '230px',
+                mt: 0,
+                '& .MuiAvatar-root': {
+                  width: 32,
+                  height: 32,
+                  ml: -0.5,
+                  mr: 1,
                 },
-              }
-            }}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          >
-            {/* <MenuItem
+                '&:before': {
+                  content: '""',
+                  display: 'block',
+                  position: 'absolute',
+                  top: 0,
+                  right: 15,
+                  width: 10,
+                  height: 10,
+                  bgcolor: 'background.paper',
+                  transform: 'translateY(-50%) rotate(45deg)',
+                  zIndex: 0,
+                },
+              },
+            }
+          }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        >
+          {/* <MenuItem
               sx={{ mt: '6px' }}
               onClick={() => router.push('/users/' + wallet.getChangeAddress)}
             >
@@ -303,25 +304,25 @@ const UserMenu: FC<IUserMenuProps> = () => {
               </ListItemIcon>
               Change Wallet
             </MenuItem> */}
-            <MenuItem onClick={() => router.push('/user/connected-wallets')}>
-              <ListItemIcon>
-                <AccountBalanceWalletIcon fontSize="small" />
-              </ListItemIcon>
-              Connected Wallets
-            </MenuItem>
-            <MenuItem onClick={() => {
-              cleanup()
-              setProviderLoading(true)
-              signOut()
-            }}>
-              <ListItemIcon>
-                <Logout fontSize="small" />
-              </ListItemIcon>
-              Logout
-            </MenuItem>
-          </Menu>
-        </>
-      )}
+          <MenuItem onClick={() => router.push('/user/connected-wallets')}>
+            <ListItemIcon>
+              <AccountBalanceWalletIcon fontSize="small" />
+            </ListItemIcon>
+            Connected Wallets
+          </MenuItem>
+          <MenuItem onClick={() => {
+            cleanup()
+            setProviderLoading(true)
+            signOut()
+          }}>
+            <ListItemIcon>
+              <Logout fontSize="small" />
+            </ListItemIcon>
+            Logout
+          </MenuItem>
+        </Menu>
+      </>
+      {/* )} */}
       <SignIn open={modalOpen} setOpen={setModalOpen} setLoading={setProviderLoading} />
     </>
   );

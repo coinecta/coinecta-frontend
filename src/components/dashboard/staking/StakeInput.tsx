@@ -7,11 +7,13 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 interface IStakeInputProps {
   inputValue: string;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
+  onKeyDown: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
 
 const StakeInput: FC<IStakeInputProps> = ({
   inputValue,
-  setInputValue
+  setInputValue,
+  onKeyDown
 }) => {
   const theme = useTheme();
   const [cnctBalance, setCnctBalance] = useState<number | undefined>(undefined);
@@ -85,6 +87,7 @@ const StakeInput: FC<IStakeInputProps> = ({
           >
             <InputBase
               fullWidth
+              onKeyDown={onKeyDown}
               sx={{
                 '& .MuiInputBase-input': {
                   fontSize: '32px',
@@ -108,12 +111,12 @@ const StakeInput: FC<IStakeInputProps> = ({
               justifyContent: 'flex-end'
             }}>
             <Typography sx={{ fontSize: '1rem!important', whiteSpace: 'nowrap' }}>
-              Balance:&nbsp;
-              {cnctBalance
+              Balance:&nbsp;121,325
+              {/* {cnctBalance
                 ? <Box component="span" onClick={handleInputMax} sx={{ cursor: 'pointer' }}>
                   {cnctBalance.toLocaleString()}
                 </Box>
-                : '0'}
+                : '0'} */}
             </Typography>
           </Box>
         </Box>

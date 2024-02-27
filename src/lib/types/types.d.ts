@@ -73,3 +73,8 @@ type TWalletListItem = {
   mobile: boolean;
   url: string;
 }
+
+interface IUnstakeListItem {
+  amount: string;
+  currency: string;
+}
