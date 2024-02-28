@@ -6,6 +6,7 @@ import {
   Checkbox,
   Chip,
   Paper,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -161,7 +162,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  // if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading</div>;
   return (
     <Box
@@ -227,30 +228,43 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                     if (key === "Status") {
                         return (
                             <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                                {item[key] === "Executed" ? 
-                                    <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' label="Executed" color='success' sx={{ width: '104px' }} /> :
-                                    <Chip icon={<AccessTimeIcon fontSize='small' />} variant='outlined' label="Pending" color='primary' sx={{ width: '104px' }} />}
+                              {isLoading ?
+                                (<Skeleton>
+                                  <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
+                                </Skeleton>) :
+                                (item[key] === "Executed" ? 
+                                  <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' label="Executed" color='success' sx={{ width: '104px' }} /> :
+                                  <Chip icon={<AccessTimeIcon fontSize='small' />} variant='outlined' label="Pending" color='primary' sx={{ width: '104px' }} />)}
                             </TableCell>
                         )
                     }
                     return (
                         <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                            {renderCellContent(item, key)}
+                            {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
                         </TableCell>
                     )
                 })}
                 <TableCell  sx={{ borderBottom: 'none'}}>
-                    <Box sx={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                    {isLoading ?
+                     ( <Box sx={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                        <Skeleton>
+                            <LaunchIcon fontSize='small' />
+                        </Skeleton>
+                        <Skeleton>
+                            <ContentCopyIcon fontSize='small' />
+                        </Skeleton>
+                      </Box>) :
+                      (<Box sx={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
                         <NextLink href={"#"}>
                             <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
                         </NextLink>
                         <NextLink href={"#"}>
                             <ContentCopyIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
                         </NextLink>
-                    </Box>
+                    </Box>)}
                 </TableCell>
                 <TableCell sx={{ borderBottom: 'none' }}>
-                    <Button key={index} variant="contained" color="secondary" onClick={() => ""}>
+                    <Button disabled={isLoading ? true : false} key={index} variant="contained" color="secondary" onClick={() => ""}>
                         Cancel
                     </Button>
                 </TableCell>

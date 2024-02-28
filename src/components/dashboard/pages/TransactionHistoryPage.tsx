@@ -7,7 +7,11 @@ import {
 import DashboardHeader from '../DashboardHeader';
 import TransactionHistoryTable from '../TransactionHistoryTable';
 
-const TransactionHistory: FC = () => {
+interface TransactionHistoryProps {
+  isLoading: boolean;
+}
+
+const TransactionHistory: FC<TransactionHistoryProps> = ({ isLoading }) => {
   const parentRef = useRef<HTMLDivElement>(null);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
 
@@ -19,6 +23,7 @@ const TransactionHistory: FC = () => {
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         parentContainerRef={parentRef}
+        isLoading={isLoading}
       />
     </Box>
   );
@@ -27,7 +32,6 @@ const TransactionHistory: FC = () => {
 export default TransactionHistory;
 
 const fakeTrpcDashboardData = {
-  isLoading: false,
   error: false,
   data: [
     {

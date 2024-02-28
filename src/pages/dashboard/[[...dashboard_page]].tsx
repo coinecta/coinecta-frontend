@@ -21,7 +21,7 @@ const Dashboard: NextPage = () => {
   }, []);
 
   const pageMapper: { [key: string]: React.ReactElement } = {
-    "transaction-history": <TransactionHistory />,
+    "transaction-history": <TransactionHistory isLoading={isLoading} />,
     "add-stake": <AddStakePage />,
     "manage-stake": <StakePositionsPage />,
     "unlock-vested": <UnlockVested />,
