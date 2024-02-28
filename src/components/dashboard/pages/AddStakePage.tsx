@@ -42,7 +42,11 @@ const calculateAPY = (lockupMonths: number, interestRate: number): number => {
   return apy * 100;
 }
 
-const AddStakePage: FC = () => {
+interface AddStakePageProps {
+  isLoading: boolean;
+}
+
+const AddStakePage: FC<AddStakePageProps> = ({ isLoading }) => {
   const [cnctAmount, setCnctAmount] = useState('')
   const [stakeDuration, setStakeDuration] = useState<number>(1)
   const [durations, setDurations] = useState<number[]>([])
@@ -181,19 +185,23 @@ const AddStakePage: FC = () => {
             <DataSpread
               title="Unlock Date"
               data={`${calculateFutureDateMonths(stakeDuration)}`}
+              isLoading={isLoading}
             />
             <DataSpread
               title="Rewards"
               data={`${(Number(cnctAmount) ? Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0) : 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} CNCT`}
+              isLoading={isLoading}
             />
             <DataSpread
               title="Total interest"
               data={`${((options.find(option => option.duration === stakeDuration)?.interest || 0) * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+              isLoading={isLoading}
             />
             <DataSpread
               title="Principal plus rewards"
               margin={0}
               data={`${total} CNCT`}
+              isLoading={isLoading}
             />
           </DashboardCard>
         </Grid>
