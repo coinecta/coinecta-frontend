@@ -12,6 +12,7 @@ import { useWallet } from '@meshsdk/react';
 import { StakeSummary, coinectaApi } from '@server/services/syncApi';
 import { useRouter } from 'next/router';
 import Skeleton from '@mui/material/Skeleton';
+import { usePrice } from '@components/hooks/usePrice';
 
 interface DashboardProps {
   isLoading: boolean;
@@ -68,6 +69,8 @@ const Dashboard: FC<DashboardProps> = ({ isLoading }) => {
   }, [querySummary]);
 
   const router = useRouter()
+
+  const { convert } = usePrice();
 
   return (
     <Box sx={{ position: 'relative' }} >
