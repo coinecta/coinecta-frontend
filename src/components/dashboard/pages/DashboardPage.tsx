@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, use, useCallback, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -13,16 +13,13 @@ import { StakeSummary, coinectaApi } from '@server/services/syncApi';
 import { useRouter } from 'next/router';
 import Skeleton from '@mui/material/Skeleton';
 
-interface DashboardProps {
-  isLoading: boolean;
-}
-
-const Dashboard: FC<DashboardProps> = ({ isLoading }) => {
+const Dashboard: FC = () => {
   const { wallet, connected} = useWallet();
 
   const [ stakeKeys, setStakeKeys ] = useState<string[]>([]);
   const [ summary, setSummary ] = useState<StakeSummary | null>(null);
   const [ time, setTime ] = useState<number>(0);
+  const [ isLoading, setIsLoading ] = useState(true);
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
@@ -50,6 +47,10 @@ const Dashboard: FC<DashboardProps> = ({ isLoading }) => {
     };
     execute();
   },[wallet, connected, time]);
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 2000);
+  }, []);
 
   const querySummary = useCallback(() => {
     const execute = async () => {

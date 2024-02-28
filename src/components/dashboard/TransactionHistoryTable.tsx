@@ -47,8 +47,8 @@ const rowsPerPageOptions = [5, 10, 15];
 const TransactionHistoryTable = <T extends Record<string, any>>({
   title,
   data,
-  isLoading,
   error,
+  isLoading,
   actions,
   selectedRows,
   setSelectedRows,
@@ -64,7 +64,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
   const tableRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
-
+  
   const sensitivityThreshold = 2;
 
   useEffect(() => {

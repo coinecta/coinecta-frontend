@@ -17,11 +17,7 @@ import UnstakeConfirm from '../staking/UnstakeConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
 import { useWalletContext } from '@contexts/WalletContext';
 
-interface StakePositionProps {
-  isLoading: boolean;
-}
-
-const StakePositions: FC<StakePositionProps> = ({ isLoading }) => {
+const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
   const { sessionStatus } = useWalletContext();
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
@@ -29,6 +25,11 @@ const StakePositions: FC<StakePositionProps> = ({ isLoading }) => {
   const [lockedRows, setLockedRows] = useState<Set<number>>(new Set());
   const [openUnstakeDialog, setOpenUnstakeDialog] = useState(false)
   const [unstakeRowData, setUnstakeRowData] = useState<IUnstakeListItem[]>([])
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 2000);
+  }, []);
 
   useEffect(() => {
     const newData = Array.from(selectedRows).filter(index => redeemableRows.has(index)).map(index => {
