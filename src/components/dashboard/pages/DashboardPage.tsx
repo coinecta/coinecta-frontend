@@ -11,9 +11,13 @@ import DashboardHeader from '../DashboardHeader';
 import { useWallet } from '@meshsdk/react';
 import { StakeSummary, coinectaApi } from '@server/services/syncApi';
 import { useRouter } from 'next/router';
+import Skeleton from '@mui/material/Skeleton';
 
-const Dashboard: FC = () => {
+interface DashboardProps {
+  isLoading: boolean;
+}
 
+const Dashboard: FC<DashboardProps> = ({ isLoading }) => {
   const { wallet, connected} = useWallet();
 
   const [ stakeKeys, setStakeKeys ] = useState<string[]>([]);
@@ -75,7 +79,9 @@ const Dashboard: FC = () => {
               Total portfolio value
             </Typography>
             <Typography variant="h5">
-              {formatNumber(summary?.totalStats.totalPortfolio ?? 0, 'CNCT')}
+              {isLoading ?
+                <Skeleton animation='wave' width={160} /> :
+                formatNumber(summary?.totalStats.totalPortfolio ?? 0, 'CNCT')}
             </Typography>
           </DashboardCard>
         </Grid>
@@ -84,19 +90,23 @@ const Dashboard: FC = () => {
             <DataSpread
               title="CNCT"
               data={`28,612 ($1,736)`}
+              isLoading={isLoading}
             />
             <DataSpread
               title="CHIP"
               data={`231,032 ($1,291)`}
+              isLoading={isLoading}
             />
             <DataSpread
               title="BANA"
               data={`42,648 ($807)`}
+              isLoading={isLoading}
             />
             <DataSpread
               title="rsPAI"
               margin={0}
               data={`725,048 ($5,885)`}
+              isLoading={isLoading}
             />
           </DashboardCard>
         </Grid>
@@ -106,9 +116,9 @@ const Dashboard: FC = () => {
               Total Vested
             </Typography>
             <Typography variant="h5" sx={{ mb: 1 }}>
-              2,431 ₳ ($1,504)
+              {isLoading ? <Skeleton animation='wave' width={160} /> : "2,431 ₳ ($1,504)"}
             </Typography>
-            <Button variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/unlock-vested")}>
+            <Button disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/unlock-vested")}>
               Unlock now
             </Button>
           </DashboardCard>
@@ -119,13 +129,13 @@ const Dashboard: FC = () => {
               Total Staked
             </Typography>
             <Typography variant="h5" sx={{ mb: 1 }}>
-              6,132 ₳ ($3,795)
+              {isLoading ?  <Skeleton animation='wave' width={160} /> : "6,132 ₳ ($3,795)"}
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-              <Button variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/add-stake")}>
+              <Button disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/add-stake")}>
                 Stake now
               </Button>
-              <Button variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
+              <Button disabled={isLoading ? true : false} variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
                 Manage positions
               </Button>
             </Box>
@@ -137,9 +147,9 @@ const Dashboard: FC = () => {
               Unclaimed tokens
             </Typography>
             <Typography variant="h5" sx={{ mb: 1 }}>
-              467 ₳ ($289)
+              {isLoading ? <Skeleton animation='wave' width={160} /> : "467 ₳ ($289)"}
             </Typography>
-            <Button variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/claim-tokens")}>
+            <Button disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/claim-tokens")}>
               Claim now
             </Button>
           </DashboardCard>

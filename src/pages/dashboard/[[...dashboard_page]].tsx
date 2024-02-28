@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import ErrorPage from '@components/ErrorPage';
@@ -14,6 +14,11 @@ const Dashboard: NextPage = () => {
   const router = useRouter()
   const { dashboard_page } = router.query
   const route = dashboard_page?.toString()
+  const [ isLoading, setIsLoading ] = useState<boolean>(true);
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 2000);
+  }, []);
 
   const pageMapper: { [key: string]: React.ReactElement } = {
     "transaction-history": <TransactionHistory />,
@@ -27,7 +32,7 @@ const Dashboard: NextPage = () => {
     {route && pageMapper[route]
       ? pageMapper[route]
       : !route
-        ? <DashboardPage />
+        ? <DashboardPage isLoading={isLoading} />
         : <ErrorPage />
     }
   </DashboardMenu>
