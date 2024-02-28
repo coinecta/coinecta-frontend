@@ -10,7 +10,9 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableFooter,
   TableHead,
+  TablePagination,
   TableRow,
   Typography,
   useTheme
@@ -28,6 +30,8 @@ interface IStakePositionTableProps<T> {
   setSelectedRows?: React.Dispatch<React.SetStateAction<Set<number>>>
   parentContainerRef: React.RefObject<HTMLDivElement>;
 }
+
+const rowsPerPageOptions = [5, 10, 15];
 
 // NOTE: YOU MAY HAVE TO SET THE PARENT CONTAINER TO overflow: 'clip' TO FIX IPHONE ISSUES
 
@@ -50,6 +54,8 @@ const StakePositionTable = <T extends Record<string, any>>({
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
   const [translateX, setTranslateX] = useState(0);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
   const tableRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
 
@@ -166,6 +172,15 @@ const StakePositionTable = <T extends Record<string, any>>({
     }
   };
 
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const allSelectableSelected = selectableRows.every(index => selectedRows?.has(index));
   const someSelectableSelected = selectableRows.some(index => selectedRows?.has(index)) && !allSelectableSelected;
 
@@ -231,14 +246,14 @@ const StakePositionTable = <T extends Record<string, any>>({
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((item, index) => (
+            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
               <TableRow key={index}
                 sx={{
                   '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
                   '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)' }
                 }}
               >
-                {actions && selectedRows && <TableCell padding="checkbox">
+                {actions && selectedRows && <TableCell padding="checkbox" sx={{ borderBottom: 'none' }}>
                   <Checkbox
                     checked={selectedRows.has(index)}
                     onChange={() => handleSelectRow(index)}
@@ -254,6 +269,19 @@ const StakePositionTable = <T extends Record<string, any>>({
               </TableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={rowsPerPageOptions}
+                colSpan={7}
+                count={data.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}>
+              </TablePagination>
+            </TableRow>
+          </TableFooter>
         </Table>
       </Paper>
     </Box>
