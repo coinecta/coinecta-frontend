@@ -11,7 +11,9 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableFooter,
   TableHead,
+  TablePagination,
   TableRow,
   Typography,
   useTheme
@@ -35,6 +37,8 @@ interface ITransactionHistoryTableProps<T> {
   parentContainerRef: React.RefObject<HTMLDivElement>;
 }
 
+const rowsPerPageOptions = [5, 10, 15];
+
 // NOTE: YOU MAY HAVE TO SET THE PARENT CONTAINER TO overflow: 'clip' TO FIX IPHONE ISSUES
 
 // if you want an action bar (buttons to do actions on specific rows) you need to include
@@ -56,6 +60,8 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
   const [translateX, setTranslateX] = useState(0);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
   const tableRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
 
@@ -110,6 +116,15 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
       tableRef.current.style.cursor = 'grab';
       tableRef.current.style.removeProperty('user-select');
     }
+  };
+
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   const onMouseDown = (e: React.MouseEvent) => onDragStart(e.pageX, e.pageY);
@@ -217,7 +232,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((item, index) => (
+            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
               <TableRow key={index}
                 sx={{
                   '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
@@ -271,12 +286,25 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
               </TableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                rowsPerPageOptions={rowsPerPageOptions}
+                colSpan={6}
+                count={data.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}>
+              </TablePagination>
+            </TableRow>
+          </TableFooter>
         </Table>
       </Paper>
     </Box>
   );
 };
-
+// data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 export default TransactionHistoryTable;
 
 const formatData = <T,>(data: T, key: keyof T): string => {
