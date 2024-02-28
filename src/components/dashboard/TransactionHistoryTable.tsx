@@ -295,7 +295,8 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}>
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                disabled={isLoading ? true : false}>
               </TablePagination>
             </TableRow>
           </TableFooter>
