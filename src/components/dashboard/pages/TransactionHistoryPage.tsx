@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import {
   Box,
   Divider,
@@ -7,13 +7,14 @@ import {
 import DashboardHeader from '../DashboardHeader';
 import TransactionHistoryTable from '../TransactionHistoryTable';
 
-interface TransactionHistoryProps {
-  isLoading: boolean;
-}
-
-const TransactionHistory: FC<TransactionHistoryProps> = ({ isLoading }) => {
+const TransactionHistory: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 2000);
+  }, []);
 
   return (
     <Box ref={parentRef}>

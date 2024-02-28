@@ -42,14 +42,12 @@ const calculateAPY = (lockupMonths: number, interestRate: number): number => {
   return apy * 100;
 }
 
-interface AddStakePageProps {
-  isLoading: boolean;
-}
-
-const AddStakePage: FC<AddStakePageProps> = ({ isLoading }) => {
+const AddStakePage: FC = () => {
   const [cnctAmount, setCnctAmount] = useState('')
   const [stakeDuration, setStakeDuration] = useState<number>(1)
   const [durations, setDurations] = useState<number[]>([])
+  const [ isLoading, setIsLoading ] = useState<boolean>(true);
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
   const walletContext = useWallet();
 
   const stakeCNCT = useCallback(async () => {
@@ -90,12 +88,15 @@ const AddStakePage: FC<AddStakePageProps> = ({ isLoading }) => {
       console.error(ex);
     }
   }, [cnctAmount, walletContext.wallet]);
-  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false)
 
   useEffect(() => {
     const newArray = options.map(option => option.duration)
     setDurations(newArray)
   }, []) // replace with TRPC query when its available
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 2000);
+  }, []);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     if (event.key === 'Enter') {

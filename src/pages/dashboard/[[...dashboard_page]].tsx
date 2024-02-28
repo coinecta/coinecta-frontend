@@ -14,16 +14,11 @@ const Dashboard: NextPage = () => {
   const router = useRouter()
   const { dashboard_page } = router.query
   const route = dashboard_page?.toString()
-  const [ isLoading, setIsLoading ] = useState<boolean>(true);
-
-  useEffect(() => {
-    setTimeout(() => setIsLoading(false), 2000);
-  }, []);
 
   const pageMapper: { [key: string]: React.ReactElement } = {
-    "transaction-history": <TransactionHistory isLoading={isLoading} />,
-    "add-stake": <AddStakePage isLoading={isLoading} />,
-    "manage-stake": <StakePositionsPage isLoading={isLoading} />,
+    "transaction-history": <TransactionHistory />,
+    "add-stake": <AddStakePage />,
+    "manage-stake": <StakePositionsPage />,
     // "unlock-vested": <UnlockVested />,
     // "claim-tokens": <ClaimTokens />
   }
@@ -32,7 +27,7 @@ const Dashboard: NextPage = () => {
     {route && pageMapper[route]
       ? pageMapper[route]
       : !route
-        ? <DashboardPage isLoading={isLoading} />
+        ? <DashboardPage />
         : <ErrorPage />
     }
   </DashboardMenu>

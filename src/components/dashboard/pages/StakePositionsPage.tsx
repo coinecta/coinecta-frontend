@@ -5,6 +5,7 @@ import {
   Divider,
   Skeleton,
   Typography,
+  useTheme
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import DashboardCard from '../DashboardCard';
@@ -17,11 +18,7 @@ import UnstakeConfirm from '../staking/UnstakeConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
 import { useWalletContext } from '@contexts/WalletContext';
 
-interface StakePositionProps {
-  isLoading: boolean;
-}
-
-const StakePositions: FC<StakePositionProps> = ({ isLoading }) => {
+const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
   const { sessionStatus } = useWalletContext();
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
@@ -29,6 +26,11 @@ const StakePositions: FC<StakePositionProps> = ({ isLoading }) => {
   const [lockedRows, setLockedRows] = useState<Set<number>>(new Set());
   const [openUnstakeDialog, setOpenUnstakeDialog] = useState(false)
   const [unstakeRowData, setUnstakeRowData] = useState<IUnstakeListItem[]>([])
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 2000);
+  }, []);
 
   useEffect(() => {
     const newData = Array.from(selectedRows).filter(index => redeemableRows.has(index)).map(index => {
@@ -91,6 +93,8 @@ const StakePositions: FC<StakePositionProps> = ({ isLoading }) => {
   const [time, setTime] = useState<number>(0);
   const [positions, setPositions] = useState<StakePosition[]>([]);
   const [summary, setSummary] = useState<StakeSummary | null>(null);
+
+  const theme = useTheme();
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
@@ -165,9 +169,18 @@ const StakePositions: FC<StakePositionProps> = ({ isLoading }) => {
             <Typography>
               Total value staked
             </Typography>
-            <Typography variant="h5">
+            {/* <Typography variant="h5">
               {isLoading ? <Skeleton animation='wave' width={160} /> : "25,391 ₳ ($15,644)"}
-            </Typography>
+            </Typography> */}
+            {isLoading ?  
+              <Box sx={{ mb: 1 }}>
+                <Skeleton animation='wave' width={100} />
+                <Skeleton animation='wave' width={100} />
+              </Box> : 
+              <Box sx={{ mb: 1 }}>
+                <Typography align='center' variant='h5'>25,391 ₳</Typography>
+                <Typography sx={{color: theme.palette.grey[500]}} align='center'>$15,644</Typography>
+              </Box>}
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={8}>
