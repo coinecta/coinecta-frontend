@@ -2,7 +2,9 @@ import React, { FC, use, useCallback, useEffect, useState } from 'react';
 import {
   Box,
   Button,
+  Divider,
   Typography,
+  useTheme
 } from '@mui/material';
 import DataSpread from '@components/DataSpread';
 import DashboardCard from '../DashboardCard';
@@ -20,6 +22,8 @@ const Dashboard: FC = () => {
   const [ summary, setSummary ] = useState<StakeSummary | null>(null);
   const [ time, setTime ] = useState<number>(0);
   const [ isLoading, setIsLoading ] = useState(true);
+
+  const theme = useTheme();
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
@@ -116,9 +120,15 @@ const Dashboard: FC = () => {
             <Typography>
               Total Vested
             </Typography>
-            <Typography variant="h5" sx={{ mb: 1 }}>
-              {isLoading ? <Skeleton animation='wave' width={160} /> : "2,431 ₳ ($1,504)"}
-            </Typography>
+            {isLoading ?  
+              <Box sx={{ mb: 1 }}>
+                <Skeleton animation='wave' width={100} />
+                <Skeleton animation='wave' width={100} />
+              </Box> : 
+              <Box sx={{ mb: 1 }}>
+                <Typography align='center' variant='h5'>2,431 ₳</Typography>
+                <Typography sx={{color: theme.palette.grey[500]}} align='center'>$1,504</Typography>
+              </Box>}
             <Button disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/unlock-vested")}>
               Unlock now
             </Button>
@@ -129,9 +139,33 @@ const Dashboard: FC = () => {
             <Typography>
               Total Staked
             </Typography>
-            <Typography variant="h5" sx={{ mb: 1 }}>
-              {isLoading ?  <Skeleton animation='wave' width={160} /> : "6,132 ₳ ($3,795)"}
-            </Typography>
+            <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-around', gap: '5px'}}>
+              <Box sx={{ flexGrow: '1' }}>
+                <Typography align='center'>Locked</Typography>
+                {isLoading ?  
+                  <Box sx={{ mb: 1 }}>
+                    <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
+                    <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
+                  </Box> : 
+                  <Box sx={{ mb: 1 }}>
+                    <Typography align='center' variant='h5'>6,132 ₳</Typography>
+                    <Typography sx={{color: theme.palette.grey[500]}} align='center'>$3,795</Typography>
+                  </Box>}
+              </Box>
+              <Divider orientation='vertical' variant='middle' flexItem />
+              <Box sx={{ flexGrow: '1' }}>
+                <Typography align='center'>Unlocked</Typography>
+                {isLoading ?  
+                  <Box sx={{ mb: 1 }}>
+                    <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
+                    <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
+                  </Box> : 
+                  <Box sx={{ mb: 1 }}>
+                    <Typography align='center' variant='h5'>6,132 ₳</Typography>
+                    <Typography sx={{color: theme.palette.grey[500]}} align='center'>$3,795</Typography>
+                  </Box>}
+              </Box>
+            </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
               <Button disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/add-stake")}>
                 Stake now
@@ -147,9 +181,15 @@ const Dashboard: FC = () => {
             <Typography>
               Unclaimed tokens
             </Typography>
-            <Typography variant="h5" sx={{ mb: 1 }}>
-              {isLoading ? <Skeleton animation='wave' width={160} /> : "467 ₳ ($289)"}
-            </Typography>
+            {isLoading ?  
+              <Box sx={{ mb: 1 }}>
+                <Skeleton animation='wave' width={100} />
+                <Skeleton animation='wave' width={100} />
+              </Box> : 
+              <Box sx={{ mb: 1 }}>
+                <Typography align='center' variant='h5'>467 ₳</Typography>
+                <Typography sx={{color: theme.palette.grey[500]}} align='center'>$289</Typography>
+              </Box>}
             <Button disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/claim-tokens")}>
               Claim now
             </Button>

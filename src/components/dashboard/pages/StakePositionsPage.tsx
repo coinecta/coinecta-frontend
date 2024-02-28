@@ -5,6 +5,7 @@ import {
   Divider,
   Skeleton,
   Typography,
+  useTheme
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import DashboardCard from '../DashboardCard';
@@ -93,6 +94,8 @@ const StakePositions: FC = () => {
   const [positions, setPositions] = useState<StakePosition[]>([]);
   const [summary, setSummary] = useState<StakeSummary | null>(null);
 
+  const theme = useTheme();
+
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
@@ -166,9 +169,18 @@ const StakePositions: FC = () => {
             <Typography>
               Total value staked
             </Typography>
-            <Typography variant="h5">
+            {/* <Typography variant="h5">
               {isLoading ? <Skeleton animation='wave' width={160} /> : "25,391 ₳ ($15,644)"}
-            </Typography>
+            </Typography> */}
+            {isLoading ?  
+              <Box sx={{ mb: 1 }}>
+                <Skeleton animation='wave' width={100} />
+                <Skeleton animation='wave' width={100} />
+              </Box> : 
+              <Box sx={{ mb: 1 }}>
+                <Typography align='center' variant='h5'>25,391 ₳</Typography>
+                <Typography sx={{color: theme.palette.grey[500]}} align='center'>$15,644</Typography>
+              </Box>}
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={8}>
