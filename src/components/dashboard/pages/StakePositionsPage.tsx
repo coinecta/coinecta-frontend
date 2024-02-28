@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Divider,
+  Skeleton,
   Typography,
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
@@ -16,7 +17,11 @@ import UnstakeConfirm from '../staking/UnstakeConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
 import { useWalletContext } from '@contexts/WalletContext';
 
-const StakePositions: FC = () => {
+interface StakePositionProps {
+  isLoading: boolean;
+}
+
+const StakePositions: FC<StakePositionProps> = ({ isLoading }) => {
   const parentRef = useRef<HTMLDivElement>(null);
   const { sessionStatus } = useWalletContext();
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
@@ -161,7 +166,7 @@ const StakePositions: FC = () => {
               Total value staked
             </Typography>
             <Typography variant="h5">
-              25,391 ₳ ($15,644)
+              {isLoading ? <Skeleton animation='wave' width={160} /> : "25,391 ₳ ($15,644)"}
             </Typography>
           </DashboardCard>
         </Grid>
@@ -173,6 +178,7 @@ const StakePositions: FC = () => {
               title="CNCT"
               margin={0} // last item needs margin 0, the rest don't include the margin prop
               data={`230,660 ($15,644)`}
+              isLoading={isLoading}
             />
           </DashboardCard>
         </Grid>
@@ -183,6 +189,7 @@ const StakePositions: FC = () => {
         setSelectedRows={setSelectedRows}
         actions={actions}
         parentContainerRef={parentRef}
+        isLoading={isLoading}
       />
       <UnstakeConfirm
         open={openUnstakeDialog}
@@ -196,7 +203,6 @@ const StakePositions: FC = () => {
 export default StakePositions;
 
 const fakeTrpcDashboardData = {
-  isLoading: false,
   error: false,
   data: [
     {

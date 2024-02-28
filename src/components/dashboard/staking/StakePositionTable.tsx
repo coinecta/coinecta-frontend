@@ -5,6 +5,7 @@ import {
   Button,
   Checkbox,
   Paper,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -168,7 +169,7 @@ const StakePositionTable = <T extends Record<string, any>>({
   const allSelectableSelected = selectableRows.every(index => selectedRows?.has(index));
   const someSelectableSelected = selectableRows.some(index => selectedRows?.has(index)) && !allSelectableSelected;
 
-  if (isLoading) return <div>Loading...</div>;
+  // if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading</div>;
   return (
     <Box
@@ -202,7 +203,7 @@ const StakePositionTable = <T extends Record<string, any>>({
             {title}
           </Typography>
         }
-        {actions && <ActionBar actions={actions} />}
+        {actions && <ActionBar isDisabled={isLoading} actions={actions} />}
         <Table>
           <TableHead>
             <TableRow sx={{
@@ -247,7 +248,7 @@ const StakePositionTable = <T extends Record<string, any>>({
                 </TableCell>}
                 {Object.keys(item).map((key, colIndex) => (
                   <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                    {renderCellContent(item, key)}
+                    {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
                   </TableCell>
                 ))}
               </TableRow>

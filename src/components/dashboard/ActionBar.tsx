@@ -8,10 +8,11 @@ export interface IActionBarButton {
 }
 
 interface IActionBarProps {
-  actions: IActionBarButton[]
+  actions: IActionBarButton[];
+  isDisabled?: boolean;
 }
 
-const ActionBar: FC<IActionBarProps> = ({ actions }) => {
+const ActionBar: FC<IActionBarProps> = ({ actions, isDisabled }) => {
   const theme = useTheme()
   return (
     <Box
@@ -29,7 +30,7 @@ const ActionBar: FC<IActionBarProps> = ({ actions }) => {
       }}
     >
       {actions.map((action, index) => (
-        <Button key={index} variant="contained" color="secondary" onClick={() => action.handler()}>
+        <Button disabled={isDisabled} key={index} variant="contained" color="secondary" onClick={() => action.handler()}>
           {action.label} {action.count}
         </Button>
       ))}
