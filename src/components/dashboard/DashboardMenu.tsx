@@ -53,16 +53,16 @@ const links = {
       link: '/dashboard/manage-stake'
     }
   ],
-  Vesting: [
-    {
-      name: 'Unlock Vested',
-      link: '/dashboard/unlock-vested'
-    },
-    {
-      name: 'Claim Tokens',
-      link: '/dashboard/claim-tokens'
-    },
-  ]
+  // Vesting: [
+  //   {
+  //     name: 'Unlock Vested',
+  //     link: '/dashboard/unlock-vested'
+  //   },
+  //   {
+  //     name: 'Claim Tokens',
+  //     link: '/dashboard/claim-tokens'
+  //   },
+  // ]
 }
 
 const DashboardMenu: FC<IDashboardMenuProps> = ({ children }) => {

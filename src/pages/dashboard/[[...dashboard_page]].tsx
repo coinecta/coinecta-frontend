@@ -24,8 +24,8 @@ const Dashboard: NextPage = () => {
     "transaction-history": <TransactionHistory isLoading={isLoading} />,
     "add-stake": <AddStakePage isLoading={isLoading} />,
     "manage-stake": <StakePositionsPage isLoading={isLoading} />,
-    "unlock-vested": <UnlockVested />,
-    "claim-tokens": <ClaimTokens />
+    // "unlock-vested": <UnlockVested />,
+    // "claim-tokens": <ClaimTokens />
   }
 
   return <DashboardMenu>
