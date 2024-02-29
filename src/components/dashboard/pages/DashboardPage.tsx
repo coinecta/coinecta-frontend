@@ -53,7 +53,7 @@ const Dashboard: FC = () => {
   },[wallet, connected, time]);
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 2000);
+    setTimeout(() => setIsLoading(false), 0);
   }, []);
 
   const querySummary = useCallback(() => {
@@ -136,9 +136,9 @@ const Dashboard: FC = () => {
         </Grid>
         <Grid xs={12} md={4}>
           <DashboardCard center>
-            <Typography>
+            {/* <Typography>
               Total Staked
-            </Typography>
+            </Typography> */}
             <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-around', gap: '5px'}}>
               <Box sx={{ flexGrow: '1' }}>
                 <Typography align='center'>Locked</Typography>
@@ -166,11 +166,11 @@ const Dashboard: FC = () => {
                   </Box>}
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-              <Button disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/add-stake")}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, width: '100%'}}>
+              <Button sx={{ width: '100%' }} disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/add-stake")}>
                 Stake now
               </Button>
-              <Button disabled={isLoading ? true : false} variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
+              <Button sx={{ width: '100%' }} disabled={isLoading ? true : false} variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
                 Manage positions
               </Button>
             </Box>
