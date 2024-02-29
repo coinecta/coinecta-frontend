@@ -6,10 +6,3 @@ export const externalApi = axios.create({
     'Content-type': 'application/json;charset=utf-8',
   }
 });
-
-export const syncApi = axios.create({
-  baseURL: `http://localhost:5232`,
-  headers: {
-    'Content-type': 'application/json;charset=utf-8',
-  }
-});

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { syncApi as api } from "./tokenApiInstance";
 import { mapAxiosErrorToTRPCError } from "@server/utils/mapErrors";
 import { TRPCError } from "@trpc/server";
 
@@ -26,10 +25,10 @@ export type StakePosition = {
     interest: number;
 }
 
-export const coinectaApi = {
-    async postStakeSummary(stakeKeys: string[]): Promise<StakeSummary> {
+export const coinectaSyncApi = {
+    async getStakeSummary(stakeKeys: string[]): Promise<StakeSummary> {
       try {
-        const response = await api.post('/stake/summary', stakeKeys)
+        const response = await syncApi.post('/stake/summary', stakeKeys)
         return response.data;
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -41,9 +40,9 @@ export const coinectaApi = {
         }
       }
     },
-    async postStakePositions(stakeKeys: string[]): Promise<StakePosition[]> {
+    async getStakePositions(stakeKeys: string[]): Promise<StakePosition[]> {
       try {
-        const response = await api.post('/stake/positions', stakeKeys)
+        const response = await syncApi.post('/stake/positions', stakeKeys)
         return response.data;
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -56,3 +55,11 @@ export const coinectaApi = {
       }
     }
   };
+
+
+export const syncApi = axios.create({
+  baseURL: `http://localhost:5232`,
+  headers: {
+    'Content-type': 'application/json;charset=utf-8',
+  }
+});

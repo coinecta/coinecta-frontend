@@ -82,7 +82,7 @@ export const usePrice = () => {
 
     }, []);
 
-    const convert = (amount: number, token: "ADA" | "CNCT") => {
+    const convertToUSD = (amount: number, token: "ADA" | "CNCT") => {
         if (token === "ADA") {
             return amount * adaPrice;
         } else {
@@ -90,9 +90,19 @@ export const usePrice = () => {
         }
     }
 
+    const convertUSDToADA = (amountInUSD: number) => {
+        return amountInUSD / adaPrice;
+    }
+
+    const convertCnctToADA = (amountInCNCT: number) => {
+        return convertToUSD(amountInCNCT, "CNCT") / adaPrice;
+    }
+
     return {
         cnctPrice,
         adaPrice,
-        convert
+        convertToUSD,
+        convertUSDToADA,
+        convertCnctToADA
     };
 };

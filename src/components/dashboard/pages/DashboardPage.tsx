@@ -11,12 +11,14 @@ import DashboardCard from '../DashboardCard';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import DashboardHeader from '../DashboardHeader';
 import { useWallet } from '@meshsdk/react';
-import { StakeSummary, coinectaApi } from '@server/services/syncApi';
+import { StakeSummary, coinectaSyncApi } from '@server/services/syncApi';
 import { useRouter } from 'next/router';
 import Skeleton from '@mui/material/Skeleton';
 import { usePrice } from '@components/hooks/usePrice';
 
 const Dashboard: FC = () => {
+  const router = useRouter();
+
   const { wallet, connected} = useWallet();
 
   const [ stakeKeys, setStakeKeys ] = useState<string[]>([]);
@@ -41,9 +43,8 @@ const Dashboard: FC = () => {
 
   useEffect(() => {
     const execute = async () => {
-      const STAKING_KEY_POLICY = "5496b3318f8ca933bbfdf19b8faa7f948d044208e0278d62c24ee73e";
-
       if (connected) {
+        const STAKING_KEY_POLICY = process.env.STAKING_KEY_POLICY;
         const balance = await wallet.getBalance();
         const stakeKeys = balance.filter((asset) => asset.unit.indexOf(STAKING_KEY_POLICY) !== -1);
         const processedStakeKeys = stakeKeys.map((key) => key.unit.split('000de140').join(''));
@@ -53,18 +54,15 @@ const Dashboard: FC = () => {
     execute();
   },[wallet, connected, time]);
 
-  useEffect(() => {
-    setTimeout(() => setIsLoading(false), 2000);
-  }, []);
-
   const querySummary = useCallback(() => {
     const execute = async () => {
       if (stakeKeys.length === 0) {
         setSummary(null);
         return;
       };
-      const summary = await coinectaApi.postStakeSummary(stakeKeys);
+      const summary = await coinectaSyncApi.getStakeSummary(stakeKeys);
       setSummary(summary);
+      setIsLoading(false);
     };
     execute();
   }, [stakeKeys]);
@@ -73,10 +71,8 @@ const Dashboard: FC = () => {
     querySummary();
   }, [querySummary]);
 
-  const router = useRouter()
 
-  const { convert } = usePrice();
-
+  const { convertCnctToADA, convertToUSD } = usePrice();
   return (
     <Box sx={{ position: 'relative' }} >
       <DashboardHeader title="Overview" />
@@ -88,8 +84,17 @@ const Dashboard: FC = () => {
             </Typography>
             <Typography variant="h5">
               {isLoading ?
-                <Skeleton animation='wave' width={160} /> :
-                formatNumber(summary?.totalStats.totalPortfolio ?? 0, 'CNCT')}
+                <>
+                <Skeleton animation='wave' width={160} />
+                <Skeleton animation='wave' width={160} />
+                </> : 
+                <>
+                  <Box sx={{ mb: 1 }}>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(summary?.totalStats.totalPortfolio ?? 0), '₳')}</Typography>
+                    <Typography sx={{color: theme.palette.grey[500]}} align='center'>${formatNumber(convertToUSD(summary?.totalStats.totalPortfolio ?? 0, "CNCT"), '')}</Typography>
+                  </Box>
+                </>
+              }
             </Typography>
           </DashboardCard>
         </Grid>
@@ -145,7 +150,7 @@ const Dashboard: FC = () => {
           <DashboardCard center>
             <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-around', gap: '5px'}}>
               <Box sx={{ flexGrow: '1' }}>
-                <Typography align='center'>Locked</Typography>
+                <Typography align='center'>Total Staked</Typography>
                 {isLoading ?  
                   <Box sx={{ mb: 1 }}>
                     <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
@@ -158,7 +163,7 @@ const Dashboard: FC = () => {
               </Box>
               <Divider orientation='vertical' variant='middle' flexItem />
               <Box sx={{ flexGrow: '1' }}>
-                <Typography align='center'>Unlocked</Typography>
+                <Typography align='center'>Claimable Stake</Typography>
                 {isLoading ?  
                   <Box sx={{ mb: 1 }}>
                     <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />

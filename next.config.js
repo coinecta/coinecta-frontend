@@ -4,7 +4,8 @@ const nextConfig = {
   env: {
     API_URL: process.env.API_URL,
     FORM_EMAIL: process.env.FORM_EMAIL,
-    CONTRIBUTION_ADDRESS: process.env.CONTRIBUTION_ADDRESS
+    CONTRIBUTION_ADDRESS: process.env.CONTRIBUTION_ADDRESS,
+    STAKING_KEY_POLICY: process.env.STAKING_KEY_POLICY
   },
   swcMinify: true,
   webpack: function (config, options) {

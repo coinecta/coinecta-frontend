@@ -13,7 +13,7 @@ import DataSpread from '@components/DataSpread';
 import { IActionBarButton } from '../ActionBar';
 import DashboardHeader from '../DashboardHeader';
 import { useWallet } from '@meshsdk/react';
-import { StakePosition, StakeSummary, coinectaApi } from '@server/services/syncApi';
+import { StakePosition, StakeSummary, coinectaSyncApi } from '@server/services/syncApi';
 import UnstakeConfirm from '../staking/UnstakeConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
 import { useWalletContext } from '@contexts/WalletContext';
@@ -129,7 +129,7 @@ const StakePositions: FC = () => {
         setPositions([]);
         return;
       }
-      const positions = await coinectaApi.postStakePositions(stakeKeys);
+      const positions = await coinectaSyncApi.getStakePositions(stakeKeys);
       setPositions(positions);
     };
     execute();
@@ -145,7 +145,7 @@ const StakePositions: FC = () => {
         setSummary(null);
         return;
       };
-      const summary = await coinectaApi.postStakeSummary(stakeKeys);
+      const summary = await coinectaSyncApi.getStakeSummary(stakeKeys);
       setSummary(summary);
     };
     execute();
