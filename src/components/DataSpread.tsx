@@ -39,7 +39,7 @@ const DataSpread: FC<DataSpreadProps> = ({ title, data, margin, isLoading, usdVa
           </Box>}  
         {isLoading && usdValue ?
           <Skeleton animation='wave' width={55} /> :
-          <Box component={'span'} sx={{ fontSize: '1rem', color: theme.palette.grey[500] }}>{usdValue}</Box>}
+          <Box component={'span'} sx={{ fontSize: '1rem', color: theme.palette.grey[500] }}>{usdValue ? `(${usdValue})` : null}</Box>}
       </Typography>
     </Box>
   );

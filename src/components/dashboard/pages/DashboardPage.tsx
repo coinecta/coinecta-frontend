@@ -95,26 +95,26 @@ const Dashboard: FC = () => {
             <DataSpread
               title="CNCT"
               data={`28,612`}
-              usdValue='($1,736)'
+              usdValue='$1,736'
               isLoading={isLoading}
             />
             <DataSpread
               title="CHIP"
               data={`231,032`}
-              usdValue='($1,291)'
+              usdValue='$1,291'
               isLoading={isLoading}
             />
             <DataSpread
               title="BANA"
               data={`42,648`}
-              usdValue='($807)'
+              usdValue='$807'
               isLoading={isLoading}
             />
             <DataSpread
               title="rsPAI"
               margin={0}
               data={`725,048`}
-              usdValue='($5,885)'
+              usdValue='$5,885'
               isLoading={isLoading}
             />
           </DashboardCard>

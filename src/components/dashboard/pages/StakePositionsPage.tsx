@@ -188,7 +188,7 @@ const StakePositions: FC = () => {
               title="CNCT"
               margin={0} // last item needs margin 0, the rest don't include the margin prop
               data={`230,660`}
-              usdValue='($15,644)'
+              usdValue='$15,644'
               isLoading={isLoading}
             />
           </DashboardCard>
