@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Chip,
+  IconButton,
   Paper,
   Skeleton,
   Table,
@@ -223,7 +224,6 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                   {camelCaseToTitle(String(column))}
                 </TableCell>
               ))}
-              <TableCell>Actions</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
@@ -236,7 +236,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                 }}
               >
                 {Object.keys(item).map((key, colIndex) => {
-                    if (key === "Status") {
+                    if (key === "status") {
                         return (
                             <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
                               {isLoading ?
@@ -249,31 +249,36 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                             </TableCell>
                         )
                     }
+
+                    if (key === "actions") {
+                      return (
+                        <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none'}}>
+                          {isLoading ?
+                          (<Box sx={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                              <Skeleton>
+                                  <LaunchIcon fontSize='small' />
+                              </Skeleton>
+                              <Skeleton>
+                                  <ContentCopyIcon fontSize='small' />
+                              </Skeleton>
+                            </Box>) :
+                            (<Box sx={{ display: 'flex', gap: '5px', marginTop: '8px'}}>
+                              <IconButton href={item[key].transactionLink} size='small'>
+                                <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                              </IconButton>
+                              <IconButton size='small'>
+                                <ContentCopyIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                              </IconButton>
+                          </Box>)}
+                      </TableCell>)
+                    }
+
                     return (
                         <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
                             {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
                         </TableCell>
                     )
                 })}
-                <TableCell  sx={{ borderBottom: 'none'}}>
-                    {isLoading ?
-                     ( <Box sx={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
-                        <Skeleton>
-                            <LaunchIcon fontSize='small' />
-                        </Skeleton>
-                        <Skeleton>
-                            <ContentCopyIcon fontSize='small' />
-                        </Skeleton>
-                      </Box>) :
-                      (<Box sx={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
-                        <NextLink href={"#"}>
-                            <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                        </NextLink>
-                        <NextLink href={"#"}>
-                            <ContentCopyIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                        </NextLink>
-                    </Box>)}
-                </TableCell>
                 <TableCell sx={{ borderBottom: 'none' }}>
                     <Button disabled={isLoading ? true : false} key={index} variant="contained" color="secondary" onClick={() => ""}>
                         Cancel
