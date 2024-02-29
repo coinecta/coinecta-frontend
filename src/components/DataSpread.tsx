@@ -1,15 +1,20 @@
 import React, { FC } from 'react';
-import { Box, Divider, Typography } from '@mui/material';
+import { Box, Divider, Typography, useTheme } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
+import { flexbox } from '@mui/system';
+// import { useTheme } from '@emotion/react';
 
 interface DataSpreadProps {
   title: string;
   data: string;
   margin?: number;
   isLoading?: boolean;
+  usdValue?: string;
 }
 
-const DataSpread: FC<DataSpreadProps> = ({ title, data, margin, isLoading }) => {
+const DataSpread: FC<DataSpreadProps> = ({ title, data, margin, isLoading, usdValue }) => {
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
@@ -28,8 +33,15 @@ const DataSpread: FC<DataSpreadProps> = ({ title, data, margin, isLoading }) => 
       <Box sx={{ flexGrow: 1 }}>
         {isLoading ? <Skeleton animation='wave' width='100%' height={1} /> : <Divider />}
       </Box>
-      <Typography variant="h6" sx={{ mb: 0, lineHeight: 0.8 }}>
-        {isLoading ? <Skeleton animation='wave' width={160} /> : data}
+      <Typography variant="h6" sx={{ mb: 0, lineHeight: 0.8, display: 'flex', alignItems: 'center', gap: '4px' }}>
+        {isLoading ?
+          <Skeleton animation='wave' width={75} /> :
+          <Box>
+            {data}
+          </Box>}  
+        {isLoading && usdValue ?
+          <Skeleton animation='wave' width={55} /> :
+          <Box component={'span'} sx={{ fontSize: '1rem', color: theme.palette.grey[500] }}>{usdValue}</Box>}
       </Typography>
     </Box>
   );
