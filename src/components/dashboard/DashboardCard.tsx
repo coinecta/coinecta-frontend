@@ -5,7 +5,7 @@ import { useWalletContext } from '@contexts/WalletContext';
 interface DashboardCardProps {
   children?: ReactNode;
   sx?: SxProps<Theme>;
-  center?: true
+  center?: true;
 }
 
 const DashboardCard: FC<DashboardCardProps> = ({ children, sx, center }) => {
@@ -14,7 +14,7 @@ const DashboardCard: FC<DashboardCardProps> = ({ children, sx, center }) => {
   const baseStyles: SxProps<Theme> = {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'start',
     px: 2,
     py: 3,
     minHeight: '120px'

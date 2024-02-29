@@ -25,6 +25,10 @@ export type StakePosition = {
     interest: number;
 }
 
+// export type StakePool {
+
+// }
+
 export const coinectaSyncApi = {
     async getStakeSummary(stakeKeys: string[]): Promise<StakeSummary> {
       try {
@@ -43,6 +47,20 @@ export const coinectaSyncApi = {
     async getStakePositions(stakeKeys: string[]): Promise<StakePosition[]> {
       try {
         const response = await syncApi.post('/stake/positions', stakeKeys)
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          throw mapAxiosErrorToTRPCError(error);
+        }
+        else {
+          console.error(error)
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An unknown error occurred' });
+        }
+      }
+    },
+    async getStakePoolByAddressOwner(address: string, ownerPkh: string): Promise<void> {
+      try {
+        const response = await syncApi.get(`/stake/pools/${address}/${ownerPkh}`)
         return response.data;
       } catch (error) {
         if (axios.isAxiosError(error)) {

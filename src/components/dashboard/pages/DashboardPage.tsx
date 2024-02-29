@@ -19,19 +19,19 @@ import { usePrice } from '@components/hooks/usePrice';
 const Dashboard: FC = () => {
   const router = useRouter();
 
-  const { wallet, connected} = useWallet();
+  const { wallet, connected } = useWallet();
 
-  const [ stakeKeys, setStakeKeys ] = useState<string[]>([]);
-  const [ summary, setSummary ] = useState<StakeSummary | null>(null);
-  const [ time, setTime ] = useState<number>(0);
-  const [ isLoading, setIsLoading ] = useState(true);
+  const [stakeKeys, setStakeKeys] = useState<string[]>([]);
+  const [summary, setSummary] = useState<StakeSummary | null>(null);
+  const [time, setTime] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const theme = useTheme();
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
-  })} ${key}`;
+  })}${key !== '' && key != null ? ` ${key}` : ''}`;
 
   // Refresh data every 20 seconds
   useEffect(() => {
@@ -52,7 +52,7 @@ const Dashboard: FC = () => {
       }
     };
     execute();
-  },[wallet, connected, time]);
+  }, [wallet, connected, time]);
 
   const querySummary = useCallback(() => {
     const execute = async () => {
@@ -85,13 +85,13 @@ const Dashboard: FC = () => {
             <Typography variant="h5">
               {isLoading ?
                 <>
-                <Skeleton animation='wave' width={160} />
-                <Skeleton animation='wave' width={160} />
-                </> : 
+                  <Skeleton animation='wave' width={160} />
+                  <Skeleton animation='wave' width={160} />
+                </> :
                 <>
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(summary?.totalStats.totalPortfolio ?? 0), '₳')}</Typography>
-                    <Typography sx={{color: theme.palette.grey[500]}} align='center'>${formatNumber(convertToUSD(summary?.totalStats.totalPortfolio ?? 0, "CNCT"), '')}</Typography>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(summary?.poolStats.CNCT.totalPortfolio ?? 0), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(summary?.poolStats.CNCT.totalPortfolio ?? 0, "CNCT"), '')}</Typography>
                   </Box>
                 </>
               }
@@ -102,27 +102,8 @@ const Dashboard: FC = () => {
           <DashboardCard center>
             <DataSpread
               title="CNCT"
-              data={`28,612`}
-              usdValue='$1,736'
-              isLoading={isLoading}
-            />
-            <DataSpread
-              title="CHIP"
-              data={`231,032`}
-              usdValue='$1,291'
-              isLoading={isLoading}
-            />
-            <DataSpread
-              title="BANA"
-              data={`42,648`}
-              usdValue='$807'
-              isLoading={isLoading}
-            />
-            <DataSpread
-              title="rsPAI"
-              margin={0}
-              data={`725,048`}
-              usdValue='$5,885'
+              data={formatNumber(summary?.poolStats.CNCT.totalPortfolio ?? 0, '')}
+              usdValue={`$${formatNumber(convertToUSD(summary?.poolStats.CNCT.totalPortfolio ?? 0, "CNCT"), '')}`}
               isLoading={isLoading}
             />
           </DashboardCard>
@@ -132,14 +113,14 @@ const Dashboard: FC = () => {
             <Typography>
               Total Vested
             </Typography>
-            {isLoading ?  
+            {isLoading ?
               <Box sx={{ mb: 1 }}>
                 <Skeleton animation='wave' width={100} />
                 <Skeleton animation='wave' width={100} />
-              </Box> : 
+              </Box> :
               <Box sx={{ mb: 1 }}>
-                <Typography align='center' variant='h5'>2,431 ₳</Typography>
-                <Typography sx={{color: theme.palette.grey[500]}} align='center'>$1,504</Typography>
+                <Typography align='center' variant='h5'>-</Typography>
+                <Typography sx={{ color: theme.palette.grey[500] }} align='center'>-</Typography>
               </Box>}
             <Button disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/unlock-vested")}>
               Unlock now
@@ -148,34 +129,34 @@ const Dashboard: FC = () => {
         </Grid>
         <Grid xs={12} md={4}>
           <DashboardCard center>
-            <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-around', gap: '5px'}}>
+            <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-around', gap: '5px' }}>
               <Box sx={{ flexGrow: '1' }}>
                 <Typography align='center'>Total Staked</Typography>
-                {isLoading ?  
+                {isLoading ?
                   <Box sx={{ mb: 1 }}>
                     <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
                     <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
-                  </Box> : 
+                  </Box> :
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>6,132 ₳</Typography>
-                    <Typography sx={{color: theme.palette.grey[500]}} align='center'>$3,795</Typography>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(summary?.poolStats.CNCT.totalStaked ?? 0), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(summary?.poolStats.CNCT.totalStaked ?? 0, "CNCT"), '')}</Typography>
                   </Box>}
               </Box>
               <Divider orientation='vertical' variant='middle' flexItem />
               <Box sx={{ flexGrow: '1' }}>
                 <Typography align='center'>Claimable Stake</Typography>
-                {isLoading ?  
+                {isLoading ?
                   <Box sx={{ mb: 1 }}>
                     <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
                     <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
-                  </Box> : 
+                  </Box> :
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>6,132 ₳</Typography>
-                    <Typography sx={{color: theme.palette.grey[500]}} align='center'>$3,795</Typography>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(summary?.poolStats.CNCT.unclaimedTokens ?? 0), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(summary?.poolStats.CNCT.unclaimedTokens ?? 0, "CNCT"), '')}</Typography>
                   </Box>}
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, width: '100%'}}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, width: '100%' }}>
               <Button sx={{ width: '100%' }} disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/add-stake")}>
                 Stake now
               </Button>
@@ -190,14 +171,14 @@ const Dashboard: FC = () => {
             <Typography>
               Unclaimed tokens
             </Typography>
-            {isLoading ?  
+            {isLoading ?
               <Box sx={{ mb: 1 }}>
                 <Skeleton animation='wave' width={100} />
                 <Skeleton animation='wave' width={100} />
-              </Box> : 
+              </Box> :
               <Box sx={{ mb: 1 }}>
-                <Typography align='center' variant='h5'>467 ₳</Typography>
-                <Typography sx={{color: theme.palette.grey[500]}} align='center'>$289</Typography>
+                <Typography align='center' variant='h5'>-</Typography>
+                <Typography sx={{ color: theme.palette.grey[500] }} align='center'>-</Typography>
               </Box>}
             <Button disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/claim-tokens")}>
               Claim now

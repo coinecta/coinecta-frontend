@@ -184,6 +184,11 @@ const AddStakePage: FC = () => {
           </DashboardCard>
           <DashboardCard>
             <DataSpread
+              title="Total Available Rewards"
+              data={`1,000,000 CNCT`}
+              isLoading={isLoading}
+            />
+            <DataSpread
               title="Unlock Date"
               data={`${calculateFutureDateMonths(stakeDuration)}`}
               isLoading={isLoading}
