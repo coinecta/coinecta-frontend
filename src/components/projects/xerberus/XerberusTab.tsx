@@ -26,7 +26,7 @@ const XerberusTab: FC<XerberusTabProps> = ({ project }) => {
         We encourage you to educate yourself on how Xerberus derives this data. A low Growth Score and Risk Rating may be a sign of an excellent investment opportunity, since newer tokens will have very little on-chain data to begin with. However, a low rating could also indicate something to be concerned about. The data presented below should never be used alone without further research; it is solely a representation of on-chain data.
       </Typography>
       <Typography sx={{ mb: 2 }}>
-        You can read more details about Risk Ratings and how they&apos;re derived in the <Link component="span" href="https://documentation.xerberus.io/introduction/risk-ratings" target="_blank">Xerberus Documentation</Link>.
+        You can read more details about Risk Ratings and how they&apos;re derived in the <Link href="https://documentation.xerberus.io/introduction/risk-ratings" target="_blank">Xerberus Documentation</Link>.
       </Typography>
       <XerberusCharts token={project.tokenomics.tokenTicker} />
     </Box>

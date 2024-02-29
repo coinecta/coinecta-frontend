@@ -272,6 +272,7 @@ const StakePositionTable = <T extends Record<string, any>>({
           <TableFooter>
             <TableRow>
               <TablePagination
+                component={"div"}
                 rowsPerPageOptions={rowsPerPageOptions}
                 colSpan={7}
                 count={data.length}
