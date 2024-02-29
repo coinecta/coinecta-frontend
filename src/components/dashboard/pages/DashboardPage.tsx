@@ -97,23 +97,27 @@ const Dashboard: FC = () => {
           <DashboardCard center>
             <DataSpread
               title="CNCT"
-              data={`28,612 ($1,736)`}
+              data={`28,612`}
+              usdValue='$1,736'
               isLoading={isLoading}
             />
             <DataSpread
               title="CHIP"
-              data={`231,032 ($1,291)`}
+              data={`231,032`}
+              usdValue='$1,291'
               isLoading={isLoading}
             />
             <DataSpread
               title="BANA"
-              data={`42,648 ($807)`}
+              data={`42,648`}
+              usdValue='$807'
               isLoading={isLoading}
             />
             <DataSpread
               title="rsPAI"
               margin={0}
-              data={`725,048 ($5,885)`}
+              data={`725,048`}
+              usdValue='$5,885'
               isLoading={isLoading}
             />
           </DashboardCard>
@@ -139,9 +143,6 @@ const Dashboard: FC = () => {
         </Grid>
         <Grid xs={12} md={4}>
           <DashboardCard center>
-            <Typography>
-              Total Staked
-            </Typography>
             <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-around', gap: '5px'}}>
               <Box sx={{ flexGrow: '1' }}>
                 <Typography align='center'>Locked</Typography>
@@ -169,11 +170,11 @@ const Dashboard: FC = () => {
                   </Box>}
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-              <Button disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/add-stake")}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, width: '100%'}}>
+              <Button sx={{ width: '100%' }} disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/add-stake")}>
                 Stake now
               </Button>
-              <Button disabled={isLoading ? true : false} variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
+              <Button sx={{ width: '100%' }} disabled={isLoading ? true : false} variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
                 Manage positions
               </Button>
             </Box>

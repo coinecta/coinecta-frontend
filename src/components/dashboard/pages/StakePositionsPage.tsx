@@ -169,9 +169,6 @@ const StakePositions: FC = () => {
             <Typography>
               Total value staked
             </Typography>
-            {/* <Typography variant="h5">
-              {isLoading ? <Skeleton animation='wave' width={160} /> : "25,391 ₳ ($15,644)"}
-            </Typography> */}
             {isLoading ?  
               <Box sx={{ mb: 1 }}>
                 <Skeleton animation='wave' width={100} />
@@ -190,7 +187,8 @@ const StakePositions: FC = () => {
             <DataSpread
               title="CNCT"
               margin={0} // last item needs margin 0, the rest don't include the margin prop
-              data={`230,660 ($15,644)`}
+              data={`230,660`}
+              usdValue='$15,644'
               isLoading={isLoading}
             />
           </DashboardCard>

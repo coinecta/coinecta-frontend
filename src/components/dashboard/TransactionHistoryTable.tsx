@@ -1,16 +1,13 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import {
-  Avatar,
   Box,
   Button,
-  Checkbox,
   Chip,
   Paper,
   Skeleton,
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableFooter,
   TableHead,
   TablePagination,
@@ -177,7 +174,6 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     }
   };
 
-  // if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading</div>;
   return (
     <Box
@@ -305,7 +301,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     </Box>
   );
 };
-// data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+
 export default TransactionHistoryTable;
 
 const formatData = <T,>(data: T, key: keyof T): string => {
