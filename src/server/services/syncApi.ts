@@ -25,7 +25,7 @@ export type StakePosition = {
   interest: number;
 }
 
-export type StakePool = {
+export type StakePoolResponse = {
   amount: CardanoValue;
   stakePool: StakePoolDatum;
 }
@@ -58,6 +58,27 @@ export type Rational = {
   denominator: BigInt;
 }
 
+export type AddStakeRequest = {
+  stakePool: StakePoolIdentifier;
+  ownerAddress: string;
+  destinationAddress: string;
+  rewardSettingIndex: number;
+  walletUtxoListCbor: string[];
+  amount: string;
+}
+
+export type FinalizeTxRequest = {
+  unsignedTxCbor: string;
+  txWitnessCbor: string;
+}
+
+export type StakePoolIdentifier = {
+  address: string;
+  ownerPkh: string;
+  policyId: string;
+  assetName: string;
+}
+
 export const coinectaSyncApi = {
   async getStakeSummary(stakeKeys: string[]): Promise<StakeSummary> {
     try {
@@ -87,9 +108,37 @@ export const coinectaSyncApi = {
       }
     }
   },
-  async getStakePool(address: string, ownerPkh: string, policyId: string, assetName: string): Promise<StakePool> {
+  async getStakePool(address: string, ownerPkh: string, policyId: string, assetName: string): Promise<StakePoolResponse> {
     try {
       const response = await syncApi.get(`/stake/pool/${address}/${ownerPkh}/${policyId}/${assetName}`)
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw mapAxiosErrorToTRPCError(error);
+      }
+      else {
+        console.error(error)
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An unknown error occurred' });
+      }
+    }
+  },
+  async addStakeTx(request: AddStakeRequest): Promise<string> {
+    try {
+      const response = await syncApi.post('/transaction/stake/add', request)
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw mapAxiosErrorToTRPCError(error);
+      }
+      else {
+        console.error(error)
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An unknown error occurred' });
+      }
+    }
+  },
+  async finalizeTx(request: FinalizeTxRequest): Promise<string> {
+    try {
+      const response = await syncApi.post('/transaction/finalize', request)
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
