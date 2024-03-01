@@ -31,17 +31,17 @@ export type StakePool = {
 }
 
 export type CardanoValue = {
-  coin: bigint;
+  coin: string;
   multiAsset: {
     [policyId: string]: {
-      [assetName: string]: bigint;
+      [assetName: string]: string;
     };
   }
 };
 
 export type StakePoolDatum = {
   owner: CardanoCredential;
-  rewardSettings: RewardSettings;
+  rewardSettings: RewardSettings[];
 }
 
 export type CardanoCredential = {
