@@ -272,7 +272,7 @@ const StakePositionTable = <T extends Record<string, any>>({
           <TableFooter>
             <TableRow>
               <TablePagination
-                component={"div"}
+                component={"td"}
                 rowsPerPageOptions={rowsPerPageOptions}
                 colSpan={7}
                 count={data.length}
@@ -280,8 +280,7 @@ const StakePositionTable = <T extends Record<string, any>>({
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-                disabled={isLoading ? true : false}>
-              </TablePagination>
+                disabled={isLoading} />
             </TableRow>
           </TableFooter>
         </Table>

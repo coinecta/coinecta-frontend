@@ -291,13 +291,14 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={rowsPerPageOptions}
-                component={"div"}
+                component={'td'}
                 colSpan={6}
                 count={data.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage} />
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                disabled={isLoading} />
             </TableRow>
           </TableFooter>
         </Table>
