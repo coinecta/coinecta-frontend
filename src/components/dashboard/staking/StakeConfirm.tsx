@@ -30,6 +30,7 @@ import { AddStakeRequest, coinectaSyncApi } from '@server/services/syncApi';
 import { set } from 'zod';
 import { parseTokenFromString } from '@lib/utils/assets';
 import { metadataApi } from '@server/services/metadataApi';
+import { useToken } from '@components/hooks/useToken';
 
 interface IStakeConfirmProps {
   open: boolean;
@@ -50,22 +51,16 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   duration,
   rewardIndex
 }) => {
-  const DEFAULT_CNCT_DECIMALS = parseInt(process.env.DEFAULT_CNCT_DECIMALS!);
   const STAKE_POOL_VALIDATOR_ADDRESS = process.env.STAKE_POOL_VALIDATOR_ADDRESS!;
   const STAKE_POOL_OWNER_KEY_HASH = process.env.STAKE_POOL_OWNER_KEY_HASH!;
   const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY!;
   const STAKE_POOL_ASSET_NAME = process.env.STAKE_POOL_ASSET_NAME!;
 
-  const { addAlert } = useAlert()
   const theme = useTheme();
-  const { sessionData } = useWalletContext()
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const { name, wallet, disconnect, connect, connected } = useWallet()
-  const [openAlternativeWallet, setOpenAlternativeWallet] = useState(false)
-  const [buttonDisabled, setButtonDisabled] = useState(false)
+  const { name, wallet, connected } = useWallet()
   const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined)
   const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>()
-  const [cnctDecimals, setCnctDecimals] = useState<number>(DEFAULT_CNCT_DECIMALS);
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
 
 
@@ -94,17 +89,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
     execute();
   }, [connected, wallet]);
 
-  useEffect(() => {
-    const execute = async () => {
-      try {
-        const cnctMetadata = await metadataApi.postMetadataQuery(`${STAKE_POOL_ASSET_POLICY}${STAKE_POOL_ASSET_NAME}`);
-        setCnctDecimals(cnctMetadata.decimals?.value ?? DEFAULT_CNCT_DECIMALS);
-      } catch {
-        setCnctDecimals(DEFAULT_CNCT_DECIMALS);
-      }
-    };
-    execute();
-  }, [DEFAULT_CNCT_DECIMALS, STAKE_POOL_ASSET_NAME, STAKE_POOL_ASSET_POLICY])
+  const { cnctDecimals } = useToken();
 
   const handleSubmit = async () => {
     const addStakeRequest: AddStakeRequest = {
@@ -190,7 +175,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
         </Alert>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center', mb: 1 }}>
-        <Button variant="contained" color="secondary" onClick={handleSubmit} disabled={connected}>
+        <Button variant="contained" color="secondary" onClick={handleSubmit} disabled={!connected}>
           {/* {`Submit with ${alternateWalletType?.name || sessionData?.user.walletType} wallet`} */}
           {`Confirm stake`}
         </Button>

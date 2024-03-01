@@ -10,10 +10,10 @@ export type StakeSummary = {
 }
 
 export type StakeStats = {
-  totalPortfolio: number;
-  totalVested: number;
-  totalStaked: number;
-  unclaimedTokens: number;
+  totalPortfolio: string;
+  totalVested: string;
+  totalStaked: string;
+  unclaimedTokens: string;
 }
 
 export type StakePosition = {

@@ -15,7 +15,8 @@ import { StakeSummary, coinectaSyncApi } from '@server/services/syncApi';
 import { useRouter } from 'next/router';
 import Skeleton from '@mui/material/Skeleton';
 import { usePrice } from '@components/hooks/usePrice';
-import { set } from 'zod';
+import { formatTokenWithDecimals } from '@lib/utils/assets';
+import { useToken } from '@components/hooks/useToken';
 
 const Dashboard: FC = () => {
   const router = useRouter();
@@ -76,6 +77,9 @@ const Dashboard: FC = () => {
   }, [querySummary]);
 
   const { convertCnctToADA, convertToUSD } = usePrice();
+  const { cnctDecimals } = useToken();
+
+  const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
 
   return (
     <Box sx={{ position: 'relative' }} >
@@ -94,8 +98,8 @@ const Dashboard: FC = () => {
                 </> :
                 <>
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(summary?.poolStats.CNCT.totalPortfolio ?? 0), '₳')}</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(summary?.poolStats.CNCT.totalPortfolio ?? 0, "CNCT"), '')}</Typography>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0")), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
                   </Box>
                 </>
               }
@@ -106,8 +110,8 @@ const Dashboard: FC = () => {
           <DashboardCard center>
             <DataSpread
               title="CNCT"
-              data={formatNumber(summary?.poolStats.CNCT.totalPortfolio ?? 0, '')}
-              usdValue={`$${formatNumber(convertToUSD(summary?.poolStats.CNCT.totalPortfolio ?? 0, "CNCT"), '')}`}
+              data={formatNumber(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), '')}
+              usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), "CNCT"), '')}`}
               isLoading={isLoading}
             />
           </DashboardCard>
@@ -142,8 +146,8 @@ const Dashboard: FC = () => {
                     <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
                   </Box> :
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(summary?.poolStats.CNCT.totalStaked ?? 0), '₳')}</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(summary?.poolStats.CNCT.totalStaked ?? 0, "CNCT"), '')}</Typography>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats.CNCT.totalStaked ?? "0")), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalStaked ?? "0"), "CNCT"), '')}</Typography>
                   </Box>}
               </Box>
               <Divider orientation='vertical' variant='middle' flexItem />
@@ -155,8 +159,8 @@ const Dashboard: FC = () => {
                     <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
                   </Box> :
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(summary?.poolStats.CNCT.unclaimedTokens ?? 0), '₳')}</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(summary?.poolStats.CNCT.unclaimedTokens ?? 0, "CNCT"), '')}</Typography>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats.CNCT.unclaimedTokens ?? "0")), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.unclaimedTokens ?? "0"), "CNCT"), '')}</Typography>
                   </Box>}
               </Box>
             </Box>
