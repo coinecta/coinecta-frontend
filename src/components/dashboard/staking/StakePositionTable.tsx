@@ -280,7 +280,7 @@ const StakePositionTable = <T extends Record<string, any>>({
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-                disabled={isLoading ? true : false}>
+                disabled={isLoading}>
               </TablePagination>
             </TableRow>
           </TableFooter>

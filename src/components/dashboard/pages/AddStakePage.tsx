@@ -4,6 +4,7 @@ import {
   Button,
   Divider,
   Paper,
+  Skeleton,
   Typography,
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
@@ -16,6 +17,8 @@ import { useWallet } from '@meshsdk/react';
 import { Data, Transaction } from '@meshsdk/core';
 import StakeConfirm from '../staking/StakeConfirm';
 import { calculateFutureDateMonths } from '@lib/utils/general'
+import { coinectaSyncApi } from '@server/services/syncApi';
+import { set } from 'zod';
 
 const options = [
   {
@@ -43,6 +46,12 @@ const calculateAPY = (lockupMonths: number, interestRate: number): number => {
 }
 
 const AddStakePage: FC = () => {
+
+  const STAKE_POOL_VALIDATOR_ADDRESS = process.env.STAKE_POOL_VALIDATOR_ADDRESS!;
+  const STAKE_POOL_OWNER_KEY_HASH = process.env.STAKE_POOL_OWNER_KEY_HASH!;
+  const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY!;
+  const STAKE_POOL_ASSET_NAME = process.env.STAKE_POOL_ASSET_NAME!;
+
   const [cnctAmount, setCnctAmount] = useState('')
   const [stakeDuration, setStakeDuration] = useState<number>(1)
   const [durations, setDurations] = useState<number[]>([])
@@ -50,53 +59,24 @@ const AddStakePage: FC = () => {
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
   const walletContext = useWallet();
 
-  const stakeCNCT = useCallback(async () => {
-    try {
-      const cnctPolicy = "8b05e87a51c1d4a0fa888d2bb14dbc25e8c343ea379a171b63aa84a0";
-      const cnctAssetName = "434e4354";
-
-      const datum: Data = {
-        alternative: 0,
-        fields: [
-          {
-            alternative: 0,
-            fields: ['0c61f135f652bc17994a5411d0a256de478ea24dbc19759d2ba14f03']
-          } as Data
-        ]
-      };
-
-      const tx = new Transaction({ initiator: walletContext.wallet })
-        .sendAssets({
-          address: "addr_test1wq6ladcf2n5h7fsphpx8xnf22v27uzj7xg0ykncwfzwyevs6lsajv", // store in config later
-          datum: {
-            value: datum
-          }
-        },
-        [
-          {
-            unit: `${cnctPolicy}${cnctAssetName}`,
-            quantity: cnctAmount
-          }
-        ]);
-
-      const unsignedTx = await tx.build();
-      console.log("UnsignedTx", unsignedTx);
-      // const signedTx = await walletContext.wallet.signTx(unsignedTx);
-      // console.log("SignedTx", signedTx.toString());
-    }
-    catch(ex) {
-      console.error(ex);
-    }
-  }, [cnctAmount, walletContext.wallet]);
-
   useEffect(() => {
     const newArray = options.map(option => option.duration)
     setDurations(newArray)
-  }, []) // replace with TRPC query when its available
+  }, [])
 
+  
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 2000);
-  }, []);
+    const execute = async () => {
+      const stakePoolData = await coinectaSyncApi.getStakePool(
+        STAKE_POOL_VALIDATOR_ADDRESS,
+        STAKE_POOL_OWNER_KEY_HASH,
+        STAKE_POOL_ASSET_POLICY,
+        STAKE_POOL_ASSET_NAME
+      );
+      setIsLoading(false);
+    };
+    execute();
+  }, [STAKE_POOL_ASSET_NAME, STAKE_POOL_ASSET_POLICY, STAKE_POOL_OWNER_KEY_HASH, STAKE_POOL_VALIDATOR_ADDRESS])
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     if (event.key === 'Enter') {
@@ -159,7 +139,10 @@ const AddStakePage: FC = () => {
                   Total APY
                 </Typography>
                 <Typography variant="h3" sx={{ fontWeight: 700 }}>
-                  {`${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+                  { isLoading ? 
+                    <div style={{display: "flex", justifyContent: "center"}}><Skeleton animation='wave' width={55} /></div> :
+                    `${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`
+                  }
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-around', width: '100%' }}>
@@ -168,7 +151,10 @@ const AddStakePage: FC = () => {
                     Base APY
                   </Typography>
                   <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                    {`${calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1)).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+                    { isLoading ? 
+                      <div style={{display: "flex", justifyContent: "center"}}><Skeleton animation='wave' width={55} /></div> : 
+                      `${calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1)).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`
+                    }
                   </Typography>
                 </Box>
                 <Box sx={{ textAlign: 'center' }}>
@@ -176,7 +162,10 @@ const AddStakePage: FC = () => {
                     APY Boost
                   </Typography>
                   <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                    {`${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1)) - calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`}
+                    { isLoading ? 
+                      <div style={{display: "flex", justifyContent: "center"}}><Skeleton animation='wave' width={55} /></div> : 
+                      `${(calculateAPY(stakeDuration, (options.find(option => option.duration === stakeDuration)?.interest || 1)) - calculateAPY(1, (options.find(option => option.duration === 1)?.interest || 1))).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`
+                    }
                   </Typography>
                 </Box>
               </Box>

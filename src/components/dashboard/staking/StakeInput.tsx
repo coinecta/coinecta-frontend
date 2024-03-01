@@ -19,26 +19,26 @@ const StakeInput: FC<IStakeInputProps> = ({
   const [cnctBalance, setCnctBalance] = useState<number | undefined>(undefined);
   const { wallet, connected } = useWallet();
 
-  useEffect(() => {
-    async function fetchBalance() {
-      try {
-        const balances = await wallet.getBalance();
-        const targetBalance = balances.find(balance =>
-          balance.unit === "c27600f3aff3d94043464a33786429b78e6ab9df5e1d23b774acb34c434e4354"
-        );
+  // useEffect(() => {
+  //   async function fetchBalance() {
+  //     try {
+  //       const balances = await wallet.getBalance();
+  //       const targetBalance = balances.find(balance =>
+  //         balance.unit === "c27600f3aff3d94043464a33786429b78e6ab9df5e1d23b774acb34c434e4354"
+  //       );
 
-        if (targetBalance) {
-          setCnctBalance(targetBalance.quantity * 0.0001);
-        } else {
-          setCnctBalance(0)
-        }
-      } catch (error) {
-        console.error('Error fetching wallet balance:', error);
-      }
-    }
+  //       if (targetBalance) {
+  //         setCnctBalance(targetBalance.quantity * 0.0001);
+  //       } else {
+  //         setCnctBalance(0)
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching wallet balance:', error);
+  //     }
+  //   }
 
-    fetchBalance();
-  }, [wallet]);
+  //   fetchBalance();
+  // }, [wallet]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Allow numbers, a dot, or a comma

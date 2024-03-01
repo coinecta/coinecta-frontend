@@ -66,7 +66,7 @@ const DashboardTable = <T extends Record<string, any>>({
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [parentContainerRef]);
 
   const isTableWiderThanParent = parentWidth < paperWidth
 

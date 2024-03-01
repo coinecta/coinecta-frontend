@@ -77,7 +77,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [parentContainerRef]);
 
   const isTableWiderThanParent = parentWidth < paperWidth
 
@@ -297,7 +297,8 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage} />
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                disabled={isLoading} />
             </TableRow>
           </TableFooter>
         </Table>
