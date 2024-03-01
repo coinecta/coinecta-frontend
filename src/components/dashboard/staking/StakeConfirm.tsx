@@ -83,7 +83,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   useEffect(() => {
     const execute = async () => {
       if(connected) {
-        const thisChangeAddress = await wallet.getChangeAddress();
+        setChangeAddress(await wallet.getChangeAddress());
       }
     };
     execute();
