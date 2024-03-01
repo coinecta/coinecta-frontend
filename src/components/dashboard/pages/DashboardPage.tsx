@@ -15,17 +15,18 @@ import { StakeSummary, coinectaSyncApi } from '@server/services/syncApi';
 import { useRouter } from 'next/router';
 import Skeleton from '@mui/material/Skeleton';
 import { usePrice } from '@components/hooks/usePrice';
+import { set } from 'zod';
 
 const Dashboard: FC = () => {
   const router = useRouter();
 
-  const { wallet, connected } = useWallet();
+  const { wallet, connected, connecting } = useWallet();
 
   const [stakeKeys, setStakeKeys] = useState<string[]>([]);
   const [summary, setSummary] = useState<StakeSummary | null>(null);
   const [time, setTime] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [isStakingKeysLoaded, setIsStakingKeysLoaded] = useState(false);
   const theme = useTheme();
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
@@ -49,6 +50,7 @@ const Dashboard: FC = () => {
         const stakeKeys = balance.filter((asset) => asset.unit.indexOf(STAKING_KEY_POLICY) !== -1);
         const processedStakeKeys = stakeKeys.map((key) => key.unit.split('000de140').join(''));
         setStakeKeys(processedStakeKeys);
+        setIsStakingKeysLoaded(true);
       }
     };
     execute();
@@ -56,23 +58,25 @@ const Dashboard: FC = () => {
 
   const querySummary = useCallback(() => {
     const execute = async () => {
-      if (stakeKeys.length === 0) {
-        setSummary(null);
-        return;
-      };
-      const summary = await coinectaSyncApi.getStakeSummary(stakeKeys);
-      setSummary(summary);
-      setIsLoading(false);
+      if (connected && isStakingKeysLoaded) {
+        if (stakeKeys.length === 0) {
+          setSummary(null);
+        } else {
+          const summary = await coinectaSyncApi.getStakeSummary(stakeKeys);
+          setSummary(summary);
+        }
+        setIsLoading(false);
+      }
     };
     execute();
-  }, [stakeKeys]);
+  }, [stakeKeys, connected, isStakingKeysLoaded]);
 
   useEffect(() => {
     querySummary();
   }, [querySummary]);
 
-
   const { convertCnctToADA, convertToUSD } = usePrice();
+
   return (
     <Box sx={{ position: 'relative' }} >
       <DashboardHeader title="Overview" />
@@ -143,7 +147,7 @@ const Dashboard: FC = () => {
                   </Box>}
               </Box>
               <Divider orientation='vertical' variant='middle' flexItem />
-              <Box sx={{ flexGrow: '1' }}>
+              <Box sx={{ width: '50%' }}>
                 <Typography align='center'>Claimable Stake</Typography>
                 {isLoading ?
                   <Box sx={{ mb: 1 }}>
@@ -157,10 +161,7 @@ const Dashboard: FC = () => {
               </Box>
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, width: '100%' }}>
-              <Button sx={{ width: '100%' }} disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/add-stake")}>
-                Stake now
-              </Button>
-              <Button sx={{ width: '100%' }} disabled={isLoading ? true : false} variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
+              <Button sx={{ margin: "auto" }} disabled={isLoading ? true : false} variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
                 Manage positions
               </Button>
             </Box>
