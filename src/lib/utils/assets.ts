@@ -14,3 +14,16 @@ export const formatTokenWithDecimals = (amount: bigint, decimals: number): strin
   const resultStr = formattedAmountStr.replace(/^0+/, '');
   return resultStr;
 }
+
+export const parseTokenFromString = (formattedAmount: string, decimals: number): bigint => {
+
+  let amountStr = formattedAmount.replace('.', '');
+
+  const digitsAfterDecimal = formattedAmount.split('.')[1]?.length || 0;
+
+  if (digitsAfterDecimal < decimals) {
+    amountStr += '0'.repeat(decimals - digitsAfterDecimal);
+  }
+
+  return BigInt(amountStr);
+}
