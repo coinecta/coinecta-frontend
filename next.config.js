@@ -9,7 +9,8 @@ const nextConfig = {
     STAKE_POOL_VALIDATOR_ADDRESS: process.env.STAKE_POOL_VALIDATOR_ADDRESS,
     STAKE_POOL_OWNER_KEY_HASH: process.env.STAKE_POOL_OWNER_KEY_HASH,
     STAKE_POOL_ASSET_POLICY: process.env.STAKE_POOL_ASSET_POLICY,
-    STAKE_POOL_ASSET_NAME: process.env.STAKE_POOL_ASSET_NAME
+    STAKE_POOL_ASSET_NAME: process.env.STAKE_POOL_ASSET_NAME,
+    DEFAULT_CNCT_DECIMALS: process.env.DEFAULT_CNCT_DECIMALS
   },
   swcMinify: true,
   webpack: function (config, options) {

@@ -16,7 +16,7 @@ import DashboardHeader from '../DashboardHeader';
 import { useWallet } from '@meshsdk/react';
 import StakeConfirm from '../staking/StakeConfirm';
 import { calculateFutureDateMonths } from '@lib/utils/general'
-import { StakePool, coinectaSyncApi } from '@server/services/syncApi';
+import { StakePoolResponse, coinectaSyncApi } from '@server/services/syncApi';
 import { metadataApi } from '@server/services/metadataApi';
 import { formatTokenWithDecimals } from '@lib/utils/assets';
 
@@ -45,23 +45,21 @@ const calculateAPY = (lockupMonths: number, interestRate: number): number => {
   return apy * 100;
 }
 
-const DEFAULT_CNCT_DECIMALS = 4;
-
 const AddStakePage: FC = () => {
 
   const STAKE_POOL_VALIDATOR_ADDRESS = process.env.STAKE_POOL_VALIDATOR_ADDRESS!;
   const STAKE_POOL_OWNER_KEY_HASH = process.env.STAKE_POOL_OWNER_KEY_HASH!;
   const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY!;
   const STAKE_POOL_ASSET_NAME = process.env.STAKE_POOL_ASSET_NAME!;
+  const DEFAULT_CNCT_DECIMALS = parseInt(process.env.DEFAULT_CNCT_DECIMALS!);
 
   const [cnctAmount, setCnctAmount] = useState('')
   const [stakeDuration, setStakeDuration] = useState<number>(1)
   const [durations, setDurations] = useState<number[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
-  const [stakePool, setStakePool] = useState<StakePool | null>(null);
+  const [stakePool, setStakePool] = useState<StakePoolResponse | null>(null);
   const [cnctDecimals, setCnctDecimals] = useState<number>(DEFAULT_CNCT_DECIMALS);
-  const walletContext = useWallet();
 
   useEffect(() => {
     const newArray = options.map(option => option.duration)
@@ -79,7 +77,7 @@ const AddStakePage: FC = () => {
       );
       setStakePool(stakePoolData);
       
-      // Fet Token Metadata
+      // Fetch Token Metadata
       try {
         const cnctMetadata = await metadataApi.postMetadataQuery(`${STAKE_POOL_ASSET_POLICY}${STAKE_POOL_ASSET_NAME}`);
         setCnctDecimals(cnctMetadata.decimals?.value ?? DEFAULT_CNCT_DECIMALS);
@@ -90,7 +88,7 @@ const AddStakePage: FC = () => {
       setIsLoading(false);
     };
     execute();
-  }, [STAKE_POOL_ASSET_NAME, STAKE_POOL_ASSET_POLICY, STAKE_POOL_OWNER_KEY_HASH, STAKE_POOL_VALIDATOR_ADDRESS])
+  }, [DEFAULT_CNCT_DECIMALS, STAKE_POOL_ASSET_NAME, STAKE_POOL_ASSET_POLICY, STAKE_POOL_OWNER_KEY_HASH, STAKE_POOL_VALIDATOR_ADDRESS])
 
 
   const totalRewards = useMemo(() => {
@@ -235,6 +233,7 @@ const AddStakePage: FC = () => {
         paymentCurrency={'CNCT'}
         duration={stakeDuration}
         total={total}
+        rewardIndex={rewardSettingIndex}
       />
     </Box >
   );
