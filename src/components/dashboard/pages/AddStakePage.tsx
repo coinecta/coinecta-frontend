@@ -230,6 +230,7 @@ const AddStakePage: FC = () => {
         open={openConfirmationDialog}
         setOpen={setOpenConfirmationDialog}
         paymentAmount={cnctAmount}
+        setPaymentAmount={setCnctAmount}
         paymentCurrency={'CNCT'}
         duration={stakeDuration}
         total={total}

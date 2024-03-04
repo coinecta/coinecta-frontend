@@ -1,40 +1,27 @@
-import React, { ChangeEvent, FC, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
   DialogContent,
-  Typography,
   DialogActions,
   useMediaQuery,
   useTheme,
   Button,
-  Box,
-  Collapse,
   IconButton,
-  Avatar,
-  Link,
   Alert
 } from '@mui/material';
-import { useWalletContext } from '@contexts/WalletContext';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
-import { useWallet, useWalletList } from '@meshsdk/react';
-import { Transaction } from '@meshsdk/core';
-import { filterInstalledWallets, walletsList } from "@lib/walletsList";
-import { WalletListItemComponent } from '@components/user/WalletListItem';
-import { calculateFutureDateMonths, getShorterAddress } from '@lib/utils/general';
-import { useAlert } from '@contexts/AlertContext';
-import { trpc } from '@lib/utils/trpc';
+import { useWallet } from '@meshsdk/react';
+import { calculateFutureDateMonths } from '@lib/utils/general';
 import DataSpread from '@components/DataSpread';
 import { AddStakeRequest, coinectaSyncApi } from '@server/services/syncApi';
-import { set } from 'zod';
 import { parseTokenFromString } from '@lib/utils/assets';
-import { metadataApi } from '@server/services/metadataApi';
 import { useToken } from '@components/hooks/useToken';
 
 interface IStakeConfirmProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setPaymentAmount: React.Dispatch<React.SetStateAction<string>>;
   paymentAmount: string;
   paymentCurrency?: string;
   total: string;
@@ -49,7 +36,8 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   paymentCurrency = 'ADA',
   total,
   duration,
-  rewardIndex
+  rewardIndex,
+  setPaymentAmount
 }) => {
   const STAKE_POOL_VALIDATOR_ADDRESS = process.env.STAKE_POOL_VALIDATOR_ADDRESS!;
   const STAKE_POOL_OWNER_KEY_HASH = process.env.STAKE_POOL_OWNER_KEY_HASH!;
@@ -92,26 +80,30 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   const { cnctDecimals } = useToken();
 
   const handleSubmit = async () => {
-    const addStakeRequest: AddStakeRequest = {
-      stakePool: {
-        address: STAKE_POOL_VALIDATOR_ADDRESS,
-        ownerPkh: STAKE_POOL_OWNER_KEY_HASH,
-        policyId: STAKE_POOL_ASSET_POLICY,
-        assetName: STAKE_POOL_ASSET_NAME
-      },
-      ownerAddress: changeAddress!,
-      destinationAddress: changeAddress!,
-      rewardSettingIndex: rewardIndex,
-      amount: parseTokenFromString(paymentAmount, cnctDecimals).toString(),
-      walletUtxoListCbor: walletUtxosCbor!
-    };
+    try {
+      const addStakeRequest: AddStakeRequest = {
+        stakePool: {
+          address: STAKE_POOL_VALIDATOR_ADDRESS,
+          ownerPkh: STAKE_POOL_OWNER_KEY_HASH,
+          policyId: STAKE_POOL_ASSET_POLICY,
+          assetName: STAKE_POOL_ASSET_NAME
+        },
+        ownerAddress: changeAddress!,
+        destinationAddress: changeAddress!,
+        rewardSettingIndex: rewardIndex,
+        amount: parseTokenFromString(paymentAmount, cnctDecimals).toString(),
+        walletUtxoListCbor: walletUtxosCbor!
+      };
 
-    const unsignedTx = await coinectaSyncApi.addStakeTx(addStakeRequest);
-    const witnessSetCbor = await cardanoApi.signTx(unsignedTx);
-    const signedTx = await coinectaSyncApi.finalizeTx({ unsignedTxCbor: unsignedTx, txWitnessCbor: witnessSetCbor });
-
-    await cardanoApi.submitTx(signedTx);
-    setOpen(false);
+      const unsignedTx = await coinectaSyncApi.addStakeTx(addStakeRequest);
+      const witnessSetCbor = await cardanoApi.signTx(unsignedTx);
+      const signedTx = await coinectaSyncApi.finalizeTx({ unsignedTxCbor: unsignedTx, txWitnessCbor: witnessSetCbor });
+      await cardanoApi.submitTx(signedTx);
+      setOpen(false);
+      setPaymentAmount('');
+    } catch (ex) {
+      console.error('Error adding stake', ex);
+    }
   }
 
 
