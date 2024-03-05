@@ -79,6 +79,35 @@ export type StakePoolIdentifier = {
   assetName: string;
 }
 
+export type StakeRequestsResponse = {
+  total: number;
+  data: StakeRequest[];
+  extra: {
+    slotData: { [slot: string]: number }
+  }
+}
+
+export type StakeRequest = {
+  slot: string;
+  txHash: string;
+  txIndex: string;
+  amount: CardanoValue;
+  status: number;
+  stakePoolProxy: {
+    lockTime: string;
+  };
+}
+
+export type OutputReference = {
+  txHash: string;
+  index: string;
+}
+
+export type CancelStakeRequest = {
+  stakeRequestOutputReference: OutputReference;
+  walletUtxoListCbor: string[];
+}
+
 export const coinectaSyncApi = {
   async getStakeSummary(stakeKeys: string[]): Promise<StakeSummary> {
     try {
@@ -122,9 +151,37 @@ export const coinectaSyncApi = {
       }
     }
   },
+  async getStakeRequests(walletAddresses: string[], page: number = 1, limit: number = 5): Promise<StakeRequestsResponse> {
+    try {
+      const response = await syncApi.post(`/stake/requests?page=${page}&limit=${limit}`, walletAddresses)
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw mapAxiosErrorToTRPCError(error);
+      }
+      else {
+        console.error(error)
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An unknown error occurred' });
+      }
+    }
+  },
   async addStakeTx(request: AddStakeRequest): Promise<string> {
     try {
       const response = await syncApi.post('/transaction/stake/add', request)
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw mapAxiosErrorToTRPCError(error);
+      }
+      else {
+        console.error(error)
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An unknown error occurred' });
+      }
+    }
+  },
+  async cancelStakeTx(request: CancelStakeRequest): Promise<string> {
+    try {
+      const response = await syncApi.post('/transaction/stake/cancel', request)
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {

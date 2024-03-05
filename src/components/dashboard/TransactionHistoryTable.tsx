@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -20,9 +20,12 @@ import dayjs from 'dayjs';
 import ActionBar, { IActionBarButton } from './ActionBar';
 import LaunchIcon from '@mui/icons-material/Launch';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import NextLink from 'next/link';
 import CheckIcon from '@mui/icons-material/Check';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import ClearIcon from '@mui/icons-material/Clear';
+import copy from 'copy-to-clipboard';
+import { useWallet } from '@meshsdk/react';
+import { coinectaSyncApi } from '@server/services/syncApi';
+import { TimeIcon } from '@mui/x-date-pickers';
 
 interface ITransactionHistoryTableProps<T> {
   title?: string;
@@ -62,7 +65,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
   const tableRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
-  
+
   const sensitivityThreshold = 2;
 
   useEffect(() => {
@@ -149,31 +152,50 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     }
   };
 
-  const handleSelectRow = (index: number) => {
-    if (setSelectedRows && actions) {
-      setSelectedRows((prevSelectedRows) => {
-        const newSelectedRows = new Set(prevSelectedRows);
-        if (newSelectedRows.has(index)) {
-          newSelectedRows.delete(index);
-        } else {
-          newSelectedRows.add(index);
-        }
-        return newSelectedRows;
-      });
-    }
-  };
 
-  const handleSelectAllRows = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (setSelectedRows && actions) {
-      if (event.target.checked) {
-        const newSelectedRows = new Set<number>();
-        data.forEach((_, index) => newSelectedRows.add(index));
-        setSelectedRows(newSelectedRows);
-      } else {
-        setSelectedRows(new Set());
+  const { name, wallet, connected } = useWallet()
+  const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined)
+  const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>()
+  const [cardanoApi, setCardanoApi] = useState<any>(undefined);
+
+  useEffect(() => {
+    const execute = async () => {
+      if (connected) {
+        const api = await window.cardano[name.toLowerCase()].enable();
+        setCardanoApi(api);
+        const utxos = await api.getUtxos();
+        setWalletUtxosCbor(utxos);
+      }
+    };
+    execute();
+  }, [name, connected]);
+
+  useEffect(() => {
+    const execute = async () => {
+      if (connected) {
+        setChangeAddress(await wallet.getChangeAddress());
+      }
+    };
+    execute();
+  }, [connected, wallet]);
+
+  const cancelTx = useCallback(async (txHash: string, txIndex: string) => {
+    if (connected && walletUtxosCbor !== undefined && cardanoApi !== undefined) {
+      try {
+        const cancelStakeTxCbor = await coinectaSyncApi.cancelStakeTx({
+          stakeRequestOutputReference: {
+            txHash,
+            index: txIndex
+          },
+          walletUtxoListCbor: walletUtxosCbor!,
+        });
+        const witnessSetCbor = await cardanoApi.signTx(cancelStakeTxCbor, true);
+        const signedTxCbor = await coinectaSyncApi.finalizeTx({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
+        cardanoApi.submitTx(signedTxCbor);
+      } catch (ex) {
       }
     }
-  };
+  }, [connected, walletUtxosCbor, cardanoApi]);
 
   if (error) return <div>Error loading</div>;
   return (
@@ -219,11 +241,12 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                 background: theme.palette.background.paper,
               }
             }}>
-              {columns.map((column) => (
-                <TableCell key={String(column)}>
+              {columns.map((column) => {
+                if (column === "txHash" || column === "txIndex") return null;
+                return <TableCell key={String(column)}>
                   {camelCaseToTitle(String(column))}
                 </TableCell>
-              ))}
+              })}
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
@@ -236,53 +259,62 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                 }}
               >
                 {Object.keys(item).map((key, colIndex) => {
-                    if (key === "status") {
-                        return (
-                            <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                              {isLoading ?
-                                (<Skeleton>
-                                  <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
-                                </Skeleton>) :
-                                (item[key] === "Executed" ? 
-                                  <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' label="Executed" color='success' sx={{ width: '104px' }} /> :
-                                  <Chip icon={<AccessTimeIcon fontSize='small' />} variant='outlined' label="Pending" color='primary' sx={{ width: '104px' }} />)}
-                            </TableCell>
-                        )
-                    }
+                  if (key === "txHash" || key === "txIndex") return null;
+                  if (key === "status") {
+                    return (
+                      <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                        {isLoading ?
+                          (<Skeleton>
+                            <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
+                          </Skeleton>) :
+                          <>
+                            {(item[key] === "Executed" &&
+                              <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' label="Executed" color='success' sx={{ width: '120px' }} />)}
+                            {(item[key] === "Pending" &&
+                              <Chip icon={<TimeIcon fontSize='small' />} variant='outlined' label="Pending" color='primary' sx={{ width: '120px' }} />)}
+                            {(item[key] === "Cancelled" &&
+                              <Chip icon={<ClearIcon fontSize='small' />} variant='outlined' label="Cancelled" color='error' sx={{ width: '120px' }} />)}
+                          </>
+                        }
+                      </TableCell>
+                    )
+                  }
 
-                    if (key === "actions") {
-                      return (
-                        <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none'}}>
-                          {isLoading ?
+                  if (key === "actions") {
+                    return (
+                      <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                        {isLoading ?
                           (<Box sx={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
-                              <Skeleton>
-                                  <LaunchIcon fontSize='small' />
-                              </Skeleton>
-                              <Skeleton>
-                                  <ContentCopyIcon fontSize='small' />
-                              </Skeleton>
-                            </Box>) :
-                            (<Box sx={{ display: 'flex', gap: '5px', marginTop: '8px'}}>
-                              <IconButton href={item[key].transactionLink} size='small'>
-                                <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                              </IconButton>
-                              <IconButton size='small'>
-                                <ContentCopyIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                              </IconButton>
+                            <Skeleton>
+                              <LaunchIcon fontSize='small' />
+                            </Skeleton>
+                            <Skeleton>
+                              <ContentCopyIcon fontSize='small' />
+                            </Skeleton>
+                          </Box>) :
+                          (<Box sx={{ display: 'flex', gap: '5px', marginTop: '8px' }}>
+                            <IconButton href={item[key].transactionLink} size='small' target='_blank'>
+                              <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                            </IconButton>
+                            <IconButton size='small' onClick={() => { copy(item[key].transactionLink) }}>
+                              <ContentCopyIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                            </IconButton>
                           </Box>)}
                       </TableCell>)
-                    }
+                  }
 
-                    return (
-                        <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                            {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
-                        </TableCell>
-                    )
+                  return (
+                    <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                      {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
+                    </TableCell>
+                  )
                 })}
                 <TableCell sx={{ borderBottom: 'none' }}>
-                    <Button disabled={isLoading ? true : false} key={index} variant="contained" color="secondary" onClick={() => ""}>
-                        Cancel
+                  {item.status === "Pending" && !isLoading && <>
+                    <Button disabled={isLoading && (walletUtxosCbor?.length ?? 0 > 0)} key={index} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex)}>
+                      Cancel
                     </Button>
+                  </>}
                 </TableCell>
               </TableRow>
             ))}
@@ -321,6 +353,6 @@ const formatData = <T,>(data: T, key: keyof T): string => {
 }
 
 const camelCaseToTitle = (camelCase: string) => {
-    const withSpaces = camelCase.replace(/([A-Z])/g, ' $1').trim();
-    return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
+  const withSpaces = camelCase.replace(/([A-Z])/g, ' $1').trim();
+  return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
 }
