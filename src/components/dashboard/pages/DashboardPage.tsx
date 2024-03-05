@@ -64,7 +64,11 @@ const Dashboard: FC = () => {
           setSummary(null);
         } else {
           const summary = await coinectaSyncApi.getStakeSummary(stakeKeys);
-          setSummary(summary);
+          if(summary.poolStats.totalPortfolio === undefined) {
+            setSummary(null);
+          } else {
+            setSummary(summary);
+          }
         }
         setIsLoading(false);
       }
