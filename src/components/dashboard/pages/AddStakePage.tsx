@@ -1,10 +1,12 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  Alert,
   Box,
   Button,
   Divider,
   Paper,
   Skeleton,
+  Snackbar,
   Typography,
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
@@ -19,6 +21,8 @@ import { calculateFutureDateMonths } from '@lib/utils/general'
 import { StakePoolResponse, coinectaSyncApi } from '@server/services/syncApi';
 import { metadataApi } from '@server/services/metadataApi';
 import { formatTokenWithDecimals } from '@lib/utils/assets';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
 const options = [
   {
@@ -60,6 +64,8 @@ const AddStakePage: FC = () => {
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
   const [stakePool, setStakePool] = useState<StakePoolResponse | null>(null);
   const [cnctDecimals, setCnctDecimals] = useState<number>(DEFAULT_CNCT_DECIMALS);
+  const [isStakeTransactionSubmitted, setIsStakeTransactionSubmitted] = useState<boolean>(false);
+  const [isStakeTransactionFailed, setIsStakeTransactionFailed] = useState<boolean>(false);
 
   useEffect(() => {
     const newArray = options.map(option => option.duration)
@@ -114,6 +120,11 @@ const AddStakePage: FC = () => {
       event.preventDefault();
     }
   };
+
+  const handleTransactionSubmitted = (status: boolean) => setIsStakeTransactionSubmitted(status);
+  const handleTransactionFailed = (status: boolean) => setIsStakeTransactionFailed(status)
+  const handleSuccessSnackbarClose = () => setIsStakeTransactionSubmitted(false);
+  const handleFailedSnackbarClose = () => setIsStakeTransactionFailed(false);
 
   const total = (Number(cnctAmount) ? (Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0)) + Number(cnctAmount) : 0).toLocaleString(undefined, { maximumFractionDigits: 1 })
 
@@ -235,7 +246,31 @@ const AddStakePage: FC = () => {
         duration={stakeDuration}
         total={total}
         rewardIndex={rewardSettingIndex}
+        onTransactionSubmitted={handleTransactionSubmitted}
+        onTransactionFailed={handleTransactionFailed}
       />
+      <Snackbar open={isStakeTransactionSubmitted} autoHideDuration={6000} onClose={handleSuccessSnackbarClose}>
+        <Alert
+          onClose={handleSuccessSnackbarClose}
+          severity="success"
+          variant="outlined"
+          sx={{ width: '100%' }}
+          icon={<TaskAltIcon fontSize='medium' />}
+        >
+          Stake transaction submitted
+        </Alert>
+      </Snackbar>
+      <Snackbar open={isStakeTransactionFailed} autoHideDuration={6000} onClose={handleFailedSnackbarClose}>
+        <Alert
+          onClose={handleFailedSnackbarClose}
+          severity="error"
+          variant="outlined"
+          sx={{ width: '100%' }}
+          icon={<ErrorOutlineOutlinedIcon fontSize='medium' />}
+        >
+          Error adding stake
+        </Alert>
+      </Snackbar>
     </Box >
   );
 };

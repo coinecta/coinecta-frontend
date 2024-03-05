@@ -8,7 +8,8 @@ import {
   useTheme,
   Button,
   IconButton,
-  Alert
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useWallet } from '@meshsdk/react';
@@ -27,6 +28,8 @@ interface IStakeConfirmProps {
   total: string;
   duration: number;
   rewardIndex: number;
+  onTransactionSubmitted: (status: boolean) => void;
+  onTransactionFailed: (status: boolean) => void;
 }
 
 const StakeConfirm: FC<IStakeConfirmProps> = ({
@@ -37,7 +40,9 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   total,
   duration,
   rewardIndex,
-  setPaymentAmount
+  setPaymentAmount,
+  onTransactionSubmitted,
+  onTransactionFailed
 }) => {
   const STAKE_POOL_VALIDATOR_ADDRESS = process.env.STAKE_POOL_VALIDATOR_ADDRESS!;
   const STAKE_POOL_OWNER_KEY_HASH = process.env.STAKE_POOL_OWNER_KEY_HASH!;
@@ -50,6 +55,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined)
   const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>()
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
+  const [isSigning, setIsSigning] = useState<boolean>(false);
 
 
   const handleClose = () => {
@@ -70,7 +76,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
 
   useEffect(() => {
     const execute = async () => {
-      if(connected) {
+      if (connected) {
         setChangeAddress(await wallet.getChangeAddress());
       }
     };
@@ -80,6 +86,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   const { cnctDecimals } = useToken();
 
   const handleSubmit = async () => {
+    setIsSigning(true);
     try {
       const addStakeRequest: AddStakeRequest = {
         stakePool: {
@@ -101,9 +108,12 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
       await cardanoApi.submitTx(signedTx);
       setOpen(false);
       setPaymentAmount('');
+      onTransactionSubmitted(true);
     } catch (ex) {
+      onTransactionFailed(true);
       console.error('Error adding stake', ex);
     }
+    setIsSigning(false);
   }
 
 
@@ -167,10 +177,10 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
         </Alert>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center', mb: 1 }}>
-        <Button variant="contained" color="secondary" onClick={handleSubmit} disabled={!connected}>
-          {/* {`Submit with ${alternateWalletType?.name || sessionData?.user.walletType} wallet`} */}
-          {`Confirm stake`}
+        <Button sx={{ display: isSigning ? 'none' : 'block' }} variant="contained" color="secondary" onClick={handleSubmit} disabled={!connected}>
+          Confirm stake
         </Button>
+        <CircularProgress sx={{ display: isSigning ? 'block' : 'none' }} color='secondary' />
       </DialogActions>
     </Dialog>
   );
