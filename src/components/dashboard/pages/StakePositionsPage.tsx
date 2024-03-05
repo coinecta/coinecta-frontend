@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -17,6 +17,9 @@ import { StakePosition, StakeSummary, coinectaSyncApi } from '@server/services/s
 import UnstakeConfirm from '../staking/UnstakeConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
 import { useWalletContext } from '@contexts/WalletContext';
+import { useToken } from '@components/hooks/useToken';
+import { formatTokenWithDecimals } from '@lib/utils/assets';
+import { usePrice } from '@components/hooks/usePrice';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -75,16 +78,6 @@ const StakePositions: FC = () => {
       count: redeemableRows.size,
       handler: handleRedeem
     },
-    // {
-    //   label: 'Combine',
-    //   count: lockedRows.size,
-    //   handler: handleRedeem
-    // },
-    // {
-    //   label: 'Split',
-    //   count: lockedRows.size,
-    //   handler: handleRedeem
-    // }
   ]
 
   /* Staking API */
@@ -155,6 +148,24 @@ const StakePositions: FC = () => {
     querySummary();
   }, [querySummary]);
 
+  const { cnctDecimals } = useToken();
+  const { convertToUSD, convertCnctToADA } = usePrice();
+
+  const processedPositions = useMemo(() => {
+    return positions.map((position) => {
+      return {
+        name: position.name,
+        total: formatTokenWithDecimals(BigInt(position.total), cnctDecimals),
+        unlockDate: new Date(position.unlockDate),
+        initial: formatTokenWithDecimals(BigInt(position.initial), cnctDecimals),
+        bonus: formatTokenWithDecimals(BigInt(position.bonus), cnctDecimals),
+        interest: formatNumber(position.interest * 100, '%')
+      };
+    });
+  }, [cnctDecimals, positions]);
+
+  const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
+
   return (
     <Box sx={{ position: 'relative' }} ref={parentRef}>
       <DashboardHeader title="Manage Staked Positions" />
@@ -169,14 +180,14 @@ const StakePositions: FC = () => {
             <Typography>
               Total value staked
             </Typography>
-            {isLoading ?  
+            {isLoading ?
               <Box sx={{ mb: 1 }}>
                 <Skeleton animation='wave' width={100} />
                 <Skeleton animation='wave' width={100} />
-              </Box> : 
+              </Box> :
               <Box sx={{ mb: 1 }}>
-                <Typography align='center' variant='h5'>25,391 ₳</Typography>
-                <Typography sx={{color: theme.palette.grey[500]}} align='center'>$15,644</Typography>
+                <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0")), '₳')}</Typography>
+                <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
               </Box>}
           </DashboardCard>
         </Grid>
@@ -186,16 +197,16 @@ const StakePositions: FC = () => {
           }}>
             <DataSpread
               title="CNCT"
-              margin={0} // last item needs margin 0, the rest don't include the margin prop
-              data={`230,660`}
-              usdValue='$15,644'
+              data={formatNumber(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), '')}
+              usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), "CNCT"), '')}`}
               isLoading={isLoading}
             />
           </DashboardCard>
         </Grid>
       </Grid>
       <StakePositionTable
-        {...fakeTrpcDashboardData}
+        error={false}
+        data={processedPositions}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={actions}
