@@ -36,6 +36,8 @@ interface ITransactionHistoryTableProps<T> {
   selectedRows?: Set<number>;
   setSelectedRows?: React.Dispatch<React.SetStateAction<Set<number>>>
   parentContainerRef: React.RefObject<HTMLDivElement>;
+  onCancellationSuccessful: (status: boolean) => void;
+  onCancellationFailed: (status: boolean) => void;
 }
 
 const rowsPerPageOptions = [5, 10, 15];
@@ -53,7 +55,9 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   actions,
   selectedRows,
   setSelectedRows,
-  parentContainerRef
+  parentContainerRef,
+  onCancellationFailed,
+  onCancellationSuccessful
 }: ITransactionHistoryTableProps<T>) => {
   const [parentWidth, setParentWidth] = useState(0);
   const [paperWidth, setPaperWidth] = useState(0);
@@ -192,7 +196,9 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         const witnessSetCbor = await cardanoApi.signTx(cancelStakeTxCbor, true);
         const signedTxCbor = await coinectaSyncApi.finalizeTx({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
         cardanoApi.submitTx(signedTxCbor);
+        onCancellationSuccessful(true);
       } catch (ex) {
+        onCancellationFailed(true);
       }
     }
   }, [connected, walletUtxosCbor, cardanoApi]);

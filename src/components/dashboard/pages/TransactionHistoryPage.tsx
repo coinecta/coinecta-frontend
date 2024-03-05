@@ -1,7 +1,9 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Alert,
   Box,
   Divider,
+  Snackbar,
   Typography,
 } from '@mui/material';
 import DashboardHeader from '../DashboardHeader';
@@ -13,6 +15,8 @@ import { useToken } from '@components/hooks/useToken';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
 const TransactionHistory: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -22,6 +26,8 @@ const TransactionHistory: FC = () => {
   const [stakeRequestResponse, setStakeRequestResponse] = useState<StakeRequestsResponse>();
   const [stakeRequests, setStakeRequests] = useState<StakeRequest[]>();
   const [totalRequests, setTotalRequests] = useState<number>(0);
+  const [isCancellationSuccessful, setIsCancellationSuccessful] = useState<boolean>(false);
+  const [isCancellationFailed, setIsCancellationFailed] = useState<boolean>(false);
 
   useEffect(() => {
     const execute = async () => {
@@ -75,6 +81,11 @@ const TransactionHistory: FC = () => {
     });
   },[stakeRequests, stakeRequestResponse, cnctDecimals]);
 
+  const handleCancellationSuccessful = (status: boolean) => setIsCancellationSuccessful(status);
+  const handleCancellationFailed = (status: boolean) => setIsCancellationFailed(status)
+  const handleSuccessSnackbarClose = () => setIsCancellationSuccessful(false);
+  const handleFailedSnackbarClose = () => setIsCancellationFailed(false);
+
   return (
     <Box ref={parentRef}>
       <DashboardHeader title="Transaction History" />
@@ -85,7 +96,31 @@ const TransactionHistory: FC = () => {
         setSelectedRows={setSelectedRows}
         parentContainerRef={parentRef}
         isLoading={isLoading}
+        onCancellationSuccessful={handleCancellationSuccessful}
+        onCancellationFailed={handleCancellationFailed}
       />
+      <Snackbar open={isCancellationSuccessful} autoHideDuration={6000} onClose={handleSuccessSnackbarClose}>
+        <Alert
+          onClose={handleSuccessSnackbarClose}
+          severity="success"
+          variant="outlined"
+          sx={{ width: '100%' }}
+          icon={<TaskAltIcon fontSize='medium' />}
+        >
+          Cancel transaction submitted
+        </Alert>
+      </Snackbar>
+      <Snackbar open={isCancellationFailed} autoHideDuration={6000} onClose={handleFailedSnackbarClose}>
+        <Alert
+          onClose={handleFailedSnackbarClose}
+          severity="error"
+          variant="outlined"
+          sx={{ width: '100%' }}
+          icon={<ErrorOutlineOutlinedIcon fontSize='medium' />}
+        >
+          Cancel transaction failed
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
