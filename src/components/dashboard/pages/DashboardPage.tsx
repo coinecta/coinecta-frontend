@@ -64,7 +64,7 @@ const Dashboard: FC = () => {
           setSummary(null);
         } else {
           const summary = await coinectaSyncApi.getStakeSummary(stakeKeys);
-          if(summary.poolStats.totalPortfolio === undefined) {
+          if(summary.poolStats.CNCT === undefined) {
             setSummary(null);
           } else {
             setSummary(summary);
@@ -84,7 +84,6 @@ const Dashboard: FC = () => {
   const { cnctDecimals } = useToken();
 
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
-
   return (
     <Box sx={{ position: 'relative' }} >
       <DashboardHeader title="Overview" />
