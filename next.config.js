@@ -12,6 +12,7 @@ const nextConfig = {
     STAKE_POOL_ASSET_NAME: process.env.STAKE_POOL_ASSET_NAME,
     DEFAULT_CNCT_DECIMALS: process.env.DEFAULT_CNCT_DECIMALS,
     CARDANO_TX_EXPLORER_URL: process.env.CARDANO_TX_EXPLORER_URL,
+    COINECTA_SYNC_API: process.env.COINECTA_SYNC_API,
   },
   swcMinify: true,
   webpack: function (config, options) {

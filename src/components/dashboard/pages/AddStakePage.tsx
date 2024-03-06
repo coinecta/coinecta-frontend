@@ -268,7 +268,7 @@ const AddStakePage: FC = () => {
           sx={{ width: '100%' }}
           icon={<ErrorOutlineOutlinedIcon fontSize='medium' />}
         >
-          Error adding stake
+          Error adding stake, Make sure you have enough CNCT!
         </Alert>
       </Snackbar>
     </Box >

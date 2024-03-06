@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -13,10 +13,14 @@ import DataSpread from '@components/DataSpread';
 import { IActionBarButton } from '../ActionBar';
 import DashboardHeader from '../DashboardHeader';
 import { useWallet } from '@meshsdk/react';
-import { StakePosition, StakeSummary, coinectaSyncApi } from '@server/services/syncApi';
+import { ClaimStakeRequest, StakePosition, StakeSummary, coinectaSyncApi } from '@server/services/syncApi';
 import UnstakeConfirm from '../staking/UnstakeConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
 import { useWalletContext } from '@contexts/WalletContext';
+import { useToken } from '@components/hooks/useToken';
+import { formatTokenWithDecimals } from '@lib/utils/assets';
+import { usePrice } from '@components/hooks/usePrice';
+import { walletNameToId } from '@lib/walletsList';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -28,21 +32,57 @@ const StakePositions: FC = () => {
   const [unstakeRowData, setUnstakeRowData] = useState<IUnstakeListItem[]>([])
   const [isLoading, setIsLoading] = useState(true);
 
+  /* Staking API */
+  const [stakeKeys, setStakeKeys] = useState<string[]>([]);
+  const { wallet, connected } = useWallet();
+  const [time, setTime] = useState<number>(0);
+  const [positions, setPositions] = useState<StakePosition[]>([]);
+  const [summary, setSummary] = useState<StakeSummary | null>(null);
+  const { sessionData } = useWalletContext();
+  const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>();
+  const theme = useTheme();
+  const { cnctDecimals } = useToken();
+  const { convertToUSD, convertCnctToADA } = usePrice();
+
+  const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })} ${key}`;
+
+  const processedPositions = useMemo(() => {
+    return positions.map((position) => {
+      return {
+        name: position.name,
+        total: formatTokenWithDecimals(BigInt(position.total), cnctDecimals),
+        unlockDate: new Date(position.unlockDate),
+        initial: formatTokenWithDecimals(BigInt(position.initial), cnctDecimals),
+        bonus: formatTokenWithDecimals(BigInt(position.bonus), cnctDecimals),
+        interest: formatNumber(position.interest * 100, '%')
+      };
+    });
+  }, [cnctDecimals, positions]);
+
+  const selectedPositions = useMemo(() => {
+    return Array.from(selectedRows).map((index) => positions[index]);
+  }, [positions, selectedRows]);
+
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 2000);
   }, []);
 
   useEffect(() => {
     const newData = Array.from(selectedRows).filter(index => redeemableRows.has(index)).map(index => {
-      const item = fakeTrpcDashboardData.data[index];
+      const item = positions[index];
       return {
         currency: item.name,
         amount: item.total.toString(),
       };
     });
 
+    console.log(newData);
+
     setUnstakeRowData(newData);
-  }, [selectedRows, redeemableRows, fakeTrpcDashboardData])
+  }, [selectedRows, redeemableRows, positions])
 
   useEffect(() => {
     const newRedeemableRows = new Set<number>();
@@ -50,7 +90,7 @@ const StakePositions: FC = () => {
     const now = new Date();
 
     selectedRows.forEach((index) => {
-      const item = fakeTrpcDashboardData.data[index];
+      const item = processedPositions[index];
       if (item && item.unlockDate) {
         if (item.unlockDate <= now) {
           newRedeemableRows.add(index);
@@ -63,43 +103,13 @@ const StakePositions: FC = () => {
     setRedeemableRows(newRedeemableRows);
     setLockedRows(newLockedRows);
 
-  }, [selectedRows, fakeTrpcDashboardData]);
+  }, [processedPositions, selectedRows]);
 
   const handleRedeem = () => {
+    if (selectedPositions.length === 0) return;
     setOpenUnstakeDialog(true)
   }
 
-  const actions: IActionBarButton[] = [
-    {
-      label: 'Redeem',
-      count: redeemableRows.size,
-      handler: handleRedeem
-    },
-    // {
-    //   label: 'Combine',
-    //   count: lockedRows.size,
-    //   handler: handleRedeem
-    // },
-    // {
-    //   label: 'Split',
-    //   count: lockedRows.size,
-    //   handler: handleRedeem
-    // }
-  ]
-
-  /* Staking API */
-  const [stakeKeys, setStakeKeys] = useState<string[]>([]);
-  const { wallet, connected } = useWallet();
-  const [time, setTime] = useState<number>(0);
-  const [positions, setPositions] = useState<StakePosition[]>([]);
-  const [summary, setSummary] = useState<StakeSummary | null>(null);
-
-  const theme = useTheme();
-
-  const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  })} ${key}`;
 
   // Refresh data every 20 seconds
   useEffect(() => {
@@ -111,7 +121,18 @@ const StakePositions: FC = () => {
 
   useEffect(() => {
     const execute = async () => {
-      const STAKING_KEY_POLICY = "5496b3318f8ca933bbfdf19b8faa7f948d044208e0278d62c24ee73e";
+      if (connected) {
+        const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
+        const utxos = await api.getUtxos();
+        setWalletUtxosCbor(utxos);
+      }
+    };
+    execute();
+  }, [connected, sessionData?.user.walletType]);
+
+  useEffect(() => {
+    const execute = async () => {
+      const STAKING_KEY_POLICY = process.env.STAKING_KEY_POLICY;
 
       if (connected) {
         const balance = await wallet.getBalance();
@@ -155,6 +176,29 @@ const StakePositions: FC = () => {
     querySummary();
   }, [querySummary]);
 
+  const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
+
+  const claimStakeRequest = useMemo(() => {
+    return {
+      stakeUtxoOutputReferences: selectedPositions.map((position) => {
+        return {
+          txHash: position.txHash,
+          index: position.txIndex
+        }
+      }),
+      walletUtxoListCbor: walletUtxosCbor
+    } as ClaimStakeRequest
+  }, [selectedPositions, walletUtxosCbor]);
+
+
+  const actions: IActionBarButton[] = [
+    {
+      label: 'Redeem',
+      count: selectedPositions.length,
+      handler: handleRedeem
+    },
+  ]
+
   return (
     <Box sx={{ position: 'relative' }} ref={parentRef}>
       <DashboardHeader title="Manage Staked Positions" />
@@ -166,27 +210,24 @@ const StakePositions: FC = () => {
             justifyContent: 'center',
             py: 4
           }}>
-            {stakeKeys.length === 0 ? (
+            {summary === null ? (
               <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Box component={'p'}>
                   No data available
                 </Box>
               </Box>
-            )
-              :
+            ) :
               (<>
                 <Typography>Total value staked</Typography>
-                {isLoading ? (
+                {isLoading ?
                   <Box sx={{ mb: 1 }}>
                     <Skeleton animation='wave' width={100} />
                     <Skeleton animation='wave' width={100} />
-                  </Box>
-                ) : (
+                  </Box> :
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>25,391 ₳</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>$15,644</Typography>
-                  </Box>
-                )}
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0")), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
+                  </Box>}
               </>
               )
             }
@@ -196,7 +237,7 @@ const StakePositions: FC = () => {
           <DashboardCard center sx={{
             justifyContent: sessionStatus === 'unauthenticated' ? 'center' : 'space-between',
           }}>
-            {stakeKeys.length === 0 ?
+            {summary === null ?
               <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Box component={'p'}>
                   No data available
@@ -205,8 +246,8 @@ const StakePositions: FC = () => {
               <DataSpread
                 title="CNCT"
                 margin={0} // last item needs margin 0, the rest don't include the margin prop
-                data={`230,660`}
-                usdValue='$15,644'
+                data={formatNumber(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), '')}
+                usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), "CNCT"), '')}`}
                 isLoading={isLoading}
               />
             }
@@ -214,8 +255,8 @@ const StakePositions: FC = () => {
         </Grid>
       </Grid>
       <StakePositionTable
-        data={[]}
         error={false}
+        data={processedPositions}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={actions}

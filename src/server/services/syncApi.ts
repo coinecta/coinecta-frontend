@@ -18,11 +18,13 @@ export type StakeStats = {
 
 export type StakePosition = {
   name: string;
-  total: number;
+  total: string;
   unlockDate: string;
-  initial: number;
-  bonus: number;
+  initial: string;
+  bonus: string;
   interest: number;
+  txHash: string;
+  txIndex: string;
 }
 
 export type StakePoolResponse = {
@@ -108,6 +110,11 @@ export type CancelStakeRequest = {
   walletUtxoListCbor: string[];
 }
 
+export type ClaimStakeRequest = {
+  stakeUtxoOutputReferences: OutputReference[];
+  walletUtxoListCbor: string[];
+}
+
 export const coinectaSyncApi = {
   async getStakeSummary(stakeKeys: string[]): Promise<StakeSummary> {
     try {
@@ -179,6 +186,20 @@ export const coinectaSyncApi = {
       }
     }
   },
+  async claimStakeTx(request: ClaimStakeRequest): Promise<string> {
+    try {
+      const response = await syncApi.post('/transaction/stake/claim', request)
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw mapAxiosErrorToTRPCError(error);
+      }
+      else {
+        console.error(error)
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'An unknown error occurred' });
+      }
+    }
+  },
   async cancelStakeTx(request: CancelStakeRequest): Promise<string> {
     try {
       const response = await syncApi.post('/transaction/stake/cancel', request)
@@ -211,7 +232,7 @@ export const coinectaSyncApi = {
 
 
 export const syncApi = axios.create({
-  baseURL: `http://localhost:5232`,
+  baseURL: process.env.COINECTA_SYNC_API,
   headers: {
     'Content-type': 'application/json;charset=utf-8',
   }

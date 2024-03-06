@@ -12,6 +12,8 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DataSpread from '@components/DataSpread';
+import { useToken } from '@components/hooks/useToken';
+import { formatTokenWithDecimals } from '@lib/utils/assets';
 
 interface IUnstakeConfirmProps {
   open: boolean;
@@ -24,6 +26,7 @@ const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
   setOpen,
   unstakeList
 }) => {
+  const { cnctDecimals } = useToken();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -81,7 +84,7 @@ const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
           <DataSpread
             key={`${item.currency}-${i}`}
             title={item.currency}
-            data={`${Number(item.amount).toLocaleString(undefined, { maximumFractionDigits: 2 })}`}
+            data={`${formatTokenWithDecimals(BigInt(item.amount), cnctDecimals)}`}
           />
         ))}
       </DialogContent>

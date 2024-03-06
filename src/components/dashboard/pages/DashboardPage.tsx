@@ -21,13 +21,13 @@ import { useToken } from '@components/hooks/useToken';
 const Dashboard: FC = () => {
   const router = useRouter();
 
-  const { wallet, connected, connecting } = useWallet();
-
+  const { wallet, connected } = useWallet();
   const [stakeKeys, setStakeKeys] = useState<string[]>([]);
   const [summary, setSummary] = useState<StakeSummary | null>(null);
   const [time, setTime] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isStakingKeysLoaded, setIsStakingKeysLoaded] = useState(false);
+
   const theme = useTheme();
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
@@ -36,6 +36,7 @@ const Dashboard: FC = () => {
   })}${key !== '' && key != null ? ` ${key}` : ''}`;
 
   // Refresh data every 20 seconds
+  // Use RTK Query?
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(time => time + 1);
@@ -64,7 +65,7 @@ const Dashboard: FC = () => {
           setSummary(null);
         } else {
           const summary = await coinectaSyncApi.getStakeSummary(stakeKeys);
-          if(summary.poolStats.totalPortfolio === undefined) {
+          if (summary.poolStats.CNCT === undefined) {
             setSummary(null);
           } else {
             setSummary(summary);
@@ -84,7 +85,6 @@ const Dashboard: FC = () => {
   const { cnctDecimals } = useToken();
 
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
-
   return (
     <Box sx={{ position: 'relative' }} >
       <DashboardHeader title="Overview" />

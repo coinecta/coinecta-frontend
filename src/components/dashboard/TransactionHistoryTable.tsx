@@ -27,6 +27,8 @@ import copy from 'copy-to-clipboard';
 import { useWallet } from '@meshsdk/react';
 import { coinectaSyncApi } from '@server/services/syncApi';
 import { TimeIcon } from '@mui/x-date-pickers';
+import { useWalletContext } from '@contexts/WalletContext';
+import { walletNameToId } from '@lib/walletsList';
 import DashboardCard from './DashboardCard';
 
 interface ITransactionHistoryTableProps<T> {
@@ -162,18 +164,19 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined)
   const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>()
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
-
+  const { sessionData } = useWalletContext();
+  
   useEffect(() => {
     const execute = async () => {
       if (connected) {
-        const api = await window.cardano[name.toLowerCase()].enable();
+        const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
         setCardanoApi(api);
         const utxos = await api.getUtxos();
         setWalletUtxosCbor(utxos);
       }
     };
     execute();
-  }, [name, connected]);
+  }, [name, connected, sessionData?.user.walletType]);
 
   useEffect(() => {
     const execute = async () => {
@@ -202,7 +205,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         onCancellationFailed(true);
       }
     }
-  }, [connected, walletUtxosCbor, cardanoApi]);
+  }, [connected, walletUtxosCbor, cardanoApi, onCancellationSuccessful, onCancellationFailed]);
 
   if (error) return <div>Error loading</div>;
   return (
