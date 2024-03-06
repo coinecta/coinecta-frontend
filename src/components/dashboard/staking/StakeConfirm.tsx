@@ -20,7 +20,8 @@ import { AddStakeRequest, coinectaSyncApi } from '@server/services/syncApi';
 import { parseTokenFromString } from '@lib/utils/assets';
 import { useToken } from '@components/hooks/useToken';
 import NamiLogo from '@components/svgs/NamiLogo';
-import GithubIcon from '@components/svgs/GithubIcon';
+import { useWalletContext } from '@contexts/WalletContext';
+import { walletNameToId } from '@lib/walletsList';
 
 interface IStakeConfirmProps {
   open: boolean;
@@ -59,7 +60,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>()
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const [isSigning, setIsSigning] = useState<boolean>(false);
-
+  const { sessionData } = useWalletContext();
 
   const handleClose = () => {
     setOpen(false);
@@ -68,14 +69,14 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   useEffect(() => {
     const execute = async () => {
       if (connected) {
-        const api = await window.cardano[name.toLowerCase()].enable();
+        const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
         setCardanoApi(api);
         const utxos = await api.getUtxos();
         setWalletUtxosCbor(utxos);
       }
     };
     execute();
-  }, [name, connected]);
+  }, [name, connected, sessionData?.user.walletType]);
 
   useEffect(() => {
     const execute = async () => {
