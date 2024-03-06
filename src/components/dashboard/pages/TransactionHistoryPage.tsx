@@ -90,7 +90,7 @@ const TransactionHistory: FC = () => {
     <Box ref={parentRef}>
       <DashboardHeader title="Transaction History" />
       <TransactionHistoryTable
-        data={processedStakeRequests ?? []}
+        data={processedStakeRequests ?? fakeTrpcDashboardData.data}
         error={false}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
