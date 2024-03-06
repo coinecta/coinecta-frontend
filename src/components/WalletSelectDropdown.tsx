@@ -9,7 +9,8 @@ import {
   SelectChangeEvent,
   useTheme,
   Checkbox,
-  ListItemText
+  ListItemText,
+  Tooltip
 } from '@mui/material';
 import { getShorterAddress } from '@lib/utils/general';
 import { useRouter } from 'next/router';
@@ -101,7 +102,9 @@ const WalletSelectDropdown = () => {
           <MenuItem key={item} value={item}>
             <Checkbox checked={selectedItems.indexOf(item) > -1} />
             <ListItemText primary={getShorterAddress(item, 6)} />
-            <WarningAmberOutlinedIcon color='error'/>
+            <Tooltip title='This wallet is not connected'>
+              <WarningAmberOutlinedIcon color='error'/>
+            </Tooltip>
           </MenuItem>
         ))}
       </Select>
