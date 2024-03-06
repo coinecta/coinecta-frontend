@@ -10,6 +10,7 @@ import {
   IconButton,
   Alert,
   CircularProgress,
+  Box,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useWallet } from '@meshsdk/react';
@@ -18,6 +19,8 @@ import DataSpread from '@components/DataSpread';
 import { AddStakeRequest, coinectaSyncApi } from '@server/services/syncApi';
 import { parseTokenFromString } from '@lib/utils/assets';
 import { useToken } from '@components/hooks/useToken';
+import NamiLogo from '@components/svgs/NamiLogo';
+import GithubIcon from '@components/svgs/GithubIcon';
 
 interface IStakeConfirmProps {
   open: boolean;
@@ -177,9 +180,10 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
         </Alert>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center', mb: 1 }}>
-        <Button sx={{ display: isSigning ? 'none' : 'block' }} variant="contained" color="secondary" onClick={handleSubmit} disabled={!connected}>
+        <Button startIcon={<NamiLogo />} sx={{ display: isSigning ? 'none' : 'flex', flexGrow: 1 }} variant="contained" color="secondary" onClick={handleSubmit} disabled={!connected}>
           Confirm stake
         </Button>
+        <Button sx={{ flexGrow: 1 }} variant='contained' color='secondary' disabled={!connected}>Choose wallets</Button>
         <CircularProgress sx={{ display: isSigning ? 'block' : 'none' }} color='secondary' />
       </DialogActions>
     </Dialog>

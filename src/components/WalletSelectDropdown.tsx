@@ -14,6 +14,8 @@ import {
 import { getShorterAddress } from '@lib/utils/general';
 import { useRouter } from 'next/router';
 import { trpc } from '@lib/utils/trpc';
+import WarningIcon from '@mui/icons-material/Warning';
+import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 
 const WalletSelectDropdown = () => {
   const theme = useTheme()
@@ -99,6 +101,7 @@ const WalletSelectDropdown = () => {
           <MenuItem key={item} value={item}>
             <Checkbox checked={selectedItems.indexOf(item) > -1} />
             <ListItemText primary={getShorterAddress(item, 6)} />
+            <WarningAmberOutlinedIcon color='error'/>
           </MenuItem>
         ))}
       </Select>
