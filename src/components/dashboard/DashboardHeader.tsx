@@ -21,9 +21,9 @@ const DashboardHeader: FC<IDashboardHeaderProps> = ({ title }) => {
         <Typography variant="h5">
           {title}
         </Typography>
-        <Box sx={{ minWidth: '250px' }}>
+        {/* <Box sx={{ minWidth: '250px' }}>
           <WalletSelectDropdown />
-        </Box>
+        </Box> */}
       </Box>
       <Divider sx={{ mb: 2 }} />
     </>

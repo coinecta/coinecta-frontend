@@ -13,6 +13,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Tooltip,
   Typography,
   useTheme
 } from '@mui/material';
@@ -296,15 +297,20 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                             </Skeleton>
                             <Skeleton>
                               <ContentCopyIcon fontSize='small' />
+                              
                             </Skeleton>
                           </Box>) :
                           (<Box sx={{ display: 'flex', gap: '5px', marginTop: '8px' }}>
-                            <IconButton href={item[key].transactionLink} size='small' target='_blank'>
-                              <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                            </IconButton>
-                            <IconButton size='small' onClick={() => { copy(item[key].transactionLink) }}>
-                              <ContentCopyIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                            </IconButton>
+                            <Tooltip title='View transaction details'>
+                              <IconButton href={item[key].transactionLink} size='small' target='_blank'>
+                                <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title='Copy transaction link' >
+                              <IconButton size='small' onClick={() => { copy(item[key].transactionLink) }}>
+                                <ContentCopyIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                              </IconButton>
+                            </Tooltip>
                           </Box>)}
                       </TableCell>)
                   }
