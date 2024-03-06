@@ -80,7 +80,7 @@ const TransactionHistory: FC = () => {
       };
     });
   },[stakeRequests, stakeRequestResponse, cnctDecimals]);
-
+  
   const handleCancellationSuccessful = (status: boolean) => setIsCancellationSuccessful(status);
   const handleCancellationFailed = (status: boolean) => setIsCancellationFailed(status)
   const handleSuccessSnackbarClose = () => setIsCancellationSuccessful(false);
@@ -90,7 +90,7 @@ const TransactionHistory: FC = () => {
     <Box ref={parentRef}>
       <DashboardHeader title="Transaction History" />
       <TransactionHistoryTable
-        data={processedStakeRequests ?? fakeTrpcDashboardData.data}
+        data={processedStakeRequests ?? []}
         error={false}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}

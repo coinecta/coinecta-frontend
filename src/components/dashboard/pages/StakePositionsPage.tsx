@@ -166,36 +166,56 @@ const StakePositions: FC = () => {
             justifyContent: 'center',
             py: 4
           }}>
-            <Typography>
-              Total value staked
-            </Typography>
-            {isLoading ?  
-              <Box sx={{ mb: 1 }}>
-                <Skeleton animation='wave' width={100} />
-                <Skeleton animation='wave' width={100} />
-              </Box> : 
-              <Box sx={{ mb: 1 }}>
-                <Typography align='center' variant='h5'>25,391 ₳</Typography>
-                <Typography sx={{color: theme.palette.grey[500]}} align='center'>$15,644</Typography>
-              </Box>}
+            {stakeKeys.length === 0 ? (
+              <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box component={'p'}>
+                  No data available
+                </Box>
+              </Box>
+            )
+              :
+              (<>
+                <Typography>Total value staked</Typography>
+                {isLoading ? (
+                  <Box sx={{ mb: 1 }}>
+                    <Skeleton animation='wave' width={100} />
+                    <Skeleton animation='wave' width={100} />
+                  </Box>
+                ) : (
+                  <Box sx={{ mb: 1 }}>
+                    <Typography align='center' variant='h5'>25,391 ₳</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>$15,644</Typography>
+                  </Box>
+                )}
+              </>
+              )
+            }
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={8}>
           <DashboardCard center sx={{
             justifyContent: sessionStatus === 'unauthenticated' ? 'center' : 'space-between',
           }}>
-            <DataSpread
-              title="CNCT"
-              margin={0} // last item needs margin 0, the rest don't include the margin prop
-              data={`230,660`}
-              usdValue='$15,644'
-              isLoading={isLoading}
-            />
+            {stakeKeys.length === 0 ?
+              <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box component={'p'}>
+                  No data available
+                </Box>
+              </Box> :
+              <DataSpread
+                title="CNCT"
+                margin={0} // last item needs margin 0, the rest don't include the margin prop
+                data={`230,660`}
+                usdValue='$15,644'
+                isLoading={isLoading}
+              />
+            }
           </DashboardCard>
         </Grid>
       </Grid>
       <StakePositionTable
-        {...fakeTrpcDashboardData}
+        data={[]}
+        error={false}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={actions}
