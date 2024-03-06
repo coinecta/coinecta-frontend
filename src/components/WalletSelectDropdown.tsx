@@ -10,7 +10,8 @@ import {
   useTheme,
   Checkbox,
   ListItemText,
-  Tooltip
+  Tooltip,
+  Avatar
 } from '@mui/material';
 import { getShorterAddress } from '@lib/utils/general';
 import { useRouter } from 'next/router';
@@ -33,6 +34,8 @@ const WalletSelectDropdown = () => {
     if (items && itemList.length < 1) {
       setSelectedItems(items)
       setItemList(items)
+      console.log(items);
+      
     }
   }, [itemList.length, items])
 
@@ -100,10 +103,11 @@ const WalletSelectDropdown = () => {
         </ListSubheader>
         {itemList.map((item, i) => (
           <MenuItem key={item} value={item}>
+            <Avatar sx={{width: '22px', height: '22px'}} src='/wallets/nami-light.svg'/>
             <Checkbox checked={selectedItems.indexOf(item) > -1} />
             <ListItemText primary={getShorterAddress(item, 6)} />
             <Tooltip title='This wallet is not connected'>
-              <WarningAmberOutlinedIcon color='error'/>
+              <WarningAmberOutlinedIcon fontSize='small' color='error'/>
             </Tooltip>
           </MenuItem>
         ))}
