@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -14,21 +14,42 @@ import CloseIcon from '@mui/icons-material/Close';
 import DataSpread from '@components/DataSpread';
 import { useToken } from '@components/hooks/useToken';
 import { formatTokenWithDecimals } from '@lib/utils/assets';
+import { useWallet } from '@meshsdk/react';
+import { walletNameToId } from '@lib/walletsList';
+import { useWalletContext } from '@contexts/WalletContext';
+import { ClaimStakeRequest, coinectaSyncApi } from '@server/services/syncApi';
 
 interface IUnstakeConfirmProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  unstakeList: IUnstakeListItem[]
+  unstakeList: IUnstakeListItem[];
+  claimStakeRequest: ClaimStakeRequest;
 }
 
 const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
   open,
   setOpen,
-  unstakeList
+  unstakeList,
+  claimStakeRequest
 }) => {
   const { cnctDecimals } = useToken();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const { connected } = useWallet();
+  const { sessionData } = useWalletContext();
+  const [cardanoApi, setCardanoApi] = useState<any>(undefined);
+
+
+  useEffect(() => {
+    const execute = async () => {
+      if (connected) {
+        const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
+        setCardanoApi(api);
+      }
+    };
+    execute();
+  }, [connected, sessionData?.user.walletType]);
 
   const handleClose = () => {
     setOpen(false);
@@ -36,7 +57,16 @@ const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
 
 
   const handleSubmit = async () => {
-    console.log('submitted')
+    if (connected) {
+      const unsignedTxCbor = await coinectaSyncApi.claimStakeTx(claimStakeRequest);
+      const witnesssetCbor = await cardanoApi.signTx(unsignedTxCbor, true);
+      const signedTxCbor = await coinectaSyncApi.finalizeTx({
+        txWitnessCbor: witnesssetCbor,
+        unsignedTxCbor: unsignedTxCbor
+      });
+      await cardanoApi.submitTx(signedTxCbor);
+      setOpen(false);
+    }
   }
 
   return (

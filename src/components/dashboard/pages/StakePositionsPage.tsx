@@ -43,12 +43,13 @@ const StakePositions: FC = () => {
   const theme = useTheme();
   const { cnctDecimals } = useToken();
   const { convertToUSD, convertCnctToADA } = usePrice();
+  const [isStakingKeysLoaded, setIsStakingKeysLoaded] = useState(false);
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })} ${key}`;
-  
+
   const processedPositions = useMemo(() => {
     return positions.map((position) => {
       return {
@@ -139,6 +140,7 @@ const StakePositions: FC = () => {
         const stakeKeys = balance.filter((asset) => asset.unit.indexOf(STAKING_KEY_POLICY) !== -1);
         const processedStakeKeys = stakeKeys.map((key) => key.unit.split('000de140').join(''));
         setStakeKeys(processedStakeKeys);
+        setIsStakingKeysLoaded(true);
       }
     };
     execute();
@@ -162,15 +164,22 @@ const StakePositions: FC = () => {
 
   const querySummary = useCallback(() => {
     const execute = async () => {
-      if (stakeKeys.length === 0) {
-        setSummary(null);
-        return;
-      };
-      const summary = await coinectaSyncApi.getStakeSummary(stakeKeys);
-      setSummary(summary);
+      if (connected && isStakingKeysLoaded) {
+        if (stakeKeys.length === 0) {
+          setSummary(null);
+        } else {
+          const summary = await coinectaSyncApi.getStakeSummary(stakeKeys);
+          if (summary.poolStats.CNCT === undefined) {
+            setSummary(null);
+          } else {
+            setSummary(summary);
+          }
+        }
+        setIsLoading(false);
+      }
     };
     execute();
-  }, [stakeKeys]);
+  }, [stakeKeys, connected, isStakingKeysLoaded]);
 
   useEffect(() => {
     querySummary();
@@ -250,6 +259,7 @@ const StakePositions: FC = () => {
         open={openUnstakeDialog}
         setOpen={setOpenUnstakeDialog}
         unstakeList={unstakeRowData}
+        claimStakeRequest={claimStakeRequest}
       />
     </Box>
   );
