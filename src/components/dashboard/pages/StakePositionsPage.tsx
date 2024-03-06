@@ -248,7 +248,7 @@ const StakePositions: FC = () => {
       </Grid>
       <StakePositionTable
         error={false}
-        data={processedPositions}
+        data={processedPositions.length > 0 && !isLoading ? processedPositions : fakeTrpcDashboardData.data}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={actions}
@@ -272,99 +272,43 @@ const fakeTrpcDashboardData = {
   data: [
     {
       name: 'CNCT',
-      total: 63000,
+      total: "63000",
       unlockDate: new Date(),
-      initial: 60000,
-      bonus: 3000,
-      apy: "21.6%"
+      initial: "60000",
+      bonus: "3000",
+      interest: "21.6%"
     },
     {
       name: 'CNCT',
-      total: 46000,
+      total: "63000",
       unlockDate: new Date(),
-      initial: 40000,
-      bonus: 6000,
-      apy: "32.2%"
+      initial: "60000",
+      bonus: "3000",
+      interest: "21.6%"
     },
     {
       name: 'CNCT',
-      total: 121660,
-      unlockDate: new Date(1718344201000),
-      initial: 86900,
-      bonus: 34760,
-      apy: "40%"
-    },
-    {
-      name: 'CNCT',
-      total: 63000,
+      total: "63000",
       unlockDate: new Date(),
-      initial: 60000,
-      bonus: 3000,
-      apy: "21.6%"
+      initial: "60000",
+      bonus: "3000",
+      interest: "21.6%"
     },
     {
       name: 'CNCT',
-      total: 46000,
+      total: "63000",
       unlockDate: new Date(),
-      initial: 40000,
-      bonus: 6000,
-      apy: "32.2%"
+      initial: "60000",
+      bonus: "3000",
+      interest: "21.6%"
     },
     {
       name: 'CNCT',
-      total: 121660,
-      unlockDate: new Date(1718344201000),
-      initial: 86900,
-      bonus: 34760,
-      apy: "40%"
-    },
-    {
-      name: 'CNCT',
-      total: 63000,
+      total: "63000",
       unlockDate: new Date(),
-      initial: 60000,
-      bonus: 3000,
-      apy: "21.6%"
+      initial: "60000",
+      bonus: "3000",
+      interest: "21.6%"
     },
-    {
-      name: 'CNCT',
-      total: 46000,
-      unlockDate: new Date(),
-      initial: 40000,
-      bonus: 6000,
-      apy: "32.2%"
-    },
-    {
-      name: 'CNCT',
-      total: 121660,
-      unlockDate: new Date(1718344201000),
-      initial: 86900,
-      bonus: 34760,
-      apy: "40%"
-    },
-    {
-      name: 'CNCT',
-      total: 63000,
-      unlockDate: new Date(),
-      initial: 60000,
-      bonus: 3000,
-      apy: "21.6%"
-    },
-    {
-      name: 'CNCT',
-      total: 46000,
-      unlockDate: new Date(),
-      initial: 40000,
-      bonus: 6000,
-      apy: "32.2%"
-    },
-    {
-      name: 'CNCT',
-      total: 121660,
-      unlockDate: new Date(1718344201000),
-      initial: 86900,
-      bonus: 34760,
-      apy: "40%"
-    }
   ]
 }

@@ -110,14 +110,14 @@ const StakeInput: FC<IStakeInputProps> = ({
               flexDirection: 'row',
               justifyContent: 'flex-end'
             }}>
-            <Typography sx={{ fontSize: '1rem!important', whiteSpace: 'nowrap' }}>
+            {/* <Typography sx={{ fontSize: '1rem!important', whiteSpace: 'nowrap' }}>
               Balance:&nbsp;
               {cnctBalance
                 ? <Box component="span" onClick={handleInputMax} sx={{ cursor: 'pointer' }}>
                   {cnctBalance.toLocaleString()}
                 </Box>
                 : '0'}
-            </Typography>
+            </Typography> */}
           </Box>
         </Box>
       </Box>
