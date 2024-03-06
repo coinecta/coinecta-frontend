@@ -56,9 +56,9 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const { name, wallet, connected } = useWallet()
-  const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined)
-  const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>()
+  const { wallet, connected } = useWallet();
+  const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined);
+  const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>();
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const [isSigning, setIsSigning] = useState<boolean>(false);
   const { sessionData } = useWalletContext();
@@ -77,7 +77,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
       }
     };
     execute();
-  }, [name, connected, sessionData?.user.walletType]);
+  }, [connected, sessionData?.user.walletType]);
 
   useEffect(() => {
     const execute = async () => {

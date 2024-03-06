@@ -37,19 +37,19 @@ const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { connected } = useWallet();
-  const { sessionData } = useWalletContext();
+  const { sessionData, sessionStatus } = useWalletContext();
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
 
 
   useEffect(() => {
     const execute = async () => {
-      if (connected) {
+      if (connected && sessionStatus === 'authenticated') {
         const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
         setCardanoApi(api);
       }
     };
     execute();
-  }, [connected, sessionData?.user.walletType]);
+  }, [connected, sessionData?.user.walletType, sessionStatus]);
 
   const handleClose = () => {
     setOpen(false);

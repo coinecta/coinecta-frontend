@@ -24,7 +24,6 @@ import { walletNameToId } from '@lib/walletsList';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
-  const { sessionStatus } = useWalletContext();
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
   const [redeemableRows, setRedeemableRows] = useState<Set<number>>(new Set());
   const [lockedRows, setLockedRows] = useState<Set<number>>(new Set());
@@ -38,7 +37,7 @@ const StakePositions: FC = () => {
   const [time, setTime] = useState<number>(0);
   const [positions, setPositions] = useState<StakePosition[]>([]);
   const [summary, setSummary] = useState<StakeSummary | null>(null);
-  const { sessionData } = useWalletContext();
+  const { sessionData, sessionStatus } = useWalletContext();
   const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>();
   const theme = useTheme();
   const { cnctDecimals } = useToken();
@@ -122,14 +121,14 @@ const StakePositions: FC = () => {
 
   useEffect(() => {
     const execute = async () => {
-      if (connected) {
+      if (connected && sessionStatus === 'authenticated') {
         const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
         const utxos = await api.getUtxos();
         setWalletUtxosCbor(utxos);
       }
     };
     execute();
-  }, [connected, sessionData?.user.walletType]);
+  }, [connected, sessionData?.user.walletType, sessionStatus]);
 
   useEffect(() => {
     const execute = async () => {
@@ -265,7 +264,7 @@ const StakePositions: FC = () => {
       </Grid>
       <StakePositionTable
         error={false}
-        data={processedPositions.length > 0 && !isLoading ? processedPositions : fakeTrpcDashboardData.data}
+        data={processedPositions.length > 0 ? processedPositions : (isLoading ? fakeTrpcDashboardData.data : [])}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={actions}
