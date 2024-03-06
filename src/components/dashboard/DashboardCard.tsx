@@ -1,6 +1,7 @@
 import React, { FC, ReactNode } from 'react';
 import { Box, Paper, SxProps, Theme } from '@mui/material';
 import { useWalletContext } from '@contexts/WalletContext';
+import { minHeight } from '@mui/system';
 
 interface DashboardCardProps {
   children?: ReactNode;
@@ -16,7 +17,7 @@ const DashboardCard: FC<DashboardCardProps> = ({ children, sx, center }) => {
     flexDirection: 'column',
     justifyContent: 'start',
     px: 2,
-    py: 3,
+    py: sessionStatus === 'loading' ? '60px' : 2,
     minHeight: '120px'
   };
 

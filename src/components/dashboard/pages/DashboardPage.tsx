@@ -134,7 +134,7 @@ const Dashboard: FC = () => {
                 <Typography align='center' variant='h5'>-</Typography>
                 <Typography sx={{ color: theme.palette.grey[500] }} align='center'>-</Typography>
               </Box>}
-            <Button disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/unlock-vested")}>
+            <Button disabled variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/unlock-vested")}>
               Unlock now
             </Button>
           </DashboardCard>
@@ -189,7 +189,7 @@ const Dashboard: FC = () => {
                 <Typography align='center' variant='h5'>-</Typography>
                 <Typography sx={{ color: theme.palette.grey[500] }} align='center'>-</Typography>
               </Box>}
-            <Button disabled={isLoading ? true : false} variant="contained" color="secondary" size="small" onClick={() => router.push("/dashboard/claim-tokens")}>
+            <Button disabled variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/claim-tokens")}>
               Claim now
             </Button>
           </DashboardCard>

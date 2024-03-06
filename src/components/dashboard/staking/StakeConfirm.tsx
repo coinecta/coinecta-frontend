@@ -183,7 +183,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
         <Button startIcon={<NamiLogo />} sx={{ display: isSigning ? 'none' : 'flex', flexGrow: 1 }} variant="outlined" color="secondary" onClick={handleSubmit} disabled={!connected}>
           Confirm stake
         </Button>
-        <Button startIcon={<AccountBalanceWalletOutlinedIcon />} sx={{ flexGrow: 1 }} variant='outlined' color='secondary' disabled={!connected}>Choose wallet</Button>
+        <Button startIcon={<AccountBalanceWalletOutlinedIcon />} sx={{ flexGrow: 1, display: isSigning ? 'none' : 'flex' }} variant='outlined' color='secondary' disabled={!connected}>Choose wallet</Button>
         <CircularProgress sx={{ display: isSigning ? 'block' : 'none' }} color='secondary' />
       </DialogActions>
     </Dialog>

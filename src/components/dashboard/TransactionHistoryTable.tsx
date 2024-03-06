@@ -27,6 +27,7 @@ import copy from 'copy-to-clipboard';
 import { useWallet } from '@meshsdk/react';
 import { coinectaSyncApi } from '@server/services/syncApi';
 import { TimeIcon } from '@mui/x-date-pickers';
+import DashboardCard from './DashboardCard';
 
 interface ITransactionHistoryTableProps<T> {
   title?: string;
@@ -206,6 +207,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
 
   if (error) return <div>Error loading</div>;
   return (
+
     <Box
       ref={tableRef}
       onMouseDown={onMouseDown}
@@ -238,114 +240,116 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
           </Typography>
         }
         {actions && <ActionBar actions={actions} />}
-        <Table>
-          <TableHead>
-            <TableRow sx={{
-              '& th': {
-                position: 'sticky',
-                top: actions ? '121px' : '71px',
-                zIndex: 2,
-                background: theme.palette.background.paper,
-              }
-            }}>
-              {columns.map((column) => {
-                if (column === "txHash" || column === "txIndex") return null;
-                return <TableCell key={String(column)}>
-                  {camelCaseToTitle(String(column))}
-                </TableCell>
-              })}
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
-              <TableRow key={index}
-                sx={{
-                  '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
-                  '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)' }
-                }}
-              >
-                {Object.keys(item).map((key, colIndex) => {
-                  if (key === "txHash" || key === "txIndex") return null;
-                  if (key === "status") {
+        <DashboardCard sx={{border: 'none', paddingLeft: '0', paddingRight: '0'}}>
+          <Table>
+            <TableHead>
+              <TableRow sx={{
+                '& th': {
+                  position: 'sticky',
+                  top: actions ? '121px' : '71px',
+                  zIndex: 2,
+                  background: theme.palette.background.paper,
+                }
+              }}>
+                {columns.map((column) => {
+                  if (column === "txHash" || column === "txIndex") return null;
+                  return <TableCell key={String(column)}>
+                    {camelCaseToTitle(String(column))}
+                  </TableCell>
+                })}
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
+                <TableRow key={index}
+                  sx={{
+                    '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
+                    '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)' }
+                  }}
+                >
+                  {Object.keys(item).map((key, colIndex) => {
+                    if (key === "txHash" || key === "txIndex") return null;
+                    if (key === "status") {
+                      return (
+                        <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                          {isLoading ?
+                            (<Skeleton>
+                              <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
+                            </Skeleton>) :
+                            <>
+                              {(item[key] === "Executed" &&
+                                <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' label="Executed" color='success' sx={{ width: '120px' }} />)}
+                              {(item[key] === "Pending" &&
+                                <Chip icon={<TimeIcon fontSize='small' />} variant='outlined' label="Pending" color='primary' sx={{ width: '120px' }} />)}
+                              {(item[key] === "Cancelled" &&
+                                <Chip icon={<ClearIcon fontSize='small' />} variant='outlined' label="Cancelled" color='error' sx={{ width: '120px' }} />)}
+                            </>
+                          }
+                        </TableCell>
+                      )
+                    }
+
+                    if (key === "actions") {
+                      return (
+                        <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                          {isLoading ?
+                            (<Box sx={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                              <Skeleton>
+                                <LaunchIcon fontSize='small' />
+                              </Skeleton>
+                              <Skeleton>
+                                <ContentCopyIcon fontSize='small' />
+
+                              </Skeleton>
+                            </Box>) :
+                            (<Box sx={{ display: 'flex', gap: '5px', marginTop: '8px' }}>
+                              <Tooltip title='View transaction details'>
+                                <IconButton href={item[key].transactionLink} size='small' target='_blank'>
+                                  <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title='Copy transaction link' >
+                                <IconButton size='small' onClick={() => { copy(item[key].transactionLink) }}>
+                                  <ContentCopyIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                                </IconButton>
+                              </Tooltip>
+                            </Box>)}
+                        </TableCell>)
+                    }
+
                     return (
                       <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                        {isLoading ?
-                          (<Skeleton>
-                            <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
-                          </Skeleton>) :
-                          <>
-                            {(item[key] === "Executed" &&
-                              <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' label="Executed" color='success' sx={{ width: '120px' }} />)}
-                            {(item[key] === "Pending" &&
-                              <Chip icon={<TimeIcon fontSize='small' />} variant='outlined' label="Pending" color='primary' sx={{ width: '120px' }} />)}
-                            {(item[key] === "Cancelled" &&
-                              <Chip icon={<ClearIcon fontSize='small' />} variant='outlined' label="Cancelled" color='error' sx={{ width: '120px' }} />)}
-                          </>
-                        }
+                        {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
                       </TableCell>
                     )
-                  }
-
-                  if (key === "actions") {
-                    return (
-                      <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                        {isLoading ?
-                          (<Box sx={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
-                            <Skeleton>
-                              <LaunchIcon fontSize='small' />
-                            </Skeleton>
-                            <Skeleton>
-                              <ContentCopyIcon fontSize='small' />
-                              
-                            </Skeleton>
-                          </Box>) :
-                          (<Box sx={{ display: 'flex', gap: '5px', marginTop: '8px' }}>
-                            <Tooltip title='View transaction details'>
-                              <IconButton href={item[key].transactionLink} size='small' target='_blank'>
-                                <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title='Copy transaction link' >
-                              <IconButton size='small' onClick={() => { copy(item[key].transactionLink) }}>
-                                <ContentCopyIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                              </IconButton>
-                            </Tooltip>
-                          </Box>)}
-                      </TableCell>)
-                  }
-
-                  return (
-                    <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                      {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
-                    </TableCell>
-                  )
-                })}
-                <TableCell sx={{ borderBottom: 'none' }}>
-                  {item.status === "Pending" && !isLoading && <>
-                    <Button disabled={isLoading && (walletUtxosCbor?.length ?? 0 > 0)} key={index} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex)}>
-                      Cancel
-                    </Button>
-                  </>}
-                </TableCell>
+                  })}
+                  <TableCell sx={{ borderBottom: 'none' }}>
+                    {item.status === "Pending" && !isLoading && <>
+                      <Button disabled={isLoading && (walletUtxosCbor?.length ?? 0 > 0)} key={index} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex)}>
+                        Cancel
+                      </Button>
+                    </>}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={rowsPerPageOptions}
+                  component={'td'}
+                  colSpan={6}
+                  count={data.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  disabled={isLoading} />
               </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={rowsPerPageOptions}
-                component={'td'}
-                colSpan={6}
-                count={data.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                disabled={isLoading} />
-            </TableRow>
-          </TableFooter>
-        </Table>
+            </TableFooter>
+          </Table>
+        </DashboardCard>
       </Paper>
     </Box>
   );
