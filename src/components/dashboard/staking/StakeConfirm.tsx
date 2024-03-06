@@ -20,7 +20,7 @@ import { AddStakeRequest, coinectaSyncApi } from '@server/services/syncApi';
 import { parseTokenFromString } from '@lib/utils/assets';
 import { useToken } from '@components/hooks/useToken';
 import NamiLogo from '@components/svgs/NamiLogo';
-import GithubIcon from '@components/svgs/GithubIcon';
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 
 interface IStakeConfirmProps {
   open: boolean;
@@ -180,10 +180,10 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
         </Alert>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center', mb: 1 }}>
-        <Button startIcon={<NamiLogo />} sx={{ display: isSigning ? 'none' : 'flex', flexGrow: 1 }} variant="contained" color="secondary" onClick={handleSubmit} disabled={!connected}>
+        <Button startIcon={<NamiLogo />} sx={{ display: isSigning ? 'none' : 'flex', flexGrow: 1 }} variant="outlined" color="secondary" onClick={handleSubmit} disabled={!connected}>
           Confirm stake
         </Button>
-        <Button sx={{ flexGrow: 1 }} variant='contained' color='secondary' disabled={!connected}>Choose wallets</Button>
+        <Button startIcon={<AccountBalanceWalletOutlinedIcon />} sx={{ flexGrow: 1 }} variant='outlined' color='secondary' disabled={!connected}>Choose wallet</Button>
         <CircularProgress sx={{ display: isSigning ? 'block' : 'none' }} color='secondary' />
       </DialogActions>
     </Dialog>
