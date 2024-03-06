@@ -219,73 +219,80 @@ const StakePositionTable = <T extends Record<string, any>>({
             {title}
           </Typography>
         }
-        <DashboardCard sx={{border: 'none', paddingLeft: '0', paddingRight: '0'}}>
-          {actions && <ActionBar isDisabled={isLoading} actions={actions} />}
-          <Table>
-            <TableHead>
-              <TableRow sx={{
-                '& th': {
-                  position: 'sticky',
-                  top: actions ? '121px' : '71px',
-                  zIndex: 2,
-                  background: theme.palette.background.paper,
-                }
-              }}>
-                {actions && selectedRows && <TableCell padding="checkbox">
-                  <Checkbox
-                    indeterminate={someSelectableSelected}
-                    checked={allSelectableSelected}
-                    onChange={handleSelectAllRows}
-                    color="secondary"
-                  />
-                </TableCell>}
-
-                {columns.map((column) => (
-                  <TableCell key={String(column)}>
-                    {camelCaseToTitle(String(column))}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
-                <TableRow key={index}
-                  sx={{
-                    '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
-                    '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)' }
-                  }}
-                >
-                  {actions && selectedRows && <TableCell padding="checkbox" sx={{ borderBottom: 'none' }}>
+        <DashboardCard sx={{ border: 'none', paddingLeft: '0', paddingRight: '0' }}>
+          {actions && data.length > 0 && <ActionBar isDisabled={isLoading} actions={actions} />}
+          {data.length > 0 ?
+            <Table>
+              <TableHead>
+                <TableRow sx={{
+                  '& th': {
+                    position: 'sticky',
+                    top: actions ? '121px' : '71px',
+                    zIndex: 2,
+                    background: theme.palette.background.paper,
+                  }
+                }}>
+                  {actions && data.length > 0 && selectedRows && <TableCell padding="checkbox">
                     <Checkbox
-                      checked={selectedRows.has(index)}
-                      onChange={() => handleSelectRow(index)}
+                      indeterminate={someSelectableSelected}
+                      checked={allSelectableSelected}
+                      onChange={handleSelectAllRows}
                       color="secondary"
-                      disabled={item.unlockDate > new Date()}
                     />
                   </TableCell>}
-                  {Object.keys(item).map((key, colIndex) => (
-                    <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                      {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
+
+                  {columns.map((column) => (
+                    <TableCell key={String(column)}>
+                      {camelCaseToTitle(String(column))}
                     </TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  component={"td"}
-                  rowsPerPageOptions={rowsPerPageOptions}
-                  colSpan={7}
-                  count={data.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  disabled={isLoading} />
-              </TableRow>
-            </TableFooter>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
+                  <TableRow key={index}
+                    sx={{
+                      '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
+                      '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)' }
+                    }}
+                  >
+                    {actions && selectedRows && <TableCell padding="checkbox" sx={{ borderBottom: 'none' }}>
+                      <Checkbox
+                        checked={selectedRows.has(index)}
+                        onChange={() => handleSelectRow(index)}
+                        color="secondary"
+                        disabled={item.unlockDate > new Date()}
+                      />
+                    </TableCell>}
+                    {Object.keys(item).map((key, colIndex) => (
+                      <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                        {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TablePagination
+                    component={"td"}
+                    rowsPerPageOptions={rowsPerPageOptions}
+                    colSpan={7}
+                    count={data.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    disabled={isLoading} />
+                </TableRow>
+              </TableFooter>
+            </Table> :
+            <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Box component={'p'}>
+                No data available
+              </Box>
+            </Box>
+          }
         </DashboardCard>
       </Paper>
     </Box>

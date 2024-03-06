@@ -17,7 +17,7 @@ const DashboardCard: FC<DashboardCardProps> = ({ children, sx, center }) => {
     flexDirection: 'column',
     justifyContent: 'start',
     px: 2,
-    py: sessionStatus === 'loading' ? '60px' : 2,
+    py: sessionStatus === 'unauthenticated' ? '60px' : 2,
     minHeight: '120px'
   };
 

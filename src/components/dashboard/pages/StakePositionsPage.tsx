@@ -219,30 +219,47 @@ const StakePositions: FC = () => {
             justifyContent: 'center',
             py: 4
           }}>
-            <Typography>
-              Total value staked
-            </Typography>
-            {isLoading ?
-              <Box sx={{ mb: 1 }}>
-                <Skeleton animation='wave' width={100} />
-                <Skeleton animation='wave' width={100} />
-              </Box> :
-              <Box sx={{ mb: 1 }}>
-                <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0")), '₳')}</Typography>
-                <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
-              </Box>}
+            {summary === null ? (
+              <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box component={'p'}>
+                  No data available
+                </Box>
+              </Box>
+            ) :
+              (<>
+                <Typography>Total value staked</Typography>
+                {isLoading ?
+                  <Box sx={{ mb: 1 }}>
+                    <Skeleton animation='wave' width={100} />
+                    <Skeleton animation='wave' width={100} />
+                  </Box> :
+                  <Box sx={{ mb: 1 }}>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0")), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
+                  </Box>}
+              </>
+              )
+            }
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={8}>
           <DashboardCard center sx={{
             justifyContent: sessionStatus === 'unauthenticated' ? 'center' : 'space-between',
           }}>
-            <DataSpread
-              title="CNCT"
-              data={formatNumber(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), '')}
-              usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), "CNCT"), '')}`}
-              isLoading={isLoading}
-            />
+            {summary === null ?
+              <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box component={'p'}>
+                  No data available
+                </Box>
+              </Box> :
+              <DataSpread
+                title="CNCT"
+                margin={0} // last item needs margin 0, the rest don't include the margin prop
+                data={formatNumber(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), '')}
+                usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), "CNCT"), '')}`}
+                isLoading={isLoading}
+              />
+            }
           </DashboardCard>
         </Grid>
       </Grid>
