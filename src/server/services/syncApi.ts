@@ -113,6 +113,7 @@ export type CancelStakeRequest = {
 export type ClaimStakeRequest = {
   stakeUtxoOutputReferences: OutputReference[];
   walletUtxoListCbor: string[];
+  changeAddress: string;
 }
 
 export const coinectaSyncApi = {

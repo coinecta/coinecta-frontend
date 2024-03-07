@@ -43,6 +43,7 @@ const StakePositions: FC = () => {
   const { cnctDecimals } = useToken();
   const { convertToUSD, convertCnctToADA } = usePrice();
   const [isStakingKeysLoaded, setIsStakingKeysLoaded] = useState(false);
+  const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined);
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
@@ -132,6 +133,15 @@ const StakePositions: FC = () => {
 
   useEffect(() => {
     const execute = async () => {
+      if (connected) {
+        setChangeAddress(await wallet.getChangeAddress());
+      }
+    };
+    execute();
+  }, [connected, wallet]);
+
+  useEffect(() => {
+    const execute = async () => {
       const STAKING_KEY_POLICY = process.env.STAKING_KEY_POLICY;
 
       if (connected) {
@@ -194,10 +204,10 @@ const StakePositions: FC = () => {
           index: position.txIndex
         }
       }),
-      walletUtxoListCbor: walletUtxosCbor
+      walletUtxoListCbor: walletUtxosCbor,
+      changeAddress: changeAddress
     } as ClaimStakeRequest
-  }, [selectedPositions, walletUtxosCbor]);
-
+  }, [changeAddress, selectedPositions, walletUtxosCbor]);
 
   const actions: IActionBarButton[] = [
     {

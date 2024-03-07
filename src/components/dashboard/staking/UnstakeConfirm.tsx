@@ -36,7 +36,7 @@ const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const { connected } = useWallet();
+  const { connected, wallet } = useWallet();
   const { sessionData, sessionStatus } = useWalletContext();
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
 
