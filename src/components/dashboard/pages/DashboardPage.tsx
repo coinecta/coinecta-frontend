@@ -21,6 +21,7 @@ import { trpc } from '@lib/utils/trpc';
 import { BrowserWallet } from '@meshsdk/core';
 import { useCardano } from '@lib/utils/cardano';
 import { select } from 'd3';
+import { useWalletContext } from '@contexts/WalletContext';
 
 const Dashboard: FC = () => {
   const router = useRouter();
@@ -31,10 +32,14 @@ const Dashboard: FC = () => {
   const [time, setTime] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isStakingKeysLoaded, setIsStakingKeysLoaded] = useState(false);
-  const { selectedAddresses } = useCardano();
+  const { selectedAddresses } = useWalletContext();
   const getWallets = trpc.user.getWallets.useQuery()
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
   const theme = useTheme();
+
+  useEffect(() => {
+    console.log('Selected addresses updated:', selectedAddresses);
+  }, [selectedAddresses]);
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
