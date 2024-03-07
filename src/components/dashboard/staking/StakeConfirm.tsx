@@ -89,6 +89,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   const { cnctDecimals } = useToken();
 
   const handleSubmit = async () => {
+    setIsSigning(true);
     try {
       await processTxWithApi(name, cardanoApi);
       setOpen(false);
@@ -127,7 +128,6 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
 
   const onChose = async (walletAddress: string) => {
     setOpenChooseWalletDialog(false);
-    setIsSigning(true);
     try {
       const wallet = userWallets?.find(w => w.changeAddress === walletAddress);
       if(wallet !== undefined) {
@@ -142,7 +142,6 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
       console.error('Error adding stake', ex);
       onTransactionFailed();
     }
-    setIsSigning(false);
   }
 
   return (
