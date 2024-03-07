@@ -9,6 +9,7 @@ import {
   useTheme,
   Button,
   IconButton,
+  CircularProgress,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DataSpread from '@components/DataSpread';
@@ -18,19 +19,24 @@ import { useWallet } from '@meshsdk/react';
 import { walletNameToId } from '@lib/walletsList';
 import { useWalletContext } from '@contexts/WalletContext';
 import { ClaimStakeRequest, coinectaSyncApi } from '@server/services/syncApi';
+import { error } from 'console';
 
-interface IUnstakeConfirmProps {
+interface IRedeemConfirmProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  unstakeList: IUnstakeListItem[];
+  redeemList: IRedeemListItem[];
   claimStakeRequest: ClaimStakeRequest;
+  onRedeemSuccessful: (status: boolean) => void;
+  onRedeemFailed: (status: boolean) => void;
 }
 
-const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
+const RedeemConfirm: FC<IRedeemConfirmProps> = ({
   open,
   setOpen,
-  unstakeList,
-  claimStakeRequest
+  redeemList,
+  claimStakeRequest,
+  onRedeemSuccessful,
+  onRedeemFailed
 }) => {
   const { cnctDecimals } = useToken();
   const theme = useTheme();
@@ -39,6 +45,7 @@ const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
   const { connected, wallet } = useWallet();
   const { sessionData, sessionStatus } = useWalletContext();
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
+  const [isSigning, setIsSigning] = useState(false);
 
 
   useEffect(() => {
@@ -57,16 +64,24 @@ const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
 
 
   const handleSubmit = async () => {
-    if (connected) {
-      const unsignedTxCbor = await coinectaSyncApi.claimStakeTx(claimStakeRequest);
-      const witnesssetCbor = await cardanoApi.signTx(unsignedTxCbor, true);
-      const signedTxCbor = await coinectaSyncApi.finalizeTx({
-        txWitnessCbor: witnesssetCbor,
-        unsignedTxCbor: unsignedTxCbor
-      });
-      await cardanoApi.submitTx(signedTxCbor);
-      setOpen(false);
+    setIsSigning(true);
+    try {
+      if (connected) {
+        const unsignedTxCbor = await coinectaSyncApi.claimStakeTx(claimStakeRequest);
+        const witnesssetCbor = await cardanoApi.signTx(unsignedTxCbor, true);
+        const signedTxCbor = await coinectaSyncApi.finalizeTx({
+          txWitnessCbor: witnesssetCbor,
+          unsignedTxCbor: unsignedTxCbor
+        });
+        await cardanoApi.submitTx(signedTxCbor);
+        setOpen(false);
+        onRedeemSuccessful(true)
+      }
+    } catch (e) {
+      console.log(e);
+      onRedeemFailed(true);
     }
+    setIsSigning(false);
   }
 
   return (
@@ -92,7 +107,7 @@ const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
           fontSize: "32px",
         }}
       >
-        Confirm Unstake
+        Confirm Redeem
       </DialogTitle>
       <IconButton
         aria-label="close"
@@ -110,7 +125,7 @@ const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
         <Typography sx={{ mb: 2 }}>
           You are unstaking the following position(s):
         </Typography>
-        {unstakeList.map((item, i) => (
+        {redeemList.map((item, i) => (
           <DataSpread
             key={`${item.currency}-${i}`}
             title={item.currency}
@@ -119,13 +134,13 @@ const UnstakeConfirm: FC<IUnstakeConfirmProps> = ({
         ))}
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center', mb: 1 }}>
-        <Button variant="contained" color="secondary" onClick={handleSubmit}>
-          {/* {`Submit with ${alternateWalletType?.name || sessionData?.user.walletType} wallet`} */}
-          {`Unstake`}
+        <Button sx={{ display: isSigning ? "none" : "block" }} variant="contained" color="secondary" onClick={handleSubmit}>
+          Redeem
         </Button>
+        <CircularProgress sx={{ display: isSigning ? "block" : "none" }} color='secondary' />
       </DialogActions>
     </Dialog>
   );
 };
 
-export default UnstakeConfirm;
+export default RedeemConfirm;

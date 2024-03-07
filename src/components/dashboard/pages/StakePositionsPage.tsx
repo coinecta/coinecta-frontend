@@ -1,9 +1,9 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Alert,
   Box,
-  Button,
-  Divider,
   Skeleton,
+  Snackbar,
   Typography,
   useTheme
 } from '@mui/material';
@@ -14,22 +14,27 @@ import { IActionBarButton } from '../ActionBar';
 import DashboardHeader from '../DashboardHeader';
 import { useWallet } from '@meshsdk/react';
 import { ClaimStakeRequest, StakePosition, StakeSummary, coinectaSyncApi } from '@server/services/syncApi';
-import UnstakeConfirm from '../staking/UnstakeConfirm';
+import RedeemConfirm from '../staking/RedeemConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
 import { useWalletContext } from '@contexts/WalletContext';
 import { useToken } from '@components/hooks/useToken';
 import { formatTokenWithDecimals } from '@lib/utils/assets';
 import { usePrice } from '@components/hooks/usePrice';
 import { walletNameToId } from '@lib/walletsList';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
-  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
+  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
   const [redeemableRows, setRedeemableRows] = useState<Set<number>>(new Set());
   const [lockedRows, setLockedRows] = useState<Set<number>>(new Set());
-  const [openUnstakeDialog, setOpenUnstakeDialog] = useState(false)
-  const [unstakeRowData, setUnstakeRowData] = useState<IUnstakeListItem[]>([])
+  const [openRedeemDialog, setOpenRedeemDialog] = useState(false)
+  const [redeemRowData, setRedeemRowData] = useState<IRedeemListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSelectedPositionsEmpty, setIsSelectedPositionsEmpty] = useState(false);
+  const [isRedeemSuccessful, setIsRedeemSuccessful] = useState(false);
+  const [isRedeemFailed, setIsRedeemFailed] = useState(false);
 
   /* Staking API */
   const [stakeKeys, setStakeKeys] = useState<string[]>([]);
@@ -82,7 +87,7 @@ const StakePositions: FC = () => {
 
     console.log(newData);
 
-    setUnstakeRowData(newData);
+    setRedeemRowData(newData);
   }, [selectedRows, redeemableRows, positions])
 
   useEffect(() => {
@@ -107,8 +112,11 @@ const StakePositions: FC = () => {
   }, [processedPositions, selectedRows]);
 
   const handleRedeem = () => {
-    if (selectedPositions.length === 0) return;
-    setOpenUnstakeDialog(true)
+    if (selectedPositions.length === 0) {
+      setIsSelectedPositionsEmpty(true);
+      return;
+    }
+    setOpenRedeemDialog(true);
   }
 
 
@@ -199,7 +207,7 @@ const StakePositions: FC = () => {
   const claimStakeRequest = useMemo(() => {
     return {
       stakeUtxoOutputReferences: selectedPositions.map((position) => {
-        
+
         if (position === undefined) {
           return {
             txHash: "",
@@ -224,6 +232,9 @@ const StakePositions: FC = () => {
       handler: handleRedeem
     },
   ]
+
+  const handleSuccessSnackbarClose = () => setIsRedeemSuccessful(false);
+  const handleFailedSnackbarClose = () => setIsRedeemFailed(false);
 
   return (
     <Box sx={{ position: 'relative' }} ref={parentRef}>
@@ -289,12 +300,49 @@ const StakePositions: FC = () => {
         parentContainerRef={parentRef}
         isLoading={isLoading}
       />
-      <UnstakeConfirm
-        open={openUnstakeDialog}
-        setOpen={setOpenUnstakeDialog}
-        unstakeList={unstakeRowData}
+      <RedeemConfirm
+        open={openRedeemDialog}
+        setOpen={setOpenRedeemDialog}
+        redeemList={redeemRowData}
         claimStakeRequest={claimStakeRequest}
+        onRedeemFailed={(status) => setIsRedeemFailed(status)}
+        onRedeemSuccessful={(status) => setIsRedeemSuccessful(status)}
       />
+      <Snackbar open={isRedeemSuccessful} autoHideDuration={6000} onClose={handleSuccessSnackbarClose}>
+        <Alert
+          onClose={handleSuccessSnackbarClose}
+          severity="success"
+          variant="outlined"
+          sx={{ width: '100%' }}
+          icon={<TaskAltIcon fontSize='medium' />}
+        >
+          Redeem transaction submitted
+        </Alert>
+      </Snackbar>
+      <Snackbar open={isRedeemFailed} autoHideDuration={6000} onClose={handleFailedSnackbarClose}>
+        <Alert
+          onClose={handleFailedSnackbarClose}
+          severity="error"
+          variant="outlined"
+          sx={{ width: '100%' }}
+          icon={<ErrorOutlineOutlinedIcon fontSize='medium' />}
+        >
+          Redeem transaction failed
+        </Alert>
+      </Snackbar>
+      {selectedPositions.length === 0 &&
+        <Snackbar open={isSelectedPositionsEmpty} autoHideDuration={6000} onClose={() => setIsSelectedPositionsEmpty(false)}>
+          <Alert
+            onClose={() => setIsSelectedPositionsEmpty(false)}
+            severity="error"
+            variant="outlined"
+            sx={{ width: '100%' }}
+            icon={<ErrorOutlineOutlinedIcon fontSize='medium' />}
+          >
+            Select the positions to redeem
+          </Alert>
+        </Snackbar>
+      }
     </Box>
   );
 };
