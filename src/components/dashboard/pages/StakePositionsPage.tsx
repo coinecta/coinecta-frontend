@@ -53,7 +53,7 @@ const StakePositions: FC = () => {
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
-  })} ${key}`;
+  })}${key !== '' && key != null ? ` ${key}` : ''}`;
 
   const processedPositions = useMemo(() => {
     return positions.map((position) => {
