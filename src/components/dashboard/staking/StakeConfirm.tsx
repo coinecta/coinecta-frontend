@@ -23,6 +23,7 @@ import NamiLogo from '@components/svgs/NamiLogo';
 import { useWalletContext } from '@contexts/WalletContext';
 import { walletNameToId } from '@lib/walletsList';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import ChooseWallet from './ChooseWallet';
 
 interface IStakeConfirmProps {
   open: boolean;
@@ -61,6 +62,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>()
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const [isSigning, setIsSigning] = useState<boolean>(false);
+  const [openChooseWalletDialog, setOpenChooseWalletDialog] = useState(false);
   const { sessionData } = useWalletContext();
 
   const handleClose = () => {
@@ -121,74 +123,85 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
     setIsSigning(false);
   }
 
-
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullScreen={fullScreen}
-      PaperProps={{
-        variant: 'outlined',
-        elevation: 0
-      }}
-      sx={{
-        '& .MuiBackdrop-root': {
-          backdropFilter: 'blur(3px)',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)'
-        }
-      }}
-    >
-      <DialogTitle
+    <>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        fullScreen={fullScreen}
+        PaperProps={{
+          variant: 'outlined',
+          elevation: 0
+        }}
         sx={{
-          textAlign: "center",
-          fontWeight: "800",
-          fontSize: "32px",
+          '& .MuiBackdrop-root': {
+            backdropFilter: 'blur(3px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          }
         }}
       >
-        Confirm Add Stake
-      </DialogTitle>
-      <IconButton
-        aria-label="close"
-        onClick={handleClose}
-        sx={{
-          position: 'absolute',
-          right: 8,
-          top: 8,
-          color: (theme) => theme.palette.grey[500],
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
-      <DialogContent sx={{ minWidth: '350px', maxWidth: !fullScreen ? '460px' : null }}>
-        <DataSpread
-          title="Staked Amount"
-          data={`${Number(paymentAmount).toLocaleString(undefined, { maximumFractionDigits: 1 })} ${paymentCurrency}`}
-        />
-        <DataSpread
-          title="Total after unlock"
-          data={`${total} ${paymentCurrency}`}
-        />
-        <DataSpread
-          title="Unlock Date"
-          margin={5}
-          data={calculateFutureDateMonths(duration)}
-        />
-        <Alert
-          variant="outlined"
-          severity="warning"
-          sx={{ justifyContent: 'center', alignItems: 'center' }}
+        <DialogTitle
+          sx={{
+            textAlign: "center",
+            fontWeight: "800",
+            fontSize: "32px",
+          }}
         >
-          <span style={{ fontWeight: 700 }}>It is impossible to unlock your tokens early!</span> Don&apos;t stake if you may need them before the unlock date.
-        </Alert>
-      </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center', mb: 1 }}>
-        <Button startIcon={<NamiLogo />} sx={{ display: isSigning ? 'none' : 'flex', flexGrow: 1 }} variant="outlined" color="secondary" onClick={handleSubmit} disabled={!connected}>
-          Confirm stake
-        </Button>
-        <Button startIcon={<AccountBalanceWalletOutlinedIcon />} sx={{ flexGrow: 1, display: isSigning ? 'none' : 'flex' }} variant='outlined' color='secondary' disabled={!connected}>Choose wallet</Button>
-        <CircularProgress sx={{ display: isSigning ? 'block' : 'none' }} color='secondary' />
-      </DialogActions>
-    </Dialog>
+          Confirm Add Stake
+        </DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <DialogContent sx={{ minWidth: '350px', maxWidth: !fullScreen ? '460px' : null }}>
+          <DataSpread
+            title="Staked Amount"
+            data={`${Number(paymentAmount).toLocaleString(undefined, { maximumFractionDigits: 1 })} ${paymentCurrency}`}
+          />
+          <DataSpread
+            title="Total after unlock"
+            data={`${total} ${paymentCurrency}`}
+          />
+          <DataSpread
+            title="Unlock Date"
+            margin={5}
+            data={calculateFutureDateMonths(duration)}
+          />
+          <Alert
+            variant="outlined"
+            severity="warning"
+            sx={{ justifyContent: 'center', alignItems: 'center' }}
+          >
+            <span style={{ fontWeight: 700 }}>It is impossible to unlock your tokens early!</span> Don&apos;t stake if you may need them before the unlock date.
+          </Alert>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center', mb: 1 }}>
+          <Button startIcon={<NamiLogo />} sx={{ display: isSigning ? 'none' : 'flex', flexGrow: 1 }} variant="outlined" color="secondary" onClick={handleSubmit} disabled={!connected}>
+            Confirm stake
+          </Button>
+          <Button
+            startIcon={<AccountBalanceWalletOutlinedIcon />}
+            sx={{ flexGrow: 1, display: isSigning ? 'none' : 'flex' }}
+            variant='outlined'
+            color='secondary'
+            disabled={!connected}
+            onClick={() => setOpenChooseWalletDialog(true)}
+          >
+            Choose wallet
+          </Button>
+          <CircularProgress sx={{ display: isSigning ? 'block' : 'none' }} color='secondary' />
+        </DialogActions>
+      </Dialog>
+      <ChooseWallet open={openChooseWalletDialog} setOpen={setOpenChooseWalletDialog} />
+    </>
   );
 };
 
