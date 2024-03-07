@@ -56,7 +56,7 @@ const ChooseWallet: FC<ChooseWalletProps> = ({ open, setOpen }) => {
       <DialogContent>
         {fakeWalletsData.map((wallet, i) => {
           return (
-            <ConnectedWalletItem wallet={wallet} key={i} endIcon={<ChevronRightIcon sx={{ width: '20px', height: '20px' }} />} />
+            <ConnectedWalletItem handleButtonClick={handleClose} handleEndIconClick={handleClose} wallet={wallet} key={i} endIcon={<ChevronRightIcon sx={{ width: '20px', height: '20px' }} />} />
           )
         })}
       </DialogContent>
