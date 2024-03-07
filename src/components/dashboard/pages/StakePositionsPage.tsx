@@ -236,7 +236,7 @@ const StakePositions: FC = () => {
             justifyContent: 'center',
             py: 4
           }}>
-            {summary === null ? (
+            {summary === null && !isLoading ? (
               <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Box component={'p'}>
                   No data available
@@ -263,7 +263,7 @@ const StakePositions: FC = () => {
           <DashboardCard center sx={{
             justifyContent: sessionStatus === 'unauthenticated' ? 'center' : 'space-between',
           }}>
-            {summary === null ?
+            {summary === null && !isLoading ?
               <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Box component={'p'}>
                   No data available
