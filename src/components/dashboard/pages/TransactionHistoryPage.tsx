@@ -15,6 +15,7 @@ import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import { useWalletContext } from '@contexts/WalletContext';
 
 const TransactionHistory: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -26,12 +27,12 @@ const TransactionHistory: FC = () => {
   const [totalRequests, setTotalRequests] = useState<number>(0);
   const [isCancellationSuccessful, setIsCancellationSuccessful] = useState<boolean>(false);
   const [isCancellationFailed, setIsCancellationFailed] = useState<boolean>(false);
+  const { selectedAddresses } = useWalletContext();
 
   useEffect(() => {
     const execute = async () => {
       if (connected) {
-        const addresses = await wallet?.getUsedAddresses();
-        const response = await coinectaSyncApi.getStakeRequests(addresses);
+        const response = await coinectaSyncApi.getStakeRequests(selectedAddresses);
         setStakeRequestResponse(response);
         setStakeRequests(response.data);
         setTotalRequests(response.total);
@@ -39,7 +40,7 @@ const TransactionHistory: FC = () => {
       }
     };
     execute();
-  }, [wallet, connected]);
+  }, [wallet, connected, selectedAddresses]);
 
   const { cnctDecimals } = useToken();
 

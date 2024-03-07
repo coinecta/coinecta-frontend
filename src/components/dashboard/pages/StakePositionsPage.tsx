@@ -23,6 +23,8 @@ import { usePrice } from '@components/hooks/usePrice';
 import { walletNameToId } from '@lib/walletsList';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import { trpc } from '@lib/utils/trpc';
+import { BrowserWallet } from '@meshsdk/core';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -49,6 +51,10 @@ const StakePositions: FC = () => {
   const { convertToUSD, convertCnctToADA } = usePrice();
   const [isStakingKeysLoaded, setIsStakingKeysLoaded] = useState(false);
   const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined);
+  const { selectedAddresses } = useWalletContext();
+
+  const getWallets = trpc.user.getWallets.useQuery()
+  const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
@@ -144,34 +150,25 @@ const StakePositions: FC = () => {
 
   useEffect(() => {
     const execute = async () => {
-      const STAKING_KEY_POLICY = process.env.STAKING_KEY_POLICY;
-
       if (connected) {
-        const balance = await wallet.getBalance();
-        const stakeKeys = balance.filter((asset) => asset.unit.indexOf(STAKING_KEY_POLICY) !== -1);
-        const processedStakeKeys = stakeKeys.map((key) => key.unit.split('000de140').join(''));
-        setStakeKeys(processedStakeKeys);
+        const STAKING_KEY_POLICY = process.env.STAKING_KEY_POLICY;
+        if (userWallets === undefined || userWallets === null) return;
+        const stakeKeysPromises = userWallets.map(async userWallet => {
+          if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
+          const browserWallet = await BrowserWallet.enable(userWallet.type);
+          const balance = await browserWallet.getBalance();
+          const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
+          const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
+          return processedStakeKeys;
+        });
+        const stakeKeysArrays = await Promise.all(stakeKeysPromises);
+        const allStakeKeys = stakeKeysArrays.flat();
+        setStakeKeys(allStakeKeys);
         setIsStakingKeysLoaded(true);
       }
     };
     execute();
-  }, [wallet, connected, time]);
-
-  const queryPositions = useCallback(() => {
-    const execute = async () => {
-      if (stakeKeys.length === 0) {
-        setPositions([]);
-        return;
-      }
-      const positions = await coinectaSyncApi.getStakePositions(stakeKeys);
-      setPositions(positions);
-    };
-    execute();
-  }, [stakeKeys]);
-
-  useEffect(() => {
-    queryPositions();
-  }, [queryPositions]);
+  }, [wallet, connected, time, userWallets, selectedAddresses]);
 
   const querySummary = useCallback(() => {
     const execute = async () => {
@@ -195,6 +192,22 @@ const StakePositions: FC = () => {
   useEffect(() => {
     querySummary();
   }, [querySummary]);
+
+  const queryPositions = useCallback(() => {
+    const execute = async () => {
+      if (stakeKeys.length === 0) {
+        setPositions([]);
+        return;
+      }
+      const positions = await coinectaSyncApi.getStakePositions(stakeKeys);
+      setPositions(positions);
+    };
+    execute();
+  }, [stakeKeys]);
+
+  useEffect(() => {
+    queryPositions();
+  }, [queryPositions]);
 
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
 
