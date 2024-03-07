@@ -121,8 +121,8 @@ const AddStakePage: FC = () => {
     }
   };
 
-  const handleTransactionSubmitted = (status: boolean) => setIsStakeTransactionSubmitted(status);
-  const handleTransactionFailed = (status: boolean) => setIsStakeTransactionFailed(status)
+  const handleTransactionSubmitted = () => setIsStakeTransactionSubmitted(true);
+  const handleTransactionFailed = () => setIsStakeTransactionFailed(true);
   const handleSuccessSnackbarClose = () => setIsStakeTransactionSubmitted(false);
   const handleFailedSnackbarClose = () => setIsStakeTransactionFailed(false);
 

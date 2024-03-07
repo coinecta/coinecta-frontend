@@ -2,24 +2,19 @@ import { getShorterAddress } from "@lib/utils/general";
 import { Avatar, useTheme, Box, Button, IconButton } from "@mui/material";
 import { FC } from "react";
 
-interface WalletData extends TWalletListItem {
-    address: string;
-}
-
 interface ConnectedWalletItemProps {
-    wallet: WalletData;
+    wallet: TWalletListItem & { address: string };
     key: number;
     endIcon?: React.ReactNode;
-    handleButtonClick?: () => void;
-    handleEndIconClick?: () => void;
+    handleButtonClick?: (address: string) => void;
 }
 
-export const ConnectedWalletItem: FC<ConnectedWalletItemProps> = ({ wallet, key, endIcon: EndIcon, handleEndIconClick, handleButtonClick }) => {
+export const ConnectedWalletItem: FC<ConnectedWalletItemProps> = ({ wallet, key, endIcon: EndIcon, handleButtonClick }) => {
     const theme = useTheme();
 
     return (
         <Button
-            onClick={handleButtonClick}
+            onClick={() => handleButtonClick ? handleButtonClick(wallet.address) : null}
             key={key}
             sx={{
                 p: '3px 12px',
@@ -58,7 +53,7 @@ export const ConnectedWalletItem: FC<ConnectedWalletItemProps> = ({ wallet, key,
             </Box>
             <Box sx={{ display: EndIcon ? "block" : "none" }}>
                 <IconButton
-                    onClick={handleEndIconClick}>
+                    onClick={() => handleButtonClick ? handleButtonClick(wallet.address) : null}>
                     {EndIcon}
                 </IconButton>
             </Box>

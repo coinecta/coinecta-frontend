@@ -21,6 +21,7 @@ interface WalletState {
   wallet: Wallet;
   sessionData: Session | null;
   sessionStatus: "loading" | "authenticated" | "unauthenticated";
+  selectedAddresses: string[],
   providerLoading: boolean;
 }
 
@@ -29,6 +30,7 @@ interface WalletContextType extends WalletState {
   setSessionData: React.Dispatch<React.SetStateAction<WalletState['sessionData']>>;
   setSessionStatus: React.Dispatch<React.SetStateAction<WalletState['sessionStatus']>>;
   setProviderLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedAddresses: React.Dispatch<React.SetStateAction<string[]>>;
   fetchSessionData: Function;
 }
 
@@ -44,6 +46,7 @@ const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [providerLoading, setProviderLoading] = useState<boolean>(false);
   const [sessionData, setSessionData] = useState<WalletState['sessionData']>(null)
   const [sessionStatus, setSessionStatus] = useState<WalletState['sessionStatus']>('unauthenticated')
+  const [selectedAddresses, setSelectedAddresses] = useState<string[]>([])
 
   const fetchSessionData = useCallback(async () => {
     setProviderLoading(true)
@@ -79,7 +82,9 @@ const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setSessionStatus,
     fetchSessionData,
     providerLoading,
-    setProviderLoading
+    setProviderLoading,
+    selectedAddresses,
+    setSelectedAddresses
   };
 
   return (

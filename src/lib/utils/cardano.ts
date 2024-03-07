@@ -1,11 +1,10 @@
+import { useWalletContext } from '@contexts/WalletContext';
 import { BrowserWallet } from '@meshsdk/core';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const useCardano = () => {
-    const [selectedAddresses, setSelectedAddresses] = useState<string[]>([]);
-    
-    const api = useMemo(() => ({
-        selectedAddresses,
+    const { setSelectedAddresses } = useWalletContext();
+    const api = {
         isWalletConnected: async (walletName: string, walletAddress: string) => {
             try {
                 const api = await BrowserWallet.enable(walletName);
@@ -22,9 +21,11 @@ export const useCardano = () => {
             // Check if running in a browser environment
             if (typeof window !== "undefined") {
                 try {
+                    setSelectedAddresses(addresses)
+
                     // Convert the addresses array to a JSON string
                     const addressesJSON = JSON.stringify(addresses);
-                    setSelectedAddresses(addresses);
+
                     // Store the JSON string in localStorage under the key 'selectedAddresses'
                     localStorage.setItem('selectedAddresses', addressesJSON);
                 } catch (error) {
@@ -40,10 +41,10 @@ export const useCardano = () => {
                 try {
                     // Retrieve the JSON string from localStorage under the key 'selectedAddresses'
                     const addressesJSON = localStorage.getItem('selectedAddresses');
-    
                     // If the JSON string is not null, parse it and return the result
                     if (addressesJSON !== null) {
-                        setSelectedAddresses(JSON.parse(addressesJSON));
+                        if (selectedAddressUpdateCallback !== null)
+                            selectedAddressUpdateCallback(JSON.parse(addressesJSON));
                         return JSON.parse(addressesJSON);
                     }
                 } catch (error) {
@@ -52,18 +53,18 @@ export const useCardano = () => {
             } else {
                 console.log('localStorage is not available. This code might be running on the server side.');
             }
-    
+
             // If the JSON string was null or an error occurred, return an empty array
             return [];
         },
         clearSelectedAddresses: () => {
             localStorage.removeItem('selectedAddresses');
         }
-    }),[selectedAddresses]);
+    };
 
     useEffect(() => {
         setSelectedAddresses(api.getSelectedAddresses());
-    },[]);
+    }, []);
 
     return api;
 };

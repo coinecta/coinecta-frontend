@@ -131,9 +131,9 @@ const WalletSelectDropdown = () => {
           </Button>
         </ListSubheader>
         {walletAddresses.map((item, i) => (
-          <MenuItem key={item} value={item}>
+          <MenuItem key={item} value={item} disabled={!isConnectedByWallets[item]}>
             <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={theme.palette.mode === "dark" ? walletByName(wallets![i].type)?.iconDark : walletByName(wallets![i].type)?.icon} />
-            <Checkbox checked={selectedAddresses.indexOf(item) > -1} />
+            <Checkbox checked={selectedAddresses.indexOf(item) > -1} disabled={!isConnectedByWallets[item]} />
             <ListItemText primary={getShorterAddress(item, 6)} />
             {!isConnectedByWallets[item] && <>
               <Tooltip title='This wallet is not connected'>

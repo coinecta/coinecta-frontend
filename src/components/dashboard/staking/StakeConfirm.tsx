@@ -20,11 +20,12 @@ import DataSpread from '@components/DataSpread';
 import { AddStakeRequest, coinectaSyncApi } from '@server/services/syncApi';
 import { parseTokenFromString } from '@lib/utils/assets';
 import { useToken } from '@components/hooks/useToken';
-import NamiLogo from '@components/svgs/NamiLogo';
 import { useWalletContext } from '@contexts/WalletContext';
 import { walletDataByName, walletNameToId } from '@lib/walletsList';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import ChooseWallet from './ChooseWallet';
+import { trpc } from '@lib/utils/trpc';
+import { BrowserWallet } from '@meshsdk/core';
 
 interface IStakeConfirmProps {
   open: boolean;
@@ -35,8 +36,8 @@ interface IStakeConfirmProps {
   total: string;
   duration: number;
   rewardIndex: number;
-  onTransactionSubmitted: (status: boolean) => void;
-  onTransactionFailed: (status: boolean) => void;
+  onTransactionSubmitted: () => void;
+  onTransactionFailed: () => void;
 }
 
 const StakeConfirm: FC<IStakeConfirmProps> = ({
@@ -58,14 +59,14 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const { wallet, connected } = useWallet();
-  const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined);
-  const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>();
+  const { name, wallet, connected } = useWallet();
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const [isSigning, setIsSigning] = useState<boolean>(false);
   const [openChooseWalletDialog, setOpenChooseWalletDialog] = useState(false);
   const { sessionData } = useWalletContext();
-
+  const getWallets = trpc.user.getWallets.useQuery()
+  const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
+  
   const handleClose = () => {
     setOpen(false);
   };
@@ -75,8 +76,6 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
       if (connected && sessionData !== null) {
         const api = await window.cardano[walletNameToId(sessionData.user.walletType!)!].enable();
         setCardanoApi(api);
-        const utxos = await api.getUtxos();
-        setWalletUtxosCbor(utxos);
       }
     };
     execute();
@@ -87,43 +86,61 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
     return theme.palette.mode === "light" ? walletData?.icon : walletData?.iconDark;
   }, [sessionData?.user.walletType, theme.palette.mode]);
 
-  useEffect(() => {
-    const execute = async () => {
-      if (connected) {
-        setChangeAddress(await wallet.getChangeAddress());
-      }
-    };
-    execute();
-  }, [connected, wallet]);
-
   const { cnctDecimals } = useToken();
 
   const handleSubmit = async () => {
     try {
-      const addStakeRequest: AddStakeRequest = {
-        stakePool: {
-          address: STAKE_POOL_VALIDATOR_ADDRESS,
-          ownerPkh: STAKE_POOL_OWNER_KEY_HASH,
-          policyId: STAKE_POOL_ASSET_POLICY,
-          assetName: STAKE_POOL_ASSET_NAME
-        },
-        ownerAddress: changeAddress!,
-        destinationAddress: changeAddress!,
-        rewardSettingIndex: rewardIndex,
-        amount: parseTokenFromString(paymentAmount, cnctDecimals).toString(),
-        walletUtxoListCbor: walletUtxosCbor!
-      };
-      setIsSigning(true);
-      const unsignedTx = await coinectaSyncApi.addStakeTx(addStakeRequest);
-      const witnessSetCbor = await cardanoApi.signTx(unsignedTx);
-      const signedTx = await coinectaSyncApi.finalizeTx({ unsignedTxCbor: unsignedTx, txWitnessCbor: witnessSetCbor });
-      await cardanoApi.submitTx(signedTx);
+      await processTxWithApi(name, cardanoApi);
       setOpen(false);
       setPaymentAmount('');
-      onTransactionSubmitted(true);
+      onTransactionSubmitted();
     } catch (ex) {
-      onTransactionFailed(true);
+      onTransactionFailed();
       console.error('Error adding stake', ex);
+    }
+    setIsSigning(false);
+  }
+
+  const processTxWithApi = async (walletName: string, api: any) => {
+    const browserWallet = await BrowserWallet.enable(walletName);
+    const apiUTxos = await api.getUtxos();
+    const changeAddress = await browserWallet.getChangeAddress();
+    const addStakeRequest: AddStakeRequest = {
+      stakePool: {
+        address: STAKE_POOL_VALIDATOR_ADDRESS,
+        ownerPkh: STAKE_POOL_OWNER_KEY_HASH,
+        policyId: STAKE_POOL_ASSET_POLICY,
+        assetName: STAKE_POOL_ASSET_NAME
+      },
+      ownerAddress: changeAddress!,
+      destinationAddress: changeAddress!,
+      rewardSettingIndex: rewardIndex,
+      amount: parseTokenFromString(paymentAmount, cnctDecimals).toString(),
+      walletUtxoListCbor: apiUTxos!
+    };
+
+    const unsignedTx = await coinectaSyncApi.addStakeTx(addStakeRequest);
+    const witnessSetCbor = await api.signTx(unsignedTx, true);
+    const signedTx = await coinectaSyncApi.finalizeTx({ unsignedTxCbor: unsignedTx, txWitnessCbor: witnessSetCbor });
+    await api.submitTx(signedTx);
+  }
+
+  const onChose = async (walletAddress: string) => {
+    setOpenChooseWalletDialog(false);
+    setIsSigning(true);
+    try {
+      const wallet = userWallets?.find(w => w.changeAddress === walletAddress);
+      if(wallet !== undefined) {
+        const api = await window.cardano[walletNameToId(wallet.type!)!].enable();
+        await processTxWithApi(wallet.type, api);
+        setOpen(false);
+        onTransactionSubmitted();
+      } else {
+        onTransactionFailed();
+      }
+    } catch (ex) {
+      console.error('Error adding stake', ex);
+      onTransactionFailed();
     }
     setIsSigning(false);
   }
@@ -205,7 +222,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
           <CircularProgress sx={{ display: isSigning || openChooseWalletDialog ? 'block' : 'none' }} color='secondary' />
         </DialogActions>
       </Dialog>
-      <ChooseWallet open={openChooseWalletDialog} setOpen={setOpenChooseWalletDialog} />
+      <ChooseWallet open={openChooseWalletDialog} setOpen={setOpenChooseWalletDialog} onChose={onChose}/>
     </>
   );
 };
