@@ -10,14 +10,16 @@ interface ConnectedWalletItemProps {
     wallet: WalletData;
     key: number;
     endIcon?: React.ReactNode;
+    handleButtonClick?: () => void;
     handleEndIconClick?: () => void;
 }
 
-export const ConnectedWalletItem: FC<ConnectedWalletItemProps> = ({ wallet, key, endIcon: EndIcon, handleEndIconClick }) => {
+export const ConnectedWalletItem: FC<ConnectedWalletItemProps> = ({ wallet, key, endIcon: EndIcon, handleEndIconClick, handleButtonClick }) => {
     const theme = useTheme();
 
     return (
-        <Box
+        <Button
+            onClick={handleButtonClick}
             key={key}
             sx={{
                 p: '3px 12px',
@@ -54,13 +56,12 @@ export const ConnectedWalletItem: FC<ConnectedWalletItemProps> = ({ wallet, key,
                     {getShorterAddress(wallet.address, 12)}
                 </Box>
             </Box>
-
             <Box sx={{ display: EndIcon ? "block" : "none" }}>
                 <IconButton
                     onClick={handleEndIconClick}>
                     {EndIcon}
                 </IconButton>
             </Box>
-        </Box>
+        </Button>
     )
 }

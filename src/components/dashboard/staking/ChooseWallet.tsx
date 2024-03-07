@@ -1,10 +1,8 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, useTheme, Typography, Collapse, useMediaQuery } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, IconButton, useTheme, useMediaQuery } from '@mui/material';
 import React, { FC, useEffect, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { ConnectedWalletItem } from '@components/user/ConnectedWalletItem';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 interface ChooseWalletProps {
   open: boolean;
@@ -14,15 +12,9 @@ interface ChooseWalletProps {
 const ChooseWallet: FC<ChooseWalletProps> = ({ open, setOpen }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const [openDropDown, setOpenDropDown] = useState<boolean>(false);
-
-  const handleOpenDropDown = () => {
-    setOpenDropDown(!openDropDown);
-  }
 
   const handleClose = () => {
     setOpen(false);
-    setOpenDropDown(false);
   };
 
   return (
@@ -62,40 +54,11 @@ const ChooseWallet: FC<ChooseWalletProps> = ({ open, setOpen }) => {
         <CloseIcon />
       </IconButton>
       <DialogContent>
-        <Button
-          endIcon={<ExpandMoreIcon sx={{ transform: openDropDown ? 'rotate(180deg)' : null }} />}
-          startIcon={
-            <Box>
-              <Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.primary }}>
-                Choose wallet
-              </Typography>
-            </Box>
-          }
-          sx={{
-            background: theme.palette.background.paper,
-            border: `1px solid ${theme.palette.divider}`,
-            borderRadius: '6px',
-            mb: 1,
-            px: 2,
-            textTransform: 'none',
-            '& .MuiListItemSecondaryAction-root': {
-              height: '24px'
-            },
-            color: theme.palette.text.secondary,
-            justifyContent: "space-between",
-            minWidth: "350px",
-            paddingRight: "24px"
-          }}
-          fullWidth
-          onClick={handleOpenDropDown}
-        />
-        <Collapse in={openDropDown}>
-          {fakeWalletsData.map((wallet, i) => {
-            return (
-              <ConnectedWalletItem wallet={wallet} key={i} endIcon={<ChevronRightIcon sx={{ width: '20px', height: '20px' }} />} />
-            )
-          })}
-        </Collapse>
+        {fakeWalletsData.map((wallet, i) => {
+          return (
+            <ConnectedWalletItem wallet={wallet} key={i} endIcon={<ChevronRightIcon sx={{ width: '20px', height: '20px' }} />} />
+          )
+        })}
       </DialogContent>
     </Dialog>
   )
