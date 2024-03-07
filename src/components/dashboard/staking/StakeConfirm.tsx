@@ -99,7 +99,6 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   const { cnctDecimals } = useToken();
 
   const handleSubmit = async () => {
-    setIsSigning(true);
     try {
       const addStakeRequest: AddStakeRequest = {
         stakePool: {
@@ -114,7 +113,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
         amount: parseTokenFromString(paymentAmount, cnctDecimals).toString(),
         walletUtxoListCbor: walletUtxosCbor!
       };
-
+      setIsSigning(true);
       const unsignedTx = await coinectaSyncApi.addStakeTx(addStakeRequest);
       const witnessSetCbor = await cardanoApi.signTx(unsignedTx);
       const signedTx = await coinectaSyncApi.finalizeTx({ unsignedTxCbor: unsignedTx, txWitnessCbor: witnessSetCbor });

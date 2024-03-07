@@ -26,8 +26,8 @@ interface IRedeemConfirmProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   redeemList: IRedeemListItem[];
   claimStakeRequest: ClaimStakeRequest;
-  onRedeemSuccessful: (status: boolean) => void;
-  onRedeemFailed: (status: boolean) => void;
+  onRedeemSuccessful: () => void;
+  onRedeemFailed: () => void;
 }
 
 const RedeemConfirm: FC<IRedeemConfirmProps> = ({
@@ -64,9 +64,9 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
 
 
   const handleSubmit = async () => {
-    setIsSigning(true);
     try {
       if (connected) {
+        setIsSigning(true);
         const unsignedTxCbor = await coinectaSyncApi.claimStakeTx(claimStakeRequest);
         const witnesssetCbor = await cardanoApi.signTx(unsignedTxCbor, true);
         const signedTxCbor = await coinectaSyncApi.finalizeTx({
@@ -75,11 +75,11 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
         });
         await cardanoApi.submitTx(signedTxCbor);
         setOpen(false);
-        onRedeemSuccessful(true)
+        onRedeemSuccessful()
       }
     } catch (e) {
       console.log(e);
-      onRedeemFailed(true);
+      onRedeemFailed();
     }
     setIsSigning(false);
   }

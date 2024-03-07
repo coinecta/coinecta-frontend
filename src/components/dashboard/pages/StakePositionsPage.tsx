@@ -305,8 +305,8 @@ const StakePositions: FC = () => {
         setOpen={setOpenRedeemDialog}
         redeemList={redeemRowData}
         claimStakeRequest={claimStakeRequest}
-        onRedeemFailed={(status) => setIsRedeemFailed(status)}
-        onRedeemSuccessful={(status) => setIsRedeemSuccessful(status)}
+        onRedeemFailed={() => setIsRedeemFailed(true)}
+        onRedeemSuccessful={() => setIsRedeemSuccessful(true)}
       />
       <Snackbar open={isRedeemSuccessful} autoHideDuration={6000} onClose={handleSuccessSnackbarClose}>
         <Alert
