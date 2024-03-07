@@ -100,7 +100,7 @@ const WalletSelectDropdown = () => {
         </ListSubheader>
         {itemList.map((item, i) => (
           <MenuItem key={item} value={item}>
-            <Avatar sx={{width: '22px', height: '22px'}} src='/wallets/nami-light.svg'/>
+            <Avatar variant='square' sx={{width: '22px', height: '22px'}} src='/wallets/nami-light.svg'/>
             <Checkbox checked={selectedItems.indexOf(item) > -1} />
             <ListItemText primary={getShorterAddress(item, 6)} />
             <Tooltip title='This wallet is not connected'>
