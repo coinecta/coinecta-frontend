@@ -79,9 +79,7 @@ const StakePositions: FC = () => {
         amount: item.total.toString(),
       };
     });
-
-    console.log(newData);
-
+    
     setUnstakeRowData(newData);
   }, [selectedRows, redeemableRows, positions])
 

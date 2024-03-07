@@ -1,17 +1,28 @@
 import { Dialog, DialogContent, DialogTitle, IconButton, useTheme, useMediaQuery } from '@mui/material';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { ConnectedWalletItem } from '@components/user/ConnectedWalletItem';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { trpc } from '@lib/utils/trpc';
+import { walletDataByName } from '@lib/walletsList';
 
 interface ChooseWalletProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onChose?: (address: string) => void;
 }
 
-const ChooseWallet: FC<ChooseWalletProps> = ({ open, setOpen }) => {
+const ChooseWallet: FC<ChooseWalletProps> = ({ open, setOpen, onChose }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const getWallets = trpc.user.getWallets.useQuery()
+  const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
+  const userWalletsRendered = useMemo(() => {
+    return userWallets?.map((wallet) => {
+      return { ...walletDataByName(wallet.type)!, address: wallet.changeAddress } as TWalletListItem & { address: string };
+    });
+  }, [userWallets]);
 
   const handleClose = () => {
     setOpen(false);
@@ -54,9 +65,9 @@ const ChooseWallet: FC<ChooseWalletProps> = ({ open, setOpen }) => {
         <CloseIcon />
       </IconButton>
       <DialogContent>
-        {fakeWalletsData.map((wallet, i) => {
+        {userWalletsRendered?.map((wallet, i) => {
           return (
-            <ConnectedWalletItem handleButtonClick={handleClose} handleEndIconClick={handleClose} wallet={wallet} key={i} endIcon={<ChevronRightIcon sx={{ width: '20px', height: '20px' }} />} />
+            <ConnectedWalletItem handleButtonClick={onChose} wallet={wallet} key={i} endIcon={<ChevronRightIcon sx={{ width: '20px', height: '20px' }} />} />
           )
         })}
       </DialogContent>
@@ -65,53 +76,3 @@ const ChooseWallet: FC<ChooseWalletProps> = ({ open, setOpen }) => {
 }
 
 export default ChooseWallet;
-
-const testAddress = 'addr_test1qrr86cuspxp7e3cnpcweyeenmsl46llt3h9k5ugg7cc4kn6u0nrh4agzpe7wlsr3rnyj0huzcu7fmuxrutcqs6td4tas36a9xq';
-
-const fakeWalletsData = [
-  {
-    icon: '/wallets/nami-light.svg',
-    address: testAddress,
-    connectName: 'Nami',
-    name: '',
-    url: '',
-    iconDark: '',
-    mobile: false
-  },
-  {
-    icon: '/wallets/lace.svg',
-    address: testAddress,
-    connectName: 'lace',
-    name: '',
-    url: '',
-    iconDark: '',
-    mobile: false
-  },
-  {
-    icon: '/wallets/eternl-light.svg',
-    address: testAddress,
-    connectName: 'eternl',
-    name: '',
-    url: '',
-    iconDark: '',
-    mobile: false
-  },
-  {
-    icon: '/wallets/typhon-light.svg',
-    address: testAddress,
-    connectName: 'typhon',
-    name: '',
-    url: '',
-    iconDark: '',
-    mobile: false
-  },
-  {
-    icon: '/wallets/gerowallet.svg',
-    address: testAddress,
-    connectName: 'gero',
-    name: '',
-    url: '',
-    iconDark: '',
-    mobile: false
-  }
-]
