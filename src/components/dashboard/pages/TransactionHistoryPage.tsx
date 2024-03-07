@@ -2,9 +2,7 @@ import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   Box,
-  Divider,
   Snackbar,
-  Typography,
 } from '@mui/material';
 import DashboardHeader from '../DashboardHeader';
 import TransactionHistoryTable from '../TransactionHistoryTable';

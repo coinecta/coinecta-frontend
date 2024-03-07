@@ -74,7 +74,7 @@ type TWalletListItem = {
   url: string;
 }
 
-interface IUnstakeListItem {
+interface IRedeemListItem {
   amount: string;
   currency: string;
 }

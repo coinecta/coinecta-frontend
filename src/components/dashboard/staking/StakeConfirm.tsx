@@ -89,7 +89,6 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   const { cnctDecimals } = useToken();
 
   const handleSubmit = async () => {
-    setIsSigning(true);
     try {
       await processTxWithApi(name, cardanoApi);
       setOpen(false);
