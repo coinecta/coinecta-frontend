@@ -16,6 +16,10 @@ export const walletNameToId = (name: string) => {
   }[name];
 };
 
+export const walletDataByName = (name: string) => {
+  return walletsList.find(wallet => wallet.connectName === name);
+}
+
 export const walletsList: TWalletListItem[] = [
   {
     name: 'Begin',

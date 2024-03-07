@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Select,
   MenuItem,
@@ -17,37 +17,67 @@ import { getShorterAddress } from '@lib/utils/general';
 import { useRouter } from 'next/router';
 import { trpc } from '@lib/utils/trpc';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
+import { walletDataByName, walletNameToId } from '@lib/walletsList';
+import { useCardano } from '@lib/utils/cardano';
 
 const WalletSelectDropdown = () => {
+
   const theme = useTheme()
   const router = useRouter()
-  const [itemList, setItemList] = useState<string[]>([])
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const { isWalletConnected: _isWalletConnected, setSelectedAddresses, getSelectedAddresses } = useCardano()
+  const [walletAddresses, setWalletAddresses] = useState<string[]>([])
+  const [selectedAddresses, setSelectedAddress] = useState<string[]>([])
+  const [isConnectedByWallets, setIsConnectedByWallets] = useState<Record<string, boolean>>({})
+
+  const isWalletConnected = useCallback(_isWalletConnected, [_isWalletConnected])
 
   const getWallets = trpc.user.getWallets.useQuery()
-  const items = getWallets.data && getWallets.data.wallets.map((item) => (
-    item.changeAddress
-  ))
+
+  const wallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
   useEffect(() => {
-    if (items && itemList.length < 1) {
-      setSelectedItems(items)
-      setItemList(items)
+    if (wallets && walletAddresses.length < 1) {
+      const localStorageSelectedAddresses = getSelectedAddresses()
+      if (localStorageSelectedAddresses.length > 0) {
+        setSelectedAddress(localStorageSelectedAddresses)
+      } else {
+        setSelectedAddress(wallets.map((wallet) => wallet.changeAddress))
+      }
+      setWalletAddresses(wallets.map((wallet) => wallet.changeAddress))
     }
-  }, [itemList.length, items])
+  }, [walletAddresses.length, wallets])
 
-  const handleChange = (event: SelectChangeEvent<typeof selectedItems>) => {
+  const walletByName = useCallback((name: string) => walletDataByName(name), []);
+
+  const handleChange = (event: SelectChangeEvent<typeof selectedAddresses>) => {
     const {
       target: { value },
     } = event;
-    setSelectedItems(
+    setSelectedAddress(
       typeof value === 'string' ? value.split(',') : value,
     );
+
+    setSelectedAddresses([...value]);
   };
 
   const handleAddWallet = () => {
     router.push('/user/connected-wallets')
   };
+
+  useEffect(() => {
+    const execute = async () => {
+      if (wallets) {
+        const promises = wallets.map(wallet =>
+          isWalletConnected(wallet!.type, wallet.changeAddress)
+            .then(isConnected => ({ [wallet.changeAddress]: isConnected }))
+        );
+
+        const results = await Promise.all(promises);
+        setIsConnectedByWallets(Object.assign({}, ...results));
+      }
+    };
+    execute();
+  }, [wallets]);
 
   return (
     <FormControl fullWidth>
@@ -55,9 +85,9 @@ const WalletSelectDropdown = () => {
         multiple
         displayEmpty
         variant="filled"
-        value={selectedItems}
+        value={selectedAddresses}
         onChange={handleChange}
-        renderValue={() => selectedItems.length === 0 ? 'No wallet selected' : 'Select displayed wallets'}
+        renderValue={() => selectedAddresses.length === 0 ? 'No wallet selected' : 'Select displayed wallets'}
         MenuProps={{
           PaperProps: {
             style: {
@@ -98,14 +128,16 @@ const WalletSelectDropdown = () => {
             Add wallet
           </Button>
         </ListSubheader>
-        {itemList.map((item, i) => (
+        {walletAddresses.map((item, i) => (
           <MenuItem key={item} value={item}>
-            <Avatar variant='square' sx={{width: '22px', height: '22px'}} src='/wallets/nami-light.svg'/>
-            <Checkbox checked={selectedItems.indexOf(item) > -1} />
+            <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={theme.palette.mode === "dark" ? walletByName(wallets![i].type)?.iconDark : walletByName(wallets![i].type)?.icon} />
+            <Checkbox checked={selectedAddresses.indexOf(item) > -1} />
             <ListItemText primary={getShorterAddress(item, 6)} />
-            <Tooltip title='This wallet is not connected'>
-              <WarningAmberOutlinedIcon fontSize='small' color='error'/>
-            </Tooltip>
+            {!isConnectedByWallets[item] && <>
+              <Tooltip title='This wallet is not connected'>
+                <WarningAmberOutlinedIcon fontSize='small' color='error' />
+              </Tooltip>
+            </>}
           </MenuItem>
         ))}
       </Select>

@@ -1,4 +1,4 @@
-import React, { FC, use, useCallback, useEffect, useState } from 'react';
+import React, { FC, use, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -17,6 +17,10 @@ import Skeleton from '@mui/material/Skeleton';
 import { usePrice } from '@components/hooks/usePrice';
 import { formatTokenWithDecimals } from '@lib/utils/assets';
 import { useToken } from '@components/hooks/useToken';
+import { trpc } from '@lib/utils/trpc';
+import { BrowserWallet } from '@meshsdk/core';
+import { useCardano } from '@lib/utils/cardano';
+import { select } from 'd3';
 
 const Dashboard: FC = () => {
   const router = useRouter();
@@ -27,7 +31,9 @@ const Dashboard: FC = () => {
   const [time, setTime] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isStakingKeysLoaded, setIsStakingKeysLoaded] = useState(false);
-
+  const { selectedAddresses } = useCardano();
+  const getWallets = trpc.user.getWallets.useQuery()
+  const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
   const theme = useTheme();
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
@@ -48,15 +54,23 @@ const Dashboard: FC = () => {
     const execute = async () => {
       if (connected) {
         const STAKING_KEY_POLICY = process.env.STAKING_KEY_POLICY;
-        const balance = await wallet.getBalance();
-        const stakeKeys = balance.filter((asset) => asset.unit.indexOf(STAKING_KEY_POLICY) !== -1);
-        const processedStakeKeys = stakeKeys.map((key) => key.unit.split('000de140').join(''));
-        setStakeKeys(processedStakeKeys);
+        if (userWallets === undefined || userWallets === null) return;
+        const stakeKeysPromises = userWallets.map(async userWallet => {
+          if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
+          const browserWallet = await BrowserWallet.enable(userWallet.type);
+          const balance = await browserWallet.getBalance();
+          const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
+          const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
+          return processedStakeKeys;
+        });
+        const stakeKeysArrays = await Promise.all(stakeKeysPromises);
+        const allStakeKeys = stakeKeysArrays.flat();
+        setStakeKeys(allStakeKeys);
         setIsStakingKeysLoaded(true);
       }
     };
     execute();
-  }, [wallet, connected, time]);
+  }, [wallet, connected, time, userWallets, selectedAddresses]);
 
   const querySummary = useCallback(() => {
     const execute = async () => {
