@@ -73,10 +73,6 @@ const StakePositions: FC = () => {
   }, [positions, selectedRows]);
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 2000);
-  }, []);
-
-  useEffect(() => {
     const newData = Array.from(selectedRows).filter(index => redeemableRows.has(index)).map(index => {
       const item = positions[index];
       return {
