@@ -16,7 +16,6 @@ import {
 import { getShorterAddress } from '@lib/utils/general';
 import { useRouter } from 'next/router';
 import { trpc } from '@lib/utils/trpc';
-import WarningIcon from '@mui/icons-material/Warning';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 
 const WalletSelectDropdown = () => {
@@ -34,8 +33,6 @@ const WalletSelectDropdown = () => {
     if (items && itemList.length < 1) {
       setSelectedItems(items)
       setItemList(items)
-      console.log(items);
-      
     }
   }, [itemList.length, items])
 
