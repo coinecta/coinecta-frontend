@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -11,6 +11,7 @@ import {
   Alert,
   CircularProgress,
   Box,
+  Avatar,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useWallet } from '@meshsdk/react';
@@ -21,7 +22,7 @@ import { parseTokenFromString } from '@lib/utils/assets';
 import { useToken } from '@components/hooks/useToken';
 import NamiLogo from '@components/svgs/NamiLogo';
 import { useWalletContext } from '@contexts/WalletContext';
-import { walletNameToId } from '@lib/walletsList';
+import { walletDataByName, walletNameToId } from '@lib/walletsList';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 
 interface IStakeConfirmProps {
@@ -69,15 +70,20 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
 
   useEffect(() => {
     const execute = async () => {
-      if (connected) {
-        const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
+      if (connected && sessionData !== null) {
+        const api = await window.cardano[walletNameToId(sessionData.user.walletType!)!].enable();
         setCardanoApi(api);
         const utxos = await api.getUtxos();
         setWalletUtxosCbor(utxos);
       }
     };
     execute();
-  }, [connected, sessionData?.user.walletType]);
+  }, [connected, sessionData]);
+
+  const userWalletIcon = useMemo(() => {
+    const walletData = walletDataByName(sessionData?.user.walletType!);
+    return theme.palette.mode === "light" ? walletData?.icon : walletData?.iconDark;
+  }, [sessionData?.user.walletType, theme.palette.mode]);
 
   useEffect(() => {
     const execute = async () => {
@@ -182,7 +188,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
         </Alert>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center', mb: 1 }}>
-        <Button startIcon={<NamiLogo />} sx={{ display: isSigning ? 'none' : 'flex', flexGrow: 1 }} variant="outlined" color="secondary" onClick={handleSubmit} disabled={!connected}>
+        <Button startIcon={<Avatar variant='square' sx={{ width: '20px', height: '20px' }} src={userWalletIcon} />} sx={{ display: isSigning ? 'none' : 'flex', flexGrow: 1 }} variant="outlined" color="secondary" onClick={handleSubmit} disabled={!connected}>
           Confirm stake
         </Button>
         <Button startIcon={<AccountBalanceWalletOutlinedIcon />} sx={{ flexGrow: 1, display: isSigning ? 'none' : 'flex' }} variant='outlined' color='secondary' disabled={!connected}>Choose wallet</Button>

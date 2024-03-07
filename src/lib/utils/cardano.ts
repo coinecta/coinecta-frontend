@@ -1,10 +1,10 @@
 import { BrowserWallet } from '@meshsdk/core';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export const useCardano = () => {
     const [selectedAddresses, setSelectedAddresses] = useState<string[]>([]);
-
-    return {
+    
+    const api = useMemo(() => ({
         selectedAddresses,
         isWalletConnected: async (walletName: string, walletAddress: string) => {
             try {
@@ -55,6 +55,15 @@ export const useCardano = () => {
     
             // If the JSON string was null or an error occurred, return an empty array
             return [];
+        },
+        clearSelectedAddresses: () => {
+            localStorage.removeItem('selectedAddresses');
         }
-    };
+    }),[selectedAddresses]);
+
+    useEffect(() => {
+        setSelectedAddresses(api.getSelectedAddresses());
+    },[]);
+
+    return api;
 };

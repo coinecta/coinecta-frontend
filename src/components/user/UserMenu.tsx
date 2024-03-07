@@ -21,6 +21,7 @@ import { trpc } from "@lib/utils/trpc";
 import { signIn, signOut } from "next-auth/react"
 import { useWalletContext } from '@contexts/WalletContext';
 import { useAlert } from '@contexts/AlertContext';
+import { useCardano } from '@lib/utils/cardano';
 
 interface IWalletType {
   name: string;
@@ -48,6 +49,7 @@ const UserMenu: FC<IUserMenuProps> = () => {
   const { providerLoading, setProviderLoading, sessionStatus, sessionData, fetchSessionData } = useWalletContext()
   const [walletIcon, setWalletIcon] = useState<string | undefined>(undefined)
   const walletsList = useWalletList();
+  const { clearSelectedAddresses } = useCardano();
 
   useEffect(() => {
     // console.log(`connected: ${connected}`)
@@ -202,6 +204,7 @@ const UserMenu: FC<IUserMenuProps> = () => {
   };
 
   const cleanup = () => {
+    clearSelectedAddresses()
     setRewardAddress(undefined)
     setChangeAddress(undefined)
     setUsedAddresses([])

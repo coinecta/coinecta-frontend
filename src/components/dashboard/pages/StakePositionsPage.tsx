@@ -199,6 +199,14 @@ const StakePositions: FC = () => {
   const claimStakeRequest = useMemo(() => {
     return {
       stakeUtxoOutputReferences: selectedPositions.map((position) => {
+        
+        if (position === undefined) {
+          return {
+            txHash: "",
+            index: 0
+          }
+        };
+
         return {
           txHash: position.txHash,
           index: position.txIndex
