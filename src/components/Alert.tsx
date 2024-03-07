@@ -2,6 +2,10 @@ import React, { FC } from 'react';
 import { useAlert } from '@contexts/AlertContext';
 import { Snackbar, Alert } from '@mui/material';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 
 const AlertComponent: FC = () => {
   const { alerts, removeAlert } = useAlert();
@@ -24,10 +28,16 @@ const AlertComponent: FC = () => {
             style={{ bottom: 50 + index * 70 }}
           >
             <Alert
-              variant="filled"
+              variant="standard"
               onClose={() => handleClose(undefined, undefined, alert.id)}
               severity={alert.type}
               sx={{ width: '100%' }}
+              iconMapping={{
+                error: <ErrorOutlineOutlinedIcon fontSize='medium' />,
+                success: <TaskAltIcon fontSize='medium' />,
+                info: <InfoOutlinedIcon fontSize='medium' />,
+                warning: <WarningAmberOutlinedIcon fontSize='medium' />
+              }}
             >
               {alert.message}
             </Alert>
