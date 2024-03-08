@@ -128,12 +128,14 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
 
   const onChose = async (walletAddress: string) => {
     setOpenChooseWalletDialog(false);
+    setIsSigning(true);
     try {
       const wallet = userWallets?.find(w => w.changeAddress === walletAddress);
       if(wallet !== undefined) {
         const api = await window.cardano[walletNameToId(wallet.type!)!].enable();
         await processTxWithApi(wallet.type, api);
         setOpen(false);
+        setPaymentAmount('');
         onTransactionSubmitted();
       } else {
         onTransactionFailed();
@@ -142,6 +144,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
       console.error('Error adding stake', ex);
       onTransactionFailed();
     }
+    setIsSigning(false);
   }
 
   return (
@@ -193,8 +196,20 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
           />
           <DataSpread
             title="Unlock Date"
-            margin={5}
             data={calculateFutureDateMonths(duration)}
+          />
+          <DataSpread
+            title="Stake Key NFT"
+            data="1.5 ADA"
+          />
+          <DataSpread
+            title="Locked with Rewards"
+            data="3 ADA"
+          />
+          <DataSpread
+            title="Execution Fee"
+            margin={5}
+            data="2 ADA"
           />
           <Alert
             variant="outlined"
