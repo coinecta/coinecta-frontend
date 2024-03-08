@@ -30,6 +30,7 @@ import { TimeIcon } from '@mui/x-date-pickers';
 import { useWalletContext } from '@contexts/WalletContext';
 import { walletNameToId } from '@lib/walletsList';
 import DashboardCard from './DashboardCard';
+import { trpc } from '@lib/utils/trpc';
 
 interface ITransactionHistoryTableProps<T> {
   title?: string;
@@ -83,6 +84,8 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
   const tableRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
+  const cancelStakeTxMutation = trpc.sync.cancelStakeTx.useMutation();
+  const finaliseTxMutation = trpc.sync.finalizeTx.useMutation();
 
   const sensitivityThreshold = 2;
 
@@ -174,7 +177,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>()
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const { sessionData } = useWalletContext();
-  
+
   useEffect(() => {
     const execute = async () => {
       if (connected) {
@@ -190,7 +193,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const cancelTx = useCallback(async (txHash: string, txIndex: string) => {
     if (connected && walletUtxosCbor !== undefined && cardanoApi !== undefined) {
       try {
-        const cancelStakeTxCbor = await coinectaSyncApi.cancelStakeTx({
+        const cancelStakeTxCbor = await cancelStakeTxMutation.mutateAsync({
           stakeRequestOutputReference: {
             txHash,
             index: txIndex
@@ -198,7 +201,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
           walletUtxoListCbor: walletUtxosCbor!,
         });
         const witnessSetCbor = await cardanoApi.signTx(cancelStakeTxCbor, true);
-        const signedTxCbor = await coinectaSyncApi.finalizeTx({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
+        const signedTxCbor = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
         cardanoApi.submitTx(signedTxCbor);
         onCancellationSuccessful(true);
       } catch (ex) {
@@ -303,7 +306,6 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                 </Skeleton>
                                 <Skeleton>
                                   <ContentCopyIcon fontSize='small' />
-
                                 </Skeleton>
                               </Box>) :
                               (<Box sx={{ display: 'flex', gap: '5px', marginTop: '8px' }}>
@@ -351,8 +353,8 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                     disabled={isLoading} />
                 </TableRow>
               </TableFooter>
-            </Table> : 
-            <Box sx={{height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            </Table> :
+            <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Box component={'p'}>
                 No data available
               </Box>

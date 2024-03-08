@@ -66,6 +66,9 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   const { sessionData } = useWalletContext();
   const getWallets = trpc.user.getWallets.useQuery()
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
+
+  const addStakeTxMutation = trpc.sync.addStakeTx.useMutation();
+  const finaliseTxMutation = trpc.sync.finalizeTx.useMutation();
   
   const handleClose = () => {
     setOpen(false);
@@ -120,9 +123,9 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
       walletUtxoListCbor: apiUTxos!
     };
 
-    const unsignedTx = await coinectaSyncApi.addStakeTx(addStakeRequest);
+    const unsignedTx = await addStakeTxMutation.mutateAsync(addStakeRequest);
     const witnessSetCbor = await api.signTx(unsignedTx, true);
-    const signedTx = await coinectaSyncApi.finalizeTx({ unsignedTxCbor: unsignedTx, txWitnessCbor: witnessSetCbor });
+    const signedTx = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: unsignedTx, txWitnessCbor: witnessSetCbor });
     await api.submitTx(signedTx);
   }
 

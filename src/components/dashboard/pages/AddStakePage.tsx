@@ -23,6 +23,7 @@ import { metadataApi } from '@server/services/metadataApi';
 import { formatTokenWithDecimals } from '@lib/utils/assets';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import { trpc } from '@lib/utils/trpc';
 
 const options = [
   {
@@ -62,54 +63,46 @@ const AddStakePage: FC = () => {
   const [durations, setDurations] = useState<number[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
-  const [stakePool, setStakePool] = useState<StakePoolResponse | null>(null);
-  const [cnctDecimals, setCnctDecimals] = useState<number>(DEFAULT_CNCT_DECIMALS);
   const [isStakeTransactionSubmitted, setIsStakeTransactionSubmitted] = useState<boolean>(false);
   const [isStakeTransactionFailed, setIsStakeTransactionFailed] = useState<boolean>(false);
+
+  const getStakePoolQuery = trpc.sync.getStakePool.useQuery({
+    address: STAKE_POOL_VALIDATOR_ADDRESS,
+    ownerPkh: STAKE_POOL_OWNER_KEY_HASH,
+    policyId: STAKE_POOL_ASSET_POLICY,
+    assetName: STAKE_POOL_ASSET_NAME
+  });
+
+  const metadataQuery  = trpc.tokens.getMetadata.useQuery({
+    unit: `${STAKE_POOL_ASSET_POLICY}${STAKE_POOL_ASSET_NAME}`
+  });
+
+  const cnctDecimals = useMemo(() => {
+    return metadataQuery.data?.decimals?.value ?? DEFAULT_CNCT_DECIMALS;
+  }, [DEFAULT_CNCT_DECIMALS, metadataQuery.data?.decimals?.value]);
+
+  useEffect(() => {
+    setIsLoading(!getStakePoolQuery.isSuccess && !metadataQuery.isSuccess);
+  }, [getStakePoolQuery.isSuccess, metadataQuery.isSuccess])
 
   useEffect(() => {
     const newArray = options.map(option => option.duration)
     setDurations(newArray)
-  }, [])
-
-  useEffect(() => {
-    const execute = async () => {
-      // Get Pool Data
-      const stakePoolData = await coinectaSyncApi.getStakePool(
-        STAKE_POOL_VALIDATOR_ADDRESS,
-        STAKE_POOL_OWNER_KEY_HASH,
-        STAKE_POOL_ASSET_POLICY,
-        STAKE_POOL_ASSET_NAME
-      );
-      setStakePool(stakePoolData);
-      
-      // Fetch Token Metadata
-      try {
-        const cnctMetadata = await metadataApi.postMetadataQuery(`${STAKE_POOL_ASSET_POLICY}${STAKE_POOL_ASSET_NAME}`);
-        setCnctDecimals(cnctMetadata.decimals?.value ?? DEFAULT_CNCT_DECIMALS);
-      } catch {
-        setCnctDecimals(DEFAULT_CNCT_DECIMALS);
-      }
-
-      setIsLoading(false);
-    };
-    execute();
-  }, [DEFAULT_CNCT_DECIMALS, STAKE_POOL_ASSET_NAME, STAKE_POOL_ASSET_POLICY, STAKE_POOL_OWNER_KEY_HASH, STAKE_POOL_VALIDATOR_ADDRESS])
-
+  }, []);
 
   const totalRewards = useMemo(() => {
-    return BigInt(stakePool?.amount.multiAsset[STAKE_POOL_ASSET_POLICY][STAKE_POOL_ASSET_NAME] ?? 0);
-  }, [STAKE_POOL_ASSET_NAME, STAKE_POOL_ASSET_POLICY, stakePool?.amount.multiAsset]);
+    return BigInt(getStakePoolQuery.data?.amount.multiAsset[STAKE_POOL_ASSET_POLICY][STAKE_POOL_ASSET_NAME] ?? 0);
+  }, [STAKE_POOL_ASSET_NAME, STAKE_POOL_ASSET_POLICY, getStakePoolQuery.data?.amount.multiAsset]);
 
   const rewardSettings = useMemo(() => {
-    return stakePool?.stakePool.rewardSettings;
-  }, [stakePool?.stakePool.rewardSettings]);
+    return getStakePoolQuery.data?.stakePool.rewardSettings;
+  }, [getStakePoolQuery.data?.stakePool.rewardSettings]);
 
   const rewardSettingIndex = useMemo(() => {
     return options.indexOf(options.find(option => option.duration === stakeDuration) || options[0]);
   }, [stakeDuration]);
 
-  if(rewardSettings !== undefined)
+  if (rewardSettings !== undefined)
     console.log('rewardSettingIndex', rewardSettings[rewardSettingIndex]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>): void => {
@@ -139,13 +132,13 @@ const AddStakePage: FC = () => {
             </Typography>
             <Box sx={{ width: '100%', mb: 3 }}>
               {isLoading ?
-              <div style={{display: "flex", justifyContent: "center"}}><Skeleton animation='wave' width={200} /></div>: 
-              <StakeDuration
-                duration={stakeDuration}
-                setDuration={setStakeDuration}
-                durations={durations}
-              />
-            }
+                <div style={{ display: "flex", justifyContent: "center" }}><Skeleton animation='wave' width={200} /></div> :
+                <StakeDuration
+                  duration={stakeDuration}
+                  setDuration={setStakeDuration}
+                  durations={durations}
+                />
+              }
             </Box>
             <Box sx={{ width: '100%', mb: 3 }}>
               <StakeInput

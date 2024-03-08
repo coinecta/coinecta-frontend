@@ -16,33 +16,31 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import { useWalletContext } from '@contexts/WalletContext';
+import { trpc } from '@lib/utils/trpc';
 
 const TransactionHistory: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
   const [isLoading, setIsLoading] = useState(true);
   const { wallet, connected } = useWallet();
-  const [stakeRequestResponse, setStakeRequestResponse] = useState<StakeRequestsResponse>();
-  const [stakeRequests, setStakeRequests] = useState<StakeRequest[]>();
-  const [totalRequests, setTotalRequests] = useState<number>(0);
   const [currentRequestPage, setCurrentRequestPage] = useState<number>(1);
   const [requestPageLimit, setRequestPageLimit] = useState<number>(5);
   const [isCancellationSuccessful, setIsCancellationSuccessful] = useState<boolean>(false);
   const [isCancellationFailed, setIsCancellationFailed] = useState<boolean>(false);
+  const [stakeRequestResponse, setStakeRequestResponse] = useState<StakeRequestsResponse | null>(null);
   const { selectedAddresses } = useWalletContext();
 
+  const queryGetStakeRequests = trpc.sync.getStakeRequests.useQuery({ walletAddresses: selectedAddresses, page: currentRequestPage, limit: requestPageLimit });
+
   useEffect(() => {
-    const execute = async () => {
-      if (connected) {
-        const response = await coinectaSyncApi.getStakeRequests(selectedAddresses, currentRequestPage, requestPageLimit);
-        setStakeRequestResponse(response);
-        setStakeRequests(response.data);
-        setTotalRequests(response.total);
-        setIsLoading(false);
-      }
-    };
-    execute();
-  }, [wallet, connected, selectedAddresses, currentRequestPage, requestPageLimit]);
+      setIsLoading(queryGetStakeRequests.isLoading);
+  }, [queryGetStakeRequests.isLoading]);
+
+  useEffect(() => {
+    if (queryGetStakeRequests.data !== undefined) {
+      setStakeRequestResponse(queryGetStakeRequests.data);
+    }
+  }, [queryGetStakeRequests.data]);
 
   const { cnctDecimals } = useToken();
 
@@ -60,12 +58,12 @@ const TransactionHistory: FC = () => {
   }
 
   const processedStakeRequests = useMemo(() => {
-    return stakeRequests?.map((request) => {
+    return stakeRequestResponse?.data?.map((request) => {
       const formattedTokenAmount = formatTokenWithDecimals(BigInt(request.amount.multiAsset["8b05e87a51c1d4a0fa888d2bb14dbc25e8c343ea379a171b63aa84a0"]["434e4354"]), cnctDecimals);
       const formattedDate = dayjs(stakeRequestResponse?.extra.slotData[request.slot]! * 1000).format('DD MMM, YY HH:mm');
       const status = statusToString(request.status);
       const CARDANO_TX_EXPLORER_URL = process.env.CARDANO_TX_EXPLORER_URL!;
-      
+
       dayjs.extend(duration);
       dayjs.extend(relativeTime);
       const lockDuration = dayjs.duration(parseInt(request.stakePoolProxy.lockTime)).humanize();
@@ -80,8 +78,8 @@ const TransactionHistory: FC = () => {
         actions: { transactionLink: `${CARDANO_TX_EXPLORER_URL}/${request.txHash}` }
       };
     });
-  },[stakeRequests, stakeRequestResponse, cnctDecimals]);
-  
+  }, [stakeRequestResponse, cnctDecimals]);
+
   const handleCancellationSuccessful = (status: boolean) => setIsCancellationSuccessful(status);
   const handleCancellationFailed = (status: boolean) => setIsCancellationFailed(status)
   const handleSuccessSnackbarClose = () => setIsCancellationSuccessful(false);
@@ -97,7 +95,7 @@ const TransactionHistory: FC = () => {
         setSelectedRows={setSelectedRows}
         parentContainerRef={parentRef}
         isLoading={isLoading}
-        totalRequests={totalRequests}
+        totalRequests={queryGetStakeRequests.data?.total ?? 0}
         currentRequestPage={currentRequestPage}
         requestPageLimit={requestPageLimit}
         setCurrentRequestPage={setCurrentRequestPage}
@@ -186,60 +184,6 @@ const fakeTrpcDashboardData = {
       lockDuration: '6 Months',
       "Date & Time": "07 Feb, 24 06:42",
       status: "Pending",
-      actions: { transactionLink: "#" },
-      txHash: "",
-      txIndex: "0"
-    },
-    {
-      amount: '500 CNCT',
-      lockDuration: '1 Month',
-      "Date & Time": "01 Feb, 24 04:22",
-      status: "Pending",
-      actions: { transactionLink: "#" },
-      txHash: "",
-      txIndex: "0"
-    },
-    {
-      amount: '1900 CNCT',
-      lockDuration: '3 Months',
-      "Date & Time": "16 Feb, 24 03:32",
-      status: "Executed",
-      actions: { transactionLink: "#" },
-      txHash: "",
-      txIndex: "0"
-    },
-    {
-      amount: '1000 CNCT',
-      lockDuration: '1 Month',
-      "Date & Time": "27 Feb, 24 10:31",
-      status: "Executed",
-      actions: { transactionLink: "#" },
-      txHash: "",
-      txIndex: "0"
-    },
-    {
-      amount: '2500 CNCT',
-      lockDuration: '6 Months',
-      "Date & Time": "07 Feb, 24 06:42",
-      status: "Pending",
-      actions: { transactionLink: "#" },
-      txHash: "",
-      txIndex: "0"
-    },
-    {
-      amount: '500 CNCT',
-      lockDuration: '1 Month',
-      "Date & Time": "01 Feb, 24 04:22",
-      status: "Pending",
-      actions: { transactionLink: "#" },
-      txHash: "",
-      txIndex: "0"
-    },
-    {
-      amount: '1300 CNCT',
-      lockDuration: '3 Months',
-      "Date & Time": "16 Feb, 24 03:32",
-      status: "Executed",
       actions: { transactionLink: "#" },
       txHash: "",
       txIndex: "0"

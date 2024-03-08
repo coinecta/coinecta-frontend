@@ -28,7 +28,6 @@ const Dashboard: FC = () => {
 
   const { wallet, connected } = useWallet();
   const [stakeKeys, setStakeKeys] = useState<string[]>([]);
-  const [summary, setSummary] = useState<StakeSummary | null>(null);
   const [time, setTime] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isStakingKeysLoaded, setIsStakingKeysLoaded] = useState(false);
@@ -37,13 +36,21 @@ const Dashboard: FC = () => {
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
   const theme = useTheme();
 
+  const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0 });
+
+  const summary = useMemo(() => {
+    if (queryStakeSummary.data?.poolStats.CNCT === undefined) return undefined;
+    return queryStakeSummary.data;
+  }, [queryStakeSummary.data]);
+  useEffect(() => {
+    setIsLoading(!queryStakeSummary.isSuccess && !isStakingKeysLoaded);
+  }, [isStakingKeysLoaded, queryStakeSummary.isSuccess]);
+
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })}${key !== '' && key != null ? ` ${key}` : ''}`;
 
-  // Refresh data every 20 seconds
-  // Use RTK Query?
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(time => time + 1);
@@ -58,15 +65,15 @@ const Dashboard: FC = () => {
         if (userWallets === undefined || userWallets === null) return;
         const stakeKeysPromises = userWallets.map(async userWallet => {
           if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
-            try {
-              const browserWallet = await BrowserWallet.enable(userWallet.type);
-              const balance = await browserWallet.getBalance();
-              const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
-              const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
-              return processedStakeKeys;
-            } catch {
-              return []
-            }
+          try {
+            const browserWallet = await BrowserWallet.enable(userWallet.type);
+            const balance = await browserWallet.getBalance();
+            const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
+            const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
+            return processedStakeKeys;
+          } catch {
+            return []
+          }
         });
         const stakeKeysArrays = await Promise.all(stakeKeysPromises);
         const allStakeKeys = stakeKeysArrays.flat();
@@ -76,29 +83,6 @@ const Dashboard: FC = () => {
     };
     execute();
   }, [wallet, connected, time, userWallets, selectedAddresses]);
-
-  const querySummary = useCallback(() => {
-    const execute = async () => {
-      if (connected && isStakingKeysLoaded) {
-        if (stakeKeys.length === 0) {
-          setSummary(null);
-        } else {
-          const summary = await coinectaSyncApi.getStakeSummary(stakeKeys);
-          if (summary.poolStats.CNCT === undefined) {
-            setSummary(null);
-          } else {
-            setSummary(summary);
-          }
-        }
-        setIsLoading(false);
-      }
-    };
-    execute();
-  }, [stakeKeys, connected, isStakingKeysLoaded]);
-
-  useEffect(() => {
-    querySummary();
-  }, [querySummary]);
 
   const { convertCnctToADA, convertToUSD } = usePrice();
   const { cnctDecimals } = useToken();
