@@ -187,6 +187,18 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
         </IconButton>
         <DialogContent sx={{ minWidth: '350px', maxWidth: !fullScreen ? '460px' : null }}>
           <DataSpread
+            title="Stake Key NFT"
+            data="1.5 ADA"
+          />
+          <DataSpread
+            title="Locked with Rewards"
+            data="3 ADA"
+          />
+          <DataSpread
+            title="Execution Fee"
+            data="2 ADA"
+          />
+          <DataSpread
             title="Staked Amount"
             data={`${Number(paymentAmount).toLocaleString(undefined, { maximumFractionDigits: 1 })} ${paymentCurrency}`}
           />
@@ -197,19 +209,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
           <DataSpread
             title="Unlock Date"
             data={calculateFutureDateMonths(duration)}
-          />
-          <DataSpread
-            title="Stake Key NFT"
-            data="1.5 ADA"
-          />
-          <DataSpread
-            title="Locked with Rewards"
-            data="3 ADA"
-          />
-          <DataSpread
-            title="Execution Fee"
             margin={5}
-            data="2 ADA"
           />
           <Alert
             variant="outlined"
