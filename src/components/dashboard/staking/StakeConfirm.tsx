@@ -196,7 +196,6 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
           />
           <DataSpread
             title="Execution Fee"
-            margin={5}
             data="2 ADA"
           />
           <DataSpread
@@ -210,6 +209,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
           <DataSpread
             title="Unlock Date"
             data={calculateFutureDateMonths(duration)}
+            margin={5}
           />
           <Alert
             variant="outlined"
