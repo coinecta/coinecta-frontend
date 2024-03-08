@@ -88,7 +88,7 @@ export const syncRouter = createTRPCRouter({
       unsignedTxCbor: z.string(),
       txWitnessCbor: z.string(),
     }))
-    .query(async ({ input }) => {
+    .mutation(async ({ input }) => {
       return await coinectaSyncApi.finalizeTx(input);
     }),
 });
