@@ -145,7 +145,6 @@ const StakePositionTable = <T extends Record<string, any>>({
     return data.map((d, index) => ({ index, unlockDate: d.unlockDate})).filter(d => d.unlockDate < new Date()).map(d => d.index);
   }, [data]);
   
-  console.log('selectableRows', selectableRows, data);
   const handleSelectRow = (index: number) => {
     if (setSelectedRows && actions) {
       setSelectedRows((prevSelectedRows) => {

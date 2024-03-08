@@ -43,8 +43,6 @@ export const useCardano = () => {
                     const addressesJSON = localStorage.getItem('selectedAddresses');
                     // If the JSON string is not null, parse it and return the result
                     if (addressesJSON !== null) {
-                        if (selectedAddressUpdateCallback !== null)
-                            selectedAddressUpdateCallback(JSON.parse(addressesJSON));
                         return JSON.parse(addressesJSON);
                     }
                 } catch (error) {

@@ -19,7 +19,7 @@ import { useWallet } from '@meshsdk/react';
 import { walletNameToId } from '@lib/walletsList';
 import { useWalletContext } from '@contexts/WalletContext';
 import { ClaimStakeRequest, coinectaSyncApi } from '@server/services/syncApi';
-import { error } from 'console';
+import { trpc } from '@lib/utils/trpc';
 
 interface IRedeemConfirmProps {
   open: boolean;
@@ -47,6 +47,8 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const [isSigning, setIsSigning] = useState(false);
 
+  const claimStakeTxMutation = trpc.sync.claimStakeTx.useMutation();
+  const finalizeTxMutation = trpc.sync.finalizeTx.useMutation();
 
   useEffect(() => {
     const execute = async () => {
@@ -67,12 +69,15 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
     try {
       if (connected) {
         setIsSigning(true);
-        const unsignedTxCbor = await coinectaSyncApi.claimStakeTx(claimStakeRequest);
+        
+        const unsignedTxCbor = await claimStakeTxMutation.mutateAsync(claimStakeRequest);
         const witnesssetCbor = await cardanoApi.signTx(unsignedTxCbor, true);
-        const signedTxCbor = await coinectaSyncApi.finalizeTx({
+
+        const signedTxCbor = await finalizeTxMutation.mutateAsync({
           txWitnessCbor: witnesssetCbor,
           unsignedTxCbor: unsignedTxCbor
         });
+
         await cardanoApi.submitTx(signedTxCbor);
         setOpen(false);
         onRedeemSuccessful()

@@ -42,8 +42,6 @@ const StakePositions: FC = () => {
   const [stakeKeys, setStakeKeys] = useState<string[]>([]);
   const { wallet, connected } = useWallet();
   const [time, setTime] = useState<number>(0);
-  const [positions, setPositions] = useState<StakePosition[]>([]);
-  const [summary, setSummary] = useState<StakeSummary | null>(null);
   const { sessionData, sessionStatus } = useWalletContext();
   const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>();
   const theme = useTheme();
@@ -60,6 +58,16 @@ const StakePositions: FC = () => {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })}${key !== '' && key != null ? ` ${key}` : ''}`;
+
+  const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0 });
+  const summary = useMemo((() => queryStakeSummary.data ), [queryStakeSummary.data]);
+
+  const queryStakePositions = trpc.sync.getStakePositions.useQuery(stakeKeys, { retry: 0 });
+  const positions = useMemo(() => queryStakePositions.data ?? [], [queryStakePositions.data]);
+
+  useEffect(() => {
+    setIsLoading(!queryStakeSummary.isSuccess && !isStakingKeysLoaded && !queryStakePositions.isSuccess); 
+  }, [queryStakeSummary.isSuccess, isStakingKeysLoaded, queryStakePositions.isSuccess]);
 
   const processedPositions = useMemo(() => {
     return positions.map((position) => {
@@ -170,51 +178,11 @@ const StakePositions: FC = () => {
     execute();
   }, [wallet, connected, time, userWallets, selectedAddresses]);
 
-  const querySummary = useCallback(() => {
-    const execute = async () => {
-      if (connected && isStakingKeysLoaded) {
-        if (stakeKeys.length === 0) {
-          setSummary(null);
-        } else {
-          const summary = await coinectaSyncApi.getStakeSummary(stakeKeys);
-          if (summary.poolStats.CNCT === undefined) {
-            setSummary(null);
-          } else {
-            setSummary(summary);
-          }
-        }
-        setIsLoading(false);
-      }
-    };
-    execute();
-  }, [stakeKeys, connected, isStakingKeysLoaded]);
-
-  useEffect(() => {
-    querySummary();
-  }, [querySummary]);
-
-  const queryPositions = useCallback(() => {
-    const execute = async () => {
-      if (stakeKeys.length === 0) {
-        setPositions([]);
-        return;
-      }
-      const positions = await coinectaSyncApi.getStakePositions(stakeKeys);
-      setPositions(positions);
-    };
-    execute();
-  }, [stakeKeys]);
-
-  useEffect(() => {
-    queryPositions();
-  }, [queryPositions]);
-
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
 
   const claimStakeRequest = useMemo(() => {
     return {
       stakeUtxoOutputReferences: selectedPositions.map((position) => {
-
         if (position === undefined) {
           return {
             txHash: "",

@@ -19,7 +19,6 @@ import { trpc } from '@lib/utils/trpc';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import { walletDataByName, walletNameToId } from '@lib/walletsList';
 import { useCardano } from '@lib/utils/cardano';
-import { useWalletContext } from '@contexts/WalletContext';
 
 const WalletSelectDropdown = () => {
 
