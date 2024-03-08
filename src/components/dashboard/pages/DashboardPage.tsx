@@ -37,10 +37,6 @@ const Dashboard: FC = () => {
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
   const theme = useTheme();
 
-  useEffect(() => {
-    console.log('Selected addresses updated:', selectedAddresses);
-  }, [selectedAddresses]);
-
   const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
@@ -62,11 +58,15 @@ const Dashboard: FC = () => {
         if (userWallets === undefined || userWallets === null) return;
         const stakeKeysPromises = userWallets.map(async userWallet => {
           if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
-          const browserWallet = await BrowserWallet.enable(userWallet.type);
-          const balance = await browserWallet.getBalance();
-          const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
-          const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
-          return processedStakeKeys;
+            try {
+              const browserWallet = await BrowserWallet.enable(userWallet.type);
+              const balance = await browserWallet.getBalance();
+              const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
+              const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
+              return processedStakeKeys;
+            } catch {
+              return []
+            }
         });
         const stakeKeysArrays = await Promise.all(stakeKeysPromises);
         const allStakeKeys = stakeKeysArrays.flat();
