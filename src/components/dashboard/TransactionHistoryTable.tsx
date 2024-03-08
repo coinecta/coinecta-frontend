@@ -38,8 +38,13 @@ interface ITransactionHistoryTableProps<T> {
   error: boolean;
   actions?: IActionBarButton[];
   selectedRows?: Set<number>;
-  setSelectedRows?: React.Dispatch<React.SetStateAction<Set<number>>>
+  setSelectedRows?: React.Dispatch<React.SetStateAction<Set<number>>>;
   parentContainerRef: React.RefObject<HTMLDivElement>;
+  totalRequests: number;
+  currentRequestPage: number;
+  setCurrentRequestPage: React.Dispatch<React.SetStateAction<number>>;
+  requestPageLimit: number;
+  setRequestPageLimit: React.Dispatch<React.SetStateAction<number>>;
   onCancellationSuccessful: (status: boolean) => void;
   onCancellationFailed: (status: boolean) => void;
 }
@@ -60,6 +65,11 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   selectedRows,
   setSelectedRows,
   parentContainerRef,
+  totalRequests,
+  currentRequestPage,
+  setCurrentRequestPage,
+  requestPageLimit,
+  setRequestPageLimit,
   onCancellationFailed,
   onCancellationSuccessful
 }: ITransactionHistoryTableProps<T>) => {
@@ -128,12 +138,12 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   };
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-    setPage(newPage);
+    setCurrentRequestPage(newPage + 1);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setRequestPageLimit(parseInt(event.target.value, 10));
+    setCurrentRequestPage(1);
   };
 
   const onMouseDown = (e: React.MouseEvent) => onDragStart(e.pageX, e.pageY);
@@ -161,7 +171,6 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   };
 
   const { name, wallet, connected } = useWallet()
-  const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined)
   const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>()
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const { sessionData } = useWalletContext();
@@ -177,15 +186,6 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     };
     execute();
   }, [name, connected, sessionData?.user.walletType]);
-
-  useEffect(() => {
-    const execute = async () => {
-      if (connected) {
-        setChangeAddress(await wallet.getChangeAddress());
-      }
-    };
-    execute();
-  }, [connected, wallet]);
 
   const cancelTx = useCallback(async (txHash: string, txIndex: string) => {
     if (connected && walletUtxosCbor !== undefined && cardanoApi !== undefined) {
@@ -264,7 +264,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
+                {data.map((item, index) => (
                   <TableRow key={index}
                     sx={{
                       '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
@@ -343,9 +343,9 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                     rowsPerPageOptions={rowsPerPageOptions}
                     component={'td'}
                     colSpan={6}
-                    count={data.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
+                    count={totalRequests}
+                    rowsPerPage={requestPageLimit}
+                    page={currentRequestPage - 1}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                     disabled={isLoading} />

@@ -25,6 +25,8 @@ const TransactionHistory: FC = () => {
   const [stakeRequestResponse, setStakeRequestResponse] = useState<StakeRequestsResponse>();
   const [stakeRequests, setStakeRequests] = useState<StakeRequest[]>();
   const [totalRequests, setTotalRequests] = useState<number>(0);
+  const [currentRequestPage, setCurrentRequestPage] = useState<number>(1);
+  const [requestPageLimit, setRequestPageLimit] = useState<number>(5);
   const [isCancellationSuccessful, setIsCancellationSuccessful] = useState<boolean>(false);
   const [isCancellationFailed, setIsCancellationFailed] = useState<boolean>(false);
   const { selectedAddresses } = useWalletContext();
@@ -32,7 +34,7 @@ const TransactionHistory: FC = () => {
   useEffect(() => {
     const execute = async () => {
       if (connected) {
-        const response = await coinectaSyncApi.getStakeRequests(selectedAddresses);
+        const response = await coinectaSyncApi.getStakeRequests(selectedAddresses, currentRequestPage, requestPageLimit);
         setStakeRequestResponse(response);
         setStakeRequests(response.data);
         setTotalRequests(response.total);
@@ -40,7 +42,7 @@ const TransactionHistory: FC = () => {
       }
     };
     execute();
-  }, [wallet, connected, selectedAddresses]);
+  }, [wallet, connected, selectedAddresses, currentRequestPage, requestPageLimit]);
 
   const { cnctDecimals } = useToken();
 
@@ -95,6 +97,11 @@ const TransactionHistory: FC = () => {
         setSelectedRows={setSelectedRows}
         parentContainerRef={parentRef}
         isLoading={isLoading}
+        totalRequests={totalRequests}
+        currentRequestPage={currentRequestPage}
+        requestPageLimit={requestPageLimit}
+        setCurrentRequestPage={setCurrentRequestPage}
+        setRequestPageLimit={setRequestPageLimit}
         onCancellationSuccessful={handleCancellationSuccessful}
         onCancellationFailed={handleCancellationFailed}
       />
