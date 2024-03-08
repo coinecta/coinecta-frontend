@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Avatar,
   Box,
@@ -141,8 +141,11 @@ const StakePositionTable = <T extends Record<string, any>>({
     return item.unlockDate > new Date();
   };
 
-  const selectableRows = data.filter(item => item.unlockDate <= new Date()).map((_, index) => index);
-
+  const selectableRows = useMemo(() => {
+    return data.map((d, index) => ({ index, unlockDate: d.unlockDate})).filter(d => d.unlockDate < new Date()).map(d => d.index);
+  }, [data]);
+  
+  console.log('selectableRows', selectableRows, data);
   const handleSelectRow = (index: number) => {
     if (setSelectedRows && actions) {
       setSelectedRows((prevSelectedRows) => {
@@ -163,7 +166,7 @@ const StakePositionTable = <T extends Record<string, any>>({
 
   const handleSelectAllRows = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (setSelectedRows && actions) {
-      const newSelectedRows = new Set(selectedRows);
+      const newSelectedRows = new Set([] as number[]);
       if (event.target.checked) {
         selectableRows.forEach(index => newSelectedRows.add(index));
       } else {
@@ -249,28 +252,31 @@ const StakePositionTable = <T extends Record<string, any>>({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
-                  <TableRow key={index}
-                    sx={{
-                      '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
-                      '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)' }
-                    }}
-                  >
-                    {actions && selectedRows && <TableCell padding="checkbox" sx={{ borderBottom: 'none' }}>
-                      <Checkbox
-                        checked={selectedRows.has(index)}
-                        onChange={() => handleSelectRow(index)}
-                        color="secondary"
-                        disabled={item.unlockDate > new Date()}
-                      />
-                    </TableCell>}
-                    {Object.keys(item).map((key, colIndex) => (
-                      <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                        {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
+                {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => {
+                  const itemIndex = page * rowsPerPage + index;
+                  return (
+                    <TableRow key={itemIndex}
+                      sx={{
+                        '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
+                        '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)' }
+                      }}
+                    >
+                      {actions && selectedRows && <TableCell padding="checkbox" sx={{ borderBottom: 'none' }}>
+                        <Checkbox
+                          checked={selectedRows.has(itemIndex)}
+                          onChange={() => handleSelectRow(itemIndex)}
+                          color="secondary"
+                          disabled={item.unlockDate > new Date()}
+                        />
+                      </TableCell>}
+                      {Object.keys(item).map((key, colIndex) => (
+                        <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                          {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                })}
               </TableBody>
               <TableFooter>
                 <TableRow>
