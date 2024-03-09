@@ -128,7 +128,6 @@ const StakePositions: FC = () => {
     setOpenRedeemDialog(true);
   }
 
-
   // Refresh data every 20 seconds
   useEffect(() => {
     const interval = setInterval(() => {
@@ -140,9 +139,14 @@ const StakePositions: FC = () => {
   useEffect(() => {
     const execute = async () => {
       if (connected && sessionStatus === 'authenticated') {
-        const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
-        const utxos = await api.getUtxos();
-        setWalletUtxosCbor(utxos);
+        try {
+          const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
+          const utxos = await api.getUtxos();
+          const collateral = api.experimental.getCollateral() === undefined ? [] : await api.experimental.getCollateral();
+          setWalletUtxosCbor([...utxos!, ...collateral!]);
+        } catch (ex) {
+          console.log("Error getting utxos", ex);
+        }
       }
     };
     execute();
@@ -211,7 +215,6 @@ const StakePositions: FC = () => {
 
   const handleSuccessSnackbarClose = () => setIsRedeemSuccessful(false);
   const handleFailedSnackbarClose = () => setIsRedeemFailed(false);
-
   return (
     <Box sx={{ position: 'relative' }} ref={parentRef}>
       <DashboardHeader title="Manage Staked Positions" />
@@ -274,7 +277,7 @@ const StakePositions: FC = () => {
         setSelectedRows={setSelectedRows}
         actions={actions}
         parentContainerRef={parentRef}
-        isLoading={isLoading}
+        isLoading={isLoading && (walletUtxosCbor?.length ?? 0) <= 0}
       />
       <RedeemConfirm
         open={openRedeemDialog}

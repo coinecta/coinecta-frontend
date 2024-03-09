@@ -69,7 +69,6 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
     try {
       if (connected) {
         setIsSigning(true);
-        
         const unsignedTxCbor = await claimStakeTxMutation.mutateAsync(claimStakeRequest);
         const witnesssetCbor = await cardanoApi.signTx(unsignedTxCbor, true);
 

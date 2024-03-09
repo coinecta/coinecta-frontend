@@ -94,16 +94,9 @@ const AddStakePage: FC = () => {
     return BigInt(getStakePoolQuery.data?.amount.multiAsset[STAKE_POOL_ASSET_POLICY][STAKE_POOL_ASSET_NAME] ?? 0);
   }, [STAKE_POOL_ASSET_NAME, STAKE_POOL_ASSET_POLICY, getStakePoolQuery.data?.amount.multiAsset]);
 
-  const rewardSettings = useMemo(() => {
-    return getStakePoolQuery.data?.stakePool.rewardSettings;
-  }, [getStakePoolQuery.data?.stakePool.rewardSettings]);
-
   const rewardSettingIndex = useMemo(() => {
     return options.indexOf(options.find(option => option.duration === stakeDuration) || options[0]);
   }, [stakeDuration]);
-
-  if (rewardSettings !== undefined)
-    console.log('rewardSettingIndex', rewardSettings[rewardSettingIndex]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     if (event.key === 'Enter') {

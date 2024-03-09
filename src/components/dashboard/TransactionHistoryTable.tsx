@@ -190,9 +190,8 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const cancelTx = useCallback(async (txHash: string, txIndex: string) => {
     if (connected && cardanoApi !== undefined) {
       try {
-
         const utxos = await cardanoApi.getUtxos();
-        const collateral = await cardanoApi.getCollateral();
+        const collateral = cardanoApi.getCollateral === undefined ? [] : await cardanoApi.getCollateral();
         const cancelStakeTxCbor = await cancelStakeTxMutation.mutateAsync({
           stakeRequestOutputReference: {
             txHash,
@@ -205,10 +204,11 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         cardanoApi.submitTx(signedTxCbor);
         onCancellationSuccessful(true);
       } catch (ex) {
+        console.error('Error cancelling stake', ex);
         onCancellationFailed(true);
       }
     }
-  }, [connected, cardanoApi, onCancellationSuccessful, onCancellationFailed]);
+  }, [connected, cardanoApi, cancelStakeTxMutation, finaliseTxMutation]);
 
   if (error) return <div>Error loading</div>;
   return (
