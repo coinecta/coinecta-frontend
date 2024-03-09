@@ -33,9 +33,8 @@ interface IAddWallet {
 
 export const AddWallet: FC<IAddWallet> = () => {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const { addAlert } = useAlert()
-  const { wallet, connected, name, connecting, connect, disconnect, error } = useWallet()
+  const { connect, wallet, connected, name } = useWallet()
   const [openAddWallet, setOpenAddWallet] = useState(false)
   const [walletSelected, setWalletSelected] = useState(true) // true to use a "false" trigger when a wallet is selected
   const [openManageWallets, setOpenManageWallets] = useState(false)
@@ -69,6 +68,7 @@ export const AddWallet: FC<IAddWallet> = () => {
         usedAddresses: thisUsedAddresses
       })
       addAlert("success", `Successfully added wallet ${getShorterAddress(thisChangeAddress, 6)}`)
+      await connect(sessionData!.user.walletType!)
       setShouldRefetch(true)
       setOpenManageWallets(true)
       setOpenAddWallet(false)

@@ -27,10 +27,10 @@ export const WalletList: FC<IWalletList> = ({ setOpen, setLoading }) => {
     setOpen(false)
   }
 
-  const handleConnect = (walletName: string) => {
+  const handleConnect = async (walletName: string) => {
     try {
       setLoading(true)
-      connect(walletName)
+      await connect(walletName)
     } catch {
 
     } finally {
