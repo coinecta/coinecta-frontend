@@ -142,9 +142,9 @@ const StakePositionTable = <T extends Record<string, any>>({
   };
 
   const selectableRows = useMemo(() => {
-    return data.map((d, index) => ({ index, unlockDate: d.unlockDate})).filter(d => d.unlockDate < new Date()).map(d => d.index);
+    return data.map((d, index) => ({ index, unlockDate: d.unlockDate })).filter(d => d.unlockDate < new Date()).map(d => d.index);
   }, [data]);
-  
+
   const handleSelectRow = (index: number) => {
     if (setSelectedRows && actions) {
       setSelectedRows((prevSelectedRows) => {
@@ -280,7 +280,7 @@ const StakePositionTable = <T extends Record<string, any>>({
               <TableFooter>
                 <TableRow>
                   <TablePagination
-                    component={"td"}
+                    component="td"
                     rowsPerPageOptions={rowsPerPageOptions}
                     colSpan={7}
                     count={data.length}
@@ -288,7 +288,8 @@ const StakePositionTable = <T extends Record<string, any>>({
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                    disabled={isLoading} />
+                  // disabled={isLoading} 
+                  />
                 </TableRow>
               </TableFooter>
             </Table> :
