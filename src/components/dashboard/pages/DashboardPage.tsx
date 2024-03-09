@@ -36,7 +36,7 @@ const Dashboard: FC = () => {
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
   const theme = useTheme();
 
-  const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0 });
+  const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
 
   const summary = useMemo(() => {
     if (queryStakeSummary.data?.poolStats.CNCT === undefined) return undefined;

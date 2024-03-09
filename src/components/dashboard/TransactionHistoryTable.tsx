@@ -174,7 +174,6 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   };
 
   const { name, wallet, connected } = useWallet()
-  const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>()
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const { sessionData } = useWalletContext();
 
@@ -183,22 +182,23 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
       if (connected) {
         const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
         setCardanoApi(api);
-        const utxos = await api.getUtxos();
-        setWalletUtxosCbor(utxos);
       }
     };
     execute();
   }, [name, connected, sessionData?.user.walletType]);
 
   const cancelTx = useCallback(async (txHash: string, txIndex: string) => {
-    if (connected && walletUtxosCbor !== undefined && cardanoApi !== undefined) {
+    if (connected && cardanoApi !== undefined) {
       try {
+
+        const utxos = await cardanoApi.getUtxos();
+        const collateral = await cardanoApi.getCollateral();
         const cancelStakeTxCbor = await cancelStakeTxMutation.mutateAsync({
           stakeRequestOutputReference: {
             txHash,
             index: txIndex
           },
-          walletUtxoListCbor: walletUtxosCbor!,
+          walletUtxoListCbor: [...utxos!, ...collateral],
         });
         const witnessSetCbor = await cardanoApi.signTx(cancelStakeTxCbor, true);
         const signedTxCbor = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
@@ -208,7 +208,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         onCancellationFailed(true);
       }
     }
-  }, [connected, walletUtxosCbor, cardanoApi, onCancellationSuccessful, onCancellationFailed]);
+  }, [connected, cardanoApi, onCancellationSuccessful, onCancellationFailed]);
 
   if (error) return <div>Error loading</div>;
   return (
@@ -331,7 +331,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                     })}
                     <TableCell sx={{ borderBottom: 'none' }}>
                       {item.status === "Pending" && !isLoading && <>
-                        <Button disabled={isLoading && (walletUtxosCbor?.length ?? 0 > 0)} key={index} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex)}>
+                        <Button disabled={isLoading} key={index} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex)}>
                           Cancel
                         </Button>
                       </>}

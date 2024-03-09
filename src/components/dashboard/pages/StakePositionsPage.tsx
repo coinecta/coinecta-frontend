@@ -59,10 +59,10 @@ const StakePositions: FC = () => {
     maximumFractionDigits: 2
   })}${key !== '' && key != null ? ` ${key}` : ''}`;
 
-  const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0 });
+  const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const summary = useMemo((() => queryStakeSummary.data ), [queryStakeSummary.data]);
 
-  const queryStakePositions = trpc.sync.getStakePositions.useQuery(stakeKeys, { retry: 0 });
+  const queryStakePositions = trpc.sync.getStakePositions.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const positions = useMemo(() => queryStakePositions.data ?? [], [queryStakePositions.data]);
 
   useEffect(() => {
@@ -89,11 +89,12 @@ const StakePositions: FC = () => {
   useEffect(() => {
     const newData = Array.from(selectedRows).filter(index => redeemableRows.has(index)).map(index => {
       const item = positions[index];
+      if(item === undefined) return;
       return {
         currency: item.name,
         amount: item.total.toString(),
       };
-    });
+    }).filter(item => item !== undefined).map(item => item as {currency: string, amount: string});
 
     setRedeemRowData(newData);
   }, [selectedRows, redeemableRows, positions])

@@ -22,7 +22,6 @@ const TransactionHistory: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set())
   const [isLoading, setIsLoading] = useState(true);
-  const { wallet, connected } = useWallet();
   const [currentRequestPage, setCurrentRequestPage] = useState<number>(1);
   const [requestPageLimit, setRequestPageLimit] = useState<number>(5);
   const [isCancellationSuccessful, setIsCancellationSuccessful] = useState<boolean>(false);
@@ -30,10 +29,10 @@ const TransactionHistory: FC = () => {
   const [stakeRequestResponse, setStakeRequestResponse] = useState<StakeRequestsResponse | null>(null);
   const { selectedAddresses } = useWalletContext();
 
-  const queryGetStakeRequests = trpc.sync.getStakeRequests.useQuery({ walletAddresses: selectedAddresses, page: currentRequestPage, limit: requestPageLimit });
+  const queryGetStakeRequests = trpc.sync.getStakeRequests.useQuery({ walletAddresses: selectedAddresses, page: currentRequestPage, limit: requestPageLimit }, { refetchInterval: 5000 });
 
   useEffect(() => {
-      setIsLoading(queryGetStakeRequests.isLoading);
+    setIsLoading(queryGetStakeRequests.isLoading);
   }, [queryGetStakeRequests.isLoading]);
 
   useEffect(() => {
@@ -59,7 +58,9 @@ const TransactionHistory: FC = () => {
 
   const processedStakeRequests = useMemo(() => {
     return stakeRequestResponse?.data?.map((request) => {
-      const formattedTokenAmount = formatTokenWithDecimals(BigInt(request.amount.multiAsset["8b05e87a51c1d4a0fa888d2bb14dbc25e8c343ea379a171b63aa84a0"]["434e4354"]), cnctDecimals);
+      const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY!;
+      const STAKE_POOL_ASSET_NAME = process.env.STAKE_POOL_ASSET_NAME!;
+      const formattedTokenAmount = formatTokenWithDecimals(BigInt(request.amount.multiAsset[STAKE_POOL_ASSET_POLICY][STAKE_POOL_ASSET_NAME]), cnctDecimals);
       const formattedDate = dayjs(stakeRequestResponse?.extra.slotData[request.slot]! * 1000).format('DD MMM, YY HH:mm');
       const status = statusToString(request.status);
       const CARDANO_TX_EXPLORER_URL = process.env.CARDANO_TX_EXPLORER_URL!;
