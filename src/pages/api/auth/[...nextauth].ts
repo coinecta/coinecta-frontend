@@ -92,7 +92,7 @@ export const authOptions = (
     // const signedMessageSplit = signatureParse.signedMessage.split(";");
     // const nonce = signedMessageSplit[0];
     // const url = signedMessageSplit[1];
-    console.log('\x1b[32m', 'Nonce: ', '\x1b[0m', nonce);
+    // console.log('\x1b[32m', 'Nonce: ', '\x1b[0m', nonce);
     // if (nonce !== user.nonce) {
     //   console.error(`Nonce doesn't match`)
     //   throw new Error(`Nonce doesn't match`)

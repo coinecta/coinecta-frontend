@@ -7,6 +7,7 @@ import { heroRouter } from "./hero";
 import { priceRouter } from "./price";
 import { projectRouter } from "./project";
 import { stakepoolRouter } from "./stakepools";
+import { syncRouter } from "./sync";
 import { tokensRouter } from "./tokens";
 import { userRouter } from "./user";
 import { whitelistRouter } from "./whitelist";
@@ -29,7 +30,8 @@ export const appRouter = createTRPCRouter({
   price: priceRouter,
   contributions: contributionRouter,
   tokens: tokensRouter,
-  xerberus: xerberusRouter
+  xerberus: xerberusRouter,
+  sync: syncRouter,
 });
 
 // export type definition of API

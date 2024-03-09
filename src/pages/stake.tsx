@@ -18,7 +18,6 @@ const Stake: NextPage = () => {
       <Typography variant="body1" sx={{ mb: 4 }}>
         Stake your CNCT tokens here
       </Typography>
-
     </Container>
   )
 }

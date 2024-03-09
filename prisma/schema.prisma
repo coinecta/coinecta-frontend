@@ -89,8 +89,8 @@ model VerificationToken {
 model Wallet {
   id              Int      @id @default(autoincrement())
   type            String
-  rewardAddress   String   @unique @map("reward_address")
-  changeAddress   String   @unique @map("change_address")
+  rewardAddress   String   @map("reward_address")
+  changeAddress   String   @map("change_address")
   unusedAddresses String[] @map("unused_addresses")
   usedAddresses   String[] @map("used_addresses")
   user_id         String

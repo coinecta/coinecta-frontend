@@ -1,5 +1,4 @@
 import { prisma } from '@server/prisma';
-import { checkAddressAvailability } from '@server/utils/checkAddress';
 import { deleteEmptyUser } from '@server/utils/deleteEmptyUser';
 import { generateNonceForLogin } from '@server/utils/nonce';
 import { TRPCError } from '@trpc/server';
@@ -42,27 +41,6 @@ export const userRouter = createTRPCRouter({
       }
 
       return { nonce };
-    }),
-  checkAddressAvailable: publicProcedure
-    .input(z.object({
-      address: z.string().optional(),
-    }))
-    .query(async ({ input }) => {
-      const { address } = input;
-
-      if (!address) {
-        return { status: "error", message: "Address not provided" };
-      }
-
-      const result = await checkAddressAvailability(address);
-      if (result.status === "unavailable") {
-        return {
-          status: "unavailable",
-          message: "Address is in use"
-        };
-      }
-
-      return { status: "available", message: "Address is not in use" };
     }),
   getWallets: protectedProcedure
     .query(async ({ ctx }) => {
@@ -177,6 +155,53 @@ export const userRouter = createTRPCRouter({
       });
 
       return { success: true }
+    }),
+  addWallet: protectedProcedure
+    .input(z.object({
+      changeAddress: z.string(),
+      rewardAddress: z.string(),
+      unusedAddresses: z.array(z.string()),
+      usedAddresses: z.array(z.string()),
+      type: z.string(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const userId = ctx.session.user.id;
+
+      // Check if a wallet with the same details is already linked to this user
+      const existingWallet = await prisma.wallet.findFirst({
+        where: {
+          user_id: userId,
+          rewardAddress: input.rewardAddress,
+        }
+      });
+
+      if (existingWallet) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "This wallet is already added."
+        });
+      }
+
+      // Create the new wallet record
+      const newWallet = await prisma.wallet.create({
+        data: {
+          user_id: userId,
+          type: input.type,
+          changeAddress: input.changeAddress,
+          rewardAddress: input.rewardAddress,
+          unusedAddresses: input.unusedAddresses,
+          usedAddresses: input.usedAddresses,
+        }
+      });
+
+      if (!newWallet) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unable to add the wallet. "
+        });
+      }
+
+      return newWallet.id;
     }),
   removeWallet: protectedProcedure
     .input(z.object({

@@ -73,3 +73,8 @@ type TWalletListItem = {
   mobile: boolean;
   url: string;
 }
+
+interface IRedeemListItem {
+  amount: string;
+  currency: string;
+}

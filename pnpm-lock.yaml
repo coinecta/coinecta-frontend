@@ -20,7 +20,7 @@ dependencies:
   '@dexhunterio/swaps':
     specifier: ^0.0.92
     version: >-
-      0.0.92(@formkit/auto-animate@0.8.1)(@radix-ui/react-accordion@1.1.2)(@radix-ui/react-checkbox@1.0.4)(@radix-ui/react-dialog@1.0.5)(@radix-ui/react-dropdown-menu@2.0.6)(@radix-ui/react-label@2.0.2)(@radix-ui/react-popover@1.0.7)(@radix-ui/react-progress@1.0.3)(@radix-ui/react-select@1.2.2)(@radix-ui/react-separator@1.0.3)(@radix-ui/react-slider@1.1.2)(@radix-ui/react-slot@1.0.2)(@radix-ui/react-switch@1.0.3)(@radix-ui/react-toast@1.1.5)(@radix-ui/react-tooltip@1.0.7)(@tabler/icons-react@2.46.0)(@tailwindcss/container-queries@0.1.1)(@tanstack/react-query-devtools@4.36.1)(@tanstack/react-query@4.32.0)(@tanstack/react-table@8.11.7)(@tanstack/react-virtual@3.0.2)(@vercel/analytics@1.1.2)(axios@1.4.0)(bech32@2.0.0)(class-variance-authority@0.7.0)(clsx@2.0.0)(cmdk@0.2.0)(i@0.3.7)(immer@10.0.3)(lucide-react@0.263.1)(moment@2.30.1)(npm@9.9.2)(overlayscrollbars-react@0.5.4)(react-confetti-explosion@2.1.2)(react-currency-input-field@3.6.14)(react-dom@18.2.0)(react-hotkeys-hook@4.4.4)(react-spinners@0.13.8)(react-toastify@9.1.3)(react-virtuoso@4.6.2)(react@18.2.0)(sort-by@1.2.0)(tailwind-merge@1.14.0)(tailwindcss-animate@1.0.7)(use-debounce@9.0.4)(zustand@4.5.0)
+      0.0.92(@formkit/auto-animate@0.8.1)(@radix-ui/react-accordion@1.1.2)(@radix-ui/react-checkbox@1.0.4)(@radix-ui/react-dialog@1.0.5)(@radix-ui/react-dropdown-menu@2.0.6)(@radix-ui/react-label@2.0.2)(@radix-ui/react-popover@1.0.7)(@radix-ui/react-progress@1.0.3)(@radix-ui/react-select@1.2.2)(@radix-ui/react-separator@1.0.3)(@radix-ui/react-slider@1.1.2)(@radix-ui/react-slot@1.0.2)(@radix-ui/react-switch@1.0.3)(@radix-ui/react-toast@1.1.5)(@radix-ui/react-tooltip@1.0.7)(@tabler/icons-react@2.46.0)(@tailwindcss/container-queries@0.1.1)(@tanstack/react-query-devtools@4.36.1)(@tanstack/react-query@4.36.1)(@tanstack/react-table@8.11.7)(@tanstack/react-virtual@3.0.2)(@vercel/analytics@1.1.2)(axios@1.4.0)(bech32@2.0.0)(class-variance-authority@0.7.0)(clsx@2.0.0)(cmdk@0.2.0)(i@0.3.7)(immer@10.0.3)(lucide-react@0.263.1)(moment@2.30.1)(npm@9.9.2)(overlayscrollbars-react@0.5.4)(react-confetti-explosion@2.1.2)(react-currency-input-field@3.6.14)(react-dom@18.2.0)(react-hotkeys-hook@4.4.4)(react-spinners@0.13.8)(react-toastify@9.1.3)(react-virtuoso@4.6.2)(react@18.2.0)(sort-by@1.2.0)(tailwind-merge@1.14.0)(tailwindcss-animate@1.0.7)(use-debounce@9.0.4)(zustand@4.5.0)
   '@emotion/cache':
     specifier: ^11.11.0
     version: 11.11.0
@@ -69,15 +69,12 @@ dependencies:
   '@sumsub/websdk-react':
     specifier: ^2.0.1
     version: 2.0.1(react-dom@18.2.0)(react@18.2.0)
-  '@tanstack/react-query':
-    specifier: ^4.32.0
-    version: 4.32.0(react-dom@18.2.0)(react@18.2.0)
   '@trpc/client':
     specifier: ^10.35.0
     version: 10.35.0(@trpc/server@10.35.0)
   '@trpc/next':
     specifier: ^10.35.0
-    version: 10.35.0(@tanstack/react-query@4.32.0)(@trpc/client@10.35.0)(@trpc/react-query@10.35.0)(@trpc/server@10.35.0)(next@13.4.12)(react-dom@18.2.0)(react@18.2.0)
+    version: 10.35.0(@tanstack/react-query@4.36.1)(@trpc/client@10.35.0)(@trpc/react-query@10.35.0)(@trpc/server@10.35.0)(next@13.4.12)(react-dom@18.2.0)(react@18.2.0)
   '@trpc/server':
     specifier: ^10.35.0
     version: 10.35.0
@@ -96,6 +93,9 @@ dependencies:
   cookies-next:
     specifier: ^2.1.2
     version: 2.1.2
+  copy-to-clipboard:
+    specifier: ^3.3.3
+    version: 3.3.3
   d3:
     specifier: ^7.8.5
     version: 7.8.5
@@ -162,9 +162,6 @@ dependencies:
   swiper:
     specifier: ^10.0.4
     version: 10.0.4
-  swr:
-    specifier: ^2.2.0
-    version: 2.2.0(react@18.2.0)
   tss-react:
     specifier: ^4.8.8
     version: 4.8.8(@emotion/react@11.11.1)(react@18.2.0)
@@ -1122,7 +1119,7 @@ packages:
     dev: false
     optional: true
 
-  ? /@dexhunterio/swaps@0.0.92(@formkit/auto-animate@0.8.1)(@radix-ui/react-accordion@1.1.2)(@radix-ui/react-checkbox@1.0.4)(@radix-ui/react-dialog@1.0.5)(@radix-ui/react-dropdown-menu@2.0.6)(@radix-ui/react-label@2.0.2)(@radix-ui/react-popover@1.0.7)(@radix-ui/react-progress@1.0.3)(@radix-ui/react-select@1.2.2)(@radix-ui/react-separator@1.0.3)(@radix-ui/react-slider@1.1.2)(@radix-ui/react-slot@1.0.2)(@radix-ui/react-switch@1.0.3)(@radix-ui/react-toast@1.1.5)(@radix-ui/react-tooltip@1.0.7)(@tabler/icons-react@2.46.0)(@tailwindcss/container-queries@0.1.1)(@tanstack/react-query-devtools@4.36.1)(@tanstack/react-query@4.32.0)(@tanstack/react-table@8.11.7)(@tanstack/react-virtual@3.0.2)(@vercel/analytics@1.1.2)(axios@1.4.0)(bech32@2.0.0)(class-variance-authority@0.7.0)(clsx@2.0.0)(cmdk@0.2.0)(i@0.3.7)(immer@10.0.3)(lucide-react@0.263.1)(moment@2.30.1)(npm@9.9.2)(overlayscrollbars-react@0.5.4)(react-confetti-explosion@2.1.2)(react-currency-input-field@3.6.14)(react-dom@18.2.0)(react-hotkeys-hook@4.4.4)(react-spinners@0.13.8)(react-toastify@9.1.3)(react-virtuoso@4.6.2)(react@18.2.0)(sort-by@1.2.0)(tailwind-merge@1.14.0)(tailwindcss-animate@1.0.7)(use-debounce@9.0.4)(zustand@4.5.0)
+  ? /@dexhunterio/swaps@0.0.92(@formkit/auto-animate@0.8.1)(@radix-ui/react-accordion@1.1.2)(@radix-ui/react-checkbox@1.0.4)(@radix-ui/react-dialog@1.0.5)(@radix-ui/react-dropdown-menu@2.0.6)(@radix-ui/react-label@2.0.2)(@radix-ui/react-popover@1.0.7)(@radix-ui/react-progress@1.0.3)(@radix-ui/react-select@1.2.2)(@radix-ui/react-separator@1.0.3)(@radix-ui/react-slider@1.1.2)(@radix-ui/react-slot@1.0.2)(@radix-ui/react-switch@1.0.3)(@radix-ui/react-toast@1.1.5)(@radix-ui/react-tooltip@1.0.7)(@tabler/icons-react@2.46.0)(@tailwindcss/container-queries@0.1.1)(@tanstack/react-query-devtools@4.36.1)(@tanstack/react-query@4.36.1)(@tanstack/react-table@8.11.7)(@tanstack/react-virtual@3.0.2)(@vercel/analytics@1.1.2)(axios@1.4.0)(bech32@2.0.0)(class-variance-authority@0.7.0)(clsx@2.0.0)(cmdk@0.2.0)(i@0.3.7)(immer@10.0.3)(lucide-react@0.263.1)(moment@2.30.1)(npm@9.9.2)(overlayscrollbars-react@0.5.4)(react-confetti-explosion@2.1.2)(react-currency-input-field@3.6.14)(react-dom@18.2.0)(react-hotkeys-hook@4.4.4)(react-spinners@0.13.8)(react-toastify@9.1.3)(react-virtuoso@4.6.2)(react@18.2.0)(sort-by@1.2.0)(tailwind-merge@1.14.0)(tailwindcss-animate@1.0.7)(use-debounce@9.0.4)(zustand@4.5.0)
   : resolution: {integrity: sha512-lHfxp5ko6N7ZMfrIOO/lkBfXkNeIQAd0x3UNn3mE8AF4Z7vjsWUeWrgqqNuqzrk+XDUnPUexMsPmTnEdLvx/aQ==}
     peerDependencies:
       '@formkit/auto-animate': ^0.8.0
@@ -1189,8 +1186,8 @@ packages:
       '@radix-ui/react-tooltip': 1.0.7(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0)(react@18.2.0)
       '@tabler/icons-react': 2.46.0(react@18.2.0)
       '@tailwindcss/container-queries': 0.1.1
-      '@tanstack/react-query': 4.32.0(react-dom@18.2.0)(react@18.2.0)
-      '@tanstack/react-query-devtools': 4.36.1(@tanstack/react-query@4.32.0)(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-query': 4.36.1(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-query-devtools': 4.36.1(@tanstack/react-query@4.36.1)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-table': 8.11.7(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-virtual': 3.0.2(react-dom@18.2.0)(react@18.2.0)
       '@vercel/analytics': 1.1.2
@@ -3687,11 +3684,11 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
-  /@tanstack/query-core@4.32.0:
-    resolution: {integrity: sha512-ei4IYwL2kmlKSlCw9WgvV7PpXi0MiswVwfQRxawhJA690zWO3dU49igaQ/UMTl+Jy9jj9dK5IKAYvbX7kUvviQ==}
+  /@tanstack/query-core@4.36.1:
+    resolution: {integrity: sha512-DJSilV5+ytBP1FbFcEJovv4rnnm/CokuVvrBEtW/Va9DvuJ3HksbXUJEpI0aV1KtuL4ZoO9AVE6PyNLzF7tLeA==}
     dev: false
 
-  /@tanstack/react-query-devtools@4.36.1(@tanstack/react-query@4.32.0)(react-dom@18.2.0)(react@18.2.0):
+  /@tanstack/react-query-devtools@4.36.1(@tanstack/react-query@4.36.1)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-WYku83CKP3OevnYSG8Y/QO9g0rT75v1om5IvcWUwiUZJ4LanYGLVCZ8TdFG5jfsq4Ej/lu2wwDAULEUnRIMBSw==}
     peerDependencies:
       '@tanstack/react-query': ^4.36.1
@@ -3699,15 +3696,15 @@ packages:
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@tanstack/match-sorter-utils': 8.11.7
-      '@tanstack/react-query': 4.32.0(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-query': 4.36.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       superjson: 1.13.3
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  /@tanstack/react-query@4.32.0(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-B8WUMcByYAH9500ENejDCATOmEZhqjtS9wsfiQ3BNa+s+yAynY8SESI8WWHhSqUmjd0pmCSFRP6BOUGSda3QXA==}
+  /@tanstack/react-query@4.36.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-y7ySVHFyyQblPl3J3eQBWpXZkliroki3ARnBKsdJchlgt7yJLRDUcf4B8soufgiYt3pEQIkBWBx1N9/ZPIeUWw==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -3718,7 +3715,7 @@ packages:
       react-native:
         optional: true
     dependencies:
-      '@tanstack/query-core': 4.32.0
+      '@tanstack/query-core': 4.36.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       use-sync-external-store: 1.2.0(react@18.2.0)
@@ -3764,7 +3761,7 @@ packages:
       '@trpc/server': 10.35.0
     dev: false
 
-  /@trpc/next@10.35.0(@tanstack/react-query@4.32.0)(@trpc/client@10.35.0)(@trpc/react-query@10.35.0)(@trpc/server@10.35.0)(next@13.4.12)(react-dom@18.2.0)(react@18.2.0):
+  /@trpc/next@10.35.0(@tanstack/react-query@4.36.1)(@trpc/client@10.35.0)(@trpc/react-query@10.35.0)(@trpc/server@10.35.0)(next@13.4.12)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-mUp7OrsF/vwxPOjZ6lP4X0XVxXA8N7PaWys6NgigUaKsGZ9pht5QyQNfprVpIv7PnSknLuICY/fKEBL9+zfH3A==}
     peerDependencies:
       '@tanstack/react-query': ^4.18.0
@@ -3775,9 +3772,9 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      '@tanstack/react-query': 4.32.0(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-query': 4.36.1(react-dom@18.2.0)(react@18.2.0)
       '@trpc/client': 10.35.0(@trpc/server@10.35.0)
-      '@trpc/react-query': 10.35.0(@tanstack/react-query@4.32.0)(@trpc/client@10.35.0)(@trpc/server@10.35.0)(react-dom@18.2.0)(react@18.2.0)
+      '@trpc/react-query': 10.35.0(@tanstack/react-query@4.36.1)(@trpc/client@10.35.0)(@trpc/server@10.35.0)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/server': 10.35.0
       next: 13.4.12(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
@@ -3785,7 +3782,7 @@ packages:
       react-ssr-prepass: 1.5.0(react@18.2.0)
     dev: false
 
-  /@trpc/react-query@10.35.0(@tanstack/react-query@4.32.0)(@trpc/client@10.35.0)(@trpc/server@10.35.0)(react-dom@18.2.0)(react@18.2.0):
+  /@trpc/react-query@10.35.0(@tanstack/react-query@4.36.1)(@trpc/client@10.35.0)(@trpc/server@10.35.0)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-tPC14UAIlrMlPZgN5TGOzcgqI4dEBUaJSmc+PjLmLfP+7vcNwOweCSdvq9gsDBCZf9aYq3Bf6KFi90ej+0ZUjQ==}
     peerDependencies:
       '@tanstack/react-query': ^4.18.0
@@ -3794,7 +3791,7 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      '@tanstack/react-query': 4.32.0(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-query': 4.36.1(react-dom@18.2.0)(react@18.2.0)
       '@trpc/client': 10.35.0(@trpc/server@10.35.0)
       '@trpc/server': 10.35.0
       react: 18.2.0
@@ -4703,6 +4700,12 @@ packages:
     engines: {node: '>=12.13'}
     dependencies:
       is-what: 4.1.15
+    dev: false
+
+  /copy-to-clipboard@3.3.3:
+    resolution: {integrity: sha512-2KV8NhB5JqC3ky0r9PMCAZKbUHSwtEo4CwCs0KXgruG43gX5PMqDEBbVU4OUzw2MuAWUfsuFmWvEKG5QRfSnJA==}
+    dependencies:
+      toggle-selection: 1.0.6
     dev: false
 
   /cosmiconfig@7.1.0:
@@ -8297,15 +8300,6 @@ packages:
     engines: {node: '>= 4.7.0'}
     dev: false
 
-  /swr@2.2.0(react@18.2.0):
-    resolution: {integrity: sha512-AjqHOv2lAhkuUdIiBu9xbuettzAzWXmCEcLONNKJRba87WAefz8Ca9d6ds/SzrPc235n1IxWYdhJ2zF3MNUaoQ==}
-    peerDependencies:
-      react: ^16.11.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
-    dev: false
-
   /symbol-observable@1.2.0:
     resolution: {integrity: sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==}
     engines: {node: '>=0.10.0'}
@@ -8375,6 +8369,10 @@ packages:
     dependencies:
       is-number: 7.0.0
     dev: true
+
+  /toggle-selection@1.0.6:
+    resolution: {integrity: sha512-BiZS+C1OS8g/q2RRbJmy59xpyghNBqrr6k5L/uKBGRsTfxmu3ffiRnd8mlGPUVayg8pvfi5urfnu8TU7DVOkLQ==}
+    dev: false
 
   /trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}

@@ -44,10 +44,10 @@ const Projects = () => {
 
   return (
     <>
-      <Container maxWidth="md" sx={{ py: 12 }}>
-        <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 600, textAlign: 'center' }}>
+      <Container maxWidth="md" sx={{ py: 3 }}>
+        {/* <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 600, textAlign: 'center' }}>
           Projects on Coinecta
-        </Typography>
+        </Typography> */}
         <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
           <SearchBar searchString={searchString} setSearchString={setSearchString} />
         </Box>

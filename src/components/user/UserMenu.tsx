@@ -12,13 +12,8 @@ import { useRouter } from 'next/router';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Divider from '@mui/material/Divider';
-import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import RedeemIcon from '@mui/icons-material/Redeem';
-import SellIcon from '@mui/icons-material/Sell';
-import EditIcon from '@mui/icons-material/Edit';
 import SignIn from '@components/user/SignIn';
 import { useWallet, useWalletList } from '@meshsdk/react';
 import { getShortAddress } from '@lib/utils/general';
@@ -26,6 +21,7 @@ import { trpc } from "@lib/utils/trpc";
 import { signIn, signOut } from "next-auth/react"
 import { useWalletContext } from '@contexts/WalletContext';
 import { useAlert } from '@contexts/AlertContext';
+import { useCardano } from '@lib/utils/cardano';
 
 interface IWalletType {
   name: string;
@@ -53,6 +49,7 @@ const UserMenu: FC<IUserMenuProps> = () => {
   const { providerLoading, setProviderLoading, sessionStatus, sessionData, fetchSessionData } = useWalletContext()
   const [walletIcon, setWalletIcon] = useState<string | undefined>(undefined)
   const walletsList = useWalletList();
+  const { clearSelectedAddresses } = useCardano();
 
   useEffect(() => {
     // console.log(`connected: ${connected}`)
@@ -60,12 +57,12 @@ const UserMenu: FC<IUserMenuProps> = () => {
     // console.log(`sessionStatus: ${sessionStatus}`)
     // console.log(`sessionData: ${sessionData?.user.walletType}`)
 
-    // user has a wallet connected, we've got the reward address, but they still need to sign in
     if (connected && !rewardAddress && sessionStatus === 'unauthenticated') {
       // console.log('getting addresses')
       getAddresses()
     }
 
+    // user has a wallet connected, we've got the reward address, but they still need to sign in
     if (connected && rewardAddress && sessionStatus === 'unauthenticated') {
       // console.log('refetching (initiate login flow)')
       refetchData()
@@ -207,6 +204,7 @@ const UserMenu: FC<IUserMenuProps> = () => {
   };
 
   const cleanup = () => {
+    clearSelectedAddresses()
     setRewardAddress(undefined)
     setChangeAddress(undefined)
     setUsedAddresses([])

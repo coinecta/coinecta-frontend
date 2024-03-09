@@ -14,20 +14,8 @@ import Link from '@components/Link'
 import { ThemeContext } from "@contexts/ThemeContext";
 import { useRouter } from 'next/router';
 import Logo from '@components/svgs/Logo';
-import NotificationsMenu from '@components/notifications/NotificationsMenu'
 import UserMenu from '@components/user/UserMenu';
 import SocialGrid from './SocialGrid';
-
-const pages = [
-  {
-    name: "Home",
-    link: "/",
-  },
-  {
-    name: "Projects",
-    link: "/projects"
-  }
-];
 
 interface INavItemProps {
   size?: number;
@@ -39,13 +27,23 @@ interface INavItemProps {
   };
 }
 
-interface IHeaderProps {
-
-}
-
-const Header: FC<IHeaderProps> = ({ }) => {
+const Header: FC = () => {
   const { theme, setTheme } = useContext(ThemeContext);
   const [navbarOpen, setNavbarOpen] = React.useState(false);
+  const pages = [
+    {
+      name: "Home",
+      link: "/",
+    },
+    {
+      name: "Projects",
+      link: "/projects"
+    },
+    {
+      name: "Dashboard",
+      link: "/dashboard"
+    }
+  ];
 
   const router = useRouter();
 
@@ -223,7 +221,7 @@ const Header: FC<IHeaderProps> = ({ }) => {
                 <Grid item sx={{ display: { xs: "flex", md: "none" } }}>
                   <Box
                     sx={{
-                      zIndex: "25",
+                      zIndex: 202,
                       position: "relative",
                       width: "26px",
                       height: "40px",
@@ -277,7 +275,7 @@ const Header: FC<IHeaderProps> = ({ }) => {
       <Fade in={navbarOpen} style={{ transitionDuration: "400ms" }}>
         <Box
           sx={{
-            zIndex: "103",
+            zIndex: 203,
             position: "fixed",
             width: "26px",
             height: "40px",
@@ -331,7 +329,7 @@ const Header: FC<IHeaderProps> = ({ }) => {
             width: "100vw",
             position: "fixed",
             bottom: "0px",
-            zIndex: "102",
+            zIndex: 201,
             background: theme.palette.background.default,
             backdropFilter: "blur(55px)",
             p: "24px",

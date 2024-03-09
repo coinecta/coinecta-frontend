@@ -10,6 +10,7 @@ import {
   Chip,
 } from '@mui/material'
 import { useRouter } from 'next/router';
+import { nanoid } from 'nanoid';
 
 interface IProjectCard {
   title: string;
