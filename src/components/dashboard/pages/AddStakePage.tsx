@@ -155,12 +155,12 @@ const AddStakePage: FC = () => {
                   borderRadius: '6px'
                 }}
                 onClick={() => setOpenConfirmationDialog(true)}
-                disabled={Number(cnctAmount) === 0 || Number(formatTokenWithDecimals(totalRewards, cnctDecimals)) < rewards}
+                disabled={Number(cnctAmount) === 0 || Number(formatTokenWithDecimals(totalRewards, cnctDecimals)) < rewards + 2000}
               >
                 Stake now
               </Button>
             </Box>
-            {Number(formatTokenWithDecimals(totalRewards, cnctDecimals)) < rewards &&
+            {Number(formatTokenWithDecimals(totalRewards, cnctDecimals)) < rewards + 2000 &&
               <Typography sx={{ fontSize: '13px!important', mt: 2, textAlign: 'center', color: theme.palette.error.main }}>The stake pool needs to be reloaded, please follow the announcements in Telegram or Discord for updates. </Typography>}
           </DashboardCard>
         </Grid>
