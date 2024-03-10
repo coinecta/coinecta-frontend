@@ -8,6 +8,7 @@ import {
   Skeleton,
   Snackbar,
   Typography,
+  useTheme,
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import DashboardCard from '@components/dashboard/DashboardCard';
@@ -51,6 +52,7 @@ const calculateAPY = (lockupMonths: number, interestRate: number): number => {
 }
 
 const AddStakePage: FC = () => {
+  const theme = useTheme()
 
   const STAKE_POOL_VALIDATOR_ADDRESS = process.env.STAKE_POOL_VALIDATOR_ADDRESS!;
   const STAKE_POOL_OWNER_KEY_HASH = process.env.STAKE_POOL_OWNER_KEY_HASH!;
@@ -73,7 +75,7 @@ const AddStakePage: FC = () => {
     assetName: STAKE_POOL_ASSET_NAME
   });
 
-  const metadataQuery  = trpc.tokens.getMetadata.useQuery({
+  const metadataQuery = trpc.tokens.getMetadata.useQuery({
     unit: `${STAKE_POOL_ASSET_POLICY}${STAKE_POOL_ASSET_NAME}`
   });
 
@@ -113,6 +115,7 @@ const AddStakePage: FC = () => {
   const handleFailedSnackbarClose = () => setIsStakeTransactionFailed(false);
 
   const total = (Number(cnctAmount) ? (Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0)) + Number(cnctAmount) : 0).toLocaleString(undefined, { maximumFractionDigits: 1 })
+  const rewards = (Number(cnctAmount) ? Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0) : 0)
 
   return (
     <Box sx={{ mb: 4 }}>
@@ -152,11 +155,13 @@ const AddStakePage: FC = () => {
                   borderRadius: '6px'
                 }}
                 onClick={() => setOpenConfirmationDialog(true)}
-                disabled={Number(cnctAmount) === 0}
+                disabled={Number(cnctAmount) === 0 || Number(formatTokenWithDecimals(totalRewards, cnctDecimals)) < rewards}
               >
                 Stake now
               </Button>
             </Box>
+            {Number(formatTokenWithDecimals(totalRewards, cnctDecimals)) < rewards &&
+              <Typography sx={{ fontSize: '13px!important', mt: 2, textAlign: 'center', color: theme.palette.error.main }}>The stake pool needs to be reloaded, please follow the announcements in Telegram or Discord for updates. </Typography>}
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={5} sx={{ display: 'flex', gap: 2, flexDirection: 'column' }}>
@@ -212,7 +217,7 @@ const AddStakePage: FC = () => {
             />
             <DataSpread
               title="Rewards"
-              data={`${(Number(cnctAmount) ? Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0) : 0).toLocaleString(undefined, { maximumFractionDigits: 1 })} CNCT`}
+              data={`${rewards.toLocaleString(undefined, { maximumFractionDigits: 1 })} CNCT`}
               isLoading={isLoading}
             />
             <DataSpread
