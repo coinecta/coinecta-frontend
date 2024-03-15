@@ -19,6 +19,7 @@ const Projects = () => {
         projectList.map((item) => {
           const details: IProjectDetails = {
             title: item.name,
+            slug: item.slug,
             tagline: item.shortDescription,
             category: '',
             imageUrl: item.bannerImgUrl,
@@ -63,7 +64,7 @@ const Projects = () => {
               {upcomingProjects.map((item: IProjectDetails) => {
                 return (
                   <Grid item xs={12} md={6} lg={4} key={item.title}>
-                    <ProjectCard {...item} link={`/projects/${item.title.toLowerCase().replace(/[\s-]/g, "")}`} />
+                    <ProjectCard {...item} link={`/projects/${item.slug}`} />
                   </Grid>
                 )
               })}
@@ -79,7 +80,7 @@ const Projects = () => {
               {launchedProjects.map((item: IProjectDetails) => {
                 return (
                   <Grid item xs={12} md={6} lg={4} key={item.title}>
-                    <ProjectCard {...item} link={`/projects/${item.title.toLowerCase().replace(/[\s-]/g, "")}`} />
+                    <ProjectCard {...item} link={`/projects/${item.slug}`} />
                   </Grid>
                 )
               })}

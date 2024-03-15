@@ -44,6 +44,7 @@ const Projects: FC<IProjectsProps> = ({ }) => {
         projectList.filter(project => project.frontPage).map((item) => {
           const details: IProjectDetails = {
             title: item.name,
+            slug: item.slug,
             tagline: item.shortDescription,
             category: '',
             imageUrl: item.bannerImgUrl,
@@ -136,7 +137,7 @@ const Projects: FC<IProjectsProps> = ({ }) => {
                     const slug = slugify(item.title)
                     return (
                       <SwiperSlide key={slug}>
-                        <ProjectCard {...item} link={`/projects/${item.title.toLowerCase().replace(/[\s-]/g, "")}`} />
+                        <ProjectCard {...item} link={`/projects/${item.slug}`} />
                       </SwiperSlide>
                     )
                   })}
