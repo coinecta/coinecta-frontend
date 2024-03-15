@@ -39,6 +39,7 @@ declare global {
 
   interface IProjectDetails {
     title: string;
+    slug: string;
     tagline: string;
     imageUrl: string;
     category: string;
