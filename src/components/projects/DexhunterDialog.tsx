@@ -60,7 +60,7 @@ const DexhunterDialog: FC<IDexhunterDialogProps> = ({
           }}
           theme={theme.palette.mode === 'dark' ? 'dark' : 'light'}
           width={upSm ? "420px" : "300px"}
-          partnerCode="coinecta61646472317179307973777374716168367a7778766435637368306779747938307063706671663067686532346e37393872303768647a3672366670367a39367267683864767536796a7838736d6d616e793430616e75383236347230656b337373756a747739da39a3ee5e6b4b0d3255bfef95601890afd80709"
+          partnerCode={process.env.DEXHUNTER_PARTNER_CODE || ''}
           partnerName="Coinecta"
           displayType="DEFAULT"
         />
