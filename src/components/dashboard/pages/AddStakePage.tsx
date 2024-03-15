@@ -21,7 +21,7 @@ import StakeConfirm from '../staking/StakeConfirm';
 import { calculateFutureDateMonths } from '@lib/utils/general'
 import { StakePoolResponse, coinectaSyncApi } from '@server/services/syncApi';
 import { metadataApi } from '@server/services/metadataApi';
-import { formatTokenWithDecimals } from '@lib/utils/assets';
+import { formatTokenWithDecimals, formatNumberWithCommasAndRound } from '@lib/utils/assets';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import { trpc } from '@lib/utils/trpc';
@@ -67,6 +67,7 @@ const AddStakePage: FC = () => {
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
   const [isStakeTransactionSubmitted, setIsStakeTransactionSubmitted] = useState<boolean>(false);
   const [isStakeTransactionFailed, setIsStakeTransactionFailed] = useState<boolean>(false);
+
 
   const getStakePoolQuery = trpc.sync.getStakePool.useQuery({
     address: STAKE_POOL_VALIDATOR_ADDRESS,
@@ -217,7 +218,7 @@ const AddStakePage: FC = () => {
             />
             <DataSpread
               title="Rewards"
-              data={`${rewards.toLocaleString(undefined, { maximumFractionDigits: 1 })} CNCT`}
+              data={`${formatNumberWithCommasAndRound(parseFloat(rewards.toLocaleString(undefined, { maximumFractionDigits: 1 })))} CNCT`}
               isLoading={isLoading}
             />
             <DataSpread
