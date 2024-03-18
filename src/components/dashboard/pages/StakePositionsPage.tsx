@@ -54,9 +54,9 @@ const StakePositions: FC = () => {
   const getWallets = trpc.user.getWallets.useQuery()
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
-  const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+  const formatNumber = (num: number, key: string) => `${num.toLocaleString(undefined, {
+    minimumFractionDigits: num % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: num % 1 === 0 ? 0 : 2
   })}${key !== '' && key != null ? ` ${key}` : ''}`;
 
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
