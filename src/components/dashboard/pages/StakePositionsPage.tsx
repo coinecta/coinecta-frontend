@@ -78,7 +78,7 @@ const StakePositions: FC = () => {
   const processedPositions = useMemo(() => {
     return positions.map((position) => {
       return {
-        name: position.name,
+        name: 'CNCT',
         total: formatNumber(parseFloat(formatTokenWithDecimals(BigInt(position.total), cnctDecimals)), ''),
         unlockDate: new Date(position.unlockDate),
         initial: formatNumber(parseFloat(formatTokenWithDecimals(BigInt(position.initial), cnctDecimals)), ''),
