@@ -21,7 +21,7 @@ import StakeConfirm from '../staking/StakeConfirm';
 import { calculateFutureDateMonths } from '@lib/utils/general'
 import { StakePoolResponse, coinectaSyncApi } from '@server/services/syncApi';
 import { metadataApi } from '@server/services/metadataApi';
-import { formatTokenWithDecimals } from '@lib/utils/assets';
+import { formatTokenWithDecimals, formatNumber } from '@lib/utils/assets';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import { trpc } from '@lib/utils/trpc';
@@ -211,7 +211,7 @@ const AddStakePage: FC = () => {
           <DashboardCard>
             <DataSpread
               title="Total Available Rewards"
-              data={`${formatTokenWithDecimals(totalRewards, cnctDecimals)} CNCT`}
+              data={`${formatNumber(parseFloat(formatTokenWithDecimals(totalRewards, cnctDecimals)), '')} CNCT`}
               isLoading={isLoading}
             />
             <DataSpread

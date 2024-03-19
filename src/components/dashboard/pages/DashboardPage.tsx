@@ -46,8 +46,7 @@ const Dashboard: FC = () => {
     setIsLoading(!queryStakeSummary.isSuccess && !isStakingKeysLoaded);
   }, [isStakingKeysLoaded, queryStakeSummary.isSuccess]);
 
-  const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
-    minimumFractionDigits: 2,
+  const formatNumber = (num: number, key: string) => `${num.toLocaleString(undefined, {
     maximumFractionDigits: 2
   })}${key !== '' && key != null ? ` ${key}` : ''}`;
 
@@ -88,6 +87,7 @@ const Dashboard: FC = () => {
   const { cnctDecimals } = useToken();
 
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
+  
   return (
     <Box sx={{ position: 'relative' }} >
       <DashboardHeader title="Overview" />

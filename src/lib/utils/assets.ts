@@ -12,7 +12,7 @@ export const formatTokenWithDecimals = (amount: bigint, decimals: number): strin
   const indexToInsertDecimal = amountStr.length - decimals;
   const formattedAmountStr = amountStr.substring(0, indexToInsertDecimal) + '.' + amountStr.substring(indexToInsertDecimal);
   const resultStr = formattedAmountStr.replace(/^0+/, '');
-  return formatNumberWithCommasAndRound(parseFloat(resultStr));
+  return resultStr;
 }
 
 export const parseTokenFromString = (formattedAmount: string, decimals: number): bigint => {
@@ -28,6 +28,6 @@ export const parseTokenFromString = (formattedAmount: string, decimals: number):
   return BigInt(amountStr);
 }
 
-export const formatNumberWithCommasAndRound = (num: number): string => {
-  return num.toLocaleString(undefined, { maximumFractionDigits: 2 })
-}
+export const formatNumber = (num: number, key: string): string => `${num.toLocaleString(undefined, {
+  maximumFractionDigits: 2
+})}${key !== '' && key != null ? ` ${key}` : ''}`;
