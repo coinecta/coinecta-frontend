@@ -28,7 +28,7 @@ import StakePositionTable from '../staking/StakePositionTable';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
-  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+  const [selectedRows, setSelectedRows] = useState<Set<any>>(new Set());
   const [redeemableRows, setRedeemableRows] = useState<Set<number>>(new Set());
   const [lockedRows, setLockedRows] = useState<Set<number>>(new Set());
   const [openRedeemDialog, setOpenRedeemDialog] = useState(false)
@@ -37,6 +37,7 @@ const StakePositions: FC = () => {
   const [isSelectedPositionsEmpty, setIsSelectedPositionsEmpty] = useState(false);
   const [isRedeemSuccessful, setIsRedeemSuccessful] = useState(false);
   const [isRedeemFailed, setIsRedeemFailed] = useState(false);
+
 
   /* Staking API */
   const [stakeKeys, setStakeKeys] = useState<string[]>([]);
@@ -55,6 +56,8 @@ const StakePositions: FC = () => {
   const getWallets = trpc.user.getWallets.useQuery()
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
+  const [currentWallet, setCurrentWallet] = useState<string | undefined>(undefined);
+
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const summary = useMemo((() => queryStakeSummary.data ), [queryStakeSummary.data]);
 
@@ -65,6 +68,13 @@ const StakePositions: FC = () => {
     setIsLoading(!queryStakeSummary.isSuccess && !isStakingKeysLoaded && !queryStakePositions.isSuccess); 
   }, [queryStakeSummary.isSuccess, isStakingKeysLoaded, queryStakePositions.isSuccess]);
 
+  useEffect(() => {
+    if (sessionData?.user) {
+      setCurrentWallet(sessionData.user.walletType!);
+    }
+
+  }, [sessionData])
+
   const processedPositions = useMemo(() => {
     return positions.map((position) => {
       return {
@@ -73,13 +83,14 @@ const StakePositions: FC = () => {
         unlockDate: new Date(position.unlockDate),
         initial: formatNumber(parseFloat(formatTokenWithDecimals(BigInt(position.initial), cnctDecimals)), ''),
         bonus: formatNumber(parseFloat(formatTokenWithDecimals(BigInt(position.bonus), cnctDecimals)), ''),
-        interest: formatNumber(position.interest * 100, '%')
+        interest: formatNumber(position.interest * 100, '%'),
+        stakeKey: position.stakeKey,
       };
     });
   }, [cnctDecimals, positions]);
 
   const selectedPositions = useMemo(() => {
-    return Array.from(selectedRows).map((index) => positions[index]);
+    return Array.from(selectedRows).map((item) => positions.find(p => p.stakeKey === item.stakeKey));
   }, [positions, selectedRows]);
 
   useEffect(() => {
@@ -136,7 +147,7 @@ const StakePositions: FC = () => {
     const execute = async () => {
       if (connected && sessionStatus === 'authenticated') {
         try {
-          const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
+          const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
           const utxos = await api.getUtxos();
           const collateral = api.experimental.getCollateral() === undefined ? [] : await api.experimental.getCollateral();
           setWalletUtxosCbor([...utxos!, ...collateral!]);
@@ -146,7 +157,7 @@ const StakePositions: FC = () => {
       }
     };
     execute();
-  }, [connected, sessionData?.user.walletType, sessionStatus]);
+  }, [connected, currentWallet, sessionStatus]);
 
   useEffect(() => {
     const execute = async () => {
@@ -274,7 +285,10 @@ const StakePositions: FC = () => {
       <StakePositionTable
         error={false}
         data={processedPositions.length > 0 ? processedPositions : (isLoading ? fakeTrpcDashboardData.data : [])}
+        connectedWallets={userWallets?.map(uw => uw.type) ?? []}
         stakeKeyWalletMapping={stakeKeyWalletMapping}
+        currentWallet={currentWallet!}
+        setCurrentWallet={setCurrentWallet}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={actions}
@@ -285,6 +299,7 @@ const StakePositions: FC = () => {
         open={openRedeemDialog}
         setOpen={setOpenRedeemDialog}
         redeemList={redeemRowData}
+        redeemWallet={currentWallet!}
         claimStakeRequest={claimStakeRequest}
         onRedeemFailed={() => setIsRedeemFailed(true)}
         onRedeemSuccessful={() => setIsRedeemSuccessful(true)}
@@ -339,7 +354,8 @@ const fakeTrpcDashboardData = {
       unlockDate: new Date(),
       initial: "60000",
       bonus: "3000",
-      interest: "21.6%"
+      interest: "21.6%",
+      stakeKey: "stakeKey1"
     },
     {
       name: 'CNCT',
@@ -347,7 +363,8 @@ const fakeTrpcDashboardData = {
       unlockDate: new Date(),
       initial: "60000",
       bonus: "3000",
-      interest: "21.6%"
+      interest: "21.6%",
+      stakeKey: "stakeKey1"
     },
     {
       name: 'CNCT',
@@ -355,7 +372,8 @@ const fakeTrpcDashboardData = {
       unlockDate: new Date(),
       initial: "60000",
       bonus: "3000",
-      interest: "21.6%"
+      interest: "21.6%",
+      stakeKey: "stakeKey1"
     },
     {
       name: 'CNCT',
@@ -363,7 +381,8 @@ const fakeTrpcDashboardData = {
       unlockDate: new Date(),
       initial: "60000",
       bonus: "3000",
-      interest: "21.6%"
+      interest: "21.6%",
+      stakeKey: "stakeKey1"
     },
     {
       name: 'CNCT',
@@ -371,7 +390,8 @@ const fakeTrpcDashboardData = {
       unlockDate: new Date(),
       initial: "60000",
       bonus: "3000",
-      interest: "21.6%"
+      interest: "21.6%",
+      stakeKey: "stakeKey1"
     },
   ]
 }
