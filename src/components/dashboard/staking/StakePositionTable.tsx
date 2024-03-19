@@ -1,15 +1,12 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import ActionBar, { IActionBarButton } from '@components/dashboard/ActionBar';
 import {
-  Avatar,
   Box,
-  Button,
   Checkbox,
   Paper,
   Skeleton,
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableFooter,
   TableHead,
   TablePagination,
@@ -18,12 +15,13 @@ import {
   useTheme
 } from '@mui/material';
 import dayjs from 'dayjs';
-import ActionBar, { IActionBarButton } from '@components/dashboard/ActionBar';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import DashboardCard from '../DashboardCard';
 
 interface IStakePositionTableProps<T> {
   title?: string;
   data: T[];
+  stakeKeyWalletMapping: Record<string, string>,
   isLoading: boolean;
   error: boolean;
   actions?: IActionBarButton[];
@@ -42,6 +40,7 @@ const rowsPerPageOptions = [5, 10, 15];
 const StakePositionTable = <T extends Record<string, any>>({
   title,
   data,
+  stakeKeyWalletMapping,
   isLoading,
   error,
   actions,

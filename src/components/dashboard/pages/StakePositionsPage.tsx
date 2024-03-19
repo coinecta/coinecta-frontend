@@ -1,4 +1,14 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import DataSpread from '@components/DataSpread';
+import { usePrice } from '@components/hooks/usePrice';
+import { useToken } from '@components/hooks/useToken';
+import { useWalletContext } from '@contexts/WalletContext';
+import { formatTokenWithDecimals } from '@lib/utils/assets';
+import { trpc } from '@lib/utils/trpc';
+import { walletNameToId } from '@lib/walletsList';
+import { BrowserWallet } from '@meshsdk/core';
+import { useWallet } from '@meshsdk/react';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import {
   Alert,
   Box,
@@ -8,23 +18,13 @@ import {
   useTheme
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
-import DashboardCard from '../DashboardCard';
-import DataSpread from '@components/DataSpread';
+import { ClaimStakeRequest } from '@server/services/syncApi';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { IActionBarButton } from '../ActionBar';
+import DashboardCard from '../DashboardCard';
 import DashboardHeader from '../DashboardHeader';
-import { useWallet } from '@meshsdk/react';
-import { ClaimStakeRequest, StakePosition, StakeSummary, coinectaSyncApi } from '@server/services/syncApi';
 import RedeemConfirm from '../staking/RedeemConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
-import { useWalletContext } from '@contexts/WalletContext';
-import { useToken } from '@components/hooks/useToken';
-import { formatTokenWithDecimals } from '@lib/utils/assets';
-import { usePrice } from '@components/hooks/usePrice';
-import { walletNameToId } from '@lib/walletsList';
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
-import { trpc } from '@lib/utils/trpc';
-import { BrowserWallet } from '@meshsdk/core';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -40,6 +40,7 @@ const StakePositions: FC = () => {
 
   /* Staking API */
   const [stakeKeys, setStakeKeys] = useState<string[]>([]);
+  const [stakeKeyWalletMapping, setStakeKeyWalletMapping] = useState<Record<string, string>>({});
   const { wallet, connected } = useWallet();
   const [time, setTime] = useState<number>(0);
   const { sessionData, sessionStatus } = useWalletContext();
@@ -54,7 +55,7 @@ const StakePositions: FC = () => {
   const getWallets = trpc.user.getWallets.useQuery()
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
-  const formatNumber = (num: number, key: string) => `${num.toLocaleString("en-US", {
+  const formatNumber = (num: number, key: string) => `${num.toLocaleString(document.documentElement.lang, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   })}${key !== '' && key != null ? ` ${key}` : ''}`;
@@ -166,17 +167,22 @@ const StakePositions: FC = () => {
       if (connected) {
         const STAKING_KEY_POLICY = process.env.STAKING_KEY_POLICY;
         if (userWallets === undefined || userWallets === null) return;
+        const stakeKeyWallet: Record<string, string> = {};
         const stakeKeysPromises = userWallets.map(async userWallet => {
           if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
           const browserWallet = await BrowserWallet.enable(userWallet.type);
           const balance = await browserWallet.getBalance();
           const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
           const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
+          stakeKeys.forEach((key) => {
+            stakeKeyWallet[key.unit.replace('000de140', '')] = userWallet.type;
+          });
           return processedStakeKeys;
         });
         const stakeKeysArrays = await Promise.all(stakeKeysPromises);
         const allStakeKeys = stakeKeysArrays.flat();
         setStakeKeys(allStakeKeys);
+        setStakeKeyWalletMapping(stakeKeyWallet);
         setIsStakingKeysLoaded(true);
       }
     };
@@ -273,6 +279,7 @@ const StakePositions: FC = () => {
       <StakePositionTable
         error={false}
         data={processedPositions.length > 0 ? processedPositions : (isLoading ? fakeTrpcDashboardData.data : [])}
+        stakeKeyWalletMapping={stakeKeyWalletMapping}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={actions}
