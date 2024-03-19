@@ -20,6 +20,7 @@ import {
 import dayjs from 'dayjs';
 import ActionBar, { IActionBarButton } from '@components/dashboard/ActionBar';
 import DashboardCard from '../DashboardCard';
+import SortByWalletDropdown from '@components/SortByWalletDropdown';
 
 interface IStakePositionTableProps<T> {
   title?: string;
@@ -222,7 +223,10 @@ const StakePositionTable = <T extends Record<string, any>>({
           </Typography>
         }
         <DashboardCard sx={{ border: 'none', paddingLeft: '0', paddingRight: '0' }}>
-          {actions && data.length > 0 && <ActionBar isDisabled={isLoading} actions={actions} />}
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '8px' }}>
+            {actions && data.length > 0 && <ActionBar isDisabled={isLoading} actions={actions} />}
+            <SortByWalletDropdown />
+          </Box>
           {data.length > 0 ?
             <Table>
               <TableHead>
@@ -234,6 +238,7 @@ const StakePositionTable = <T extends Record<string, any>>({
                     background: theme.palette.background.paper,
                   }
                 }}>
+                  <TableCell></TableCell>
                   {actions && data.length > 0 && selectedRows && <TableCell padding="checkbox">
                     <Checkbox
                       indeterminate={someSelectableSelected}
@@ -260,6 +265,9 @@ const StakePositionTable = <T extends Record<string, any>>({
                         '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)' }
                       }}
                     >
+                      <TableCell sx={{ borderBottom: 'none', width: '22px' }}>
+                        <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src="/wallets/nami-light.svg" />
+                      </TableCell>
                       {actions && selectedRows && <TableCell padding="checkbox" sx={{ borderBottom: 'none' }}>
                         <Checkbox
                           checked={selectedRows.has(itemIndex)}
@@ -282,7 +290,7 @@ const StakePositionTable = <T extends Record<string, any>>({
                   <TablePagination
                     component="td"
                     rowsPerPageOptions={rowsPerPageOptions}
-                    colSpan={7}
+                    colSpan={8}
                     count={data.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
