@@ -54,7 +54,7 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
 
   useEffect(() => {
     const execute = async () => {
-      if (connected && sessionStatus === 'authenticated') {
+      if (connected && sessionStatus === 'authenticated' && redeemWallet) {
         const api = await window.cardano[walletNameToId(redeemWallet)!].enable();
         setCardanoApi(api);
       }
