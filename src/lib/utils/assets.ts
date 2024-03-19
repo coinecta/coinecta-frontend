@@ -29,9 +29,5 @@ export const parseTokenFromString = (formattedAmount: string, decimals: number):
 }
 
 export const formatNumberWithCommasAndRound = (num: number): string => {
-  const formatter = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-  return formatter.format(num);
+  return num.toLocaleString(undefined, { maximumFractionDigits: 2 })
 }
