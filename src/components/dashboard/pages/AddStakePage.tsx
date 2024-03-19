@@ -161,8 +161,11 @@ const AddStakePage: FC = () => {
                 Stake now
               </Button>
             </Box>
-            {Number(formatTokenWithDecimals(totalRewards, cnctDecimals)) < rewards + 2000 &&
-              <Typography sx={{ fontSize: '13px!important', mt: 2, textAlign: 'center', color: theme.palette.error.main }}>The stake pool needs to be reloaded, please follow the announcements in Telegram or Discord for updates. </Typography>}
+            {/* {Number(formatTokenWithDecimals(totalRewards, cnctDecimals)) < rewards + 2000 && 
+              <Typography sx={{ fontSize: '13px!important', mt: 2, textAlign: 'center', color: theme.palette.error.main }}>
+                The stake pool needs to be reloaded, please follow the announcements in Telegram or Discord for updates.
+              </Typography>
+            } */}
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={5} sx={{ display: 'flex', gap: 2, flexDirection: 'column' }}>
@@ -218,7 +221,7 @@ const AddStakePage: FC = () => {
             />
             <DataSpread
               title="Rewards"
-              data={`${rewards.toLocaleString(undefined, { maximumFractionDigits: 1 })} CNCT`}
+              data={`${rewards.toLocaleString(undefined, { maximumFractionDigits: 2 })} CNCT`}
               isLoading={isLoading}
             />
             <DataSpread
