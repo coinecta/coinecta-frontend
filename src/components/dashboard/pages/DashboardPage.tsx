@@ -47,8 +47,7 @@ const Dashboard: FC = () => {
   }, [isStakingKeysLoaded, queryStakeSummary.isSuccess]);
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString(undefined, {
-    minimumFractionDigits: num % 1 === 0 ? 0 : 2,
-    maximumFractionDigits: num % 1 === 0 ? 0 : 2
+    maximumFractionDigits: 2
   })}${key !== '' && key != null ? ` ${key}` : ''}`;
 
   useEffect(() => {
