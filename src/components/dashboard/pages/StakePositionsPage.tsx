@@ -18,7 +18,7 @@ import RedeemConfirm from '../staking/RedeemConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
 import { useWalletContext } from '@contexts/WalletContext';
 import { useToken } from '@components/hooks/useToken';
-import { formatTokenWithDecimals } from '@lib/utils/assets';
+import { formatTokenWithDecimals, formatNumber } from '@lib/utils/assets';
 import { usePrice } from '@components/hooks/usePrice';
 import { walletNameToId } from '@lib/walletsList';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
@@ -54,11 +54,6 @@ const StakePositions: FC = () => {
   const getWallets = trpc.user.getWallets.useQuery()
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
-  const formatNumber = (num: number, key: string) => `${num.toLocaleString(undefined, {
-    minimumFractionDigits: num % 1 === 0 ? 0 : 2,
-    maximumFractionDigits: num % 1 === 0 ? 0 : 2
-  })}${key !== '' && key != null ? ` ${key}` : ''}`;
-
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const summary = useMemo((() => queryStakeSummary.data ), [queryStakeSummary.data]);
 
@@ -73,10 +68,10 @@ const StakePositions: FC = () => {
     return positions.map((position) => {
       return {
         name: position.name,
-        total: formatTokenWithDecimals(BigInt(position.total), cnctDecimals),
+        total: formatNumber(parseFloat(formatTokenWithDecimals(BigInt(position.total), cnctDecimals)), ''),
         unlockDate: new Date(position.unlockDate),
-        initial: formatTokenWithDecimals(BigInt(position.initial), cnctDecimals),
-        bonus: formatTokenWithDecimals(BigInt(position.bonus), cnctDecimals),
+        initial: formatNumber(parseFloat(formatTokenWithDecimals(BigInt(position.initial), cnctDecimals)), ''),
+        bonus: formatNumber(parseFloat(formatTokenWithDecimals(BigInt(position.bonus), cnctDecimals)), ''),
         interest: formatNumber(position.interest * 100, '%')
       };
     });

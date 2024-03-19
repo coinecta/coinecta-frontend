@@ -8,7 +8,7 @@ import DashboardHeader from '../DashboardHeader';
 import TransactionHistoryTable from '../TransactionHistoryTable';
 import { StakeRequest, StakeRequestsResponse, coinectaSyncApi } from '@server/services/syncApi';
 import { useWallet } from '@meshsdk/react';
-import { formatTokenWithDecimals } from '@lib/utils/assets';
+import { formatTokenWithDecimals, formatNumber } from '@lib/utils/assets';
 import { useToken } from '@components/hooks/useToken';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -60,7 +60,7 @@ const TransactionHistory: FC = () => {
     return stakeRequestResponse?.data?.map((request) => {
       const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY!;
       const STAKE_POOL_ASSET_NAME = process.env.STAKE_POOL_ASSET_NAME!;
-      const formattedTokenAmount = formatTokenWithDecimals(BigInt(request.amount.multiAsset[STAKE_POOL_ASSET_POLICY][STAKE_POOL_ASSET_NAME]), cnctDecimals);
+      const formattedTokenAmount = formatNumber(parseFloat(formatTokenWithDecimals(BigInt(request.amount.multiAsset[STAKE_POOL_ASSET_POLICY][STAKE_POOL_ASSET_NAME]), cnctDecimals)), '');
       const formattedDate = dayjs(stakeRequestResponse?.extra.slotData[request.slot]! * 1000).format('DD MMM, YY HH:mm');
       const status = statusToString(request.status);
       const CARDANO_TX_EXPLORER_URL = process.env.CARDANO_TX_EXPLORER_URL!;
