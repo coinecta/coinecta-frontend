@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { NextPage } from 'next'
 import {
   Container,
@@ -29,6 +29,10 @@ import HeroSlider from '@components/landing/HeroSlider';
 import CrciLogo from '@components/svgs/CrciLogo';
 import XerberusLogo from '@components/svgs/XerberusLogo';
 import DexhunterLogo from '@components/svgs/DexhunterLogo';
+import DexhunterDialog from '@components/projects/DexhunterDialog';
+import { trpc } from '@lib/utils/trpc';
+import DexhunterLogomark from '@components/svgs/DexhunterLogomark';
+import ButtonLink from '@components/ButtonLink';
 
 const inViewOptions = {
   threshold: 1,
@@ -56,6 +60,12 @@ const Home: NextPage = () => {
       }
     }
   }
+
+  const [dexhunterModal, setDexhunterModal] = useState(false)
+  const coinectaData = trpc.project.getProject.useQuery(
+    { slug: 'coinecta' },
+    { enabled: true, retry: 0 }
+  )
 
   return (
     <Box sx={{ overflowX: 'hidden' }}>
@@ -227,19 +237,22 @@ const Home: NextPage = () => {
                         <Button
                           variant="contained"
                           color="secondary"
-                          disabled
+                          startIcon={<DexhunterLogomark sx={{ width: '16px', height: '16px', mr: -1, ml: 1 }} />}
+                          onClick={() => setDexhunterModal(true)}
+                          aria-label={`CNCT DexHunter Swap`}
                         >
                           Get CNCT
                         </Button>
                       </Grid>
                       <Grid item>
-                        <Button
+                        <ButtonLink
                           variant="outlined"
                           color="secondary"
-                          disabled
+
+                          href="/dashboard/add-stake"
                         >
                           Stake Now
-                        </Button>
+                        </ButtonLink>
                       </Grid>
                     </Grid>
                   </Grid>
@@ -261,7 +274,7 @@ const Home: NextPage = () => {
                 >
                   <Grid item md={6} ref={ref3}>
                     <Typography variant="h5" fontWeight={600}>3. Contribute</Typography>
-                    <Typography variant="body2">You will receive whitelist tokens in your wallet and can use those to contribute to the project. Send ADA or DJED to the Vesting Contract to receive your vesting key which will unlock tokens over time</Typography>
+                    <Typography variant="body2">Once the contribute form opens, send ADA to reserve your tokens. Each project will have specific distribution details and we will post a place for you to claim your tokens. </Typography>
                     <Button
                       variant="contained"
                       color="secondary"
@@ -277,8 +290,8 @@ const Home: NextPage = () => {
                   {...(inView3 ? { timeout: 1200 } : {})}
                 >
                   <Grid item md={6}>
-                    <Typography variant="h5" fontWeight={600}>4. Redeem</Typography>
-                    <Typography variant="body2">Each seed round will have a specific vesting period, depending on how deep the discount is. You can redeem your tokens as they unlock on the Redeem panel. </Typography>
+                    <Typography variant="h5" fontWeight={600}>4. Redeem or Claim</Typography>
+                    <Typography variant="body2">If there is a vesting period, you will be sent a vesting NFT which contains your locked tokens which you can redeem over time. Otherwise, claim any reserved tokens on your Dashboard. </Typography>
                     <Button
                       variant="contained"
                       color="secondary"
@@ -339,9 +352,6 @@ const Home: NextPage = () => {
                 In addition, we will draw on our own experience to vet projects before approving them to IDO on Coinecta. We encourage teams to put together a roadmap that clearly outlines their goals and gives consideration to the amount of funds needed to achieve them.
               </Typography>
               <Grid container spacing={3}>
-                <Grid item>
-                  <Button variant="contained" color="secondary" disabled>Get Started</Button>
-                </Grid>
                 <Grid item>
                   <Button variant="outlined" color="secondary" href="https://docs.coinecta.fi">Read the Whitepaper</Button>
                 </Grid>
@@ -425,6 +435,13 @@ const Home: NextPage = () => {
           </Box>
         </Paper>
       </Container>
+      {coinectaData.data?.tokenomics && coinectaData.data.tokenomics.tokenPolicyId.length > 0 &&
+        <DexhunterDialog
+          open={dexhunterModal}
+          setOpen={setDexhunterModal}
+          projectData={coinectaData.data}
+        />
+      }
     </Box>
   )
 }

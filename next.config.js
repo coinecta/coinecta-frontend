@@ -13,6 +13,7 @@ const nextConfig = {
     DEFAULT_CNCT_DECIMALS: process.env.DEFAULT_CNCT_DECIMALS,
     CARDANO_TX_EXPLORER_URL: process.env.CARDANO_TX_EXPLORER_URL,
     COINECTA_SYNC_API: process.env.COINECTA_SYNC_API,
+    DEXHUNTER_PARTNER_CODE: process.env.DEXHUNTER_PARTNER_CODE,
   },
   swcMinify: true,
   webpack: function (config, options) {
@@ -20,9 +21,11 @@ const nextConfig = {
       asyncWebAssembly: true,
       layers: true,
     };
-    config.ignoreWarnings = [/Critical dependency: the request of a dependency is an expression/];
+    config.ignoreWarnings = [
+      /Critical dependency: the request of a dependency is an expression/,
+    ];
     return config;
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

@@ -58,6 +58,7 @@ const HeroSlider: FC = () => {
         projectList.filter(project => project.frontPage).map((item) => {
           const details: IProjectDetails = {
             title: item.name,
+            slug: item.slug,
             tagline: item.shortDescription,
             category: '',
             imageUrl: item.bannerImgUrl,
