@@ -256,7 +256,7 @@ const StakePositionTable = <T extends Record<string, any>>({
         <DashboardCard sx={{ border: 'none', paddingLeft: '0', paddingRight: '0' }}>
           <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
             {actions && data.length > 0 && <ActionBar isDisabled={isLoading} actions={actions} />}
-            <Box sx={{ display: isLoading ? 'none' : 'block', position: 'absolute', top: 0, right: '8px' }}>
+            <Box sx={{ display: data.length === 0 || isLoading ? 'none' : 'block', position: 'absolute', top: '8px', right: '8px' }}>
               {isLoading ?
                 <Skeleton width={100} /> :
                 <SortByWalletDropdown 
