@@ -21,7 +21,7 @@ import StakeConfirm from '../staking/StakeConfirm';
 import { calculateFutureDateMonths } from '@lib/utils/general'
 import { StakePoolResponse, coinectaSyncApi } from '@server/services/syncApi';
 import { metadataApi } from '@server/services/metadataApi';
-import { formatTokenWithDecimals, formatNumberWithCommasAndRound } from '@lib/utils/assets';
+import { formatTokenWithDecimals } from '@lib/utils/assets';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import { trpc } from '@lib/utils/trpc';
@@ -161,8 +161,11 @@ const AddStakePage: FC = () => {
                 Stake now
               </Button>
             </Box>
-            {Number(formatTokenWithDecimals(totalRewards, cnctDecimals)) < rewards + 2000 &&
-              <Typography sx={{ fontSize: '13px!important', mt: 2, textAlign: 'center', color: theme.palette.error.main }}>The stake pool needs to be reloaded, please follow the announcements in Telegram or Discord for updates. </Typography>}
+            {/* {Number(formatTokenWithDecimals(totalRewards, cnctDecimals)) < rewards + 2000 && 
+              <Typography sx={{ fontSize: '13px!important', mt: 2, textAlign: 'center', color: theme.palette.error.main }}>
+                The stake pool needs to be reloaded, please follow the announcements in Telegram or Discord for updates.
+              </Typography>
+            } */}
           </DashboardCard>
         </Grid>
         <Grid xs={12} md={5} sx={{ display: 'flex', gap: 2, flexDirection: 'column' }}>
@@ -218,7 +221,7 @@ const AddStakePage: FC = () => {
             />
             <DataSpread
               title="Rewards"
-              data={`${formatNumberWithCommasAndRound(parseFloat(rewards.toLocaleString(undefined, { maximumFractionDigits: 1 })))} CNCT`}
+              data={`${rewards.toLocaleString(undefined, { maximumFractionDigits: 2 })} CNCT`}
               isLoading={isLoading}
             />
             <DataSpread
