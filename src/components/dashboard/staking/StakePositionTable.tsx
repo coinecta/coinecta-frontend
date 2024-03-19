@@ -188,8 +188,8 @@ const StakePositionTable = <T extends Record<string, any>>({
   const allSelectableSelected = selectableRows.every(index => selectedRows?.has(index));
   const someSelectableSelected = selectableRows.some(index => selectedRows?.has(index)) && !allSelectableSelected;
 
-  // if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading</div>;
+
   return (
     <Box
       ref={tableRef}
@@ -223,9 +223,11 @@ const StakePositionTable = <T extends Record<string, any>>({
           </Typography>
         }
         <DashboardCard sx={{ border: 'none', paddingLeft: '0', paddingRight: '0' }}>
-          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '8px' }}>
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
             {actions && data.length > 0 && <ActionBar isDisabled={isLoading} actions={actions} />}
-            <SortByWalletDropdown />
+            <Box sx={{ display: isLoading ? 'none' : 'block', position: 'absolute', top: 0, right: '8px' }}>
+              {isLoading ? <Skeleton width={100} /> : <SortByWalletDropdown />}
+            </Box>
           </Box>
           {data.length > 0 ?
             <Table>
