@@ -1,23 +1,32 @@
-import React, { useState } from 'react';
+import { walletsList } from '@lib/walletsList';
 import {
-  Select,
-  MenuItem,
-  FormControl,
-  SelectChangeEvent,
-  useTheme,
-  ListItemText,
   Avatar,
-  Typography
+  FormControl,
+  ListItemText,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Typography,
+  useTheme
 } from '@mui/material';
 
+interface SortByWalletDropdownProps {
+  wallet: string;
+  connectedWallets: string[];
+  setWallet: (wallet: string) => void;
+}
 
-const SortByWalletDropdown = () => {
+const SortByWalletDropdown = ({
+  wallet,
+  setWallet,
+  connectedWallets
+}: SortByWalletDropdownProps) => {
   const theme = useTheme()
-  const [selectedWallet, setSelectedWallet] = useState<string>(fakeWalletsData[0].name);
 
   const handleChange = (event: SelectChangeEvent) => {
     const { target: { value } } = event;
-    setSelectedWallet(value);
+    if (wallet === value) return;
+    setWallet(value);
   };
 
   return (
@@ -25,7 +34,7 @@ const SortByWalletDropdown = () => {
       <Typography sx={{ fontWeight: 900 }}>Sort by</Typography>
       <Select
         variant="filled"
-        value={selectedWallet}
+        value={wallet}
         onChange={handleChange}
         MenuProps={{
           PaperProps: {
@@ -68,12 +77,17 @@ const SortByWalletDropdown = () => {
           }
         }}
       >
-        {fakeWalletsData.map((item) => (
-          <MenuItem key={item.name} value={item.name} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={item.icon} />
-            <ListItemText primary={item.name} />
-          </MenuItem>
-        ))}
+        {connectedWallets.map((connectedWallet) => {
+
+          const walletData = walletsList.find(w => w.connectName === connectedWallet);
+          const icon = theme.palette.mode === 'dark' ? walletData?.iconDark : walletData?.icon;
+          return (
+            <MenuItem key={connectedWallet} value={connectedWallet} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={icon} />
+              <ListItemText primary={connectedWallet} />
+            </MenuItem>
+          );
+        })}
       </Select>
     </FormControl>
   );

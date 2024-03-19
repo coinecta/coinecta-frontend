@@ -1,30 +1,31 @@
-import React, { FC, useEffect, useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Typography,
-  DialogActions,
-  useMediaQuery,
-  useTheme,
-  Button,
-  IconButton,
-  CircularProgress,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import DataSpread from '@components/DataSpread';
 import { useToken } from '@components/hooks/useToken';
-import { formatTokenWithDecimals } from '@lib/utils/assets';
-import { useWallet } from '@meshsdk/react';
-import { walletNameToId } from '@lib/walletsList';
 import { useWalletContext } from '@contexts/WalletContext';
-import { ClaimStakeRequest, coinectaSyncApi } from '@server/services/syncApi';
+import { formatTokenWithDecimals } from '@lib/utils/assets';
 import { trpc } from '@lib/utils/trpc';
+import { walletNameToId } from '@lib/walletsList';
+import { useWallet } from '@meshsdk/react';
+import CloseIcon from '@mui/icons-material/Close';
+import {
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { ClaimStakeRequest } from '@server/services/syncApi';
+import React, { FC, useEffect, useState } from 'react';
 
 interface IRedeemConfirmProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   redeemList: IRedeemListItem[];
+  redeemWallet: string;
   claimStakeRequest: ClaimStakeRequest;
   onRedeemSuccessful: () => void;
   onRedeemFailed: () => void;
@@ -34,6 +35,7 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
   open,
   setOpen,
   redeemList,
+  redeemWallet,
   claimStakeRequest,
   onRedeemSuccessful,
   onRedeemFailed
@@ -53,12 +55,12 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
   useEffect(() => {
     const execute = async () => {
       if (connected && sessionStatus === 'authenticated') {
-        const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
+        const api = await window.cardano[walletNameToId(redeemWallet)!].enable();
         setCardanoApi(api);
       }
     };
     execute();
-  }, [connected, sessionData?.user.walletType, sessionStatus]);
+  }, [connected, redeemWallet, sessionStatus]);
 
   const handleClose = () => {
     setOpen(false);
