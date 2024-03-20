@@ -244,8 +244,8 @@ const Project = () => {
               <ContainedTab label="Summary" value={'summary'} />
               <ContainedTab label="Tokenomics" value={'tokenomics'} />
               {projectData.whitelists.length > 0 && <ContainedTab label="Whitelist" value={'whitelist'} />}
-              <ContainedTab label="Contribute" value={'contribute'} />
-              {projectData.contributionRounds.length > 0 && <ContainedTab label="FISO" value={'fiso'} />}
+              {projectData.contributionRounds.length > 0 && <ContainedTab label="Contribute" value={'contribute'} />}
+              {fisoData.length > 0 && <ContainedTab label="FISO" value={'fiso'} />}
               {projectData.tokenomics.tokenPolicyId && <ContainedTab label="Xerberus" value={'xerberus'} />}
             </ContainedTabs>
             <Box sx={{ mb: 12, mt: 2 }}>
