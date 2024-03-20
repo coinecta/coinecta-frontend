@@ -20,6 +20,7 @@ import {
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import DashboardCard from '../DashboardCard';
+import { useAlert } from '@contexts/AlertContext';
 
 interface IStakePositionTableProps<T> {
   title?: string;
@@ -68,6 +69,7 @@ const StakePositionTable = <T extends Record<string, any>>({
   const tableRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
   const [sortedData, setSortedData] = useState<T[]>(data);
+  const { addAlert } = useAlert();
 
   const sensitivityThreshold = 2;
 
@@ -88,11 +90,13 @@ const StakePositionTable = <T extends Record<string, any>>({
   useEffect(() => setSortedData(data), [data]);
 
   useEffect(() => {
-    if (currentWallet)
-    {
-      setSelectedRows!(new Set());
-    }
+    if (currentWallet) setSelectedRows!(new Set());
   }, [currentWallet, setSelectedRows])
+
+  useEffect(() => {
+    if (selectedRows?.size === 1)
+      addAlert('info', 'Please note: You can only redeem rewards using one wallet type at a time.');
+  }, [selectedRows])
 
   useEffect(() => {
     data.sort((a, b) => {
@@ -182,6 +186,16 @@ const StakePositionTable = <T extends Record<string, any>>({
       .filter(d => d.unlockDate < new Date());
   }, [sortedData]);
 
+  const unselectableRows = useMemo(() => {
+    return selectableRows
+      .filter(r => stakeKeyWalletMapping[r.stakeKey] !== currentWallet);
+  }, [selectableRows]);
+
+  const handleCheckboxClick = (isDisabled: boolean, item: any): void => {
+    if (isDisabled && unselectableRows.some(r => r.stakeKey === item.stakeKey))
+      addAlert('error', 'Please select the appropriate wallet type from the "Redeem from" dropdown before choosing this reward.');
+  };
+  
   const handleSelectRow = (item: T) => {
     if (setSelectedRows && actions) {
       setSelectedRows((prevSelectedRows) => {
@@ -285,7 +299,6 @@ const StakePositionTable = <T extends Record<string, any>>({
                       color="secondary"
                     />
                   </TableCell>}
-
                   {columns.map((column) => (
                     column !== 'stakeKey' && 
                     <TableCell key={String(column)}> {camelCaseToTitle(String(column))} </TableCell>
@@ -310,12 +323,14 @@ const StakePositionTable = <T extends Record<string, any>>({
                         <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={icon} />
                       </TableCell>
                       {actions && selectedRows && <TableCell padding="checkbox" sx={{ borderBottom: 'none' }}>
-                        <Checkbox
-                          checked={selectedRows.has(item)}
-                          onChange={() => handleSelectRow(item)}
-                          color="secondary"
-                          disabled={item.unlockDate > new Date() || stakeKeyWalletMapping[item.stakeKey] !== currentWallet}
-                        />
+                        <Box onClick={() => handleCheckboxClick(!selectedRows.has(item), item)}>
+                          <Checkbox
+                            checked={selectedRows.has(item)}
+                            onChange={() => handleSelectRow(item)}
+                            color="secondary"
+                            disabled={item.unlockDate > new Date() || stakeKeyWalletMapping[item.stakeKey] !== currentWallet}
+                          />
+                        </Box>
                       </TableCell>}
                       {Object.keys(item).map((key, colIndex) => (
                         key !== 'stakeKey' && 
