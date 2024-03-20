@@ -31,7 +31,7 @@ const SortByWalletDropdown = ({
 
   return (
     <FormControl sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
-      <Typography sx={{ fontWeight: 900 }}>Sort by</Typography>
+      <Typography sx={{ fontWeight: 900 }}>Redeem from</Typography>
       <Select
         variant="filled"
         value={wallet}
