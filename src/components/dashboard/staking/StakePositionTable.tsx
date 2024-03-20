@@ -21,6 +21,7 @@ import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import DashboardCard from '../DashboardCard';
 import { useAlert } from '@contexts/AlertContext';
+import { useWalletContext } from '@contexts/WalletContext';
 
 interface IStakePositionTableProps<T> {
   title?: string;
@@ -69,9 +70,11 @@ const StakePositionTable = <T extends Record<string, any>>({
   const tableRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
   const [sortedData, setSortedData] = useState<T[]>(data);
+  const [isAllRowsStakedUnderSingleWallet, setIsAllRowsStakedUnderSingleWallet] = useState<boolean>(false);
   const { addAlert } = useAlert();
+  const { selectedAddresses } = useWalletContext();
 
-  const sensitivityThreshold = 2;
+  const sensitivityThreshold = 2;  
 
   useEffect(() => {
     const handleResize = () => {
@@ -91,13 +94,13 @@ const StakePositionTable = <T extends Record<string, any>>({
 
   useEffect(() => {
     if (currentWallet) setSelectedRows!(new Set());
-  }, [currentWallet, setSelectedRows])
+  }, [currentWallet, setSelectedRows, selectedAddresses])
 
   useEffect(() => {
     if (selectedRows?.size === 1)
       addAlert('info', 'Please note: You can only redeem rewards using one wallet type at a time.');
   }, [selectedRows])
-
+  
   useEffect(() => {
     data.sort((a, b) => {
       // If a's wallet matches currentWallet, it should come before b
@@ -115,6 +118,12 @@ const StakePositionTable = <T extends Record<string, any>>({
 
     setSortedData([...data]);
   }, [data, currentWallet, stakeKeyWalletMapping])
+
+  useEffect(() => {
+    const stakeKeyWalletMappingValues = Object.values(stakeKeyWalletMapping);
+    setIsAllRowsStakedUnderSingleWallet(stakeKeyWalletMappingValues.every(v => v === stakeKeyWalletMappingValues[0]));
+    if (isAllRowsStakedUnderSingleWallet) setCurrentWallet(stakeKeyWalletMappingValues[stakeKeyWalletMappingValues.length - 1]);
+  }, [stakeKeyWalletMapping, isAllRowsStakedUnderSingleWallet])  
 
   const isTableWiderThanParent = parentWidth < paperWidth
 
@@ -192,7 +201,7 @@ const StakePositionTable = <T extends Record<string, any>>({
   }, [selectableRows]);
 
   const handleCheckboxClick = (isDisabled: boolean, item: any): void => {
-    if (isDisabled && unselectableRows.some(r => r.stakeKey === item.stakeKey))
+    if (isDisabled && unselectableRows.some(row => row.stakeKey === item.stakeKey))
       addAlert('error', 'Please select the appropriate wallet type from the "Redeem from" dropdown before choosing this reward.');
   };
   
@@ -270,7 +279,12 @@ const StakePositionTable = <T extends Record<string, any>>({
         <DashboardCard sx={{ border: 'none', paddingLeft: '0', paddingRight: '0' }}>
           <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
             {actions && data.length > 0 && <ActionBar isDisabled={isLoading} actions={actions} />}
-            <Box sx={{ display: data.length === 0 || isLoading ? 'none' : 'block', position: 'absolute', top: '8px', right: '8px' }}>
+            <Box sx={{
+                display: isAllRowsStakedUnderSingleWallet || data.length === 0 || isLoading ? 'none' : 'block',
+                position: 'absolute',
+                top: '8px',
+                right: '8px'
+            }}>
               {isLoading ?
                 <Skeleton width={100} /> :
                 <SortByWalletDropdown 
