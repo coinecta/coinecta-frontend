@@ -212,7 +212,7 @@ const StakePositionTable = <T extends Record<string, any>>({
         // Check if the checkbox for this row is not disabled
         if (!isCheckboxDisabled(item)) {
           if (newSelectedRows.has(item)) {
-            newSelectedRows.delete(item);
+            newSelectedRows.delete(item);  
           } else {
             newSelectedRows.add(item);
           }
@@ -223,6 +223,11 @@ const StakePositionTable = <T extends Record<string, any>>({
   };
 
   const handleSelectAllRows = () => {
+    if (selectedRows!.size >= 1) {
+      setSelectedRows!(new Set());
+      return;
+    }
+
     if (setSelectedRows && actions) {
       sortedData
         .filter(item => stakeKeyWalletMapping[item.stakeKey] == currentWallet && !isCheckboxDisabled(item))
