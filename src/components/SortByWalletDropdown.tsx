@@ -78,7 +78,6 @@ const SortByWalletDropdown = ({
         }}
       >
         {connectedWallets.map((connectedWallet) => {
-
           const walletData = walletsList.find(w => w.connectName === connectedWallet);
           const icon = theme.palette.mode === 'dark' ? walletData?.iconDark : walletData?.icon;
           return (
@@ -94,18 +93,3 @@ const SortByWalletDropdown = ({
 };
 
 export default SortByWalletDropdown;
-
-const fakeWalletsData = [
-    {
-        name: 'Nami',
-        icon: '/wallets/nami-light.svg',
-    },
-    {
-        name: 'Lace',
-        icon: '/wallets/lace.svg',
-    },
-    {
-        name: 'Eternl',
-        icon: '/wallets/eternl-light.svg',
-    }
-]
