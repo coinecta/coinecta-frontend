@@ -83,7 +83,7 @@ const SortByWalletDropdown = ({
           return (
             <MenuItem key={connectedWallet} value={connectedWallet} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={icon} />
-              <ListItemText primary={connectedWallet} />
+              <ListItemText primary={connectedWallet[0].toUpperCase() + connectedWallet.slice(1).toLowerCase()} />
             </MenuItem>
           );
         })}
