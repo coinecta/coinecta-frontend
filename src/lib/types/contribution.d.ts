@@ -15,6 +15,6 @@ declare global {
     deposited: number;
     projectName: string;
     projectSlug: string;
-    whitelistSlug: string;
+    whitelistSlug: string | null | undefined;
   };
 }

@@ -62,7 +62,7 @@ type TProRataFormProps = {
   projectName: string;
   projectIcon: string;
   projectSlug: string;
-  whitelistSlug: string;
+  whitelistSlug: string | null;
 }
 
 type TWalletListItem = {

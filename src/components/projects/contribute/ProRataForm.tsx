@@ -78,14 +78,14 @@ const ProRataForm: FC<TProRataFormProps> = ({
               tokenTicker={tokenTicker}
               remainingTokens={tokenTarget - claimedAmount}
               exchangeRate={1 / price}
-              whitelisted={whitelisted}
+              whitelisted={whitelistSlug ? whitelisted : true}
               live={isCurrentDateBetween}
               contributionRoundId={id}
             />
           </Paper>
         </Grid>
         <Grid xs={12} md={5}>
-          <WhitelistResult whitelistStatus={whitelistStatus} sessionStatus={sessionStatus} />
+          {whitelistSlug && <WhitelistResult whitelistStatus={whitelistStatus} sessionStatus={sessionStatus} />}
           <Paper variant="outlined" sx={{ px: 3, py: 2 }}>
             <Box
               sx={{

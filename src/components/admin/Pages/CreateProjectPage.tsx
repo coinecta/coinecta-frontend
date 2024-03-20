@@ -34,6 +34,7 @@ const initialFormData: TProject = {
     tokenPolicyId: '',
     tokenomics: [],
   },
+  contributionRounds: [],
   whitelists: [],
   fisos: []
 }
