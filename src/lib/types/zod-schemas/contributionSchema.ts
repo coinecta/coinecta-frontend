@@ -13,5 +13,5 @@ export const ZContributionRound = z.object({
   deposited: z.number(),
   projectName: z.string(),
   projectSlug: z.string(),
-  whitelistSlug: z.string()
+  whitelistSlug: z.string().nullable().optional()
 });

@@ -72,7 +72,7 @@ export const projectRouter = createTRPCRouter({
         throw new Error('Missing required fields');
       }
 
-      const { slug, socials, roadmap, team, tokenomics, whitelists, fisos, ...rest } = input;
+      const { slug, socials, roadmap, team, tokenomics, whitelists, fisos, contributionRounds, ...rest } = input;
       try {
         // update roadmap items
         const currentRoadmap = await prisma.roadmap.findMany({ where: { project_slug: slug } });
@@ -203,9 +203,11 @@ export const projectRouter = createTRPCRouter({
 
         // Update whitelists
         const currentWhitelists = await prisma.whitelist.findMany({ where: { project_slug: slug } });
+        console.log('Current: ', currentWhitelists)
         const toUpdateWhitelists = findToUpdate(currentWhitelists, whitelists);
         const toDeleteWhitelists = findToDelete(currentWhitelists, whitelists);
         const toCreateWhitelists = findToCreate(currentWhitelists, whitelists);
+        console.log('Delete: ', toDeleteWhitelists)
 
         const updateWhitelistsPromises = toUpdateWhitelists.length > 0
           ? toUpdateWhitelists.map(w => prisma.whitelist.update({
@@ -303,7 +305,8 @@ export const projectRouter = createTRPCRouter({
                 tokenomics: true,
               },
             },
-            whitelists: true
+            whitelists: true,
+            contributionRounds: true
             // fisos: true
           },
         });

@@ -155,8 +155,8 @@ model ContributionRound {
   currency      String
   price         Float
   deposited     Float
-  whitelistSlug String        @unique @map("whitelist_slug")
-  whitelist     Whitelist     @relation(fields: [whitelistSlug], references: [slug])
+  whitelistSlug String?       @unique @map("whitelist_slug")
+  whitelist     Whitelist?    @relation(fields: [whitelistSlug], references: [slug])
   Transaction   Transaction[]
   projectName   String        @map("project_name")
   projectSlug   String        @map("project_slug")
