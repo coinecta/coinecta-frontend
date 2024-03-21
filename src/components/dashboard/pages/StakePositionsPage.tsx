@@ -192,7 +192,7 @@ const StakePositions: FC = () => {
             });
             return processedStakeKeys;
           } catch {
-            addAlert('error', `Failed to load stake positions for ${userWallet.type} wallet. Please reload the page.`);
+            addAlert('error', `Failed to load stake positions for ${userWallet.type[0].toUpperCase() + userWallet.type.slice(1)} wallet. Please reload the page.`);
             console.log('Error getting stake keys', userWallet);
           }
         });
