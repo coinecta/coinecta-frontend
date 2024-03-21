@@ -313,7 +313,7 @@ const StakePositionTable = <T extends Record<string, any>>({
                   {actions && sortedData.length > 0 && selectedRows && <TableCell padding="checkbox">
                     <Checkbox
                       indeterminate={someSelectableSelected}
-                      checked={allSelectableSelected}
+                      checked={Object.keys(stakeKeyWalletMapping).length === 0 ? false : allSelectableSelected}
                       onChange={handleSelectAllRows}
                       color="secondary"
                     />
