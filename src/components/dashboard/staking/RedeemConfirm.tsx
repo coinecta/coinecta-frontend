@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import { ClaimStakeRequest } from '@server/services/syncApi';
 import React, { FC, useEffect, useState } from 'react';
+import { useAlert } from '@contexts/AlertContext';
 
 interface IRedeemConfirmProps {
   open: boolean;
@@ -27,8 +28,6 @@ interface IRedeemConfirmProps {
   redeemList: IRedeemListItem[];
   redeemWallet: string;
   claimStakeRequest: ClaimStakeRequest;
-  onRedeemSuccessful: () => void;
-  onRedeemFailed: () => void;
 }
 
 const RedeemConfirm: FC<IRedeemConfirmProps> = ({
@@ -37,8 +36,6 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
   redeemList,
   redeemWallet,
   claimStakeRequest,
-  onRedeemSuccessful,
-  onRedeemFailed
 }) => {
   const { cnctDecimals } = useToken();
   const theme = useTheme();
@@ -48,6 +45,7 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
   const { sessionData, sessionStatus } = useWalletContext();
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const [isSigning, setIsSigning] = useState(false);
+  const { addAlert } = useAlert();
 
   const claimStakeTxMutation = trpc.sync.claimStakeTx.useMutation();
   const finalizeTxMutation = trpc.sync.finalizeTx.useMutation();
@@ -62,10 +60,7 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
     execute();
   }, [connected, redeemWallet, sessionStatus]);
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
+  const handleClose = () => setOpen(false);
 
   const handleSubmit = async () => {
     try {
@@ -81,11 +76,11 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
 
         await cardanoApi.submitTx(signedTxCbor);
         setOpen(false);
-        onRedeemSuccessful()
+        addAlert('success', 'Redeem transaction submitted');
       }
     } catch (e) {
       console.log(e);
-      onRedeemFailed();
+      addAlert('error', 'Redeem transaction failed');
     }
     setIsSigning(false);
   }

@@ -7,13 +7,9 @@ import { trpc } from '@lib/utils/trpc';
 import { walletNameToId } from '@lib/walletsList';
 import { BrowserWallet } from '@meshsdk/core';
 import { useWallet } from '@meshsdk/react';
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import {
-  Alert,
   Box,
   Skeleton,
-  Snackbar,
   Typography,
   useTheme
 } from '@mui/material';
@@ -36,11 +32,7 @@ const StakePositions: FC = () => {
   const [openRedeemDialog, setOpenRedeemDialog] = useState(false)
   const [redeemRowData, setRedeemRowData] = useState<IRedeemListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSelectedPositionsEmpty, setIsSelectedPositionsEmpty] = useState(false);
-  const [isRedeemSuccessful, setIsRedeemSuccessful] = useState(false);
-  const [isRedeemFailed, setIsRedeemFailed] = useState(false);
   const { addAlert } = useAlert();
-
 
   /* Staking API */
   const [stakeKeys, setStakeKeys] = useState<string[]>([]);
@@ -133,7 +125,7 @@ const StakePositions: FC = () => {
 
   const handleRedeem = () => {
     if (selectedPositions.length === 0) {
-      setIsSelectedPositionsEmpty(true);
+      addAlert('error', 'Select the positions to redeem');
       return;
     }
     setOpenRedeemDialog(true);
@@ -236,8 +228,6 @@ const StakePositions: FC = () => {
     },
   ]
 
-  const handleSuccessSnackbarClose = () => setIsRedeemSuccessful(false);
-  const handleFailedSnackbarClose = () => setIsRedeemFailed(false);
   return (
     <Box sx={{ position: 'relative' }} ref={parentRef}>
       <DashboardHeader title="Manage Staked Positions" />
@@ -312,44 +302,7 @@ const StakePositions: FC = () => {
         redeemList={redeemRowData}
         redeemWallet={currentWallet!}
         claimStakeRequest={claimStakeRequest}
-        onRedeemFailed={() => setIsRedeemFailed(true)}
-        onRedeemSuccessful={() => setIsRedeemSuccessful(true)}
       />
-      <Snackbar open={isRedeemSuccessful} autoHideDuration={6000} onClose={handleSuccessSnackbarClose}>
-        <Alert
-          onClose={handleSuccessSnackbarClose}
-          severity="success"
-          variant="outlined"
-          sx={{ width: '100%' }}
-          icon={<TaskAltIcon fontSize='medium' />}
-        >
-          Redeem transaction submitted
-        </Alert>
-      </Snackbar>
-      <Snackbar open={isRedeemFailed} autoHideDuration={6000} onClose={handleFailedSnackbarClose}>
-        <Alert
-          onClose={handleFailedSnackbarClose}
-          severity="error"
-          variant="outlined"
-          sx={{ width: '100%' }}
-          icon={<ErrorOutlineOutlinedIcon fontSize='medium' />}
-        >
-          Redeem transaction failed
-        </Alert>
-      </Snackbar>
-      {selectedPositions.length === 0 &&
-        <Snackbar open={isSelectedPositionsEmpty} autoHideDuration={6000} onClose={() => setIsSelectedPositionsEmpty(false)}>
-          <Alert
-            onClose={() => setIsSelectedPositionsEmpty(false)}
-            severity="error"
-            variant="outlined"
-            sx={{ width: '100%' }}
-            icon={<ErrorOutlineOutlinedIcon fontSize='medium' />}
-          >
-            Select the positions to redeem
-          </Alert>
-        </Snackbar>
-      }
     </Box>
   );
 };
