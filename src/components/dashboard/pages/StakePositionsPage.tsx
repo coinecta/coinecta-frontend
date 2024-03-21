@@ -25,6 +25,7 @@ import DashboardCard from '../DashboardCard';
 import DashboardHeader from '../DashboardHeader';
 import RedeemConfirm from '../staking/RedeemConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
+import { useCardano } from '@lib/utils/cardano';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -52,6 +53,7 @@ const StakePositions: FC = () => {
   const [isStakingKeysLoaded, setIsStakingKeysLoaded] = useState(false);
   const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined);
   const { selectedAddresses } = useWalletContext();
+  const { isWalletConnected } = useCardano();
 
   const getWallets = trpc.user.getWallets.useQuery()
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
@@ -65,7 +67,7 @@ const StakePositions: FC = () => {
   const positions = useMemo(() => queryStakePositions.data ?? [], [queryStakePositions.data]);
 
   useEffect(() => {
-    setIsLoading(!queryStakeSummary.isSuccess && !isStakingKeysLoaded && !queryStakePositions.isSuccess);
+    setIsLoading(!queryStakeSummary.isSuccess || !isStakingKeysLoaded || !queryStakePositions.isSuccess);
   }, [queryStakeSummary.isSuccess, isStakingKeysLoaded, queryStakePositions.isSuccess]);
 
   useEffect(() => {
@@ -147,6 +149,7 @@ const StakePositions: FC = () => {
     const execute = async () => {
       if (connected && sessionStatus === 'authenticated') {
         try {
+          setWalletUtxosCbor([]);
           const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
           const utxos = await api.getUtxos();
           const collateral = api.experimental.getCollateral() === undefined ? [] : await api.experimental.getCollateral();
@@ -175,15 +178,20 @@ const StakePositions: FC = () => {
         if (userWallets === undefined || userWallets === null) return;
         const stakeKeyWallet: Record<string, string> = {};
         const stakeKeysPromises = userWallets.map(async userWallet => {
-          if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
-          const browserWallet = await BrowserWallet.enable(userWallet.type);
-          const balance = await browserWallet.getBalance();
-          const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
-          const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
-          stakeKeys.forEach((key) => {
-            stakeKeyWallet[key.unit.replace('000de140', '')] = userWallet.type;
-          });
-          return processedStakeKeys;
+          try {
+            if (!(await isWalletConnected(userWallet.type, userWallet.changeAddress))) return [];
+            if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
+            const browserWallet = await BrowserWallet.enable(userWallet.type);
+            const balance = await browserWallet.getBalance();
+            const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
+            const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
+            stakeKeys.forEach((key) => {
+              stakeKeyWallet[key.unit.replace('000de140', '')] = userWallet.type;
+            });
+            return processedStakeKeys;
+          } catch {
+            console.log('Error getting stake keys', userWallet);
+          }
         });
         const stakeKeysArrays = await Promise.all(stakeKeysPromises);
         const allStakeKeys = stakeKeysArrays.flat();
@@ -193,7 +201,7 @@ const StakePositions: FC = () => {
       }
     };
     execute();
-  }, [wallet, connected, time, userWallets, selectedAddresses]);
+  }, [wallet, connected, time, userWallets, selectedAddresses, isWalletConnected]);
 
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
 
@@ -293,7 +301,7 @@ const StakePositions: FC = () => {
         setSelectedRows={setSelectedRows}
         actions={actions}
         parentContainerRef={parentRef}
-        isLoading={isLoading && (walletUtxosCbor?.length ?? 0) <= 0}
+        isLoading={isLoading || (walletUtxosCbor?.length ?? 0) <= 0}
       />
       <RedeemConfirm
         open={openRedeemDialog}

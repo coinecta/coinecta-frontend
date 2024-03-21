@@ -118,8 +118,9 @@ export type ClaimStakeRequest = {
 };
 
 export const coinectaSyncApi = {
-  async getStakeSummary(stakeKeys: string[]): Promise<StakeSummary> {
+  async getStakeSummary(stakeKeys: string[]): Promise<StakeSummary | null> {
     try {
+      if (stakeKeys.length === 0) return null;
       const response = await syncApi.post("/stake/summary", stakeKeys);
       return response.data;
     } catch (error) {
@@ -136,6 +137,7 @@ export const coinectaSyncApi = {
   },
   async getStakePositions(stakeKeys: string[]): Promise<StakePosition[]> {
     try {
+      if (stakeKeys.length === 0) return [];
       const response = await syncApi.post("/stake/positions", stakeKeys);
       return response.data;
     } catch (error) {
