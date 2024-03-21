@@ -107,7 +107,7 @@ const StakePositions: FC = () => {
 
     setRedeemRowData(newData);
   }, [selectedRows, redeemableRows, positions])
-
+  
   useEffect(() => {
     const newRedeemableRows = new Set<number>();
     const newLockedRows = new Set<number>();
@@ -204,7 +204,7 @@ const StakePositions: FC = () => {
   }, [wallet, connected, time, userWallets, selectedAddresses, isWalletConnected]);
 
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
-
+  
   const claimStakeRequest = useMemo(() => {
     return {
       stakeUtxoOutputReferences: selectedPositions.map((position) => {
@@ -293,7 +293,7 @@ const StakePositions: FC = () => {
       <StakePositionTable
         error={false}
         data={processedPositions.length > 0 ? processedPositions : (isLoading ? fakeTrpcDashboardData.data : [])}
-        connectedWallets={userWallets?.map(uw => uw.type) ?? []}
+        connectedWallets={userWallets?.map(uw => uw.type).filter(w => new Set(Object.values(stakeKeyWalletMapping)).has(w)) ?? []}
         stakeKeyWalletMapping={stakeKeyWalletMapping}
         currentWallet={currentWallet!}
         setCurrentWallet={setCurrentWallet}
