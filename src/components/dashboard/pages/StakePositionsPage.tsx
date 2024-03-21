@@ -101,7 +101,7 @@ const StakePositions: FC = () => {
 
     setRedeemRowData(newData);
   }, [selectedRows, redeemableRows, positions])
-  
+
   useEffect(() => {
     const newRedeemableRows = new Set<number>();
     const newLockedRows = new Set<number>();
@@ -144,6 +144,7 @@ const StakePositions: FC = () => {
       if (connected && sessionStatus === 'authenticated') {
         try {
           setWalletUtxosCbor([]);
+          if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
           const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
           const utxos = await api.getUtxos();
           const collateral = api.experimental.getCollateral() === undefined ? [] : await api.experimental.getCollateral();
@@ -196,10 +197,10 @@ const StakePositions: FC = () => {
       }
     };
     execute();
-  }, [wallet, connected, time, userWallets, selectedAddresses, isWalletConnected]);
+  }, [wallet, connected, time, userWallets, selectedAddresses, isWalletConnected, addAlert]);
 
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
-  
+
   const claimStakeRequest = useMemo(() => {
     return {
       stakeUtxoOutputReferences: selectedPositions.map((position) => {
