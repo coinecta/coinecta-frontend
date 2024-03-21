@@ -26,6 +26,7 @@ import DashboardHeader from '../DashboardHeader';
 import RedeemConfirm from '../staking/RedeemConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
 import { useCardano } from '@lib/utils/cardano';
+import { useAlert } from '@contexts/AlertContext';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -38,6 +39,7 @@ const StakePositions: FC = () => {
   const [isSelectedPositionsEmpty, setIsSelectedPositionsEmpty] = useState(false);
   const [isRedeemSuccessful, setIsRedeemSuccessful] = useState(false);
   const [isRedeemFailed, setIsRedeemFailed] = useState(false);
+  const { addAlert } = useAlert();
 
 
   /* Staking API */
@@ -190,6 +192,7 @@ const StakePositions: FC = () => {
             });
             return processedStakeKeys;
           } catch {
+            addAlert('error', `Failed to load stake positions for ${userWallet.type} wallet. Please reload the page.`);
             console.log('Error getting stake keys', userWallet);
           }
         });
