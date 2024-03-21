@@ -71,6 +71,7 @@ const StakePositionTable = <T extends Record<string, any>>({
   const paperRef = useRef<HTMLDivElement>(null);
   const [sortedData, setSortedData] = useState<T[]>(data);
   const [isAllRowsStakedUnderSingleWallet, setIsAllRowsStakedUnderSingleWallet] = useState<boolean>(false);
+  const [isInfoSnackbarShown, setIsInfoSnackbarShown] = useState<boolean>(false);
   const { addAlert } = useAlert();
   const { selectedAddresses } = useWalletContext();
 
@@ -97,9 +98,11 @@ const StakePositionTable = <T extends Record<string, any>>({
   }, [currentWallet, setSelectedRows, selectedAddresses])
 
   useEffect(() => {
-    if (selectedRows?.size === 1)
+    if (selectedRows!.size >= 1 && !isInfoSnackbarShown){
       addAlert('info', 'Please note: You can only redeem rewards using one wallet type at a time.');
-  }, [selectedRows])
+      setIsInfoSnackbarShown(true);
+    }
+  }, [selectedRows, isInfoSnackbarShown])
   
   useEffect(() => {
     data.sort((a, b) => {
