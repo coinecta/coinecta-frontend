@@ -102,7 +102,7 @@ const StakePositionTable = <T extends Record<string, any>>({
       addAlert('info', 'Please note: You can only redeem rewards using one wallet type at a time.');
       setIsInfoSnackbarShown(true);
     }
-  }, [selectedRows, isInfoSnackbarShown])
+  }, [selectedRows, isInfoSnackbarShown, addAlert])
   
   useEffect(() => {
     data.sort((a, b) => {
@@ -126,7 +126,7 @@ const StakePositionTable = <T extends Record<string, any>>({
     const stakeKeyWalletMappingValues = Object.values(stakeKeyWalletMapping);
     setIsAllRowsStakedUnderSingleWallet(stakeKeyWalletMappingValues.every(v => v === stakeKeyWalletMappingValues[0]));
     if (isAllRowsStakedUnderSingleWallet) setCurrentWallet(stakeKeyWalletMappingValues[stakeKeyWalletMappingValues.length - 1]);
-  }, [stakeKeyWalletMapping, isAllRowsStakedUnderSingleWallet])  
+  }, [stakeKeyWalletMapping, isAllRowsStakedUnderSingleWallet, setCurrentWallet])  
 
   const isTableWiderThanParent = parentWidth < paperWidth
 
@@ -201,7 +201,7 @@ const StakePositionTable = <T extends Record<string, any>>({
   const unselectableRows = useMemo(() => {
     return selectableRows
       .filter(r => stakeKeyWalletMapping[r.stakeKey] !== currentWallet);
-  }, [selectableRows]);
+  }, [currentWallet, selectableRows, stakeKeyWalletMapping]);
 
   const handleCheckboxClick = (isDisabled: boolean, item: any): void => {
     if (isDisabled && unselectableRows.some(row => row.stakeKey === item.stakeKey))

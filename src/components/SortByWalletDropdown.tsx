@@ -34,7 +34,7 @@ const SortByWalletDropdown = ({
       <Typography sx={{ fontWeight: 900 }}>Redeem from</Typography>
       <Select
         variant="filled"
-        value={wallet}
+        value={wallet ?? ''}
         onChange={handleChange}
         MenuProps={{
           PaperProps: {
