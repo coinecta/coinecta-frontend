@@ -59,13 +59,13 @@ const StakePositions: FC = () => {
   const [currentWallet, setCurrentWallet] = useState<string | undefined>(undefined);
 
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
-  const summary = useMemo((() => queryStakeSummary.data ), [queryStakeSummary.data]);
+  const summary = useMemo((() => queryStakeSummary.data), [queryStakeSummary.data]);
 
   const queryStakePositions = trpc.sync.getStakePositions.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const positions = useMemo(() => queryStakePositions.data ?? [], [queryStakePositions.data]);
 
   useEffect(() => {
-    setIsLoading(!queryStakeSummary.isSuccess && !isStakingKeysLoaded && !queryStakePositions.isSuccess); 
+    setIsLoading(!queryStakeSummary.isSuccess && !isStakingKeysLoaded && !queryStakePositions.isSuccess);
   }, [queryStakeSummary.isSuccess, isStakingKeysLoaded, queryStakePositions.isSuccess]);
 
   useEffect(() => {
@@ -96,12 +96,12 @@ const StakePositions: FC = () => {
   useEffect(() => {
     const newData = Array.from(selectedRows).filter(index => redeemableRows.has(index)).map(index => {
       const item = positions[index];
-      if(item === undefined) return;
+      if (item === undefined) return;
       return {
         currency: item.name,
         amount: item.total.toString(),
       };
-    }).filter(item => item !== undefined).map(item => item as {currency: string, amount: string});
+    }).filter(item => item !== undefined).map(item => item as { currency: string, amount: string });
 
     setRedeemRowData(newData);
   }, [selectedRows, redeemableRows, positions])
@@ -345,53 +345,49 @@ const StakePositions: FC = () => {
 
 export default StakePositions;
 
+
 const fakeTrpcDashboardData = {
   error: false,
   data: [
     {
-      name: 'CNCT',
-      total: "63000",
+      name: '',
+      total: "",
       unlockDate: new Date(),
-      initial: "60000",
-      bonus: "3000",
-      interest: "21.6%",
-      stakeKey: "stakeKey1"
+      initial: "",
+      bonus: "",
+      interest: ""
     },
     {
-      name: 'CNCT',
-      total: "63000",
+      name: '',
+      total: "",
       unlockDate: new Date(),
-      initial: "60000",
-      bonus: "3000",
-      interest: "21.6%",
-      stakeKey: "stakeKey1"
+      initial: "",
+      bonus: "",
+      interest: ""
     },
     {
-      name: 'CNCT',
-      total: "63000",
+      name: '',
+      total: "",
       unlockDate: new Date(),
-      initial: "60000",
-      bonus: "3000",
-      interest: "21.6%",
-      stakeKey: "stakeKey1"
+      initial: "",
+      bonus: "",
+      interest: ""
     },
     {
-      name: 'CNCT',
-      total: "63000",
+      name: '',
+      total: "",
       unlockDate: new Date(),
-      initial: "60000",
-      bonus: "3000",
-      interest: "21.6%",
-      stakeKey: "stakeKey1"
+      initial: "",
+      bonus: "",
+      interest: ""
     },
     {
-      name: 'CNCT',
-      total: "63000",
+      name: '',
+      total: "",
       unlockDate: new Date(),
-      initial: "60000",
-      bonus: "3000",
-      interest: "21.6%",
-      stakeKey: "stakeKey1"
-    },
+      initial: "",
+      bonus: "",
+      interest: ""
+    }
   ]
 }

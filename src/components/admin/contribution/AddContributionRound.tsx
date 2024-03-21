@@ -4,13 +4,9 @@ import {
   Typography,
   TextField,
   Button,
-  FormControl,
-  InputLabel,
-  Paper,
   Grid
 } from '@mui/material';
 import { trpc } from '@lib/utils/trpc';
-import AdminMenu from '@components/admin/AdminMenu';
 import { useAlert } from '@contexts/AlertContext';
 import SelectWhitelist from './SelectWhitelist';
 
@@ -50,10 +46,10 @@ const AddContributionRound: FC<AddContributionRoundProps> = ({ projectList, sele
 
     const project = projectList?.find(project => selectedProject === project.slug)
 
-    if (project && selectedWhitelist) {
+    if (project) {
       const submissionData = {
         ...formRound,
-        whitelistSlug: selectedWhitelist,
+        whitelistSlug: selectedWhitelist || undefined,
         tokenTarget: Number(formRound.tokenTarget),
         price: Number(formRound.price),
         startDate: new Date(formRound.startDate),
@@ -72,7 +68,7 @@ const AddContributionRound: FC<AddContributionRoundProps> = ({ projectList, sele
       }
     } else {
       if (!project) addAlert('error', 'Please choose a project first');
-      else if (!selectedWhitelist) addAlert('error', 'Please choose a whitelist to connect to');
+      // else if (!selectedWhitelist) addAlert('error', 'Please choose a whitelist to connect to');
       else addAlert('error', 'An unknown error occured');
       setLoading(false)
     }

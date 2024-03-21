@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ZContributionRound } from './contributionSchema';
 import { TFiso } from './fisoSchema';
 
 export {
@@ -96,6 +97,7 @@ const TProject = z.object({
   team: z.array(TTeam),
   tokenomics: TTokenomics,
   whitelists: z.array(TWhitelist),
+  contributionRounds: z.array(ZContributionRound),
   fisos: z.array(TFiso)
 });
 

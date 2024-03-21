@@ -1,5 +1,6 @@
 import { TProject } from "@lib/types/zod-schemas/projectSchema";
 import {
+  ContributionRound,
   Project,
   Roadmap,
   Socials,
@@ -25,6 +26,7 @@ interface ProjectWithRelations extends Project {
   team: Team[];
   tokenomics: TokenomicsWithRelations | null;
   whitelists: Whitelist[];
+  contributionRounds: ContributionRound[];
   // fisos: FisoWithRelations[];
 }
 
@@ -94,6 +96,12 @@ export const mapFullProjectFromDb = (projectDb: ProjectWithRelations | null): z.
     ergoProofs: whitelist.ergoProofs
   }));
 
+
+  // Map Contribution Rounds
+  const contributionRounds = projectDb.contributionRounds.map(contributionRound => ({
+    ...contributionRound
+  }));
+
   // Combine everything into a project
   const project: z.infer<typeof TProject> = {
     name: projectDb.name,
@@ -108,11 +116,12 @@ export const mapFullProjectFromDb = (projectDb: ProjectWithRelations | null): z.
     isLaunched: projectDb.isLaunched,
     isDraft: projectDb.isDraft,
     frontPage: projectDb.frontPage,
-    socials: socials,
+    socials,
     roadmap: roadmaps,
     team: teams,
-    tokenomics: tokenomics,
-    whitelists: whitelists,
+    tokenomics,
+    whitelists,
+    contributionRounds,
     fisos: []
   };
 

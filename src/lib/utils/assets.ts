@@ -29,6 +29,5 @@ export const parseTokenFromString = (formattedAmount: string, decimals: number):
 }
 
 export const formatNumber = (num: number, key: string): string => `${num.toLocaleString(undefined, {
-  minimumFractionDigits: num % 1 === 0 ? 0 : 2,
-  maximumFractionDigits: num % 1 === 0 ? 0 : 2
+  maximumFractionDigits: 2
 })}${key !== '' && key != null ? ` ${key}` : ''}`;
