@@ -318,7 +318,7 @@ const fakeTrpcDashboardData = {
     {
       name: '',
       total: "",
-      unlockDate: "",
+      unlockDate: new Date(),
       initial: "",
       bonus: "",
       interest: ""
@@ -326,7 +326,7 @@ const fakeTrpcDashboardData = {
     {
       name: '',
       total: "",
-      unlockDate: "",
+      unlockDate: new Date(),
       initial: "",
       bonus: "",
       interest: ""
@@ -334,7 +334,7 @@ const fakeTrpcDashboardData = {
     {
       name: '',
       total: "",
-      unlockDate: "",
+      unlockDate: new Date(),
       initial: "",
       bonus: "",
       interest: ""
@@ -342,7 +342,7 @@ const fakeTrpcDashboardData = {
     {
       name: '',
       total: "",
-      unlockDate: "",
+      unlockDate: new Date(),
       initial: "",
       bonus: "",
       interest: ""
@@ -350,7 +350,7 @@ const fakeTrpcDashboardData = {
     {
       name: '',
       total: "",
-      unlockDate: "",
+      unlockDate: new Date(),
       initial: "",
       bonus: "",
       interest: ""

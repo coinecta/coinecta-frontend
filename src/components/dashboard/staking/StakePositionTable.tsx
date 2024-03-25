@@ -249,6 +249,7 @@ const StakePositionTable = <T extends Record<string, any>>({
 
   const allSelectableSelected = selectableRows.every(item => selectedRows?.has(item));
   const someSelectableSelected = selectableRows.some(item => selectedRows?.has(item)) && !allSelectableSelected;
+  const allRowsIrredeemable = sortedData.every(item => item.unlockDate > new Date());
 
   if (error) return <div>Error loading</div>;
 
@@ -316,7 +317,7 @@ const StakePositionTable = <T extends Record<string, any>>({
                   {actions && sortedData.length > 0 && selectedRows && <TableCell padding="checkbox">
                     <Checkbox
                       indeterminate={someSelectableSelected}
-                      checked={Object.keys(stakeKeyWalletMapping).length === 0 ? false : allSelectableSelected}
+                      checked={Object.keys(stakeKeyWalletMapping).length === 0 ? false : (allSelectableSelected && !allRowsIrredeemable)}
                       onChange={handleSelectAllRows}
                       color="secondary"
                     />
