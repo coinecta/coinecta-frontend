@@ -60,6 +60,9 @@ const StakePositions: FC = () => {
   const queryStakePositions = trpc.sync.getStakePositions.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const positions = useMemo(() => queryStakePositions.data ?? [], [queryStakePositions.data]);
 
+  const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY;
+  const STAKE_POOL_ASSET_NAME = process.env.STAKE_POOL_ASSET_NAME;
+
   useEffect(() => {
     setIsLoading(!queryStakeSummary.isSuccess || !isStakingKeysLoaded || !queryStakePositions.isSuccess);
   }, [queryStakeSummary.isSuccess, isStakingKeysLoaded, queryStakePositions.isSuccess]);
@@ -141,16 +144,16 @@ const StakePositions: FC = () => {
 
   useEffect(() => {
     const execute = async () => {
-      if (connected && sessionStatus === 'authenticated') {
+      if (connected && sessionStatus === 'authenticated' && currentWallet) {
         try {
           setWalletUtxosCbor([]);
           if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
           const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
           const utxos = await api.getUtxos();
-          const collateral = api.experimental.getCollateral() === undefined ? [] : await api.experimental.getCollateral();
+          const collateral = await api.experimental.getCollateral() === undefined ? [] : await api.experimental.getCollateral();
           setWalletUtxosCbor([...utxos!, ...collateral!]);
         } catch (ex) {
-          console.log("Error getting utxos", ex);
+          console.error("Error getting utxos", ex);
         }
       }
     };
@@ -159,9 +162,7 @@ const StakePositions: FC = () => {
 
   useEffect(() => {
     const execute = async () => {
-      if (connected) {
-        setChangeAddress(await wallet.getChangeAddress());
-      }
+      if (connected) setChangeAddress(await wallet.getChangeAddress());
     };
     execute();
   }, [connected, wallet]);
@@ -255,8 +256,8 @@ const StakePositions: FC = () => {
                     <Skeleton animation='wave' width={100} />
                   </Box> :
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats.CNCT?.totalPortfolio ?? "0")), '₳')}</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT?.totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY! + STAKE_POOL_ASSET_NAME!]?.totalPortfolio ?? "0")), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY! + STAKE_POOL_ASSET_NAME!]?.totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
                   </Box>}
               </>
               )
@@ -276,8 +277,8 @@ const StakePositions: FC = () => {
               <DataSpread
                 title="CNCT"
                 margin={0} // last item needs margin 0, the rest don't include the margin prop
-                data={formatNumber(formatWithDecimals(summary?.poolStats.CNCT?.totalPortfolio ?? "0"), '')}
-                usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT?.totalPortfolio ?? "0"), "CNCT"), '')}`}
+                data={formatNumber(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY! + STAKE_POOL_ASSET_NAME!]?.totalPortfolio ?? "0"), '')}
+                usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY! + STAKE_POOL_ASSET_NAME!]?.totalPortfolio ?? "0"), "CNCT"), '')}`}
                 isLoading={isLoading}
               />
             }
@@ -317,7 +318,7 @@ const fakeTrpcDashboardData = {
     {
       name: '',
       total: "",
-      unlockDate: new Date(),
+      unlockDate: "",
       initial: "",
       bonus: "",
       interest: ""
@@ -325,7 +326,7 @@ const fakeTrpcDashboardData = {
     {
       name: '',
       total: "",
-      unlockDate: new Date(),
+      unlockDate: "",
       initial: "",
       bonus: "",
       interest: ""
@@ -333,7 +334,7 @@ const fakeTrpcDashboardData = {
     {
       name: '',
       total: "",
-      unlockDate: new Date(),
+      unlockDate: "",
       initial: "",
       bonus: "",
       interest: ""
@@ -341,7 +342,7 @@ const fakeTrpcDashboardData = {
     {
       name: '',
       total: "",
-      unlockDate: new Date(),
+      unlockDate: "",
       initial: "",
       bonus: "",
       interest: ""
@@ -349,7 +350,7 @@ const fakeTrpcDashboardData = {
     {
       name: '',
       total: "",
-      unlockDate: new Date(),
+      unlockDate: "",
       initial: "",
       bonus: "",
       interest: ""
