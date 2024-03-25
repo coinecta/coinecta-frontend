@@ -60,8 +60,8 @@ const StakePositions: FC = () => {
   const queryStakePositions = trpc.sync.getStakePositions.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const positions = useMemo(() => queryStakePositions.data ?? [], [queryStakePositions.data]);
 
-  const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY;
-  const STAKE_POOL_ASSET_NAME = process.env.STAKE_POOL_ASSET_NAME;
+  const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY!;
+  const STAKE_POOL_ASSET_NAME = process.env.STAKE_POOL_ASSET_NAME!;
 
   useEffect(() => {
     setIsLoading(!queryStakeSummary.isSuccess || !isStakingKeysLoaded || !queryStakePositions.isSuccess);
@@ -256,8 +256,8 @@ const StakePositions: FC = () => {
                     <Skeleton animation='wave' width={100} />
                   </Box> :
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY! + STAKE_POOL_ASSET_NAME!]?.totalPortfolio ?? "0")), '₳')}</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY! + STAKE_POOL_ASSET_NAME!]?.totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME].totalPortfolio ?? "0")), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME].totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
                   </Box>}
               </>
               )
@@ -277,8 +277,8 @@ const StakePositions: FC = () => {
               <DataSpread
                 title="CNCT"
                 margin={0} // last item needs margin 0, the rest don't include the margin prop
-                data={formatNumber(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY! + STAKE_POOL_ASSET_NAME!]?.totalPortfolio ?? "0"), '')}
-                usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY! + STAKE_POOL_ASSET_NAME!]?.totalPortfolio ?? "0"), "CNCT"), '')}`}
+                data={formatNumber(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME].totalPortfolio ?? "0"), '')}
+                usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME].totalPortfolio ?? "0"), "CNCT"), '')}`}
                 isLoading={isLoading}
               />
             }
