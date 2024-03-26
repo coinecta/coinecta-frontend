@@ -9,10 +9,7 @@ export const useCardano = () => {
             try {
                 const api = await BrowserWallet.enable(walletName);
                 const changeAddress = await api.getChangeAddress();
-                if (walletAddress === changeAddress) {
-                    return true;
-                }
-                return false;
+                return walletAddress === changeAddress;
             } catch {
                 return false;
             }
