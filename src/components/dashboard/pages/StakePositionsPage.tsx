@@ -149,8 +149,8 @@ const StakePositions: FC = () => {
           if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
           const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
           const utxos = await api.getUtxos();
-          const collateral = await api.experimental.getCollateral() === undefined ? [] : await api.experimental.getCollateral();
-          setWalletUtxosCbor([...utxos!, ...collateral!]);
+          const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
+          setWalletUtxosCbor([...utxos!, ...(collateral ?? [])]);
         } catch (ex) {
           console.error("Error getting utxos", ex);
         }
