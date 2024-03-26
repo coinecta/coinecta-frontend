@@ -122,12 +122,14 @@ const StakePositionTable = <T extends Record<string, any>>({
     setSortedData([...data]);
   }, [data, currentWallet, stakeKeyWalletMapping])
 
-  useEffect(() => {
-    const stakeKeyWalletMappingValues = Object.values(stakeKeyWalletMapping);
-    if (stakeKeyWalletMappingValues.length === 0) return;
-    setIsAllRowsStakedUnderSingleWallet(stakeKeyWalletMappingValues.every(v => v === stakeKeyWalletMappingValues[0]));
-    if (isAllRowsStakedUnderSingleWallet) setCurrentWallet(stakeKeyWalletMappingValues[0]);
-  }, [stakeKeyWalletMapping, isAllRowsStakedUnderSingleWallet, setCurrentWallet])
+  // useEffect(() => {
+  //   const stakeKeyWalletMappingValues = Object.values(stakeKeyWalletMapping);
+  //   if (stakeKeyWalletMappingValues.length === 0) return;
+  //   setIsAllRowsStakedUnderSingleWallet(stakeKeyWalletMappingValues.every(v => v === stakeKeyWalletMappingValues[0]));
+  //   if (isAllRowsStakedUnderSingleWallet) {
+  //     setCurrentWallet(stakeKeyWalletMappingValues[0]);
+  //   }
+  // }, [stakeKeyWalletMapping, isAllRowsStakedUnderSingleWallet, setCurrentWallet])
 
   const isTableWiderThanParent = parentWidth < paperWidth
 
