@@ -1,12 +1,8 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import {
-  Alert,
   Box,
   Button,
-  Divider,
-  Paper,
   Skeleton,
-  Snackbar,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -16,14 +12,9 @@ import StakeInput from '@components/dashboard/staking/StakeInput';
 import StakeDuration from '../staking/StakeDuration';
 import DataSpread from '@components/DataSpread';
 import DashboardHeader from '../DashboardHeader';
-import { useWallet } from '@meshsdk/react';
 import StakeConfirm from '../staking/StakeConfirm';
 import { calculateFutureDateMonths } from '@lib/utils/general'
-import { StakePoolResponse, coinectaSyncApi } from '@server/services/syncApi';
-import { metadataApi } from '@server/services/metadataApi';
 import { formatTokenWithDecimals, formatNumber } from '@lib/utils/assets';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import { trpc } from '@lib/utils/trpc';
 
 const options = [
@@ -52,8 +43,6 @@ const calculateAPY = (lockupMonths: number, interestRate: number): number => {
 }
 
 const AddStakePage: FC = () => {
-  const theme = useTheme()
-
   const STAKE_POOL_VALIDATOR_ADDRESS = process.env.STAKE_POOL_VALIDATOR_ADDRESS!;
   const STAKE_POOL_OWNER_KEY_HASH = process.env.STAKE_POOL_OWNER_KEY_HASH!;
   const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY!;
@@ -65,9 +54,6 @@ const AddStakePage: FC = () => {
   const [durations, setDurations] = useState<number[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
-  const [isStakeTransactionSubmitted, setIsStakeTransactionSubmitted] = useState<boolean>(false);
-  const [isStakeTransactionFailed, setIsStakeTransactionFailed] = useState<boolean>(false);
-
 
   const getStakePoolQuery = trpc.sync.getStakePool.useQuery({
     address: STAKE_POOL_VALIDATOR_ADDRESS,
@@ -110,11 +96,6 @@ const AddStakePage: FC = () => {
     }
   };
 
-  const handleTransactionSubmitted = () => setIsStakeTransactionSubmitted(true);
-  const handleTransactionFailed = () => setIsStakeTransactionFailed(true);
-  const handleSuccessSnackbarClose = () => setIsStakeTransactionSubmitted(false);
-  const handleFailedSnackbarClose = () => setIsStakeTransactionFailed(false);
-
   const total = (Number(cnctAmount) ? (Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0)) + Number(cnctAmount) : 0).toLocaleString(undefined, { maximumFractionDigits: 1 })
   const rewards = (Number(cnctAmount) ? Number(cnctAmount) * (options.find(option => option.duration === stakeDuration)?.interest || 0) : 0)
 
@@ -148,7 +129,6 @@ const AddStakePage: FC = () => {
               <Button
                 variant="contained"
                 color="secondary"
-                // disabled={!termsCheck || !whitelisted || !live}
                 sx={{
                   textTransform: 'none',
                   fontSize: '20px',
@@ -241,31 +221,7 @@ const AddStakePage: FC = () => {
         duration={stakeDuration}
         total={total}
         rewardIndex={rewardSettingIndex}
-        onTransactionSubmitted={handleTransactionSubmitted}
-        onTransactionFailed={handleTransactionFailed}
       />
-      <Snackbar open={isStakeTransactionSubmitted} autoHideDuration={6000} onClose={handleSuccessSnackbarClose}>
-        <Alert
-          onClose={handleSuccessSnackbarClose}
-          severity="success"
-          variant="outlined"
-          sx={{ width: '100%' }}
-          icon={<TaskAltIcon fontSize='medium' />}
-        >
-          Stake transaction submitted
-        </Alert>
-      </Snackbar>
-      <Snackbar open={isStakeTransactionFailed} autoHideDuration={6000} onClose={handleFailedSnackbarClose}>
-        <Alert
-          onClose={handleFailedSnackbarClose}
-          severity="error"
-          variant="outlined"
-          sx={{ width: '100%' }}
-          icon={<ErrorOutlineOutlinedIcon fontSize='medium' />}
-        >
-          Error adding stake!
-        </Alert>
-      </Snackbar>
     </Box >
   );
 };

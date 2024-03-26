@@ -10,7 +10,6 @@ import {
   IconButton,
   Alert,
   CircularProgress,
-  Box,
   Avatar,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -26,6 +25,7 @@ import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalance
 import ChooseWallet from './ChooseWallet';
 import { trpc } from '@lib/utils/trpc';
 import { BrowserWallet } from '@meshsdk/core';
+import { useAlert } from '@contexts/AlertContext';
 
 interface IStakeConfirmProps {
   open: boolean;
@@ -36,8 +36,6 @@ interface IStakeConfirmProps {
   total: string;
   duration: number;
   rewardIndex: number;
-  onTransactionSubmitted: () => void;
-  onTransactionFailed: () => void;
 }
 
 const StakeConfirm: FC<IStakeConfirmProps> = ({
@@ -49,8 +47,6 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   duration,
   rewardIndex,
   setPaymentAmount,
-  onTransactionSubmitted,
-  onTransactionFailed
 }) => {
   const STAKE_POOL_VALIDATOR_ADDRESS = process.env.STAKE_POOL_VALIDATOR_ADDRESS!;
   const STAKE_POOL_OWNER_KEY_HASH = process.env.STAKE_POOL_OWNER_KEY_HASH!;
@@ -64,15 +60,14 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   const [isSigning, setIsSigning] = useState<boolean>(false);
   const [openChooseWalletDialog, setOpenChooseWalletDialog] = useState(false);
   const { sessionData } = useWalletContext();
+  const { addAlert } = useAlert();
   const getWallets = trpc.user.getWallets.useQuery()
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
   const addStakeTxMutation = trpc.sync.addStakeTx.useMutation();
   const finaliseTxMutation = trpc.sync.finalizeTx.useMutation();
   
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleClose = () => setOpen(false);
 
   useEffect(() => {
     const execute = async () => {
@@ -97,9 +92,9 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
       await processTxWithApi(name, cardanoApi);
       setOpen(false);
       setPaymentAmount('');
-      onTransactionSubmitted();
+      addAlert('success', 'Stake transaction submitted');
     } catch (ex) {
-      onTransactionFailed();
+      addAlert('error', 'Error adding stake!');
       console.error('Error adding stake', ex);
     }
     setIsSigning(false);
@@ -139,13 +134,13 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
         await processTxWithApi(wallet.type, api);
         setOpen(false);
         setPaymentAmount('');
-        onTransactionSubmitted();
+        addAlert('success', 'Stake transaction submitted');
       } else {
-        onTransactionFailed();
+        addAlert('error', 'Error adding stake!');
       }
     } catch (ex) {
       console.error('Error adding stake', ex);
-      onTransactionFailed();
+      addAlert('error', 'Error adding stake!');
     }
     setIsSigning(false);
   }

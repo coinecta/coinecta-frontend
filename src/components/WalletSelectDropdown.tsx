@@ -24,12 +24,14 @@ const WalletSelectDropdown = () => {
 
   const theme = useTheme()
   const router = useRouter()
-  const { isWalletConnected: _isWalletConnected, setSelectedAddresses, getSelectedAddresses } = useCardano()
+  const { isWalletConnected: _isWalletConnected, setSelectedAddresses: _setSelectedAddresses, getSelectedAddresses: _getSelectedAddresses } = useCardano()
   const [walletAddresses, setWalletAddresses] = useState<string[]>([])
   const [selectedAddresses, setSelectedAddress] = useState<string[]>([])
   const [isConnectedByWallets, setIsConnectedByWallets] = useState<Record<string, boolean>>({})
 
-  const isWalletConnected = useCallback(_isWalletConnected, [_isWalletConnected])
+  const isWalletConnected = useCallback(_isWalletConnected, [_isWalletConnected]);
+  const setSelectedAddresses = useCallback(_setSelectedAddresses, [_setSelectedAddresses]);
+  const getSelectedAddresses = useCallback(_getSelectedAddresses, [_getSelectedAddresses]);
 
   const getWallets = trpc.user.getWallets.useQuery()
 
@@ -46,7 +48,7 @@ const WalletSelectDropdown = () => {
       }
       setWalletAddresses(wallets.map((wallet) => wallet.changeAddress))
     }
-  }, [walletAddresses.length, wallets])
+  }, [getSelectedAddresses, setSelectedAddresses, walletAddresses.length, wallets])
 
   const walletByName = useCallback((name: string) => walletDataByName(name), []);
 
@@ -78,7 +80,7 @@ const WalletSelectDropdown = () => {
       }
     };
     execute();
-  }, [wallets]);
+  }, [isWalletConnected, wallets]);
 
   return (
     <FormControl fullWidth>

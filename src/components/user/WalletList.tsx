@@ -20,7 +20,7 @@ interface IWalletList {
 export const WalletList: FC<IWalletList> = ({ setOpen, setLoading }) => {
   const theme = useTheme();
   const wallets = useWalletList();
-  const { wallet, connected, name, connecting, connect, disconnect, error } = useWallet()
+  const { connecting, connect } = useWallet()
   const [openAddWallet, setOpenAddWallet] = useState(false)
 
   const handleClose = () => {
@@ -31,8 +31,6 @@ export const WalletList: FC<IWalletList> = ({ setOpen, setLoading }) => {
     try {
       setLoading(true)
       await connect(walletName)
-    } catch {
-
     } finally {
       handleClose()
       setLoading(false)
@@ -67,7 +65,7 @@ export const WalletList: FC<IWalletList> = ({ setOpen, setLoading }) => {
                 Install a wallet:
               </Typography>
 
-              {notInstalledWallets.map((walletListEntry, i) => (
+              {notInstalledWallets.map((walletListEntry) => (
                 <WalletListItemComponent {...walletListEntry} link key={walletListEntry.name} handleConnect={handleConnect} />
               ))}
             </Collapse>

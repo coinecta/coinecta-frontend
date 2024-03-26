@@ -25,12 +25,12 @@ import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import copy from 'copy-to-clipboard';
 import { useWallet } from '@meshsdk/react';
-import { coinectaSyncApi } from '@server/services/syncApi';
 import { TimeIcon } from '@mui/x-date-pickers';
 import { useWalletContext } from '@contexts/WalletContext';
 import { walletNameToId } from '@lib/walletsList';
 import DashboardCard from './DashboardCard';
 import { trpc } from '@lib/utils/trpc';
+import { useAlert } from '@contexts/AlertContext';
 
 interface ITransactionHistoryTableProps<T> {
   title?: string;
@@ -46,8 +46,6 @@ interface ITransactionHistoryTableProps<T> {
   setCurrentRequestPage: React.Dispatch<React.SetStateAction<number>>;
   requestPageLimit: number;
   setRequestPageLimit: React.Dispatch<React.SetStateAction<number>>;
-  onCancellationSuccessful: (status: boolean) => void;
-  onCancellationFailed: (status: boolean) => void;
 }
 
 const rowsPerPageOptions = [5, 10, 15];
@@ -63,16 +61,12 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   error,
   isLoading,
   actions,
-  selectedRows,
-  setSelectedRows,
   parentContainerRef,
   totalRequests,
   currentRequestPage,
   setCurrentRequestPage,
   requestPageLimit,
-  setRequestPageLimit,
-  onCancellationFailed,
-  onCancellationSuccessful
+  setRequestPageLimit
 }: ITransactionHistoryTableProps<T>) => {
   const [parentWidth, setParentWidth] = useState(0);
   const [paperWidth, setPaperWidth] = useState(0);
@@ -80,8 +74,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
   const [translateX, setTranslateX] = useState(0);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
+  const { addAlert } = useAlert();
   const tableRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
   const cancelStakeTxMutation = trpc.sync.cancelStakeTx.useMutation();
@@ -173,7 +166,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     }
   };
 
-  const { name, wallet, connected } = useWallet()
+  const { name, connected } = useWallet()
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const { sessionData } = useWalletContext();
 
@@ -202,17 +195,17 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         const witnessSetCbor = await cardanoApi.signTx(cancelStakeTxCbor, true);
         const signedTxCbor = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
         cardanoApi.submitTx(signedTxCbor);
-        onCancellationSuccessful(true);
+        addAlert('success', 'Cancel transaction submitted');
       } catch (ex) {
         console.error('Error cancelling stake', ex);
-        onCancellationFailed(true);
+        addAlert('error', 'Cancel transaction failed')
       }
     }
   }, [connected, cardanoApi, cancelStakeTxMutation, finaliseTxMutation]);
 
   if (error) return <div>Error loading</div>;
+  
   return (
-
     <Box
       ref={tableRef}
       onMouseDown={onMouseDown}
@@ -350,7 +343,6 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                     page={currentRequestPage - 1}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                  // disabled={isLoading} 
                   />
                 </TableRow>
               </TableFooter>
