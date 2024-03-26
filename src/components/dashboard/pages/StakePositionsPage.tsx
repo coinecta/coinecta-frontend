@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import { ClaimStakeRequest } from '@server/services/syncApi';
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { IActionBarButton } from '../ActionBar';
 import DashboardCard from '../DashboardCard';
 import DashboardHeader from '../DashboardHeader';
@@ -47,7 +47,9 @@ const StakePositions: FC = () => {
   const [isStakingKeysLoaded, setIsStakingKeysLoaded] = useState(false);
   const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined);
   const { selectedAddresses } = useWalletContext();
-  const { isWalletConnected } = useCardano();
+  const { isWalletConnected: _isWalletConnected } = useCardano();
+
+  const isWalletConnected = useCallback(_isWalletConnected, [_isWalletConnected]);
 
   const getWallets = trpc.user.getWallets.useQuery()
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
@@ -197,7 +199,7 @@ const StakePositions: FC = () => {
       }
     };
     execute();
-  }, [wallet, connected, time, userWallets, selectedAddresses, addAlert]);
+  }, [wallet, connected, time, userWallets, selectedAddresses, addAlert, isWalletConnected]);
 
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
 
