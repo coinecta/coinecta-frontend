@@ -124,9 +124,10 @@ const StakePositionTable = <T extends Record<string, any>>({
 
   useEffect(() => {
     const stakeKeyWalletMappingValues = Object.values(stakeKeyWalletMapping);
+    if (stakeKeyWalletMappingValues.length === 0) return;
     setIsAllRowsStakedUnderSingleWallet(stakeKeyWalletMappingValues.every(v => v === stakeKeyWalletMappingValues[0]));
-    if (isAllRowsStakedUnderSingleWallet) setCurrentWallet(stakeKeyWalletMappingValues[stakeKeyWalletMappingValues.length - 1]);
-  }, [stakeKeyWalletMapping, isAllRowsStakedUnderSingleWallet, setCurrentWallet])  
+    if (isAllRowsStakedUnderSingleWallet) setCurrentWallet(stakeKeyWalletMappingValues[0]);
+  }, [stakeKeyWalletMapping, isAllRowsStakedUnderSingleWallet, setCurrentWallet])
 
   const isTableWiderThanParent = parentWidth < paperWidth
 
@@ -249,7 +250,7 @@ const StakePositionTable = <T extends Record<string, any>>({
 
   const allSelectableSelected = selectableRows.every(item => selectedRows?.has(item));
   const someSelectableSelected = selectableRows.some(item => selectedRows?.has(item)) && !allSelectableSelected;
-  const allRowsIrredeemable = sortedData.every(item => item.unlockDate > new Date());
+  const allRowsIrredeemable = sortedData.every(item => isCheckboxDisabled(item));
 
   if (error) return <div>Error loading</div>;
 
@@ -289,7 +290,7 @@ const StakePositionTable = <T extends Record<string, any>>({
           <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
             {actions && data.length > 0 && <ActionBar isDisabled={isLoading} actions={actions} />}
             <Box sx={{
-                display: isAllRowsStakedUnderSingleWallet || data.length === 0 || isLoading ? 'none' : 'block',
+                display: isAllRowsStakedUnderSingleWallet ||  data.length === 0 || isLoading ? 'none' : 'block',
                 position: 'absolute',
                 top: '8px',
                 right: '8px'
