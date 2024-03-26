@@ -190,9 +190,7 @@ const StakePositionTable = <T extends Record<string, any>>({
     }
   };
 
-  const isCheckboxDisabled = (item: T) => {
-    return item.unlockDate > new Date();
-  };
+  const isCheckboxDisabled = (item: T) => item.unlockDate > new Date();
 
   const selectableRows = useMemo(() => {
     return sortedData
@@ -352,7 +350,7 @@ const StakePositionTable = <T extends Record<string, any>>({
                             checked={selectedRows.has(item)}
                             onChange={() => handleSelectRow(item)}
                             color="secondary"
-                            disabled={item.unlockDate > new Date() || stakeKeyWalletMapping[item.stakeKey] !== currentWallet}
+                            disabled={isCheckboxDisabled(item) || stakeKeyWalletMapping[item.stakeKey] !== currentWallet}
                           />
                         </Box>
                       </TableCell>}

@@ -38,11 +38,10 @@ const Dashboard: FC = () => {
 
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
 
-  const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY!;
-  const STAKE_POOL_ASSET_NAME = process.env.STAKE_POOL_ASSET_NAME!;
+  const STAKE_POOL_SUBJECT = process.env.STAKE_POOL_ASSET_POLICY! + process.env.STAKE_POOL_ASSET_NAME!;
 
   const summary = useMemo(() => {
-    if (queryStakeSummary.data?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME] === undefined) return undefined;
+    if (queryStakeSummary.data?.poolStats[STAKE_POOL_SUBJECT] === undefined) return undefined;
     return queryStakeSummary.data;
   }, [queryStakeSummary.data]);
 
@@ -109,8 +108,8 @@ const Dashboard: FC = () => {
                 </> :
                 <>
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME]?.totalPortfolio ?? "0")), '₳')}</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME].totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT]?.totalPortfolio ?? "0")), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
                   </Box>
                 </>
               }
@@ -121,8 +120,8 @@ const Dashboard: FC = () => {
           <DashboardCard center>
             <DataSpread
               title="CNCT"
-              data={formatNumber(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME].totalPortfolio ?? "0"), '')}
-              usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME].totalPortfolio ?? "0"), "CNCT"), '')}`}
+              data={formatNumber(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), '')}
+              usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), "CNCT"), '')}`}
               isLoading={isLoading}
             />
           </DashboardCard>
@@ -157,8 +156,8 @@ const Dashboard: FC = () => {
                     <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
                   </Box> :
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME].totalStaked ?? "0")), '₳')}</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME].totalStaked ?? "0"), "CNCT"), '')}</Typography>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalStaked ?? "0")), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalStaked ?? "0"), "CNCT"), '')}</Typography>
                   </Box>}
               </Box>
               <Divider orientation='vertical' variant='middle' flexItem />
@@ -170,8 +169,8 @@ const Dashboard: FC = () => {
                     <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
                   </Box> :
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME].unclaimedTokens ?? "0")), '₳')}</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_ASSET_POLICY + STAKE_POOL_ASSET_NAME].unclaimedTokens ?? "0"), "CNCT"), '')}</Typography>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].unclaimedTokens ?? "0")), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].unclaimedTokens ?? "0"), "CNCT"), '')}</Typography>
                   </Box>}
               </Box>
             </Box>
