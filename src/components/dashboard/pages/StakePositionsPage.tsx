@@ -199,7 +199,7 @@ const StakePositions: FC = () => {
       }
     };
     execute();
-  }, [wallet, connected, time, userWallets, selectedAddresses, addAlert, isWalletConnected]);
+  }, [wallet, connected, time, userWallets, selectedAddresses]);
 
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
 
