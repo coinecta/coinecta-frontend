@@ -1,45 +1,42 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import DataSpread from '@components/DataSpread';
+import { usePrice } from '@components/hooks/usePrice';
+import { useToken } from '@components/hooks/useToken';
+import { useWalletContext } from '@contexts/WalletContext';
+import { formatNumber, formatTokenWithDecimals } from '@lib/utils/assets';
+import { trpc } from '@lib/utils/trpc';
+import { walletNameToId } from '@lib/walletsList';
+import { BrowserWallet } from '@meshsdk/core';
+import { useWallet } from '@meshsdk/react';
 import {
-  Alert,
   Box,
   Skeleton,
-  Snackbar,
   Typography,
   useTheme
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
-import DashboardCard from '../DashboardCard';
-import DataSpread from '@components/DataSpread';
+import { ClaimStakeRequest } from '@server/services/syncApi';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { IActionBarButton } from '../ActionBar';
+import DashboardCard from '../DashboardCard';
 import DashboardHeader from '../DashboardHeader';
-import { useWallet } from '@meshsdk/react';
-import { ClaimStakeRequest, StakePosition, StakeSummary, coinectaSyncApi } from '@server/services/syncApi';
 import RedeemConfirm from '../staking/RedeemConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
-import { useWalletContext } from '@contexts/WalletContext';
-import { useToken } from '@components/hooks/useToken';
-import { formatTokenWithDecimals, formatNumber } from '@lib/utils/assets';
-import { usePrice } from '@components/hooks/usePrice';
-import { walletNameToId } from '@lib/walletsList';
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
-import { trpc } from '@lib/utils/trpc';
-import { BrowserWallet } from '@meshsdk/core';
+import { useCardano } from '@lib/utils/cardano';
+import { useAlert } from '@contexts/AlertContext';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
-  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+  const [selectedRows, setSelectedRows] = useState<Set<any>>(new Set());
   const [redeemableRows, setRedeemableRows] = useState<Set<number>>(new Set());
   const [lockedRows, setLockedRows] = useState<Set<number>>(new Set());
   const [openRedeemDialog, setOpenRedeemDialog] = useState(false)
   const [redeemRowData, setRedeemRowData] = useState<IRedeemListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSelectedPositionsEmpty, setIsSelectedPositionsEmpty] = useState(false);
-  const [isRedeemSuccessful, setIsRedeemSuccessful] = useState(false);
-  const [isRedeemFailed, setIsRedeemFailed] = useState(false);
+  const { addAlert } = useAlert();
 
   /* Staking API */
   const [stakeKeys, setStakeKeys] = useState<string[]>([]);
+  const [stakeKeyWalletMapping, setStakeKeyWalletMapping] = useState<Record<string, string>>({});
   const { wallet, connected } = useWallet();
   const [time, setTime] = useState<number>(0);
   const { sessionData, sessionStatus } = useWalletContext();
@@ -50,35 +47,50 @@ const StakePositions: FC = () => {
   const [isStakingKeysLoaded, setIsStakingKeysLoaded] = useState(false);
   const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined);
   const { selectedAddresses } = useWalletContext();
+  const { isWalletConnected: _isWalletConnected } = useCardano();
+
+  const isWalletConnected = useCallback(_isWalletConnected, [_isWalletConnected]);
 
   const getWallets = trpc.user.getWallets.useQuery()
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
+  const [currentWallet, setCurrentWallet] = useState<string | undefined>(undefined);
+
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const summary = useMemo((() => queryStakeSummary.data), [queryStakeSummary.data]);
-
+  
   const queryStakePositions = trpc.sync.getStakePositions.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const positions = useMemo(() => queryStakePositions.data ?? [], [queryStakePositions.data]);
 
+  const STAKE_POOL_SUBJECT = process.env.STAKE_POOL_ASSET_POLICY! + process.env.STAKE_POOL_ASSET_NAME!;
+
   useEffect(() => {
-    setIsLoading(!queryStakeSummary.isSuccess && !isStakingKeysLoaded && !queryStakePositions.isSuccess);
+    setIsLoading(!queryStakeSummary.isSuccess || !isStakingKeysLoaded || !queryStakePositions.isSuccess);
   }, [queryStakeSummary.isSuccess, isStakingKeysLoaded, queryStakePositions.isSuccess]);
+
+  useEffect(() => {
+    if (sessionData?.user) {
+      setCurrentWallet(sessionData.user.walletType!);
+    }
+    
+  }, [sessionData])
 
   const processedPositions = useMemo(() => {
     return positions.map((position) => {
       return {
-        name: position.name,
+        name: 'CNCT',
         total: formatNumber(parseFloat(formatTokenWithDecimals(BigInt(position.total), cnctDecimals)), ''),
         unlockDate: new Date(position.unlockDate),
         initial: formatNumber(parseFloat(formatTokenWithDecimals(BigInt(position.initial), cnctDecimals)), ''),
         bonus: formatNumber(parseFloat(formatTokenWithDecimals(BigInt(position.bonus), cnctDecimals)), ''),
-        interest: formatNumber(position.interest * 100, '%')
+        interest: formatNumber(position.interest * 100, '%'),
+        stakeKey: position.stakeKey,
       };
     });
   }, [cnctDecimals, positions]);
 
   const selectedPositions = useMemo(() => {
-    return Array.from(selectedRows).map((index) => positions[index]);
+    return Array.from(selectedRows).map((item) => positions.find(p => p.stakeKey === item.stakeKey));
   }, [positions, selectedRows]);
 
   useEffect(() => {
@@ -114,10 +126,10 @@ const StakePositions: FC = () => {
     setLockedRows(newLockedRows);
 
   }, [processedPositions, selectedRows]);
-
+  
   const handleRedeem = () => {
     if (selectedPositions.length === 0) {
-      setIsSelectedPositionsEmpty(true);
+      addAlert('error', 'Select the positions to redeem');
       return;
     }
     setOpenRedeemDialog(true);
@@ -133,25 +145,25 @@ const StakePositions: FC = () => {
 
   useEffect(() => {
     const execute = async () => {
-      if (connected && sessionStatus === 'authenticated') {
+      if (connected && sessionStatus === 'authenticated' && currentWallet) {
         try {
-          const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
+          setWalletUtxosCbor([]);
+          if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
+          const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
           const utxos = await api.getUtxos();
-          const collateral = api.experimental.getCollateral() === undefined ? [] : await api.experimental.getCollateral();
-          setWalletUtxosCbor([...utxos!, ...collateral!]);
+          const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
+          setWalletUtxosCbor([...utxos!, ...(collateral ?? [])]);
         } catch (ex) {
-          console.log("Error getting utxos", ex);
+          console.error("Error getting utxos", ex);
         }
       }
     };
     execute();
-  }, [connected, sessionData?.user.walletType, sessionStatus]);
+  }, [connected, currentWallet, sessionStatus]);
 
   useEffect(() => {
     const execute = async () => {
-      if (connected) {
-        setChangeAddress(await wallet.getChangeAddress());
-      }
+      if (connected) setChangeAddress(await wallet.getChangeAddress());
     };
     execute();
   }, [connected, wallet]);
@@ -161,17 +173,28 @@ const StakePositions: FC = () => {
       if (connected) {
         const STAKING_KEY_POLICY = process.env.STAKING_KEY_POLICY;
         if (userWallets === undefined || userWallets === null) return;
+        const stakeKeyWallet: Record<string, string> = {};
         const stakeKeysPromises = userWallets.map(async userWallet => {
-          if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
-          const browserWallet = await BrowserWallet.enable(userWallet.type);
-          const balance = await browserWallet.getBalance();
-          const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
-          const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
-          return processedStakeKeys;
+          try {
+            if (!(await isWalletConnected(userWallet.type, userWallet.changeAddress))) return [];
+            if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
+            const browserWallet = await BrowserWallet.enable(userWallet.type);
+            const balance = await browserWallet.getBalance();
+            const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
+            const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
+            stakeKeys.forEach((key) => {
+              stakeKeyWallet[key.unit.replace('000de140', '')] = userWallet.type;
+            });
+            return processedStakeKeys;
+          } catch {
+            addAlert('error', `Failed to load stake positions for ${userWallet.type[0].toUpperCase() + userWallet.type.slice(1)} wallet. Please reload the page.`);
+            console.log('Error getting stake keys', userWallet);
+          }
         });
         const stakeKeysArrays = await Promise.all(stakeKeysPromises);
         const allStakeKeys = stakeKeysArrays.flat();
         setStakeKeys(allStakeKeys);
+        setStakeKeyWalletMapping(stakeKeyWallet);
         setIsStakingKeysLoaded(true);
       }
     };
@@ -208,8 +231,6 @@ const StakePositions: FC = () => {
     },
   ]
 
-  const handleSuccessSnackbarClose = () => setIsRedeemSuccessful(false);
-  const handleFailedSnackbarClose = () => setIsRedeemFailed(false);
   return (
     <Box sx={{ position: 'relative' }} ref={parentRef}>
       <DashboardHeader title="Manage Staked Positions" />
@@ -236,8 +257,8 @@ const StakePositions: FC = () => {
                     <Skeleton animation='wave' width={100} />
                   </Box> :
                   <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0")), '₳')}</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
+                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT]?.totalPortfolio ?? "0")), '₳')}</Typography>
+                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT]?.totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
                   </Box>}
               </>
               )
@@ -257,8 +278,8 @@ const StakePositions: FC = () => {
               <DataSpread
                 title="CNCT"
                 margin={0} // last item needs margin 0, the rest don't include the margin prop
-                data={formatNumber(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), '')}
-                usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats.CNCT.totalPortfolio ?? "0"), "CNCT"), '')}`}
+                data={formatNumber(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT]?.totalPortfolio ?? "0"), '')}
+                usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT]?.totalPortfolio ?? "0"), "CNCT"), '')}`}
                 isLoading={isLoading}
               />
             }
@@ -268,55 +289,23 @@ const StakePositions: FC = () => {
       <StakePositionTable
         error={false}
         data={processedPositions.length > 0 ? processedPositions : (isLoading ? fakeTrpcDashboardData.data : [])}
+        connectedWallets={userWallets?.map(uw => uw.type).filter(w => new Set(Object.values(stakeKeyWalletMapping)).has(w)) ?? []}
+        stakeKeyWalletMapping={stakeKeyWalletMapping}
+        currentWallet={currentWallet!}
+        setCurrentWallet={setCurrentWallet}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={actions}
         parentContainerRef={parentRef}
-        isLoading={isLoading && (walletUtxosCbor?.length ?? 0) <= 0}
+        isLoading={isLoading || (walletUtxosCbor?.length ?? 0) <= 0}
       />
       <RedeemConfirm
         open={openRedeemDialog}
         setOpen={setOpenRedeemDialog}
         redeemList={redeemRowData}
+        redeemWallet={currentWallet!}
         claimStakeRequest={claimStakeRequest}
-        onRedeemFailed={() => setIsRedeemFailed(true)}
-        onRedeemSuccessful={() => setIsRedeemSuccessful(true)}
       />
-      <Snackbar open={isRedeemSuccessful} autoHideDuration={6000} onClose={handleSuccessSnackbarClose}>
-        <Alert
-          onClose={handleSuccessSnackbarClose}
-          severity="success"
-          variant="outlined"
-          sx={{ width: '100%' }}
-          icon={<TaskAltIcon fontSize='medium' />}
-        >
-          Redeem transaction submitted
-        </Alert>
-      </Snackbar>
-      <Snackbar open={isRedeemFailed} autoHideDuration={6000} onClose={handleFailedSnackbarClose}>
-        <Alert
-          onClose={handleFailedSnackbarClose}
-          severity="error"
-          variant="outlined"
-          sx={{ width: '100%' }}
-          icon={<ErrorOutlineOutlinedIcon fontSize='medium' />}
-        >
-          Redeem transaction failed
-        </Alert>
-      </Snackbar>
-      {selectedPositions.length === 0 &&
-        <Snackbar open={isSelectedPositionsEmpty} autoHideDuration={6000} onClose={() => setIsSelectedPositionsEmpty(false)}>
-          <Alert
-            onClose={() => setIsSelectedPositionsEmpty(false)}
-            severity="error"
-            variant="outlined"
-            sx={{ width: '100%' }}
-            icon={<ErrorOutlineOutlinedIcon fontSize='medium' />}
-          >
-            Select the positions to redeem
-          </Alert>
-        </Snackbar>
-      }
     </Box>
   );
 };

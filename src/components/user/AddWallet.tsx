@@ -1,12 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import {
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   useTheme,
-  useMediaQuery,
   Typography,
   Box,
   Collapse,
@@ -14,24 +9,17 @@ import {
   IconButton
 } from "@mui/material";
 import { useWallet } from '@meshsdk/react';
-import Link from "@components/Link";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import WalletList from "./WalletList";
 import { useAlert } from "@contexts/AlertContext";
 import { walletsList } from "@lib/walletsList";
-import { deleteEmptyUser } from "@server/utils/deleteEmptyUser";
-import { signIn } from "next-auth/react";
 import { trpc } from "@lib/utils/trpc";
 import { getShorterAddress } from "@lib/utils/general";
 import ClearIcon from '@mui/icons-material/Clear';
 import { useWalletContext } from '@contexts/WalletContext';
 import { TRPCClientError } from "@trpc/client";
 
-interface IAddWallet {
-
-}
-
-export const AddWallet: FC<IAddWallet> = () => {
+export const AddWallet: FC = () => {
   const theme = useTheme();
   const { addAlert } = useAlert()
   const { connect, wallet, connected, name } = useWallet()
