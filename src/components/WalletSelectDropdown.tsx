@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Select,
   MenuItem,
-  InputLabel,
   FormControl,
   ListSubheader,
   Button,
@@ -17,16 +16,16 @@ import { getShorterAddress } from '@lib/utils/general';
 import { useRouter } from 'next/router';
 import { trpc } from '@lib/utils/trpc';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
-import { walletDataByName, walletNameToId } from '@lib/walletsList';
+import { walletDataByName } from '@lib/walletsList';
 import { useCardano } from '@lib/utils/cardano';
 
 const WalletSelectDropdown = () => {
-
   const theme = useTheme()
   const router = useRouter()
   const { isWalletConnected: _isWalletConnected, setSelectedAddresses: _setSelectedAddresses, getSelectedAddresses: _getSelectedAddresses } = useCardano()
   const [walletAddresses, setWalletAddresses] = useState<string[]>([])
   const [selectedAddresses, setSelectedAddress] = useState<string[]>([])
+  const [time, setTime] = useState<number>(0);
   const [isConnectedByWallets, setIsConnectedByWallets] = useState<Record<string, boolean>>({})
 
   const isWalletConnected = useCallback(_isWalletConnected, [_isWalletConnected]);
@@ -36,6 +35,14 @@ const WalletSelectDropdown = () => {
   const getWallets = trpc.user.getWallets.useQuery()
 
   const wallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
+
+  // Refresh component every 10 seconds to update the styles indicating the connection status of displayed wallets
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(time => time + 1);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (wallets && walletAddresses.length < 1) {
@@ -48,7 +55,7 @@ const WalletSelectDropdown = () => {
       }
       setWalletAddresses(wallets.map((wallet) => wallet.changeAddress))
     }
-  }, [getSelectedAddresses, setSelectedAddresses, walletAddresses.length, wallets])
+  }, [walletAddresses.length, wallets])
 
   const walletByName = useCallback((name: string) => walletDataByName(name), []);
 
@@ -74,13 +81,12 @@ const WalletSelectDropdown = () => {
           isWalletConnected(wallet!.type, wallet.changeAddress)
             .then(isConnected => ({ [wallet.changeAddress]: isConnected }))
         );
-
         const results = await Promise.all(promises);
         setIsConnectedByWallets(Object.assign({}, ...results));
       }
     };
     execute();
-  }, [isWalletConnected, wallets]);
+  }, [wallets, time]);
 
   return (
     <FormControl fullWidth>
