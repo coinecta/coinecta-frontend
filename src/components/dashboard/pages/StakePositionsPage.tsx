@@ -1,8 +1,10 @@
 import DataSpread from '@components/DataSpread';
 import { usePrice } from '@components/hooks/usePrice';
 import { useToken } from '@components/hooks/useToken';
+import { useAlert } from '@contexts/AlertContext';
 import { useWalletContext } from '@contexts/WalletContext';
 import { formatNumber, formatTokenWithDecimals } from '@lib/utils/assets';
+import { useCardano } from '@lib/utils/cardano';
 import { trpc } from '@lib/utils/trpc';
 import { walletNameToId } from '@lib/walletsList';
 import { BrowserWallet } from '@meshsdk/core';
@@ -21,8 +23,6 @@ import DashboardCard from '../DashboardCard';
 import DashboardHeader from '../DashboardHeader';
 import RedeemConfirm from '../staking/RedeemConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
-import { useCardano } from '@lib/utils/cardano';
-import { useAlert } from '@contexts/AlertContext';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -40,7 +40,6 @@ const StakePositions: FC = () => {
   const { wallet, connected } = useWallet();
   const [time, setTime] = useState<number>(0);
   const { sessionData, sessionStatus } = useWalletContext();
-  const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>();
   const theme = useTheme();
   const { cnctDecimals } = useToken();
   const { convertToUSD, convertCnctToADA } = usePrice();
@@ -55,12 +54,16 @@ const StakePositions: FC = () => {
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
   const [currentWallet, setCurrentWallet] = useState<string | undefined>(undefined);
+  const [currentWalletAddress, setCurrentWalletAddres] = useState<string | undefined>(undefined);
 
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const summary = useMemo((() => queryStakeSummary.data), [queryStakeSummary.data]);
   
   const queryStakePositions = trpc.sync.getStakePositions.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const positions = useMemo(() => queryStakePositions.data ?? [], [queryStakePositions.data]);
+
+  const queryCurrentWalletRawUtxos = trpc.sync.getRawUtxos.useQuery(currentWalletAddress ?? '', { retry: 0, refetchInterval: 5000 });
+  const walletUtxosCbor = useMemo(() => queryCurrentWalletRawUtxos.data, [queryCurrentWalletRawUtxos.data]);
 
   const STAKE_POOL_SUBJECT = process.env.STAKE_POOL_ASSET_POLICY! + process.env.STAKE_POOL_ASSET_NAME!;
 
@@ -147,12 +150,10 @@ const StakePositions: FC = () => {
     const execute = async () => {
       if (connected && sessionStatus === 'authenticated' && currentWallet) {
         try {
-          setWalletUtxosCbor([]);
           if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
-          const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
-          const utxos = await api.getUtxos();
-          const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
-          setWalletUtxosCbor([...utxos!, ...(collateral ?? [])]);
+          const browserApi = await BrowserWallet.enable(currentWallet);
+          const walletAddress = await browserApi.getChangeAddress();
+          setCurrentWalletAddres(walletAddress);
         } catch (ex) {
           console.error("Error getting utxos", ex);
         }
