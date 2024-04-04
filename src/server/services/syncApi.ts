@@ -198,6 +198,22 @@ export const coinectaSyncApi = {
       }
     }
   },
+  async getRawUtxos(address: string): Promise<string[]> {
+    try {
+      const response = await syncApi.get(`/transaction/utxos/raw/${address}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw mapAxiosErrorToTRPCError(error);
+      } else {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An unknown error occurred",
+        });
+      }
+    }
+  },
   async addStakeTx(request: AddStakeRequest): Promise<string> {
     try {
       const response = await syncApi.post("/transaction/stake/add", request);
