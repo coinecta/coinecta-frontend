@@ -41,7 +41,7 @@ const Projects: FC<IProjectsProps> = ({ }) => {
   useEffect(() => {
     if (projectList) {
       setProjects(
-        projectList.filter(project => project.frontPage).map((item) => {
+        projectList.filter(project => project.frontPage && !project.isDraft).map((item) => {
           const details: IProjectDetails = {
             title: item.name,
             slug: item.slug,
@@ -54,7 +54,25 @@ const Projects: FC<IProjectsProps> = ({ }) => {
             blockchains: item.blockchains
           }
           return (details)
-        }))
+        })
+          .sort((a, b) => {
+            if (a.status === b.status) {
+              return 0; // Keep original order if the status is the same
+            }
+            if (a.status === "Upcoming") {
+              return -1; // "upcoming" should come first
+            }
+            if (b.status === "Upcoming") {
+              return 1; // "upcoming" in b should come before a
+            }
+            if (a.status === "Complete") {
+              return -1; // "complete" should come after "upcoming" but before other statuses if any
+            }
+            if (b.status === "Complete") {
+              return 1; // "complete" in b should come after "upcoming" in a
+            }
+            return 0; // Fallback in case there are more statuses and the comparison didn't match above
+          }))
     }
   }, [projectList]);
 
@@ -134,29 +152,11 @@ const Projects: FC<IProjectsProps> = ({ }) => {
                   className="mySwiper"
                 >
                   {
-                    [...projects] // Create a shallow copy of the projects array to avoid mutating the original
-                      .sort((a, b) => {
-                        if (a.status === b.status) {
-                          return 0; // Keep original order if the status is the same
-                        }
-                        if (a.status === "Upcoming") {
-                          return -1; // "upcoming" should come first
-                        }
-                        if (b.status === "Upcoming") {
-                          return 1; // "upcoming" in b should come before a
-                        }
-                        if (a.status === "Complete") {
-                          return -1; // "complete" should come after "upcoming" but before other statuses if any
-                        }
-                        if (b.status === "Complete") {
-                          return 1; // "complete" in b should come after "upcoming" in a
-                        }
-                        return 0; // Fallback in case there are more statuses and the comparison didn't match above
-                      })
+                    projects // Create a shallow copy of the projects array to avoid mutating the original
                       .map((item: IProjectDetails) => {
                         const slug = slugify(item.title)
                         return (
-                          <SwiperSlide key={slug}>
+                          <SwiperSlide key={slug} style={{ height: '100%' }}>
                             <ProjectCard {...item} link={`/projects/${item.slug}`} />
                           </SwiperSlide>
                         )
