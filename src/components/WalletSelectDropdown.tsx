@@ -25,7 +25,6 @@ const WalletSelectDropdown = () => {
   const { isWalletConnected: _isWalletConnected, setSelectedAddresses: _setSelectedAddresses, getSelectedAddresses: _getSelectedAddresses } = useCardano()
   const [walletAddresses, setWalletAddresses] = useState<string[]>([])
   const [selectedAddresses, setSelectedAddress] = useState<string[]>([])
-  const [time, setTime] = useState<number>(0);
   const [isConnectedByWallets, setIsConnectedByWallets] = useState<Record<string, boolean>>({})
 
   const isWalletConnected = useCallback(_isWalletConnected, [_isWalletConnected]);
@@ -35,14 +34,6 @@ const WalletSelectDropdown = () => {
   const getWallets = trpc.user.getWallets.useQuery()
 
   const wallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
-
-  // Refresh component every 10 seconds to update the styles indicating the connection status of displayed wallets
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(time => time + 1);
-    }, 10000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     if (wallets && walletAddresses.length < 1) {
@@ -86,7 +77,7 @@ const WalletSelectDropdown = () => {
       }
     };
     execute();
-  }, [wallets, time]);
+  }, [wallets]);
 
   return (
     <FormControl fullWidth>
