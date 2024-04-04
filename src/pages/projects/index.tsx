@@ -16,7 +16,7 @@ const Projects = () => {
   useEffect(() => {
     if (projectList) {
       setProjects(
-        projectList.map((item) => {
+        projectList.filter(project => !project.isDraft).map((item) => {
           const details: IProjectDetails = {
             title: item.name,
             slug: item.slug,
