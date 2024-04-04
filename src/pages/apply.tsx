@@ -188,10 +188,10 @@ const Apply = () => {
 	return (
 		<Container maxWidth="md" sx={{ py: 12 }}>
 			<Typography variant="h2" component="h1" sx={{ fontWeight: '600' }}>
-				IDO Application Form
+				Information Request Form
 			</Typography>
 			<Typography variant="body1" sx={{ mb: 4 }}>
-				Please fill out as much of the form as you can. Even if you don&apos;t have everything finished, feel free to apply and we can consult with you to prepare for an IDO.
+				Please fill out as much of the form as you can. Even if you don&apos;t have everything finished, feel free to apply and we can consult with you about your project.
 			</Typography>
 			<Box component="form" noValidate onSubmit={handleSubmit}>
 				<Grid container spacing={2}>

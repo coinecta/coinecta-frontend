@@ -58,9 +58,9 @@ const Projects = () => {
         {upcomingProjects.length > 0 &&
           <>
             <Typography variant="h4" sx={{ fontWeight: "800", mb: 4 }}>
-              Upcoming IDOs
+              Upcoming Token Launches
             </Typography>
-            <Grid container spacing={3} alignItems="center" sx={{ mb: 6 }}>
+            <Grid container spacing={3} alignItems="stretch" sx={{ mb: 6 }}>
               {upcomingProjects.map((item: IProjectDetails) => {
                 return (
                   <Grid item xs={12} md={6} lg={4} key={item.title}>

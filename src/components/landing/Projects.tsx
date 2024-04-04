@@ -9,23 +9,13 @@ import {
   Box,
   IconButton
 } from '@mui/material'
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore from 'swiper';
-import { Autoplay, Navigation, Pagination, Grid } from 'swiper/modules'
-import "swiper/css";
-import "swiper/css/grid";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import ProjectCard from '@components/projects/ProjectCard';
 import { trpc } from '@lib/utils/trpc';
 import { slugify } from '@lib/utils/general';
-
-SwiperCore.use([Navigation]);
-
-type ExtendedSwiperRef = typeof Swiper & {
-  swiper: SwiperCore;
-};
+import Slider from "react-slick";
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 interface IProjectsProps {
 
@@ -34,9 +24,36 @@ interface IProjectsProps {
 const Projects: FC<IProjectsProps> = ({ }) => {
   const theme = useTheme()
   const upMd = useMediaQuery(theme.breakpoints.up('md'))
-  const swiperRef = useRef<ExtendedSwiperRef | null>(null);
   const [projects, setProjects] = useState<IProjectDetails[]>([]);
   const { data: projectList } = trpc.project.getProjectList.useQuery({});
+  const sliderRef = useRef<Slider | null>(null);
+
+  const next = () => {
+    sliderRef.current?.slickNext();
+  };
+  const previous = () => {
+    sliderRef.current?.slickPrev();
+  };
+
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    autoplaySpeed: 3000,
+    slidesToShow: 2,
+    slidesToScroll: 2,
+    adaptiveHeight: false,
+    arrows: false,
+    responsive: [
+      {
+        breakpoint: 640,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1
+        }
+      }
+    ]
+  };
 
   useEffect(() => {
     if (projectList) {
@@ -76,17 +93,6 @@ const Projects: FC<IProjectsProps> = ({ }) => {
     }
   }, [projectList]);
 
-  // const handlePrev = () => {
-  //   if (swiperRef.current) {
-  //     swiperRef.current.swiper.slidePrev();
-  //   }
-  // };
-
-  const handleNext = () => {
-    if (swiperRef.current) {
-      swiperRef.current.swiper.slideNext();
-    }
-  };
   return (
     <>
       <Container sx={{ mb: 12, display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}>
@@ -107,67 +113,34 @@ const Projects: FC<IProjectsProps> = ({ }) => {
               </Button>
             </MuiGrid>
             <MuiGrid item md={9} sx={{ maxWidth: '100%', }}>
-              <Box
-                sx={{
-                  position: 'relative',
-                  display: 'block',
-                  '& .swiper-slide': {
-                    pb: 6
-                  },
-                  '& .swiper-button-next, .swiper-button-prev': {
-                    color: theme.palette.divider,
-                    '&:hover': {
-                      color: theme.palette.primary.main,
-                    }
-                  },
-                  '& .swiper-pagination-bullet': {
-                    background: theme.palette.text.secondary,
-                  },
-                  '& .swiper-pagination-bullet-active': {
-                    background: theme.palette.primary.main,
-                  }
-                }}
-              >
-                <Swiper
-                  ref={swiperRef}
-                  pagination={{
-                    clickable: true,
-                  }}
-                  slidesPerView={1}
-                  spaceBetween={10}
-                  breakpoints={{
-                    640: {
-                      slidesPerView: 2,
-                      slidesPerGroup: 2,
-                      spaceBetween: 20,
-                    },
-                  }}
-                  autoplay={{
-                    delay: 4000,
-                    disableOnInteraction: true,
-                  }}
-                  loop={true}
-                  // navigation
-                  modules={[Grid, Pagination, Navigation, Autoplay]}
-                  className="mySwiper"
-                >
-                  {
-                    projects // Create a shallow copy of the projects array to avoid mutating the original
-                      .map((item: IProjectDetails) => {
-                        const slug = slugify(item.title)
-                        return (
-                          <SwiperSlide key={slug} style={{ height: '100%' }}>
-                            <ProjectCard {...item} link={`/projects/${item.slug}`} />
-                          </SwiperSlide>
-                        )
-                      })}
-                </Swiper>
+              <Box className="slider-container" sx={{
+                '& .slick-dots li button:before': {
+                  pt: 1,
+                  color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.9)'
+                },
+                '& .slick-dots li.slick-active button:before': {
+                  color: theme.palette.primary.main
+                },
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%'
+              }}>
+                <Slider {...sliderSettings} ref={sliderRef}>
+                  {projects.map((item: IProjectDetails) => {
+                    const slug = slugify(item.title)
+                    return (
+                      <div key={slug} style={{ display: 'flex', height: '100%' }}>
+                        <ProjectCard {...item} link={`/projects/${item.slug}`} />
+                      </div>
+                    )
+                  })}
+                </Slider>
               </Box>
             </MuiGrid>
           </MuiGrid>
         </Box>
         <Box sx={{ display: upMd ? 'flex' : 'none', width: '3%', position: 'relative' }}>
-          <IconButton onClick={handleNext} sx={{ position: 'absolute', top: '45%', transform: 'translateY(-45%)' }}>
+          <IconButton onClick={next} sx={{ position: 'absolute', top: '45%', transform: 'translateY(-45%)' }}>
             <KeyboardArrowRightIcon />
           </IconButton>
         </Box>

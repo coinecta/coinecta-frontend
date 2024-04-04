@@ -39,7 +39,7 @@ const secondPages = {
   title: 'Support',
   links: [
     {
-      name: "Apply for IDO",
+      name: "Apply",
       link: "/apply",
     },
     {
