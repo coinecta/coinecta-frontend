@@ -187,11 +187,11 @@ const Home: NextPage = () => {
       </Box>
       {/* End hero section */}
 
-      <Grow in={inView4} {...(inView4 ? { timeout: 250 } : {})}>
-        <Box ref={ref4}>
-          <Projects />
-        </Box>
-      </Grow >
+      {/* <Grow in={inView4} {...(inView4 ? { timeout: 250 } : {})}> */}
+      {/* <Box ref={ref4}> */}
+      <Projects />
+      {/* </Box> */}
+      {/* </Grow > */}
 
       {/* How it works */}
       <Box sx={{

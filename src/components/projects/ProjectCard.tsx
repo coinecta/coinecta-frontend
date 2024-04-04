@@ -33,16 +33,19 @@ const ProjectCard: FC<IProjectCard> = ({
 }) => {
   const router = useRouter()
   return (
-    <Card sx={{ maxWidth: '560px' }}>
+    <Card sx={{ maxWidth: '560px', display: 'flex', flexDirection: 'column', height: '100%' }}>
       <CardMedia
         component="img"
         image={imageUrl || '/banner.jpg'}
         alt={`${title} Banner`}
         sx={{ height: '240px' }}
       />
-      <CardContent sx={{ flex: '1 0 auto' }}>
+      <CardContent sx={{
+        flex: '1',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
         <Box sx={{ position: 'relative' }}>
-
           <Typography
             component="h5"
             variant="h5"
@@ -52,7 +55,11 @@ const ProjectCard: FC<IProjectCard> = ({
           <Chip label={status} sx={{ position: 'absolute', top: '-32px', right: '6px', background: '#ccc', color: '#000' }} />
         </Box>
 
-        <Typography variant="subtitle2" color="text.secondary" component="div" sx={{ mb: 2 }}>
+        <Typography variant="subtitle2" color="text.secondary" component="div" sx={{
+          flex: '1',
+          display: 'flex',
+          flexDirection: 'column', mb: 2
+        }}>
           {tagline}
         </Typography>
         <MuiGrid container justifyContent="space-between" alignItems="center">

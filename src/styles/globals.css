@@ -48,3 +48,28 @@ a {
 {
    display:none;
 }
+
+.slick-track {
+  display: flex;
+  align-items: stretch; 
+}
+
+.slick-slide > div {
+  height: 100% !important;
+}
+
+.slick-slide > div > div {
+  height: 100% !important;
+}
+
+.slick-slide {
+  padding: 0 10px; /* Half of desired space between slides */
+  display: flex;
+  flex-direction: column; 
+  height: 100%;
+}
+
+.slick-list, .slick-track {
+  align-items: stretch;
+  height: 100%;
+}
