@@ -47,7 +47,7 @@ export const ConnectedWalletItem: FC<ConnectedWalletItemProps> = ({ wallet, key,
                         variant="square"
                     />
                 </Box>
-                <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis', color: theme.palette.text.primary }}>
                     {getShorterAddress(wallet.address, 12)}
                 </Box>
             </Box>
