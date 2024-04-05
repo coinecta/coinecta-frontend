@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Select,
   MenuItem,
-  InputLabel,
   FormControl,
   ListSubheader,
   Button,
@@ -17,11 +16,10 @@ import { getShorterAddress } from '@lib/utils/general';
 import { useRouter } from 'next/router';
 import { trpc } from '@lib/utils/trpc';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
-import { walletDataByName, walletNameToId } from '@lib/walletsList';
+import { walletDataByName } from '@lib/walletsList';
 import { useCardano } from '@lib/utils/cardano';
 
 const WalletSelectDropdown = () => {
-
   const theme = useTheme()
   const router = useRouter()
   const { isWalletConnected: _isWalletConnected, setSelectedAddresses: _setSelectedAddresses, getSelectedAddresses: _getSelectedAddresses } = useCardano()
@@ -48,7 +46,7 @@ const WalletSelectDropdown = () => {
       }
       setWalletAddresses(wallets.map((wallet) => wallet.changeAddress))
     }
-  }, [getSelectedAddresses, setSelectedAddresses, walletAddresses.length, wallets])
+  }, [walletAddresses.length, wallets])
 
   const walletByName = useCallback((name: string) => walletDataByName(name), []);
 
@@ -74,13 +72,12 @@ const WalletSelectDropdown = () => {
           isWalletConnected(wallet!.type, wallet.changeAddress)
             .then(isConnected => ({ [wallet.changeAddress]: isConnected }))
         );
-
         const results = await Promise.all(promises);
         setIsConnectedByWallets(Object.assign({}, ...results));
       }
     };
     execute();
-  }, [isWalletConnected, wallets]);
+  }, [wallets]);
 
   return (
     <FormControl fullWidth>

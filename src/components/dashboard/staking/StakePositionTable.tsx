@@ -95,14 +95,14 @@ const StakePositionTable = <T extends Record<string, any>>({
 
   useEffect(() => {
     if (currentWallet) setSelectedRows!(new Set());
-  }, [currentWallet, setSelectedRows, selectedAddresses])
+  }, [currentWallet, selectedAddresses])
 
   useEffect(() => {
     if (selectedRows!.size >= 1 && !isInfoSnackbarShown){
       addAlert('info', 'Please note: You can only redeem rewards using one wallet type at a time.');
       setIsInfoSnackbarShown(true);
     }
-  }, [selectedRows, isInfoSnackbarShown, addAlert])
+  }, [selectedRows, isInfoSnackbarShown])
   
   useEffect(() => {
     data.sort((a, b) => {
@@ -132,7 +132,7 @@ const StakePositionTable = <T extends Record<string, any>>({
     if (isAllRowsStakedUnderSingleWallet) {
       setCurrentWallet(Object.values(stakeKeyWalletMapping)[0]);
     }
-  }, [stakeKeyWalletMapping, isAllRowsStakedUnderSingleWallet, setCurrentWallet]);
+  }, [stakeKeyWalletMapping, isAllRowsStakedUnderSingleWallet]);
 
 
   const isTableWiderThanParent = parentWidth < paperWidth
