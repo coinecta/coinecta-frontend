@@ -1,8 +1,10 @@
 import DataSpread from '@components/DataSpread';
 import { usePrice } from '@components/hooks/usePrice';
 import { useToken } from '@components/hooks/useToken';
+import { useAlert } from '@contexts/AlertContext';
 import { useWalletContext } from '@contexts/WalletContext';
 import { formatNumber, formatTokenWithDecimals } from '@lib/utils/assets';
+import { useCardano } from '@lib/utils/cardano';
 import { trpc } from '@lib/utils/trpc';
 import { walletNameToId } from '@lib/walletsList';
 import { BrowserWallet } from '@meshsdk/core';
@@ -21,8 +23,6 @@ import DashboardCard from '../DashboardCard';
 import DashboardHeader from '../DashboardHeader';
 import RedeemConfirm from '../staking/RedeemConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
-import { useCardano } from '@lib/utils/cardano';
-import { useAlert } from '@contexts/AlertContext';
 
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -147,12 +147,20 @@ const StakePositions: FC = () => {
     const execute = async () => {
       if (connected && sessionStatus === 'authenticated' && currentWallet) {
         try {
+
+          // Update Utxos
           setWalletUtxosCbor([]);
           if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
           const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
           const utxos = await api.getUtxos();
           const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
           setWalletUtxosCbor([...utxos!, ...(collateral ?? [])]);
+
+          // Update change address
+          const browserWallet = await BrowserWallet.enable(currentWallet);
+          const changeAddress = await browserWallet.getChangeAddress();
+          setChangeAddress(changeAddress);
+          
         } catch (ex) {
           console.error("Error getting utxos", ex);
         }
