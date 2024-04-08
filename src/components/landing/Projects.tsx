@@ -58,37 +58,29 @@ const Projects: FC<IProjectsProps> = ({ }) => {
   useEffect(() => {
     if (projectList) {
       setProjects(
-        projectList.filter(project => project.frontPage && !project.isDraft).map((item) => {
-          const details: IProjectDetails = {
-            title: item.name,
-            slug: item.slug,
-            tagline: item.shortDescription,
-            category: '',
-            imageUrl: item.bannerImgUrl,
-            status: item.isLaunched
-              ? "Complete"
-              : "Upcoming", // 'In Progress', 'Complete'
-            blockchains: item.blockchains
-          }
-          return (details)
-        })
+        projectList
+          .filter(project => project.frontPage && !project.isDraft)
           .sort((a, b) => {
-            if (a.status === b.status) {
-              return 0; // Keep original order if the status is the same
+            // First, sort by launch status
+            if (a.isLaunched === b.isLaunched) {
+              // If the launch status is the same, sort by updatedAt
+              return a.updated_at.getTime() - b.updated_at.getTime() // Last updated come last
             }
-            if (a.status === "Upcoming") {
-              return -1; // "upcoming" should come first
+            return a.isLaunched ? 1 : -1; // Not launched (upcoming) projects come before launched (complete) projects
+          })
+          .map((item) => {
+            const details: IProjectDetails = {
+              title: item.name,
+              slug: item.slug,
+              tagline: item.shortDescription,
+              category: '',
+              imageUrl: item.bannerImgUrl,
+              status: item.isLaunched
+                ? "Complete"
+                : "Upcoming", // 'In Progress', 'Complete'
+              blockchains: item.blockchains
             }
-            if (b.status === "Upcoming") {
-              return 1; // "upcoming" in b should come before a
-            }
-            if (a.status === "Complete") {
-              return -1; // "complete" should come after "upcoming" but before other statuses if any
-            }
-            if (b.status === "Complete") {
-              return 1; // "complete" in b should come after "upcoming" in a
-            }
-            return 0; // Fallback in case there are more statuses and the comparison didn't match above
+            return (details)
           }))
     }
   }, [projectList]);
@@ -107,7 +99,7 @@ const Projects: FC<IProjectsProps> = ({ }) => {
               >
                 Projects
               </Typography>
-              <Typography variant="subtitle1" sx={{ mb: 3 }}>Check out the upcoming and past IDOs</Typography>
+              <Typography variant="subtitle1" sx={{ mb: 3 }}>Check out the upcoming and past launches</Typography>
               <Button variant="contained" color="secondary" href="/projects">
                 All Projects
               </Button>

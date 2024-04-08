@@ -16,7 +16,14 @@ const Projects = () => {
   useEffect(() => {
     if (projectList) {
       setProjects(
-        projectList.filter(project => !project.isDraft).map((item) => {
+        projectList.filter(project => !project.isDraft).sort((a, b) => {
+          // First, sort by launch status
+          if (a.isLaunched === b.isLaunched) {
+            // If the launch status is the same, sort by updatedAt
+            return a.updated_at.getTime() - b.updated_at.getTime() // Last updated come last
+          }
+          return a.isLaunched ? 1 : -1; // Not launched (upcoming) projects come before launched (complete) projects
+        }).map((item) => {
           const details: IProjectDetails = {
             title: item.name,
             slug: item.slug,
