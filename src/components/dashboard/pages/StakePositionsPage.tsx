@@ -180,7 +180,6 @@ const StakePositions: FC = () => {
           try {
             if (!(await isWalletConnected(userWallet.type, userWallet.changeAddress))) return [];
             if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
-            console.log("fff")
             const browserWallet = await BrowserWallet.enable(userWallet.type);
             const usedAddresses = await browserWallet.getUsedAddresses();
             const usedAddressesRawUtxos = await utils.client.sync.getRawUtxosMultiAddress.query(usedAddresses);
