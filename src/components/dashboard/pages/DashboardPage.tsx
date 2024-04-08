@@ -1,4 +1,11 @@
-import React, { FC, use, useCallback, useEffect, useMemo, useState } from 'react';
+import DataSpread from '@components/DataSpread';
+import { usePrice } from '@components/hooks/usePrice';
+import { useToken } from '@components/hooks/useToken';
+import { useWalletContext } from '@contexts/WalletContext';
+import { formatTokenWithDecimals } from '@lib/utils/assets';
+import { trpc } from '@lib/utils/trpc';
+import { BrowserWallet } from '@meshsdk/core';
+import { useWallet } from '@meshsdk/react';
 import {
   Box,
   Button,
@@ -6,22 +13,12 @@ import {
   Typography,
   useTheme
 } from '@mui/material';
-import DataSpread from '@components/DataSpread';
-import DashboardCard from '../DashboardCard';
-import Grid from '@mui/system/Unstable_Grid/Grid';
-import DashboardHeader from '../DashboardHeader';
-import { useWallet } from '@meshsdk/react';
-import { StakeSummary, coinectaSyncApi } from '@server/services/syncApi';
-import { useRouter } from 'next/router';
 import Skeleton from '@mui/material/Skeleton';
-import { usePrice } from '@components/hooks/usePrice';
-import { formatTokenWithDecimals } from '@lib/utils/assets';
-import { useToken } from '@components/hooks/useToken';
-import { trpc } from '@lib/utils/trpc';
-import { BrowserWallet } from '@meshsdk/core';
-import { useCardano } from '@lib/utils/cardano';
-import { select } from 'd3';
-import { useWalletContext } from '@contexts/WalletContext';
+import Grid from '@mui/system/Unstable_Grid/Grid';
+import { useRouter } from 'next/router';
+import { FC, useEffect, useMemo, useState } from 'react';
+import DashboardCard from '../DashboardCard';
+import DashboardHeader from '../DashboardHeader';
 
 const Dashboard: FC = () => {
   const router = useRouter();
@@ -36,6 +33,7 @@ const Dashboard: FC = () => {
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
   const theme = useTheme();
 
+  const utils = trpc.useUtils();
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
 
   const STAKE_POOL_SUBJECT = process.env.STAKE_POOL_ASSET_POLICY! + process.env.STAKE_POOL_ASSET_NAME!;
@@ -69,9 +67,11 @@ const Dashboard: FC = () => {
           if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
           try {
             const browserWallet = await BrowserWallet.enable(userWallet.type);
-            const balance = await browserWallet.getBalance();
-            const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
-            const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
+            const usedAddresses = await browserWallet.getUsedAddresses();
+            const usedAddressesRawUtxos = await utils.client.sync.getRawUtxosMultiAddress.query(usedAddresses);
+            const balance = await utils.client.sync.getBalanceFromRawUtxos.query(usedAddressesRawUtxos);
+            const stakeKeys = balance.assets.map((asset) => asset.policyId + asset.name).filter((unit) => unit.includes(STAKING_KEY_POLICY!));
+            const processedStakeKeys = stakeKeys.map((key) => key.replace('000de140', ''));
             return processedStakeKeys;
           } catch {
             return []

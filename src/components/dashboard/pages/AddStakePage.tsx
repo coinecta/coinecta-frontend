@@ -1,21 +1,20 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import DataSpread from '@components/DataSpread';
+import DashboardCard from '@components/dashboard/DashboardCard';
+import StakeInput from '@components/dashboard/staking/StakeInput';
+import { formatNumber, formatTokenWithDecimals } from '@lib/utils/assets';
+import { calculateFutureDateMonths } from '@lib/utils/general';
+import { trpc } from '@lib/utils/trpc';
 import {
   Box,
   Button,
   Skeleton,
-  Typography,
-  useTheme,
+  Typography
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
-import DashboardCard from '@components/dashboard/DashboardCard';
-import StakeInput from '@components/dashboard/staking/StakeInput';
-import StakeDuration from '../staking/StakeDuration';
-import DataSpread from '@components/DataSpread';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import DashboardHeader from '../DashboardHeader';
 import StakeConfirm from '../staking/StakeConfirm';
-import { calculateFutureDateMonths } from '@lib/utils/general'
-import { formatTokenWithDecimals, formatNumber } from '@lib/utils/assets';
-import { trpc } from '@lib/utils/trpc';
+import StakeDuration from '../staking/StakeDuration';
 
 const options = [
   {

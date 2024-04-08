@@ -1,31 +1,31 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import DataSpread from '@components/DataSpread';
+import { useToken } from '@components/hooks/useToken';
+import { useAlert } from '@contexts/AlertContext';
+import { useWalletContext } from '@contexts/WalletContext';
+import { parseTokenFromString } from '@lib/utils/assets';
+import { calculateFutureDateMonths } from '@lib/utils/general';
+import { trpc } from '@lib/utils/trpc';
+import { walletDataByName, walletNameToId } from '@lib/walletsList';
+import { BrowserWallet } from '@meshsdk/core';
+import { useWallet } from '@meshsdk/react';
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 import {
+  Alert,
+  Avatar,
+  Button,
+  CircularProgress,
   Dialog,
-  DialogTitle,
-  DialogContent,
   DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
   useMediaQuery,
   useTheme,
-  Button,
-  IconButton,
-  Alert,
-  CircularProgress,
-  Avatar,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { useWallet } from '@meshsdk/react';
-import { calculateFutureDateMonths } from '@lib/utils/general';
-import DataSpread from '@components/DataSpread';
-import { AddStakeRequest, coinectaSyncApi } from '@server/services/syncApi';
-import { parseTokenFromString } from '@lib/utils/assets';
-import { useToken } from '@components/hooks/useToken';
-import { useWalletContext } from '@contexts/WalletContext';
-import { walletDataByName, walletNameToId } from '@lib/walletsList';
-import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import { AddStakeRequest } from '@server/services/syncApi';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import ChooseWallet from './ChooseWallet';
-import { trpc } from '@lib/utils/trpc';
-import { BrowserWallet } from '@meshsdk/core';
-import { useAlert } from '@contexts/AlertContext';
 
 interface IStakeConfirmProps {
   open: boolean;
