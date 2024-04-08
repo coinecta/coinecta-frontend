@@ -152,9 +152,22 @@ const StakePositions: FC = () => {
       if (connected && sessionStatus === 'authenticated' && currentWallet) {
         try {
           if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
-          const browserApi = await BrowserWallet.enable(currentWallet);
+
+          // Update Utxos
+          setWalletUtxosCbor([]);
           const walletAddresses = await browserApi.getUsedAddresses();
           setCurrentWalletAddresses(walletAddresses);
+          if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
+          const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
+          const utxos = await api.getUtxos();
+          const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
+          setWalletUtxosCbor([...utxos!, ...(collateral ?? [])]);
+
+          // Update change address
+          const browserWallet = await BrowserWallet.enable(currentWallet);
+          const changeAddress = await browserWallet.getChangeAddress();
+          setChangeAddress(changeAddress);
+          
         } catch (ex) {
           console.error("Error getting utxos", ex);
         }
