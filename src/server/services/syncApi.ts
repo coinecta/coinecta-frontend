@@ -42,6 +42,15 @@ export type CardanoValue = {
   };
 };
 
+export type WalletBalance = {
+  lovelaces: string;
+  assets: {
+    policyId: string;
+    name: string;
+    quantity: number;
+  }[];
+};
+
 export type StakePoolDatum = {
   owner: CardanoCredential;
   rewardSettings: RewardSettings[];
@@ -91,6 +100,7 @@ export type StakeRequestsResponse = {
 };
 
 export type StakeRequest = {
+  address: string;
   slot: string;
   txHash: string;
   txIndex: string;
@@ -184,6 +194,57 @@ export const coinectaSyncApi = {
       const response = await syncApi.post(
         `/stake/requests?page=${page}&limit=${limit}`,
         walletAddresses,
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw mapAxiosErrorToTRPCError(error);
+      } else {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An unknown error occurred",
+        });
+      }
+    }
+  },
+  async getRawUtxos(address: string): Promise<string[]> {
+    try {
+      const response = await syncApi.get(`/transaction/utxos/raw/${address}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw mapAxiosErrorToTRPCError(error);
+      } else {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An unknown error occurred",
+        });
+      }
+    }
+  },
+  async getRawUtxosMultiAddress(addresses: string[]): Promise<string[]> {
+    try {
+      const response = await syncApi.post(`/transaction/utxos/raw`, addresses);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw mapAxiosErrorToTRPCError(error);
+      } else {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An unknown error occurred",
+        });
+      }
+    }
+  },
+  async getBalanceFromRawUtxos(utxos: string[]): Promise<WalletBalance> {
+    try {
+      const response = await syncApi.post(
+        `/transaction/utxos/raw/balance`,
+        utxos,
       );
       return response.data;
     } catch (error) {
