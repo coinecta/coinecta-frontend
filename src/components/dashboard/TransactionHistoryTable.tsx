@@ -2,13 +2,14 @@ import { useAlert } from '@contexts/AlertContext';
 import { useWalletContext } from '@contexts/WalletContext';
 import { useCardano } from '@lib/utils/cardano';
 import { trpc } from '@lib/utils/trpc';
-import { walletNameToId } from '@lib/walletsList';
+import { walletNameToId, walletsList } from '@lib/walletsList';
 import { useWallet } from '@meshsdk/react';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import LaunchIcon from '@mui/icons-material/Launch';
 import {
+  Avatar,
   Box,
   Button,
   Chip,
@@ -258,6 +259,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                     background: theme.palette.background.paper,
                   }
                 }}>
+                  <TableCell></TableCell>
                   {columns.map((column) => {
                     if (column === "txHash" || column === "txIndex" || column == "address") return null;
                     return <TableCell key={String(column)}>
@@ -268,13 +270,20 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.map((item, index) => (
-                  <TableRow key={index}
+                {data.map((item, index) => {
+                  const wallet = walletsList.find(w => w.connectName === cardano.getAddressWalletType(item.address));
+                  const icon = theme.palette.mode === 'dark' ? wallet?.iconDark : wallet?.icon;
+
+                  return (
+                    <TableRow key={index}
                     sx={{
                       '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
                       '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)' }
                     }}
                   >
+                    <TableCell sx={{ borderBottom: 'none' }}>
+                      <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={icon} />
+                    </TableCell>
                     {Object.keys(item).map((key, colIndex) => {
                       if (key === "txHash" || key === "txIndex" || key === "address") return null;
                       if (key === "status") {
@@ -338,7 +347,8 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                       </>}
                     </TableCell>
                   </TableRow>
-                ))}
+                  )
+                })}
               </TableBody>
               <TableFooter>
                 <TableRow>
