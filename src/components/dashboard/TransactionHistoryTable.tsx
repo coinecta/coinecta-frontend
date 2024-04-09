@@ -3,7 +3,6 @@ import { useWalletContext } from '@contexts/WalletContext';
 import { useCardano } from '@lib/utils/cardano';
 import { trpc } from '@lib/utils/trpc';
 import { walletNameToId } from '@lib/walletsList';
-import { BrowserWallet } from '@meshsdk/core';
 import { useWallet } from '@meshsdk/react';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -190,9 +189,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     if (connected && cardanoApi !== undefined) {
       try {
         const walletType = cardano.getAddressWalletType(address);
-        console.log({address})
-        console.log({walletType})
-        const browserWallet = await BrowserWallet.enable(walletType!);
+        const api = await window.cardano[walletNameToId(walletType!)!].enable();
         const utxos = await utils.client.sync.getRawUtxosMultiAddress.query([address]);
         const cancelStakeTxCbor = await cancelStakeTxMutation.mutateAsync({
           stakeRequestOutputReference: {
@@ -201,9 +198,9 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
           },
           walletUtxoListCbor: utxos,
         });
-        const witnessSetCbor = await browserWallet.signTx(cancelStakeTxCbor, true);
+        const witnessSetCbor = await api.signTx(cancelStakeTxCbor, true);
         const signedTxCbor = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
-        browserWallet.submitTx(signedTxCbor);
+        api.submitTx(signedTxCbor);
         addAlert('success', 'Cancel transaction submitted');
       } catch (ex) {
         console.error('Error cancelling stake', ex);
