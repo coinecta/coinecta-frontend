@@ -100,6 +100,7 @@ export type StakeRequestsResponse = {
 };
 
 export type StakeRequest = {
+  address: string;
   slot: string;
   txHash: string;
   txIndex: string;
