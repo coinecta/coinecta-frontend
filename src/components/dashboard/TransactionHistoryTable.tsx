@@ -355,7 +355,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                   <TablePagination
                     rowsPerPageOptions={rowsPerPageOptions}
                     component={'td'}
-                    colSpan={6}
+                    colSpan={7}
                     count={totalRequests}
                     rowsPerPage={requestPageLimit}
                     page={currentRequestPage - 1}
