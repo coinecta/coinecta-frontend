@@ -1,9 +1,14 @@
 import { useWalletContext } from '@contexts/WalletContext';
 import { BrowserWallet } from '@meshsdk/core';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
+import { trpc } from './trpc';
 
 export const useCardano = () => {
     const { setSelectedAddresses } = useWalletContext();
+
+    const getWallets = trpc.user.getWallets.useQuery()
+    const wallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
+
     const api = {
         isWalletConnected: async (walletName: string, walletAddress: string) => {
             try {
@@ -51,6 +56,9 @@ export const useCardano = () => {
 
             // If the JSON string was null or an error occurred, return an empty array
             return [];
+        },
+        getAddressWalletType: (address: string) => {
+            return wallets?.find(wallet => wallet.changeAddress === address)?.type;
         },
         clearSelectedAddresses: () => {
             localStorage.removeItem('selectedAddresses');

@@ -43,6 +43,21 @@ export const syncRouter = createTRPCRouter({
         limit,
       );
     }),
+  getRawUtxos: protectedProcedure
+    .input(z.string())
+    .query(async ({ input }) => {
+      return await coinectaSyncApi.getRawUtxos(input);
+    }),
+  getRawUtxosMultiAddress: protectedProcedure
+    .input(z.array(z.string()))
+    .query(async ({ input }) => {
+      return await coinectaSyncApi.getRawUtxosMultiAddress(input);
+    }),
+  getBalanceFromRawUtxos: protectedProcedure
+    .input(z.array(z.string()))
+    .query(async ({ input }) => {
+      return await coinectaSyncApi.getBalanceFromRawUtxos(input);
+    }),
   addStakeTx: protectedProcedure
     .input(z.object({
       stakePool: z.object({
