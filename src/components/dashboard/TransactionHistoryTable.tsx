@@ -175,6 +175,8 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const { sessionData } = useWalletContext();
 
+  const getRawUtxosMultiAddress = trpc.sync.getRawUtxosMultiAddress.useMutation();
+
   useEffect(() => {
     const execute = async () => {
       if (connected) {
@@ -190,7 +192,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
       try {
         const walletType = cardano.getAddressWalletType(address);
         const api = await window.cardano[walletNameToId(walletType!)!].enable();
-        const utxos = await utils.client.sync.getRawUtxosMultiAddress.query([address]);
+        const utxos = await getRawUtxosMultiAddress.mutateAsync([address]);
         const cancelStakeTxCbor = await cancelStakeTxMutation.mutateAsync({
           stakeRequestOutputReference: {
             txHash,
