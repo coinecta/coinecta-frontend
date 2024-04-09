@@ -40,7 +40,6 @@ const StakePositions: FC = () => {
   const { wallet, connected } = useWallet();
   const [time, setTime] = useState<number>(0);
   const { sessionData, sessionStatus } = useWalletContext();
-  const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>();
   const theme = useTheme();
   const { cnctDecimals } = useToken();
   const { convertToUSD, convertCnctToADA } = usePrice();
@@ -48,6 +47,7 @@ const StakePositions: FC = () => {
   const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined);
   const { selectedAddresses } = useWalletContext();
   const { isWalletConnected: _isWalletConnected } = useCardano();
+  const utils = trpc.useUtils();
 
   const isWalletConnected = useCallback(_isWalletConnected, [_isWalletConnected]);
 
@@ -55,12 +55,19 @@ const StakePositions: FC = () => {
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
   const [currentWallet, setCurrentWallet] = useState<string | undefined>(undefined);
+  const [currentWalletAddress, setCurrentWalletAddress] = useState<string | undefined>(undefined);
 
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const summary = useMemo((() => queryStakeSummary.data), [queryStakeSummary.data]);
   
   const queryStakePositions = trpc.sync.getStakePositions.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const positions = useMemo(() => queryStakePositions.data ?? [], [queryStakePositions.data]);
+
+  const queryCurrentWalletRawUtxos = trpc.sync.getRawUtxos.useQuery(currentWalletAddress ?? '', { retry: 0, refetchInterval: 5000 });
+  const walletUtxosCbor = useMemo(() => queryCurrentWalletRawUtxos.data, [queryCurrentWalletRawUtxos.data]);
+
+  const getRawUtxosMultiAddress = trpc.sync.getRawUtxosMultiAddress.useMutation();
+  const getBalanceFromRawUtxos = trpc.sync.getBalanceFromRawUtxos.useMutation();
 
   const STAKE_POOL_SUBJECT = process.env.STAKE_POOL_ASSET_POLICY! + process.env.STAKE_POOL_ASSET_NAME!;
 
@@ -94,17 +101,16 @@ const StakePositions: FC = () => {
   }, [positions, selectedRows]);
 
   useEffect(() => {
-    const newData = Array.from(selectedRows).filter(index => redeemableRows.has(index)).map(index => {
-      const item = positions[index];
+    const newData = selectedPositions.map(item => {
       if (item === undefined) return;
       return {
-        currency: item.name,
+        currency: 'CNCT',
         amount: item.total.toString(),
       };
     }).filter(item => item !== undefined).map(item => item as { currency: string, amount: string });
 
     setRedeemRowData(newData);
-  }, [selectedRows, redeemableRows, positions])
+  }, [selectedRows, redeemableRows, selectedPositions])
 
   useEffect(() => {
     const newRedeemableRows = new Set<number>();
@@ -139,7 +145,7 @@ const StakePositions: FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(time => time + 1);
-    }, 10000);
+    }, 20000);
     return () => clearInterval(interval);
   }, []);
 
@@ -147,20 +153,14 @@ const StakePositions: FC = () => {
     const execute = async () => {
       if (connected && sessionStatus === 'authenticated' && currentWallet) {
         try {
-
-          // Update Utxos
-          setWalletUtxosCbor([]);
-          if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
-          const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
-          const utxos = await api.getUtxos();
-          const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
-          setWalletUtxosCbor([...utxos!, ...(collateral ?? [])]);
-
-          // Update change address
-          const browserWallet = await BrowserWallet.enable(currentWallet);
-          const changeAddress = await browserWallet.getChangeAddress();
-          setChangeAddress(changeAddress);
+           if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
           
+           const browserWallet = await BrowserWallet.enable(currentWallet);
+           const changeAddress = await browserWallet.getChangeAddress();
+           setChangeAddress(changeAddress);
+
+          setCurrentWalletAddress(changeAddress);
+           
         } catch (ex) {
           console.error("Error getting utxos", ex);
         }
@@ -186,17 +186,18 @@ const StakePositions: FC = () => {
           try {
             if (!(await isWalletConnected(userWallet.type, userWallet.changeAddress))) return [];
             if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
-            const browserWallet = await BrowserWallet.enable(userWallet.type);
-            const balance = await browserWallet.getBalance();
-            const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
-            const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
+            const usedAddressesRawUtxos = await getRawUtxosMultiAddress.mutateAsync([userWallet.changeAddress]);
+            const balance = await getBalanceFromRawUtxos.mutateAsync(usedAddressesRawUtxos);
+            const stakeKeys = balance.assets.map((asset) => asset.policyId + asset.name).filter((unit) => unit.includes(STAKING_KEY_POLICY!));
+            const processedStakeKeys = stakeKeys.map((key) => key.replace('000de140', ''));
             stakeKeys.forEach((key) => {
-              stakeKeyWallet[key.unit.replace('000de140', '')] = userWallet.type;
+              stakeKeyWallet[key.replace('000de140', '')] = userWallet.type;
             });
             return processedStakeKeys;
           } catch {
             addAlert('error', `Failed to load stake positions for ${userWallet.type[0].toUpperCase() + userWallet.type.slice(1)} wallet. Please reload the page.`);
             console.log('Error getting stake keys', userWallet);
+            return [];
           }
         });
         const stakeKeysArrays = await Promise.all(stakeKeysPromises);

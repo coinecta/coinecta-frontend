@@ -1,15 +1,15 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { Box } from '@mui/material';
-import DashboardHeader from '../DashboardHeader';
-import TransactionHistoryTable from '../TransactionHistoryTable';
-import { StakeRequestsResponse } from '@server/services/syncApi';
-import { formatTokenWithDecimals, formatNumber } from '@lib/utils/assets';
 import { useToken } from '@components/hooks/useToken';
+import { useWalletContext } from '@contexts/WalletContext';
+import { formatNumber, formatTokenWithDecimals } from '@lib/utils/assets';
+import { trpc } from '@lib/utils/trpc';
+import { Box } from '@mui/material';
+import { StakeRequestsResponse } from '@server/services/syncApi';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { useWalletContext } from '@contexts/WalletContext';
-import { trpc } from '@lib/utils/trpc';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import DashboardHeader from '../DashboardHeader';
+import TransactionHistoryTable from '../TransactionHistoryTable';
 
 const TransactionHistory: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -61,6 +61,7 @@ const TransactionHistory: FC = () => {
       const lockDuration = dayjs.duration(parseInt(request.stakePoolProxy.lockTime)).humanize();
 
       return {
+        address: request.address,
         amount: `${formattedTokenAmount} CNCT`,
         lockDuration,
         "Date & Time": formattedDate,

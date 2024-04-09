@@ -56,3 +56,5 @@ ssl.key
 /deployments/local_postgres/test_keys
 /deployments/local_postgres/db
 bun.lockb
+
+.vscode/
