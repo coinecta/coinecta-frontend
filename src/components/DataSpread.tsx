@@ -1,6 +1,6 @@
-import React, { FC } from 'react';
 import { Box, Divider, Typography, useTheme } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
+import { FC } from 'react';
 
 interface DataSpreadProps {
   title: string;
@@ -25,13 +25,13 @@ const DataSpread: FC<DataSpreadProps> = ({ title, data, margin, isLoading, usdVa
         mb: margin ?? 2
       }}
     >
-      <Typography variant="overline" sx={{ mb: 0, lineHeight: 1, fontSize: { xs: '0.9rem', sm: '1rem' }, textTransform: 'none' }}>
+      <Typography sx={{ mb: 0, lineHeight: 1, fontSize: { xs: '0.9rem', sm: '1.2rem' }, textTransform: 'none', fontWeight: 'bold' }}>
         {isLoading ? <Skeleton animation='wave' width={35} /> : title}
       </Typography>
       <Box sx={{ flexGrow: 1 }}>
         {isLoading ? <Skeleton animation='wave' width='100%' height={1} /> : <Divider />}
       </Box>
-      <Typography variant="h6" sx={{ mb: 0, lineHeight: 0.8, display: 'flex', alignItems: 'center', gap: '4px' }}>
+      <Typography sx={{ mb: 0, lineHeight: 0.8, display: 'flex', alignItems: 'center', gap: '4px', fontSize: { xs: '0.9rem', sm: '1.2rem' }, fontWeight: 'bold' }}>
         {isLoading ?
           <Skeleton animation='wave' width={75} /> :
           <Box>
@@ -39,7 +39,7 @@ const DataSpread: FC<DataSpreadProps> = ({ title, data, margin, isLoading, usdVa
           </Box>}  
         {isLoading && usdValue ?
           <Skeleton animation='wave' width={55} /> :
-          <Box component={'span'} sx={{ fontSize: '1rem', color: theme.palette.grey[500] }}>{usdValue ? `(${usdValue})` : null}</Box>}
+          <Box component={'span'} sx={{ fontSize: '1.2rem', color: theme.palette.grey[500] }}>{usdValue ? `(${usdValue})` : null}</Box>}
       </Typography>
     </Box>
   );
