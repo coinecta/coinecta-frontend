@@ -98,17 +98,16 @@ const StakePositions: FC = () => {
   }, [positions, selectedRows]);
 
   useEffect(() => {
-    const newData = Array.from(selectedRows).filter(index => redeemableRows.has(index)).map(index => {
-      const item = positions[index];
+    const newData = selectedPositions.map(item => {
       if (item === undefined) return;
       return {
-        currency: item.name,
+        currency: 'CNCT',
         amount: item.total.toString(),
       };
     }).filter(item => item !== undefined).map(item => item as { currency: string, amount: string });
 
     setRedeemRowData(newData);
-  }, [selectedRows, redeemableRows, positions])
+  }, [selectedRows, redeemableRows, selectedPositions])
 
   useEffect(() => {
     const newRedeemableRows = new Set<number>();
