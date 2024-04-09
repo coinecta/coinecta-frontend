@@ -46,9 +46,9 @@ const Dashboard: FC = () => {
   }, [queryStakeSummary.data]);
 
   useEffect(() => {
-    setIsLoading(!queryStakeSummary.isSuccess && !isStakingKeysLoaded);
+    setIsLoading(!queryStakeSummary.isSuccess || !isStakingKeysLoaded);
   }, [isStakingKeysLoaded, queryStakeSummary.isSuccess]);
-
+  
   const formatNumber = (num: number, key: string) => `${num.toLocaleString(undefined, {
     maximumFractionDigits: 2
   })}${key !== '' && key != null ? ` ${key}` : ''}`;
