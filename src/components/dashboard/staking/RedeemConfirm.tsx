@@ -37,11 +37,10 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
   redeemWallet,
   claimStakeRequest,
 }) => {
-  const { cnctDecimals } = useToken();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const { connected, wallet } = useWallet();
+  const { connected } = useWallet();
   const { sessionData, sessionStatus } = useWalletContext();
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const [isSigning, setIsSigning] = useState(false);
@@ -131,7 +130,7 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
           <DataSpread
             key={`${item.currency}-${i}`}
             title={item.currency}
-            data={`${formatTokenWithDecimals(BigInt(item.amount), cnctDecimals)}`}
+            data={item.amount}
           />
         ))}
       </DialogContent>

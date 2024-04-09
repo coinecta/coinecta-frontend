@@ -1,6 +1,6 @@
 import SortByWalletDropdown from '@components/SortByWalletDropdown';
 import ActionBar, { IActionBarButton } from '@components/dashboard/ActionBar';
-import { walletsList } from '@lib/walletsList';
+import { walletNameToId, walletsList } from '@lib/walletsList';
 import {
   Avatar,
   Box,
@@ -22,6 +22,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import DashboardCard from '../DashboardCard';
 import { useAlert } from '@contexts/AlertContext';
 import { useWalletContext } from '@contexts/WalletContext';
+import RedeemConfirm from './RedeemConfirm';
+import { useWallet } from '@meshsdk/react';
+import { ClaimStakeRequest } from '@server/services/syncApi';
 
 interface IStakePositionTableProps<T> {
   title?: string;
@@ -32,7 +35,6 @@ interface IStakePositionTableProps<T> {
   connectedWallets: string[];
   isLoading: boolean;
   error: boolean;
-  actions?: IActionBarButton[];
   selectedRows?: Set<T>;
   setSelectedRows?: React.Dispatch<React.SetStateAction<Set<any>>>
   parentContainerRef: React.RefObject<HTMLDivElement>;
@@ -54,7 +56,6 @@ const StakePositionTable = <T extends Record<string, any>>({
   connectedWallets,
   isLoading,
   error,
-  actions,
   selectedRows,
   setSelectedRows,
   parentContainerRef
@@ -72,10 +73,17 @@ const StakePositionTable = <T extends Record<string, any>>({
   const [sortedData, setSortedData] = useState<T[]>(data);
   const [isAllRowsStakedUnderSingleWallet, setIsAllRowsStakedUnderSingleWallet] = useState<boolean>(false);
   const [isInfoSnackbarShown, setIsInfoSnackbarShown] = useState<boolean>(false);
+  const [openRedeemDialog, setOpenRedeemDialog] = useState(false);
+  const [redeemRowData, setRedeemRowData] = useState<IRedeemListItem[]>([]);
   const { addAlert } = useAlert();
-  const { selectedAddresses } = useWalletContext();
+  const { selectedAddresses, sessionStatus } = useWalletContext();
+  const { wallet, connected } = useWallet();
+  const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[] | undefined>();
+  const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined);
+  const [redeemableRows, setRedeemableRows] = useState<Set<number>>(new Set());
+  const [lockedRows, setLockedRows] = useState<Set<number>>(new Set());
 
-  const sensitivityThreshold = 2;  
+  const sensitivityThreshold = 2;
 
   useEffect(() => {
     const handleResize = () => {
@@ -92,6 +100,13 @@ const StakePositionTable = <T extends Record<string, any>>({
   }, []);
 
   useEffect(() => setSortedData(data), [data]);
+
+  useEffect(() => {
+    const execute = async () => {
+      if (connected) setChangeAddress(await wallet.getChangeAddress());
+    };
+    execute();
+  }, [connected, wallet]);
 
   useEffect(() => {
     if (currentWallet) setSelectedRows!(new Set());
@@ -134,6 +149,48 @@ const StakePositionTable = <T extends Record<string, any>>({
     }
   }, [stakeKeyWalletMapping, isAllRowsStakedUnderSingleWallet]);
 
+  useEffect(() => {
+    const newData = Array.from(selectedRows!)
+      .filter(row => {
+        const rowIndex = sortedData.findIndex(data => data.unlockDate === row.unlockDate);
+        return redeemableRows.has(rowIndex);
+      })
+      .map(item => {
+        if (item === undefined) return;
+        return {
+          currency: item.name,
+          amount: item.total.toString(),
+        };
+      })
+      .filter(item => item !== undefined)
+      .map(item => item as { currency: string, amount: string });
+
+    setRedeemRowData(newData);
+  }, [selectedRows, redeemableRows, sortedData])
+
+  useEffect(() => {
+    const newRedeemableRows = new Set<number>();
+    const newLockedRows = new Set<number>();
+    const now = new Date();
+    selectedRows!.forEach((selectedRow) => {
+      const selectedRowIndex = sortedData.findIndex(data => data.unlockDate === selectedRow.unlockDate);
+      const item = sortedData[selectedRowIndex];
+      if (item && item.unlockDate) {
+        if (item.unlockDate <= now) {
+          newRedeemableRows.add(selectedRowIndex);
+        } else {
+          newLockedRows.add(selectedRowIndex);
+        }
+      }
+    });
+  
+    setRedeemableRows(newRedeemableRows);
+    setLockedRows(newLockedRows);
+  }, [sortedData, selectedRows]);
+
+  const selectedPositions = useMemo(() => {
+    return Array.from(selectedRows ?? new Set()).map((item) => sortedData.find(p => p.stakeKey === (item as any).stakeKey));
+  }, [sortedData, selectedRows]);
 
   const isTableWiderThanParent = parentWidth < paperWidth
 
@@ -251,6 +308,42 @@ const StakePositionTable = <T extends Record<string, any>>({
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  const handleRedeem = () => {
+    if (sortedData.length === 0) {
+      addAlert('error', 'Select the positions to redeem');
+      return;
+    }
+    setOpenRedeemDialog(true);
+  }
+
+  const claimStakeRequest = useMemo(() => {
+    return {
+      stakeUtxoOutputReferences: selectedPositions.map((position) => {
+        if (position === undefined) {
+          return {
+            txHash: "",
+            index: 0
+          }
+        };
+
+        return {
+          txHash: position.txHash,
+          index: position.txIndex
+        }
+      }),
+      walletUtxoListCbor: walletUtxosCbor,
+      changeAddress: changeAddress
+    } as ClaimStakeRequest
+  }, [changeAddress, selectedPositions, walletUtxosCbor]);
+
+  const actions: IActionBarButton[] = [
+    {
+      label: 'Redeem',
+      count: selectedPositions.length,
+      handler: handleRedeem
+    },
+  ]
 
   const allSelectableSelected = selectableRows.every(item => selectedRows?.has(item));
   const someSelectableSelected = selectableRows.some(item => selectedRows?.has(item)) && !allSelectableSelected;
@@ -393,6 +486,13 @@ const StakePositionTable = <T extends Record<string, any>>({
           }
         </DashboardCard>
       </Paper>
+      <RedeemConfirm
+        open={openRedeemDialog}
+        setOpen={setOpenRedeemDialog}
+        redeemList={redeemRowData}
+        redeemWallet={currentWallet!}
+        claimStakeRequest={claimStakeRequest}
+      />
     </Box>
   );
 };

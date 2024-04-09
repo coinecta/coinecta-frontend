@@ -14,12 +14,9 @@ import {
   useTheme
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
-import { ClaimStakeRequest } from '@server/services/syncApi';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { IActionBarButton } from '../ActionBar';
 import DashboardCard from '../DashboardCard';
 import DashboardHeader from '../DashboardHeader';
-import RedeemConfirm from '../staking/RedeemConfirm';
 import StakePositionTable from '../staking/StakePositionTable';
 import { useCardano } from '@lib/utils/cardano';
 import { useAlert } from '@contexts/AlertContext';
@@ -27,10 +24,6 @@ import { useAlert } from '@contexts/AlertContext';
 const StakePositions: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
   const [selectedRows, setSelectedRows] = useState<Set<any>>(new Set());
-  const [redeemableRows, setRedeemableRows] = useState<Set<number>>(new Set());
-  const [lockedRows, setLockedRows] = useState<Set<number>>(new Set());
-  const [openRedeemDialog, setOpenRedeemDialog] = useState(false)
-  const [redeemRowData, setRedeemRowData] = useState<IRedeemListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { addAlert } = useAlert();
 
@@ -88,52 +81,6 @@ const StakePositions: FC = () => {
       };
     });
   }, [cnctDecimals, positions]);
-
-  const selectedPositions = useMemo(() => {
-    return Array.from(selectedRows).map((item) => positions.find(p => p.stakeKey === item.stakeKey));
-  }, [positions, selectedRows]);
-
-  useEffect(() => {
-    const newData = Array.from(selectedRows).filter(index => redeemableRows.has(index)).map(index => {
-      const item = positions[index];
-      if (item === undefined) return;
-      return {
-        currency: item.name,
-        amount: item.total.toString(),
-      };
-    }).filter(item => item !== undefined).map(item => item as { currency: string, amount: string });
-
-    setRedeemRowData(newData);
-  }, [selectedRows, redeemableRows, positions])
-
-  useEffect(() => {
-    const newRedeemableRows = new Set<number>();
-    const newLockedRows = new Set<number>();
-    const now = new Date();
-
-    selectedRows.forEach((index) => {
-      const item = processedPositions[index];
-      if (item && item.unlockDate) {
-        if (item.unlockDate <= now) {
-          newRedeemableRows.add(index);
-        } else {
-          newLockedRows.add(index);
-        }
-      }
-    });
-
-    setRedeemableRows(newRedeemableRows);
-    setLockedRows(newLockedRows);
-
-  }, [processedPositions, selectedRows]);
-  
-  const handleRedeem = () => {
-    if (selectedPositions.length === 0) {
-      addAlert('error', 'Select the positions to redeem');
-      return;
-    }
-    setOpenRedeemDialog(true);
-  }
 
   // Refresh data every 20 seconds
   useEffect(() => {
@@ -203,34 +150,6 @@ const StakePositions: FC = () => {
 
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
 
-  const claimStakeRequest = useMemo(() => {
-    return {
-      stakeUtxoOutputReferences: selectedPositions.map((position) => {
-        if (position === undefined) {
-          return {
-            txHash: "",
-            index: 0
-          }
-        };
-
-        return {
-          txHash: position.txHash,
-          index: position.txIndex
-        }
-      }),
-      walletUtxoListCbor: walletUtxosCbor,
-      changeAddress: changeAddress
-    } as ClaimStakeRequest
-  }, [changeAddress, selectedPositions, walletUtxosCbor]);
-
-  const actions: IActionBarButton[] = [
-    {
-      label: 'Redeem',
-      count: selectedPositions.length,
-      handler: handleRedeem
-    },
-  ]
-
   return (
     <Box sx={{ position: 'relative' }} ref={parentRef}>
       <DashboardHeader title="Manage Staked Positions" />
@@ -295,16 +214,8 @@ const StakePositions: FC = () => {
         setCurrentWallet={setCurrentWallet}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
-        actions={actions}
         parentContainerRef={parentRef}
         isLoading={isLoading || (walletUtxosCbor?.length ?? 0) <= 0}
-      />
-      <RedeemConfirm
-        open={openRedeemDialog}
-        setOpen={setOpenRedeemDialog}
-        redeemList={redeemRowData}
-        redeemWallet={currentWallet!}
-        claimStakeRequest={claimStakeRequest}
       />
     </Box>
   );
