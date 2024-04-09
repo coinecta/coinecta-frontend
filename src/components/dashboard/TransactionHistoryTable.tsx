@@ -1,4 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useAlert } from '@contexts/AlertContext';
+import { useWalletContext } from '@contexts/WalletContext';
+import { useCardano } from '@lib/utils/cardano';
+import { trpc } from '@lib/utils/trpc';
+import { walletNameToId } from '@lib/walletsList';
+import { BrowserWallet } from '@meshsdk/core';
+import { useWallet } from '@meshsdk/react';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import LaunchIcon from '@mui/icons-material/Launch';
 import {
   Box,
   Button,
@@ -17,20 +27,12 @@ import {
   Typography,
   useTheme
 } from '@mui/material';
-import dayjs from 'dayjs';
-import ActionBar, { IActionBarButton } from './ActionBar';
-import LaunchIcon from '@mui/icons-material/Launch';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import CheckIcon from '@mui/icons-material/Check';
-import ClearIcon from '@mui/icons-material/Clear';
-import copy from 'copy-to-clipboard';
-import { useWallet } from '@meshsdk/react';
 import { TimeIcon } from '@mui/x-date-pickers';
-import { useWalletContext } from '@contexts/WalletContext';
-import { walletNameToId } from '@lib/walletsList';
+import copy from 'copy-to-clipboard';
+import dayjs from 'dayjs';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ActionBar, { IActionBarButton } from './ActionBar';
 import DashboardCard from './DashboardCard';
-import { trpc } from '@lib/utils/trpc';
-import { useAlert } from '@contexts/AlertContext';
 
 interface ITransactionHistoryTableProps<T> {
   title?: string;
@@ -77,8 +79,12 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const { addAlert } = useAlert();
   const tableRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
+
+  const utils = trpc.useUtils();
   const cancelStakeTxMutation = trpc.sync.cancelStakeTx.useMutation();
   const finaliseTxMutation = trpc.sync.finalizeTx.useMutation();
+  
+  const cardano = useCardano();
 
   const sensitivityThreshold = 2;
 
@@ -166,7 +172,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     }
   };
 
-  const { name, connected } = useWallet()
+  const { name, connected, wallet } = useWallet()
   const [cardanoApi, setCardanoApi] = useState<any>(undefined);
   const { sessionData } = useWalletContext();
 
@@ -180,21 +186,24 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     execute();
   }, [name, connected, sessionData?.user.walletType]);
 
-  const cancelTx = useCallback(async (txHash: string, txIndex: string) => {
+  const cancelTx = useCallback(async (txHash: string, txIndex: string, address: string) => {
     if (connected && cardanoApi !== undefined) {
       try {
-        const utxos = await cardanoApi.getUtxos();
-        const collateral = cardanoApi.getCollateral === undefined ? [] : await cardanoApi.getCollateral();
+        const walletType = cardano.getAddressWalletType(address);
+        console.log({address})
+        console.log({walletType})
+        const browserWallet = await BrowserWallet.enable(walletType!);
+        const utxos = await utils.client.sync.getRawUtxosMultiAddress.query([address]);
         const cancelStakeTxCbor = await cancelStakeTxMutation.mutateAsync({
           stakeRequestOutputReference: {
             txHash,
             index: txIndex
           },
-          walletUtxoListCbor: [...utxos!, ...collateral],
+          walletUtxoListCbor: utxos,
         });
-        const witnessSetCbor = await cardanoApi.signTx(cancelStakeTxCbor, true);
+        const witnessSetCbor = await browserWallet.signTx(cancelStakeTxCbor, true);
         const signedTxCbor = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
-        cardanoApi.submitTx(signedTxCbor);
+        browserWallet.submitTx(signedTxCbor);
         addAlert('success', 'Cancel transaction submitted');
       } catch (ex) {
         console.error('Error cancelling stake', ex);
@@ -251,7 +260,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                   }
                 }}>
                   {columns.map((column) => {
-                    if (column === "txHash" || column === "txIndex") return null;
+                    if (column === "txHash" || column === "txIndex" || column == "address") return null;
                     return <TableCell key={String(column)}>
                       {camelCaseToTitle(String(column))}
                     </TableCell>
@@ -268,7 +277,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                     }}
                   >
                     {Object.keys(item).map((key, colIndex) => {
-                      if (key === "txHash" || key === "txIndex") return null;
+                      if (key === "txHash" || key === "txIndex" || key === "address") return null;
                       if (key === "status") {
                         return (
                           <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
@@ -324,7 +333,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                     })}
                     <TableCell sx={{ borderBottom: 'none' }}>
                       {item.status === "Pending" && !isLoading && <>
-                        <Button disabled={isLoading} key={index} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex)}>
+                        <Button disabled={isLoading} key={index} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex, item.address)}>
                           Cancel
                         </Button>
                       </>}

@@ -4,7 +4,6 @@ import { useToken } from '@components/hooks/useToken';
 import { useWalletContext } from '@contexts/WalletContext';
 import { formatTokenWithDecimals } from '@lib/utils/assets';
 import { trpc } from '@lib/utils/trpc';
-import { BrowserWallet } from '@meshsdk/core';
 import { useWallet } from '@meshsdk/react';
 import {
   Box,
@@ -66,9 +65,7 @@ const Dashboard: FC = () => {
         const stakeKeysPromises = userWallets.map(async userWallet => {
           if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
           try {
-            const browserWallet = await BrowserWallet.enable(userWallet.type);
-            const usedAddresses = await browserWallet.getUsedAddresses();
-            const usedAddressesRawUtxos = await utils.client.sync.getRawUtxosMultiAddress.query(usedAddresses);
+            const usedAddressesRawUtxos = await utils.client.sync.getRawUtxosMultiAddress.query([userWallet.changeAddress]);
             const balance = await utils.client.sync.getBalanceFromRawUtxos.query(usedAddressesRawUtxos);
             const stakeKeys = balance.assets.map((asset) => asset.policyId + asset.name).filter((unit) => unit.includes(STAKING_KEY_POLICY!));
             const processedStakeKeys = stakeKeys.map((key) => key.replace('000de140', ''));

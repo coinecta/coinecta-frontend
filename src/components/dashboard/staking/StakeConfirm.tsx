@@ -64,6 +64,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   const getWallets = trpc.user.getWallets.useQuery()
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
+  const utils = trpc.useUtils();
   const addStakeTxMutation = trpc.sync.addStakeTx.useMutation();
   const finaliseTxMutation = trpc.sync.finalizeTx.useMutation();
   
@@ -102,8 +103,15 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
 
   const processTxWithApi = async (walletName: string, api: any) => {
     const browserWallet = await BrowserWallet.enable(walletName);
-    const apiUTxos = await api.getUtxos();
     const changeAddress = await browserWallet.getChangeAddress();
+
+    let apiUTxos = await utils.client.sync.getRawUtxosMultiAddress.query([changeAddress]);
+    const collateralUtxos = await api.experimental.getCollateral();
+
+    if (collateralUtxos !== undefined) {
+      apiUTxos = apiUTxos.filter((utxo: any) => !collateralUtxos.includes(utxo));
+    }
+
     const addStakeRequest: AddStakeRequest = {
       stakePool: {
         address: STAKE_POOL_VALIDATOR_ADDRESS,
