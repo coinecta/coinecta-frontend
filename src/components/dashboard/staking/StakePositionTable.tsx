@@ -1,5 +1,7 @@
 import SortByWalletDropdown from '@components/SortByWalletDropdown';
 import ActionBar, { IActionBarButton } from '@components/dashboard/ActionBar';
+import { useAlert } from '@contexts/AlertContext';
+import { useWalletContext } from '@contexts/WalletContext';
 import { walletsList } from '@lib/walletsList';
 import {
   Avatar,
@@ -20,8 +22,6 @@ import {
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import DashboardCard from '../DashboardCard';
-import { useAlert } from '@contexts/AlertContext';
-import { useWalletContext } from '@contexts/WalletContext';
 
 interface IStakePositionTableProps<T> {
   title?: string;

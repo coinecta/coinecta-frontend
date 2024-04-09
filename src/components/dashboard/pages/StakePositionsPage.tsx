@@ -55,7 +55,7 @@ const StakePositions: FC = () => {
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
   const [currentWallet, setCurrentWallet] = useState<string | undefined>(undefined);
-  const [currentWalletAddresses, setCurrentWalletAddresses] = useState<string[] | undefined>(undefined);
+  const [currentWalletAddress, setCurrentWalletAddress] = useState<string | undefined>(undefined);
 
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const summary = useMemo((() => queryStakeSummary.data), [queryStakeSummary.data]);
@@ -63,8 +63,11 @@ const StakePositions: FC = () => {
   const queryStakePositions = trpc.sync.getStakePositions.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const positions = useMemo(() => queryStakePositions.data ?? [], [queryStakePositions.data]);
 
-  const queryCurrentWalletRawUtxos = trpc.sync.getRawUtxosMultiAddress.useQuery(currentWalletAddresses ?? [], { retry: 0, refetchInterval: 5000 });
+  const queryCurrentWalletRawUtxos = trpc.sync.getRawUtxos.useQuery(currentWalletAddress ?? '', { retry: 0, refetchInterval: 5000 });
   const walletUtxosCbor = useMemo(() => queryCurrentWalletRawUtxos.data, [queryCurrentWalletRawUtxos.data]);
+
+  const getRawUtxosMultiAddress = trpc.sync.getRawUtxosMultiAddress.useMutation();
+  const getBalanceFromRawUtxos = trpc.sync.getBalanceFromRawUtxos.useMutation();
 
   const STAKE_POOL_SUBJECT = process.env.STAKE_POOL_ASSET_POLICY! + process.env.STAKE_POOL_ASSET_NAME!;
 
@@ -156,7 +159,7 @@ const StakePositions: FC = () => {
            const changeAddress = await browserWallet.getChangeAddress();
            setChangeAddress(changeAddress);
 
-          setCurrentWalletAddresses([changeAddress]);
+          setCurrentWalletAddress(changeAddress);
            
         } catch (ex) {
           console.error("Error getting utxos", ex);
@@ -183,8 +186,8 @@ const StakePositions: FC = () => {
           try {
             if (!(await isWalletConnected(userWallet.type, userWallet.changeAddress))) return [];
             if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
-            const usedAddressesRawUtxos = await utils.client.sync.getRawUtxosMultiAddress.query([userWallet.changeAddress]);
-            const balance = await utils.client.sync.getBalanceFromRawUtxos.query(usedAddressesRawUtxos);
+            const usedAddressesRawUtxos = await getRawUtxosMultiAddress.mutateAsync([userWallet.changeAddress]);
+            const balance = await getBalanceFromRawUtxos.mutateAsync(usedAddressesRawUtxos);
             const stakeKeys = balance.assets.map((asset) => asset.policyId + asset.name).filter((unit) => unit.includes(STAKING_KEY_POLICY!));
             const processedStakeKeys = stakeKeys.map((key) => key.replace('000de140', ''));
             stakeKeys.forEach((key) => {

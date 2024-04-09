@@ -37,6 +37,9 @@ const Dashboard: FC = () => {
 
   const STAKE_POOL_SUBJECT = process.env.STAKE_POOL_ASSET_POLICY! + process.env.STAKE_POOL_ASSET_NAME!;
 
+  const getRawUtxosMultiAddress = trpc.sync.getRawUtxosMultiAddress.useMutation();
+  const getBalanceFromRawUtxos = trpc.sync.getBalanceFromRawUtxos.useMutation();
+
   const summary = useMemo(() => {
     if (queryStakeSummary.data?.poolStats[STAKE_POOL_SUBJECT] === undefined) return undefined;
     return queryStakeSummary.data;
@@ -65,8 +68,8 @@ const Dashboard: FC = () => {
         const stakeKeysPromises = userWallets.map(async userWallet => {
           if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
           try {
-            const usedAddressesRawUtxos = await utils.client.sync.getRawUtxosMultiAddress.query([userWallet.changeAddress]);
-            const balance = await utils.client.sync.getBalanceFromRawUtxos.query(usedAddressesRawUtxos);
+            const usedAddressesRawUtxos = await getRawUtxosMultiAddress.mutateAsync([userWallet.changeAddress]);
+            const balance = await getBalanceFromRawUtxos.mutateAsync(usedAddressesRawUtxos);
             const stakeKeys = balance.assets.map((asset) => asset.policyId + asset.name).filter((unit) => unit.includes(STAKING_KEY_POLICY!));
             const processedStakeKeys = stakeKeys.map((key) => key.replace('000de140', ''));
             return processedStakeKeys;
