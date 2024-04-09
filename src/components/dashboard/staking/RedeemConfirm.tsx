@@ -1,5 +1,6 @@
 import DataSpread from '@components/DataSpread';
 import { useToken } from '@components/hooks/useToken';
+import { useAlert } from '@contexts/AlertContext';
 import { useWalletContext } from '@contexts/WalletContext';
 import { formatTokenWithDecimals } from '@lib/utils/assets';
 import { trpc } from '@lib/utils/trpc';
@@ -20,7 +21,6 @@ import {
 } from '@mui/material';
 import { ClaimStakeRequest } from '@server/services/syncApi';
 import React, { FC, useEffect, useState } from 'react';
-import { useAlert } from '@contexts/AlertContext';
 
 interface IRedeemConfirmProps {
   open: boolean;
