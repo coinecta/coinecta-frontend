@@ -281,7 +281,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                       '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)' }
                     }}
                   >
-                    <TableCell sx={{ borderBottom: 'none' }}>
+                    <TableCell sx={{ borderBottom: 'none', width: '22px' }}>
                       <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={icon} />
                     </TableCell>
                     {Object.keys(item).map((key, colIndex) => {
