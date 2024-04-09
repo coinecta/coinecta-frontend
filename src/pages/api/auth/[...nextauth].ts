@@ -254,6 +254,9 @@ export const authOptions = (
             expires: sessionExpiry,
             req: req,
             res: res,
+            httpOnly: true,
+            secure: true,
+            sameSite: true
           })
 
           return true
