@@ -47,27 +47,20 @@ const StakePositions: FC = () => {
   const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined);
   const { selectedAddresses } = useWalletContext();
   const { isWalletConnected: _isWalletConnected } = useCardano();
-  const utils = trpc.useUtils();
+  const [walletUtxosCbor, setWalletUtxosCbor] = useState<string[]>([]);
 
+  const utils = trpc.useUtils();
   const isWalletConnected = useCallback(_isWalletConnected, [_isWalletConnected]);
 
   const getWallets = trpc.user.getWallets.useQuery()
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
   const [currentWallet, setCurrentWallet] = useState<string | undefined>(undefined);
-  const [currentWalletAddress, setCurrentWalletAddress] = useState<string | undefined>(undefined);
-
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const summary = useMemo((() => queryStakeSummary.data), [queryStakeSummary.data]);
   
   const queryStakePositions = trpc.sync.getStakePositions.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const positions = useMemo(() => queryStakePositions.data ?? [], [queryStakePositions.data]);
-
-  const queryCurrentWalletRawUtxos = trpc.sync.getRawUtxos.useQuery(currentWalletAddress ?? '', { retry: 0, refetchInterval: 5000 });
-  const walletUtxosCbor = useMemo(() => queryCurrentWalletRawUtxos.data, [queryCurrentWalletRawUtxos.data]);
-
-  const getRawUtxosMultiAddress = trpc.sync.getRawUtxosMultiAddress.useMutation();
-  const getBalanceFromRawUtxos = trpc.sync.getBalanceFromRawUtxos.useMutation();
 
   const STAKE_POOL_SUBJECT = process.env.STAKE_POOL_ASSET_POLICY! + process.env.STAKE_POOL_ASSET_NAME!;
 
@@ -153,14 +146,20 @@ const StakePositions: FC = () => {
     const execute = async () => {
       if (connected && sessionStatus === 'authenticated' && currentWallet) {
         try {
-           if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
+            if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
           
-           const browserWallet = await BrowserWallet.enable(currentWallet);
-           const changeAddress = await browserWallet.getChangeAddress();
-           setChangeAddress(changeAddress);
+            // Update Utxos
+            setWalletUtxosCbor([]);
+            if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
+            const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
+            const utxos = await api.getUtxos(undefined);
+            const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
+            setWalletUtxosCbor([...utxos!, ...(collateral ?? [])]);
 
-          setCurrentWalletAddress(changeAddress);
-           
+            // Update change address
+            const browserWallet = await BrowserWallet.enable(currentWallet);
+            const changeAddress = await browserWallet.getChangeAddress();
+            setChangeAddress(changeAddress);
         } catch (ex) {
           console.error("Error getting utxos", ex);
         }
@@ -186,12 +185,12 @@ const StakePositions: FC = () => {
           try {
             if (!(await isWalletConnected(userWallet.type, userWallet.changeAddress))) return [];
             if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
-            const usedAddressesRawUtxos = await getRawUtxosMultiAddress.mutateAsync([userWallet.changeAddress]);
-            const balance = await getBalanceFromRawUtxos.mutateAsync(usedAddressesRawUtxos);
-            const stakeKeys = balance.assets.map((asset) => asset.policyId + asset.name).filter((unit) => unit.includes(STAKING_KEY_POLICY!));
-            const processedStakeKeys = stakeKeys.map((key) => key.replace('000de140', ''));
+            const browserWallet = await BrowserWallet.enable(userWallet.type);
+            const balance = await browserWallet.getBalance();
+            const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
+            const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
             stakeKeys.forEach((key) => {
-              stakeKeyWallet[key.replace('000de140', '')] = userWallet.type;
+              stakeKeyWallet[key.unit.replace('000de140', '')] = userWallet.type;
             });
             return processedStakeKeys;
           } catch {
