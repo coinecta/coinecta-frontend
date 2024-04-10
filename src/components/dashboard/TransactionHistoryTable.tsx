@@ -191,7 +191,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
       try {
         const walletType = cardano.getAddressWalletType(address);
         const api = await window.cardano[walletNameToId(walletType!)!].enable();
-        const utxos = await api.getUtxos();
+        const utxos = await api.getUtxos(undefined);
         const collateralUtxos = await api.experimental.getCollateral();
         const cancelStakeTxCbor = await cancelStakeTxMutation.mutateAsync({
           stakeRequestOutputReference: {
