@@ -192,13 +192,13 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         const walletType = cardano.getAddressWalletType(address);
         const api = await window.cardano[walletNameToId(walletType!)!].enable();
         const utxos = await api.getUtxos(undefined);
-        const collateralUtxos = await api.experimental.getCollateral();
+        const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
         const cancelStakeTxCbor = await cancelStakeTxMutation.mutateAsync({
           stakeRequestOutputReference: {
             txHash,
             index: txIndex
           },
-          walletUtxoListCbor: [...utxos!, ...collateralUtxos!],
+          walletUtxoListCbor: [...utxos!, ...(collateral ?? [])],
         });
         const witnessSetCbor = await api.signTx(cancelStakeTxCbor, true);
         const signedTxCbor = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
