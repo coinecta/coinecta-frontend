@@ -19,19 +19,19 @@ import StakeDuration from '../staking/StakeDuration';
 const options = [
   {
     duration: 1,
-    interest: 0.01
+    interest: 0.005
   },
   {
     duration: 3,
-    interest: 0.05
+    interest: 0.025
   },
   {
     duration: 6,
-    interest: 0.15
+    interest: 0.075
   },
   {
     duration: 12,
-    interest: 0.40
+    interest: 0.20
   },
 ]
 
