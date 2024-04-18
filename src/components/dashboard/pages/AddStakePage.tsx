@@ -106,7 +106,7 @@ const AddStakePage: FC = () => {
   return (
     <>
       <Box sx={{ mb: 4 }}>
-        <DashboardHeader title="Add stake" />
+        <DashboardHeader title="Add Stake" />
         <Grid container spacing={2}>
           <Grid xs={12} md={7}>
             <DashboardCard center>
