@@ -73,3 +73,66 @@ a {
   align-items: stretch;
   height: 100%;
 }
+
+.olStart {
+  counter-reset: section; /* Establish a new counter named 'section' */
+  list-style-type: none; /* Remove default list style */
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.olStart > li {
+  counter-reset: subsection; /* Reset subsection counter at the start of a new li in the main list */
+  margin-bottom: 12px;
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+.olStart > li:before {
+  content: counter(section) ". "; /* Use the 'section' counter for numbering */
+  counter-increment: section; /* Increment the 'section' counter */
+}
+
+.olStart > li > ol,
+.olStart > li > ul {
+  list-style-type: none;
+  padding-left: 20px;
+  margin-top: 12px;
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+
+.olStart > li > ol > li, 
+.olStart > li > ul > li {
+  position: relative; /* Positioning relative to the li for before content */
+  counter-reset: subsubsection; /* Reset subsubsection counter at the start of a new li in the second-level list */
+  margin-bottom: 12px;
+  padding-left: 20px;
+}
+
+.olStart > li > ol > li:before {
+  content: counter(section) "." counter(subsection) " "; /* Combine 'section' and 'subsection' counters */
+  counter-increment: subsection; /* Increment the 'subsection' counter */
+  position: absolute;
+  margin-left: -40px;
+}
+
+.olStart ol ol, 
+.olStart ul ol {
+  list-style-type: lower-alpha; /* Use lower-alpha for second-level nested lists */
+  margin-top: 12px;
+}
+
+.olStart ol ol > li,
+.olStart ol ol ol > li,
+.olStart ul ol > li,
+.olStart ul ol ol > li {
+  margin-bottom: 8px;
+}
+
+.olStart ol ol ol,
+.olStart ul ol ol {
+  list-style-type: lower-roman; /* Use lower-roman for third-level nested lists */
+  padding-left: 20px;
+  margin-top: 12px;
+}

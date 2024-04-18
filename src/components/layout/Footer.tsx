@@ -193,7 +193,7 @@ const Footer: FC = () => {
                 },
               }}
             >
-              Terms of Service
+              Terms of Use
             </Link>{" "}
             ·{" "}
             <Link

@@ -148,7 +148,7 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
             txHash = await wallet.submitTx(signedTx);
             console.log("Transaction submitted successfully. Transaction Hash: ", txHash);
             addAlert('success', <>Transaction submitted successfully.
-              Hash: <Link target="_blank" sx={{ color: '#fff' }} href={`https://cardanoscan.io/transaction/${txHash}`}>{txHash}</Link>
+              Hash: <Link target="_blank" href={`https://cardanoscan.io/transaction/${txHash}`}>{txHash}</Link>
             </>);
             const integerValue = parseInt(paymentAmount, 10).toString();
             try {

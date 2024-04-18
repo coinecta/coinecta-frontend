@@ -1,5 +1,7 @@
 import React from 'react';
-import { Typography, Box, List, ListItem, Container } from '@mui/material';
+import { Typography, Box, Container } from '@mui/material';
+import { NextPage } from 'next';
+import Link from '@components/Link';
 
 const listStyle = {
   pl: "40px",
@@ -7,297 +9,308 @@ const listStyle = {
   listStyleType: "disc",
   "& li": {
     display: "list-item",
+    mb: 0,
     pl: 0,
   },
 }
 
-const CoinectaTermsOfService = () => {
+const TermsOfUse: NextPage = () => {
   return (
     <Container maxWidth="md" sx={{ py: 12 }}>
       <Box>
         <Typography variant="h3" component="h1" gutterBottom>
-          Coinecta Terms of Service
+          Coinecta Terms of Use
         </Typography>
 
         <Typography variant="body2">
-          Last modified: November 27, 2023
+          Last modified: April 17, 2024
         </Typography>
 
-        <Typography variant="h4" component="h2" gutterBottom>
-          1. Introduction
-        </Typography>
-
-        <Typography variant="body2">
-          1.1 These Terms of Service (hereinafter referred to as &quot;Terms&quot;) govern the use and conditions of the website located
-          at{' '}
-          <Typography component="a" href="https://coinecta.finance" target="_blank" rel="noopener">
-            https://coinecta.finance
-          </Typography>{' '}
-          (hereinafter referred to as the &quot;Website&quot;) and the services provided by Benevolent SA de CV (hereinafter referred
-          to as the &quot;Company&quot; or &quot;We&quot; or &quot;Us&quot;), a corporation registered in El Salvador. These Terms constitute a binding and
-          enforceable legal contract between the Company and its affiliates and subsidiaries worldwide, and you, an end user
-          of the Services (hereinafter referred to as &quot;You&quot; or &quot;User&quot;) in relation to the Services. By accessing,
-          registering, using, or clicking on the Services and information made available by the Company via the Website, you
-          hereby accept and agree to all the Terms set forth herein. If you do not agree to these Terms, you may not access
-          or use the Website and the Services.
-        </Typography>
-
-        <Typography variant="h4" component="h2" gutterBottom>
-          2. Definitions
-        </Typography>
-
-        <List sx={listStyle}>
-          <ListItem>
-            <Typography>
-              &quot;Affiliate&quot; means, in relation to a person, any company or other entity, whether or not with legal personality,
-              which directly or indirectly controls, is controlled by, or is under joint control with that person.
-            </Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>
-              &quot;Applicable Laws&quot; refers to acts, statutes, regulations, ordinances, treaties, guidelines, and policies issued by
-              governmental organizations or regulatory bodies relevant to a certain party.
-            </Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>&quot;Company&quot; refers to Benevolent SA de CV.</Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>&quot;Platform&quot; refers to Coinecta Finance, the online platform operated by the Company.</Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>&quot;Project&quot; refers to Projects launched on the Platform.</Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>
-              &quot;Services&quot; refers to the features, functionalities, and offerings provided by the Company through the Website.
-              These may include but are not limited to access to the online platform, the exchange or trading of
-              cryptocurrencies or tokens, participation in token sales or staking activities, access to information, and any
-              other services made available by the Company through the Website.
-            </Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>
-              &quot;Tokens&quot; refers to Coinecta Tokens (CNCT) and other Project Tokens available on the Platform.
-            </Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>
-              &quot;User(s)&quot; refers to individuals or entities accessing and using the Company Services.
-            </Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>&quot;Website&quot; refers to the website associated with the Platform.</Typography>
-          </ListItem>
-        </List>
-
-        <Typography variant="h4" component="h2" gutterBottom>
-          3. General Provisions
+        <Typography variant="h5" component="h1" gutterBottom>
+          Disclaimer
         </Typography>
 
         <Typography variant="body2">
-          3.1 Contractual Relationship: These Terms constitute a valid and binding agreement between You and the Company. The
-          binding obligations stipulated in these Terms are enforceable. To access or use the Platform, you must be able to form
-          a legally binding contract with us. Accordingly, you represent that you are at least the age of majority in your jurisdiction
-          (e.g., 18 years old) and have the full right, power, and authority to enter into and comply with the terms and conditions of
-          this Agreement on behalf of yourself and any company or legal entity for which you may access or use the Interface.
+          Crypto-tokens are a high-risk asset class where you can face the risk of total loss of the value of purchase, as well as loss of crypto-tokens or other assets you hold if your information to access crypto-tokens or other assets is compromised.
         </Typography>
 
         <Typography variant="body2">
-          3.2 Revision and Amendments: The Company reserves the right to revise, amend, or update any clauses and provisions
-          stipulated in these Terms in its sole discretion at any time. You are advised to check these Terms periodically to
-          ensure that you are cognizant of the current versions and comply with them.
+          Scams involving crypto-tokens and digital wallets, and harmful imitations of blockchain-based platforms are common. Please take upmost care to interact only with the official Coinecta Platform, including Interface and Coinecta Application. Official links to each are contained in these Terms.
         </Typography>
 
         <Typography variant="body2">
-          3.3 Privacy Policy: The Company collects, uses, stores, and protects user data in accordance with applicable data
-          protection laws. By using the platform, you acknowledge and agree to the Company&apos;s Privacy Policy, which outlines
-          the types of data collected, how it is used, and your rights regarding your personal information.
+          Coinecta does not endorse, verify, or validate any Project Team or the terms, features, obligations, or other aspects of their Project Tokens.
         </Typography>
 
-        <Typography variant="body2">
-          3.4 Links to and from the Website: You may gain access from the Website to third-party services operated or made
-          available by persons other than us (&quot;Third-Party Services&quot;). Such hyperlinks are provided for your convenience,
-          and the Company has no control over the content of these sites or resources. The Company accepts no responsibility
-          for them or for any loss or damage that may arise from your use of them.
-        </Typography>
+        <ol className="olStart">
+          <li>Introduction
+            <ol>
+              <li>These Terms of Use (Terms) govern your access to and use of the Coinecta Platform.</li>
+              <li>Please read these Terms carefully since your access to and use of the Coinecta Platform implies you have understood and have the legal capacity to agree to these Terms.</li>
+              <li>You are responsible for seeking your own independent and professional advice regarding your eligibility to access or use the Coinecta Platform.</li>
+              <li>We will not invite, target, or solicit any person to access and use the Coinecta Platform, but will assume you are eligible to access and use the Coinecta Platform if you proceed to engage with the Interface and Activities. If you reside outside of El Salvador, we may be limited in the way that we can respond to any queries you raise with us.</li>
+              <li>You must, regardless of the capacity in which you are accessing or using the Coinecta Platform, and interacting with Activities:
+                <ol>
+                  <li>not access or use if such access or use is prohibited by Applicable Laws;</li>
+                  <li>not access or use if you disagree to these Terms because we will assume you have agreed to the Terms by your access and use of the Coinecta Platform and that you have the legal capacity to be bound by these Terms;</li>
+                  <li>opt out of the arbitration and class action/jury trial waiver (at clause 4) if you do not agree to use arbitration on an individual basis to resolve disputes; and</li>
+                  <li>be at least the age of majority in your jurisdiction (e.g., 18 years old).</li>
+                </ol>
+              </li>
+              <li>Be warned that your access and use of the Coinecta Platform will give rise to you creating a legal relationship us, our Affiliates, and subsidiaries worldwide, as well as separately with third parties. You are responsible for reading and determining your eligibility to enter other legal relationships in accordance with the terms provided by those third parties. </li>
+              <li>Except for CNCT Tokens, Coinecta does not issue Project Tokens and does not take responsibility for the creation, listing, or management of Project Tokens. </li>
+              <li>These Terms do not govern your interaction with, or reliance upon, any third-party software nor the reliability, safety, or continuity of the Cardano blockchain and its network including transactions and balances recorded on the Cardano blockchain ledger. </li>
+              <li>
+                By using the Coinecta Platform, you understand that:
+                <ol>
+                  <li>you are not:
+                    <ol>
+                      <li>
+                        buying or selling Project Tokens from or to Coinecta (also referred to as &quot;we&quot; or &quot;us&quot;),
+                      </li>
+                      <li>
+                        staking or dealing in your Project Tokens with us, or
+                      </li>
+                      <li>
+                        paying ADA Tokens to us,
+                      </li>
+                    </ol>
+                  </li>
+                  <p>and in respect of each of the above items you may or will create a legal relationship with one or more third parties, but</p>
+                  <li>in respect of your legal relationship with us, you may be one or both of:
+                    <ol>
+                      <li>
+                        a licensee of our proprietary software and Interface Content, and
+                      </li>
+                      <li>
+                        a customer of ours in respect of your purchase of our CNCT Tokens.
+                      </li>
+                    </ol>
+                  </li>
+                </ol>
+              </li>
+              <li>
+                If our Activities expand, we may need to provide additional terms to cover the expanded services or activities offering (Additional Terms). Any Additional Terms which are available with the relevant services or activities become part of your agreement with us if you use those services or engage with those activities.
+              </li>
+              <li>
+                These Terms and our Privacy Policy (available <Link href="/privacy">here</Link>) and any Additional Terms comprise the entire agreement between Coinecta and you in relation to your use of the Coinecta Platform, including the Interface and Coinecta Application, and create a binding legal arrangement between you and Coinecta.
+              </li>
+              <li>
+                If you do not understand or agree to these Terms, or if you do not agree with any updates or changes, then you must immediately stop accessing or using the Coinecta Platform.
+              </li>
+              <li>
+                Coinecta reserves the right to review and change any of the Terms by updating them at its sole discretion at any time. Any changes to the Terms take immediate effect from the date of their publication. When Coinecta updates the Terms, it will update the last modified date at the top of these Terms and use reasonable endeavours to provide you with notice of updates to the Terms.
+              </li>
+              <li>
+                We recommend you keep a copy of the Terms, and any updates to the Terms, for your records.
+              </li>
+              <Typography variant="h6" sx={{ mb: 2 }}>About Us</Typography>
+              <li>
+                The Coinecta Platform is owned and administered by Benevolent S.A. de C.V., a corporation registered in El Salvador, operating as Coinecta (Coinecta, we, us or our).
+              </li>
+              <li>
+                Coinecta does not hold any licences in any jurisdictions that cover securities transactions, financial services providers, financial market operators, crypto-asset or virtual-asset services providers, or other regulated activities. You do not have the protections afforded under such laws and regulations when you access and use the Coinecta Platform.
+              </li>
+              <li>
+                To the maximum extent permitted by Applicable Laws, Coinecta does not accept any responsibility or liability for your access or use of the Coinecta Platform, or you&apos;re your purchase and dealings with Project Tokens launched via the Coinecta Platform.
+              </li>
+            </ol>
+          </li>
+          <li>Definitions
+            <ul>
+              <li>
+                &quot;Activities&quot; means:
+                <ol>
+                  <li>
+                    accessing the Interface to view Interface Content in accordance with the Interface Content Licence;
+                  </li>
+                  <li>
+                    using the Coinecta Application by:
+                    <ol>
+                      <li>
+                        connecting a third-party software wallet compatible to send instructions, and sign transactions, on the Cardano blockchain;
+                      </li>
+                      <li>
+                        entering instructions via the Interface to sell a balance of ADA Tokens for a balance of a Project&apos;s Tokens, or vice versa;
+                      </li>
+                      <li>
+                        entering instructions via the Interface to contribute a balance of ADA crypto-tokens in return for a balance of a Project&apos;s Tokens;
+                      </li>
+                      <li>
+                        entering instructions via the Interface to stake crypto-tokens; and
+                      </li>
+                      <li>
+                        other activities added by Coinecta, from time to time.
+                      </li>
+                    </ol>
+                  </li>
+                </ol>
+              </li>
+              <li>
+                &quot;Affiliate&quot; means, in relation to a person, any company or other entity, which directly or indirectly controls, is controlled by, or is under joint control with, that person.
+              </li>
+              <li>
+                &quot;Applicable Laws&quot; means acts, statutes, regulations, ordinances, treaties, guidelines, and policies issued by governmental organizations or regulatory bodies relevant to a certain party.
+              </li>
+              <li>
+                &quot;Coinecta&quot; means Benevolent S.A. de C.V., a company registered in El Salvador.
+              </li>
+              <li>
+                &quot;Coinecta Application&quot; means the proprietary Cardano-based protocol designed and deployed by us to the Cardano blockchain which allows a Project Team to launch a Project Token for sale and staking, which can be displayed on the Interface but may also be displayed on third party user interfaces operated independently of Coinecta.
+              </li>
+              <li>
+                &quot;Coinecta Platform&quot; refers to the Coinecta Interface and Coinecta Application.
+              </li>
+              <li>
+                &quot;Coinecta Tokens&quot; or &quot;CNCT Tokens&quot; means the official supply of crypto-tokens referred to by ticker &quot;CNCT&quot; deployed on the Cardano blockchain with policy ID: c27600f3aff3d94043464a33786429b78e6ab9df5e1d23b774acb34c, visible at <Link href="https://cardanoscan.io/tokenPolicy/c27600f3aff3d94043464a33786429b78e6ab9df5e1d23b774acb34c">https://cardanoscan.io/tokenPolicy/c27600f3aff3d94043464a33786429b78e6ab9df5e1d23b774acb34c</Link>.
+              </li>
+              <li>
+                &quot;Interface&quot; refers to the user interface located at https://coinecta.fi, which provides Users with the ability to communicate with the Coinecta Application to enjoy the Activities.
+              </li>
+              <li>
+                &quot;Interface Content&quot; means all information displayed on the Interface which is owned or licensed from third parties by Coinecta.
+              </li>
+              <li>
+                &quot;Interface Content Licence&quot; means the non-exclusive, royalty-free licence granted by Coinecta to you to view the Interface Content for personal and non-commercial use.
+              </li>
+              <li>
+                &quot;Project&quot; means a Cardano-based blockchain project undertaken by a third party.
+              </li>
+              <li>
+                &quot;Project Team&quot; means one or more persons with the authority and ability under Applicable Laws to work on a Project, display the Project on the Interface, and have Users engage in Activities with respect to the Project and Project Tokens via the Interface.
+              </li>
+              <li>
+                &quot;Project Tokens&quot; means the official supply of a Project&apos;s crypto-tokens referred to by the ticker nominated by the Project Team.
+              </li>
+              <li>
+                &quot;Services&quot; means discretionary commercial and advisory services that may be provided by us to a Project to assist with the Project&apos;s development and marketing subject to a separate agreement between us and the Project.
+              </li>
+              <li>
+                &quot;User(s)&quot; means individuals or persons, each with the capacity to understand and agree to these Terms, that access or use the Coinecta Platform, including the Activities via the Interface.
+              </li>
+            </ul>
+          </li>
+          <li>Risk Disclosure
+            <ol>
+              <li>By accessing the Coinecta Platform, you acknowledge and assume the following risks noting that the risks listed below are neither a complete nor exhaustive representation of the risks you face by your access and use of the Coinecta Platform:
+                <ol>
+                  <li>
+                    Risk of Loss in Value: Tokens and digital currencies lack backing by central banks or hard assets, and their value is influenced by various factors, including market conditions and regulatory measures. This volatility may lead to partial or total loss of the crypto-token&apos;s value. No guarantees are provided regarding liquidity or market price.
+                  </li>
+                  <li>
+                    Regulatory Change: The regulatory framework for crypto-tokens and crypto-token activities is subject to revision and may materially affect the value of crypto-tokens or a User&apos;s access to wallets and blockchains to deal with balances of crypto-tokens.
+                  </li>
+                  <li>
+                    Technical and System Failures: The Coinecta Platform and associated blockchain infrastructure may experience system failures, interruptions, defects, security breaches, or other causes beyond our control. Hacks, cyber-attacks, and other incidents may occur without timely detection, potentially impacting the security and stability of the Coinecta Platform including Coinecta Application.
+                  </li>
+                </ol>
+              </li>
+            </ol>
+          </li>
+          <li>Arbitration
+            <ol>
+              <li>
+                Any dispute, controversy, or claim arising out of or in relation to these Terms, including the validity, invalidity, breach, or termination thereof, shall be settled by arbitration in accordance with the applicable laws in El Salvador. There shall be one arbitrator; the appointing authority may be based on mutual agreement, be chosen by the parties or in the absence of such agreement, the court may designate an appointing authority. The seat of the arbitration shall be El Salvador and the language of the arbitration shall be English. The applicable law shall be the law of El Salvador or another choice of law determined in Coinecta&apos;s sole discretion.
+              </li>
+              <li>
 
-        <Typography variant="body2">
-          3.5 Disclaimer for Accessibility of the Website and the Services: The Website and the Services are provided on an
-          &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis. The Company makes no warranty or representation regarding the accuracy,
-          completeness, or timeliness of the information provided on the platform. You accept that any reliance on such
-          information is at your own risk.
-        </Typography>
+                With respect to all persons and entities, regardless of whether they have obtained or used the site for personal, commercial, or other purposes, all disputes, controversies or claims must be brought in the parties&apos; individual capacity, and not as a plaintiff or class member in any purported class action, collective action or other representative proceeding. This waiver applies to class arbitration, and, unless we agree otherwise, the arbitrator may not consolidate more than one person&apos;s claims. You agree that, by entering into this agreement, you and Coinecta are each waiving the right to a trial by jury or to participate in a class action, collective action, or other representative proceeding of any kind.
 
-        <Typography variant="body2">
-          3.7 Governing Law and Jurisdiction: These Terms and your use of the Website and the Services shall be governed by and
-          construed in accordance with the laws of El Salvador. Any dispute arising out of or in connection with these Terms shall
-          be subject to the exclusive jurisdiction of the courts of El Salvador.
-        </Typography>
+              </li>
+            </ol>
+          </li>
+          <li>General Provisions
+            <ol>
+              <li>
 
-        <Typography variant="body2">
-          3.8 Eligibility: As a user of the Interface, you declare and guarantee that you are not presently subjected to any economic or
-          trade sanctions enforced by any governmental authority or organization, nor are you listed as a prohibited or restricted
-          party, including listings maintained by the United Nations. Furthermore, you affirm and guarantee that you are not a citizen,
-          resident, or organized in a jurisdiction or territory that is currently under comprehensive country-wide, territory-wide,
-          or regional economic sanctions imposed by the United Nations. You further represent and warrant that your access and use of the Interface will comply with all applicable laws and
-          regulations, and that you will not use the Interface to conduct, promote, or facilitate any illegal activity. This
-          includes but not limited to money laundering, terrorist financing, fraud, or any other illegal activities.
-        </Typography>
+                Links to and from the Website: You may gain access from the Coinecta Platform to third-party services operated or made available by persons other than us (&quot;Third-Party Services&quot;). Such hyperlinks are provided for your convenience, and Coinecta has no control over the content of these sites or resources. Coinecta accepts no responsibility for them or for any loss or damage that may arise from your use of them.
+              </li>
+              <li>
 
-        <Typography variant="h4" component="h2" gutterBottom>
-          4. Risk Disclosure
-        </Typography>
+                Disclaimer for Accessibility of the Website and the Services: The Coinecta Platform and any Activities possible via the Interface and Coinecta Application are provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis. Coinecta makes no warranty or representation regarding the accuracy, completeness, safety, or timeliness of the information provided on and via the Coinecta Platform. You accept that any reliance on such information is at your own risk.
+              </li>
+              <li>
+                Governing Law and Jurisdiction: These Terms and your access and use of the Coinecta Platform and any Activities possible via the Interface shall be governed by and construed in accordance with the laws of El Salvador. Any dispute arising out of or in connection with these Terms shall be subject to the exclusive jurisdiction of the courts of El Salvador.
 
-        <Typography variant="body2" sx={{ mb: 1 }}>
-          4.1 By accessing the Website or using the Company Services, you acknowledge and assume the following risks:
-        </Typography>
+              </li>
+              <li>
+                Eligibility: As a User, you confirm that you are not presently subjected to any economic or trade sanctions enforced by any governmental authority or organization, nor are you listed as a prohibited or restricted party, including listings maintained by the United Nations. Furthermore, you confirm that you are not a citizen, resident, or organized in a jurisdiction or territory that is currently under comprehensive country-wide, territory-wide, or regional economic sanctions imposed by the United Nations. You further represent and warrant that your access and use of the Coinecta Platform will comply with all Applicable Laws, and that you will not use the Coinecta Platform to conduct, promote, or facilitate any illegal activity. This includes but not limited to money laundering, terrorist financing, fraud, or any other illegal activities.
+              </li>
+              <li>
+                User Obligations: By using the Coinecta Platform, you agree to comply with all Applicable Laws and that you are responsible for performing your own research and due diligence before participating in any Activities via the Coinecta Platform. Engaging in any such Activities is at your own risk. You shall not engage in any activity that is illegal, unethical, or violates these Terms. Prohibited activities include but are not limited to:
 
-        <List sx={listStyle}>
-          <ListItem>
-            <Typography>
-              Risk of Loss in Value: Tokens and digital currencies lack backing by central banks or hard assets, and their
-              value is influenced by various factors, including market conditions and regulatory measures. This volatility may
-              lead to partial or total loss of the Tokens&apos; value. No guarantees are provided regarding liquidity or market
-              price.
-            </Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>
-              Regulatory Regime: The regulatory framework for tokens and digital currencies is subject to revision and may
-              materially affect Token value or User access to wallets and blockchains.
-            </Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>
-              Technical and System Failures: The Website and associated blockchain infrastructure may experience system
-              failures, interruptions, defects, security breaches, or other causes beyond the Company&apos;s control. Hacks,
-              cyber-attacks, and other incidents may occur without timely detection, potentially impacting the security and
-              stability of the Company&apos;s network and services.
-            </Typography>
-          </ListItem>
-        </List>
+              </li>
+              <ol>
+                <li>
+                  Engaging in any form of market manipulation or fraudulent activities.
+                </li>
+                <li>
+                  Attempting to gain unauthorized access to the Coinecta Platform or other Users&apos; accounts.
+                </li>
+                <li>
+                  Introducing malware, viruses, or any other harmful code that may disrupt or compromise the platform&apos;s security.
+                </li>
+                <li>
+                  Engaging in any illegal activities or violating applicable laws and regulations.
 
-        <Typography variant="h4" component="h2" gutterBottom>
-          5. Terms of Use
-        </Typography>
+                </li>
+              </ol>
+              <li>
+                Sign in: To access and use the Coinecta Application, you are required to sign in with your preferred web3 credentials. You are responsible for maintaining the confidentiality of your credentials and for all Activities that occur with your credentials and crypto-token balances referable to your credentials.
+              </li>
+              <li>
 
-        <Typography variant="body2" sx={{ mb: 1 }}>
-          5.1 User Obligations: By using the Website and the Services, you agree to comply with all applicable laws and
-          regulations. You shall not engage in any activity that is illegal, unethical, or violates these Terms. Prohibited
-          activities include but are not limited to:
-        </Typography>
+                Interface Content Licence: We grant you a limited, non-exclusive, non-transferable license to access and use the intellectual property owned or licensed by us solely for the purpose of your access and use of the Coinecta Platform. You shall not reproduce, modify, distribute, or exploit our intellectual property without our prior written consent.
 
-        <List sx={listStyle}>
-          <ListItem>
-            <Typography>
-              Engaging in any form of market manipulation or fraudulent activities.
-            </Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>
-              Attempting to gain unauthorized access to the platform or other users&apos; accounts.
-            </Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>
-              Introducing malware, viruses, or any other harmful code that may disrupt or compromise the platform&apos;s security.
-            </Typography>
-          </ListItem>
-          <ListItem>
-            <Typography>
-              Engaging in any illegal activities or violating applicable laws and regulations.
-            </Typography>
-          </ListItem>
-        </List>
+              </li>
+              <li>
+                Limitation of Liability: Notwithstanding any provisions within these Terms, in no event will we, our partners, Affiliates, employees, agents, officers, or directors be liable to you for any incidental, special, exemplary, punitive, indirect, or consequential damages of any kind, arising out of or in connection with your access and use of the Coinecta Platform, or any third party software or services necessary or associated with your access and use of the Coinecta Platform.
+              </li>
+              <li>
+                Indemnification: You agree to indemnify and hold harmless Coinecta, its Affiliates, licensors, shareholders, officers, directors, managers, employees, and agents from any losses, claims, actions, damages, demands, liabilities, costs, and expenses arising out of or related to your access or use of the Coinecta Platform, or any third party software or services necessary or associated with your access and use of the Coinecta Platform.
+              </li>
+              <li>
+                No Financial and Legal Advice: Coinecta is not your broker, intermediary, agent, or legal advisor. No communication or information provided by us shall be considered as investment advice, financial advice, or legal advice. You should consult independent professionals before executing any transactions or investments.
+              </li>
+              <li>
+                Dispute Resolution: Any dispute arising out of or in connection with these Terms shall be subject to the exclusive jurisdiction of the courts of El Salvador.
+              </li>
+              <li>
+                Severability: If any provision of these Terms is found to be invalid, illegal, or unenforceable, the remaining provisions shall continue to be valid and enforceable to the fullest extent permitted by Applicable Laws.
+              </li>
+              <li>
+                Suspension or Termination of Services: The Company reserves the right to suspend or terminate your access to the services without prior notice if you engage in any prohibited activities, violate the terms of service, or if your continued use poses a risk to the platform or other users.
+              </li>
+              <li>
+                Modification of Coinecta Platform: Coinecta reserves the right to modify, update, or discontinue certain features or functionalities of the Interface and Coinecta Application at any time without prior notice. Coinecta shall not be liable to you or any third party for any modification, suspension, or discontinuation of the Interface and / or Coinecta Application.
+              </li>
+              <li>
+                Project Team Responsibility: Teams utilizing the Coinecta Platform to launch their Project Tokens are solely responsible for ensuring:
+              </li>
+              <ol>
+                <li>
+                  the Project Token is a utility token and not characterised as security or other financial product; and
+                </li>
+                <li>
+                  that all Applicable Laws are being complied with in respect of all information displayed or linked via the Coinecta Platform as well as in respect of all Activities possible via the Coinecta Application,
+                  by seeking independent and professional legal advice prior to the display of the Project Token on the Coinecta Platform.
+                </li>
+              </ol>
+              <li>
+                Force majeure: Coinecta shall not be liable for any failure or delay in the performance of its obligations under these terms resulting from events beyond its reasonable control, including but not limited to natural disasters, acts of government, or technical malfunctions.
+              </li>
+              <li>
+                Entire agreement: These terms constitute the entire agreement between you and the Company regarding your use of the platform and supersede any prior agreements or understandings.
+              </li>
+            </ol>
+          </li>
+        </ol>
 
-        <Typography variant="body2">
-          5.2 Account Registration: In order to access certain features or Services on the Website, you may be required to
-          create an account and provide accurate and complete information. You are responsible for maintaining the
-          confidentiality of your account credentials and for all activities that occur under your account.
-        </Typography>
 
-        <Typography variant="body2">
-          5.3 Intellectual Property: The Company grants you a limited, non-exclusive, non-transferable license to access and
-          use the intellectual property owned or licensed by the Company solely for the purpose of using the platform and its
-          services. You shall not reproduce, modify, distribute, or exploit the Company&apos;s intellectual property without
-          prior written consent.
-        </Typography>
 
-        <Typography variant="body2">
-          5.4 Limitation of Liability: Notwithstanding any provisions within these Terms, in no event will the Company, its
-          partners, affiliates, employees, agents, officers, or directors be liable to you for any incidental, special,
-          exemplary, punitive, indirect, or consequential damages of any kind, arising out of or in connection with your use
-          of the Website, the Services, or any other items obtained through the Website.
-        </Typography>
-
-        <Typography variant="body2">
-          5.5 Indemnification: You agree to indemnify and hold harmless the Company, its affiliates, licensors, shareholders,
-          officers, directors, managers, employees, and agents from any losses, claims, actions, damages, demands,
-          liabilities, costs, and expenses arising out of or related to your use or participation in the Services.
-        </Typography>
-
-        <Typography variant="body2">
-          5.6 No Financial and Legal Advice: The Company is not your broker, intermediary, agent, or legal advisor. No
-          communication or information provided by the Company shall be considered as investment advice, financial advice, or
-          legal advice. You should consult independent professionals before executing any transactions or investments.
-        </Typography>
-
-        <Typography variant="body2">
-          5.7 Dispute Resolution: Any dispute arising out of or in connection with these Terms shall be subject to the
-          exclusive jurisdiction of the courts of El Salvador.
-        </Typography>
-
-        <Typography variant="body2">
-          5.8 Severability: If any provision of these Terms is found to be invalid, illegal, or unenforceable, the remaining
-          provisions shall continue to be valid and enforceable to the fullest extent permitted by law.
-        </Typography>
-
-        <Typography variant="body2">
-          5.9 Suspension or Termination of Services: The Company reserves the right to suspend or terminate your access to the
-          services without prior notice if you engage in any prohibited activities, violate the terms of service, or if your
-          continued use poses a risk to the platform or other users.
-        </Typography>
-
-        <Typography variant="body2">
-          5.10 Modification of Services: The Company reserves the right to modify, update, or discontinue certain features or
-          functionalities of the platform at any time without prior notice. The Company shall not be liable to you or any
-          third party for any modification, suspension, or discontinuation of the services.
-        </Typography>
-
-        <Typography variant="body2">
-          5.11.1 Platform Role: The Platform serves as an intermediary facilitating token sales between third-party companies (&quot;Issuers&quot;) and Users. The Company does not issue tokens directly and does not take responsibility for the creation, listing, or management of tokens. If the Company takes part in those activities, it is solely on the behalf of token Issuers and/or Projects launching through the Platform.
-        </Typography>
-
-        <Typography variant="body2">
-          5.11.2 Issuer Responsibility: Issuers utilizing the platform to launch their tokens are solely responsible for the tokens they issue, including their legality, functionality, and associated claims. The Company does not endorse, verify, or validate any Issuer or their token offerings.
-        </Typography>
-
-        <Typography variant="body2">
-          5.11.3 User Responsibility: Users are responsible for performing their own research and due diligence before participating in any token sale facilitated by the Platform. Engaging in any such sales is at the User&apos;s own risk.
-        </Typography>
-
-        <Typography variant="h4" component="h2" gutterBottom>
-          6. Force Majeure
-        </Typography>
-
-        <Typography variant="body2">
-          6.1 The Company shall not be liable for any failure or delay in the performance of its obligations under these terms
-          resulting from events beyond its reasonable control, including but not limited to natural disasters, acts of
-          government, or technical malfunctions.
-        </Typography>
-
-        <Typography variant="h4" component="h2" gutterBottom>
-          7. Entire Agreement
-        </Typography>
-
-        <Typography variant="body2">
-          7.1 These terms constitute the entire agreement between you and the Company regarding your use of the platform and
-          supersede any prior agreements or understandings.
-        </Typography>
       </Box>
     </Container>
   );
 };
 
-export default CoinectaTermsOfService;
+export default TermsOfUse;

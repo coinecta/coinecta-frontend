@@ -1,6 +1,7 @@
 import { ZContributionRound } from '@lib/types/zod-schemas/contributionSchema';
 import { prisma } from '@server/prisma';
 import { TRPCError } from '@trpc/server';
+import axios from 'axios';
 import { z } from 'zod';
 import { adminProcedure, createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -214,4 +215,72 @@ export const contributionRouter = createTRPCRouter({
 
   //   return usersExceedingThreshold;
   // }),
+
+  contributedPoolWeight: publicProcedure
+    .input(z.object({
+      contributionId: z.number()
+    }))
+    .query(async ({ input }) => {
+      try {
+        const { contributionId } = input;
+
+        // Step 1: Fetch Contributions
+        const contributions = await prisma.transaction.findMany({
+          where: { contribution_id: contributionId },
+          include: {
+            user: {
+              include: {
+                wallets: true
+              }
+            }
+          }
+        });
+
+        // Step 2: Fetch Pool Weights Data
+        const response = await axios.post('https://api.coinecta.fi/stake/snapshot', [], {
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+          }
+        });
+        const rawResponse: IPoolWeightAPI = response.data
+        const stakeData: IPoolWeightDataItem[] = rawResponse.data;
+
+        // Prepare a Set to track unique addresses to avoid double-counting
+        const uniqueAddresses = new Set();
+
+        // Step 3: Match Contributions with Staking Data
+        let totalPoolWeight = 0;
+        contributions.forEach(contribution => {
+          // Check and add contribution address if not already added
+          if (!uniqueAddresses.has(contribution.address)) {
+            const matchedStake = stakeData.find((stake) => stake.address === contribution.address);
+            if (matchedStake) {
+              totalPoolWeight += matchedStake.cummulativeWeight;
+              uniqueAddresses.add(contribution.address);
+            }
+          }
+          // Check and add wallet reward addresses if not already added
+          contribution.user.wallets.forEach(wallet => {
+            if (!uniqueAddresses.has(wallet.rewardAddress)) {
+              const matchedStake = stakeData.find(stake => stake.address === wallet.rewardAddress);
+              if (matchedStake) {
+                totalPoolWeight += matchedStake.cummulativeWeight;
+                uniqueAddresses.add(wallet.rewardAddress);
+              }
+            }
+          });
+        });
+
+        return {
+          totalPoolWeight,
+          apiResponse: rawResponse
+        };
+      } catch (error) {
+        console.error(`Error fetching pool weights`, error);
+        throw new TRPCError({
+          message: `An unexpected error occurred while fetching pool weights`,
+          code: 'INTERNAL_SERVER_ERROR',
+        });
+      }
+    })
 })

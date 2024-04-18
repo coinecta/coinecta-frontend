@@ -31,3 +31,10 @@ export const parseTokenFromString = (formattedAmount: string, decimals: number):
 export const formatNumber = (num: number, key: string): string => `${num.toLocaleString(undefined, {
   maximumFractionDigits: 2
 })}${key !== '' && key != null ? ` ${key}` : ''}`;
+
+export const formatNumberDecimals = (num: number, decimals?: number): string => {
+
+  return `${Math.floor(num / Math.pow(10, decimals ?? 0)).toLocaleString(undefined, {
+    maximumFractionDigits: 2
+  })}`
+}

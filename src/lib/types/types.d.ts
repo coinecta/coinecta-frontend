@@ -78,3 +78,17 @@ interface IRedeemListItem {
   amount: string;
   currency: string;
 }
+
+interface IPoolWeightDataItem {
+  address: string;
+  uniqueNfts: number;
+  totalStake: string;
+  cummulativeWeight: number;
+}
+
+interface IPoolWeightAPI {
+  data: IPoolWeightDataItem[];
+  totalStakers: number;
+  totalStake: string;
+  totalCummulativeWeight: string;
+}

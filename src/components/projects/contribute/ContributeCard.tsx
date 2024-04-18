@@ -71,7 +71,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
           }
           sx={{ mb: 2 }}
           label={<Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.secondary }}>
-            I agree to the&nbsp;<Link href="/terms" target="_blank">Terms &amp; Conditions</Link> and <Link href="/privacy" target="_blank">Privacy Policy</Link>.
+            I agree to the&nbsp;<Link href="/terms" target="_blank">Terms of Use</Link> and <Link href="/privacy" target="_blank">Privacy Policy</Link>.
           </Typography>}
         />
       </Box>

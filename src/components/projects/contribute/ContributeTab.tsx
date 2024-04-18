@@ -1,12 +1,11 @@
-import React, { FC, useState } from 'react';
-import { Collapse, Box, Typography, useTheme } from '@mui/material';
+import React, { FC, useEffect, useState } from 'react';
+import { Box, Paper, Typography, useTheme } from '@mui/material';
 import { trpc } from '@lib/utils/trpc';
-import { useWalletContext } from '@contexts/WalletContext';
-import { calculatePageRange } from '@server/utils/userRewardsFiso';
 import { ContainedTab, ContainedTabs } from '@components/styled-components/ContainedTabs';
-import TimeRemaining from '@components/TimeRemaining';
-import { LinearProgressStyled } from '@components/styled-components/LinearProgress';
 import ProRataForm from './ProRataForm';
+import axios from 'axios';
+import { getShorterAddress } from '@lib/utils/general';
+import { formatNumber } from '@lib/utils/assets'
 
 type ContributeTabProps = {
   projectName: string;
@@ -44,7 +43,8 @@ const ContributeTab: FC<ContributeTabProps> = ({ projectName, projectIcon, proje
               tabValue === i &&
               <ProRataForm key={`form-${i}`} {...round} projectName={projectName} projectIcon={projectIcon} />
             ))}
-          </Box></>
+          </Box>
+        </>
         : <Typography>
           No contribution rounds available at this time. Check back soon.
         </Typography>}
