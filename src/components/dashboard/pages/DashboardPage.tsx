@@ -19,7 +19,6 @@ import { useRouter } from 'next/router';
 import { FC, useEffect, useMemo, useState } from 'react';
 import DashboardCard from '../DashboardCard';
 import DashboardHeader from '../DashboardHeader';
-import { StakeData, StakeSnapshot } from '@server/services/syncApi';
 
 const Dashboard: FC = () => {
   const router = useRouter();
@@ -34,13 +33,9 @@ const Dashboard: FC = () => {
   const userWallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
   const theme = useTheme();
 
-  const utils = trpc.useUtils();
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
 
   const STAKE_POOL_SUBJECT = process.env.STAKE_POOL_ASSET_POLICY! + process.env.STAKE_POOL_ASSET_NAME!;
-
-  const getRawUtxosMultiAddress = trpc.sync.getRawUtxosMultiAddress.useMutation();
-  const getBalanceFromRawUtxos = trpc.sync.getBalanceFromRawUtxos.useMutation();
 
   const queryStakeSnapshot = trpc.sync.getStakeSnapshot.useQuery(selectedAddresses, { retry: 0, refetchInterval: 5000 });
   const snapshot = useMemo(() => queryStakeSnapshot.data, [queryStakeSnapshot.data]);
@@ -52,7 +47,7 @@ const Dashboard: FC = () => {
   const summary = useMemo(() => {
     if (queryStakeSummary.data?.poolStats[STAKE_POOL_SUBJECT] === undefined) return undefined;
     return queryStakeSummary.data;
-  }, [queryStakeSummary.data]);
+  }, [queryStakeSummary.data, STAKE_POOL_SUBJECT]);
 
   useEffect(() => {
     setIsLoading(!queryStakeSummary.isSuccess || !isStakingKeysLoaded);
