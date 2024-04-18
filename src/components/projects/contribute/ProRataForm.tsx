@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useState } from 'react';
-import { Box, Typography, useTheme, Paper, IconButton, Button, Alert } from '@mui/material';
+import React, { FC, useEffect, useMemo, useState } from 'react';
+import { Box, Typography, useTheme, Paper, IconButton, Button, Alert, Skeleton } from '@mui/material';
 import TimeRemaining from '@components/TimeRemaining';
 import { LinearProgressStyled } from '@components/styled-components/LinearProgress';
 import Grid from '@mui/system/Unstable_Grid/Grid';
@@ -8,6 +8,11 @@ import AutorenewIcon from '@mui/icons-material/Autorenew';
 import ContributeCard from './ContributeCard';
 import { trpc } from '@lib/utils/trpc';
 import { useWalletContext } from '@contexts/WalletContext';
+import { formatNumber, formatNumberDecimals } from '@lib/utils/assets';
+import UnlabelledTextField from '@components/styled-components/UnlabelledTextField';
+import { checkPoolWeight } from '@lib/utils/checkPoolWeight';
+import { useAlert } from '@contexts/AlertContext';
+import { getShorterAddress } from '@lib/utils/general';
 
 const ProRataForm: FC<TProRataFormProps> = ({
   id,
@@ -37,6 +42,8 @@ const ProRataForm: FC<TProRataFormProps> = ({
   const currentDate = new Date();
   const isCurrentDateBetween = currentDate >= startDate && currentDate <= endDate;
   const usersTransactions = trpc.contributions.sumTransactions.useQuery({ contributionId: id })
+  const { addAlert } = useAlert()
+
 
   useEffect(() => {
     if (sessionStatus === 'authenticated' && getUserWhitelistSignups.data?.data) {
@@ -66,9 +73,37 @@ const ProRataForm: FC<TProRataFormProps> = ({
     else setPriceSet(priceToCurrency)
   }
 
+  const poolData = trpc.contributions.contributedPoolWeight.useQuery({
+    contributionId: id
+  })
+
+  const [userPoolWeight, setUserPoolWeight] = useState<number | undefined>(undefined)
+  const [userStakedAmount, setUserStakedAmount] = useState<number | undefined>(undefined)
+  const [customAddressText, setCustomAddressText] = useState('')
+
+  const handleCheckPoolWeight = async (address: string) => {
+    const weight = await checkPoolWeight(address)
+    setUserPoolWeight(weight.cummulativeWeight)
+    setUserStakedAmount(Number(weight.totalStake))
+  }
+
+  const handleChangeCustomAddress = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCustomAddressText(e.target.value)
+  }
+
+  const getWallets = trpc.user.getWallets.useQuery()
+  const wallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
+  const [usersStake, setUsersStake] = useState<IPoolWeightDataItem[]>([])
+  useEffect(() => {
+    if (wallets && poolData.data?.apiResponse?.data && poolData.data?.apiResponse?.data.length > 0) {
+      const walletList = wallets.map((wallet) => wallet.changeAddress)
+      setUsersStake(poolData.data?.apiResponse?.data.filter(item => walletList.includes(item.address)))
+    }
+  }, [wallets, poolData.data?.apiResponse])
+
   return (
     <>
-      <Grid container spacing={2} alignItems="stretch" direction={{ xs: 'column-reverse', md: 'row' }}>
+      <Grid container spacing={2} alignItems="stretch" direction={{ xs: 'column-reverse', md: 'row' }} sx={{ mb: 2 }}>
         <Grid xs={12} md={7}>
           <Paper variant="outlined" sx={{ px: 2, py: 4, height: '100%' }}>
             <ContributeCard
@@ -86,7 +121,7 @@ const ProRataForm: FC<TProRataFormProps> = ({
         </Grid>
         <Grid xs={12} md={5}>
           {whitelistSlug && <WhitelistResult whitelistStatus={whitelistStatus} sessionStatus={sessionStatus} />}
-          <Paper variant="outlined" sx={{ px: 3, py: 2 }}>
+          <Paper variant="outlined" sx={{ px: 3, py: 2, height: '100%' }}>
             <Box
               sx={{
                 display: 'flex',
@@ -212,46 +247,95 @@ const ProRataForm: FC<TProRataFormProps> = ({
                   </Box>
                 </Box>
               </Grid>
-              {usersTransactions.data !== undefined
-                && usersTransactions.data > 0
-                && <Grid xs={12} sm={6}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      mb: 2,
-                      textAlign: { xs: 'left', sm: 'right' }
-                    }}
-                  >
+              <Grid xs={12} sm={6}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    mb: 2,
+                    textAlign: { xs: 'left', sm: 'right' }
+                  }}
+                >
+                  <Box>
+                    <Typography variant="overline">
+                      Pool Weight of Contributors
+                    </Typography>
+                    <Typography variant="h6" sx={{ mt: -1 }}>
+                      {poolData.isLoading ?
+                        <Skeleton variant="text" />
+                        : poolData.data?.totalPoolWeight !== undefined
+                          ? formatNumber(poolData.data?.totalPoolWeight, '')
+                          : 'Error loading'}
+                    </Typography>
+                  </Box>
+                  {usersTransactions.data !== undefined
+                    && usersTransactions.data > 0
+                    &&
                     <Box>
                       <Typography variant="overline">
                         Your contribution
                       </Typography>
 
-                      <Box>
-                        <Typography variant="h6">
-                          {usersTransactions.data} ₳
-                        </Typography>
-                      </Box>
-
-                      <Typography variant="overline">
-                        Your expected {tokenTicker}
+                      <Typography variant="h6" sx={{ mt: -1 }}>
+                        {formatNumber(usersTransactions.data, '')} ₳
                       </Typography>
-
-                      <Box>
-                        <Typography variant="h6">
-                          {usersTransactions.data * (1 / price)} {tokenTicker}
-                        </Typography>
-                      </Box>
-
                     </Box>
-                  </Box>
-                </Grid>}
+                  }
+                </Box>
+              </Grid>
             </Grid>
           </Paper>
         </Grid>
       </Grid>
+      <Paper variant="outlined" sx={{ px: 2, py: 4 }}>
+        <Typography variant="h5" sx={{ mb: 2 }}>
+          Pool weight checker
+        </Typography>
+        {usersStake.length > 0 &&
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="h6">Connected wallets</Typography>
+            {usersStake.map((stakeKey) => (
+              <Box key={stakeKey.address}>
+                Address: {getShorterAddress(stakeKey.address, 8)}, Stake amount: {formatNumberDecimals(Number(stakeKey.totalStake), 4)}, Pool Weight: {formatNumberDecimals(stakeKey.cummulativeWeight)}
+              </Box>
+            ))}
+          </Box>}
+        <Typography variant="h6">Pool Weight By Address</Typography>
+        <Grid container spacing={2} alignItems="center">
+          <Grid xs>
+            <UnlabelledTextField
+              id="wallet-address"
+              variant="filled"
+              value={customAddressText}
+              onChange={handleChangeCustomAddress}
+              fullWidth
+              placeholder="Paste an address to check pool weight"
+            />
+          </Grid>
+          <Grid xs="auto">
+            <Button
+              variant="contained"
+              onClick={() => handleCheckPoolWeight(customAddressText)}>
+              Submit
+            </Button>
+          </Grid>
+          <Grid xs="auto">
+            <Button variant="outlined"
+              onClick={() => {
+                setCustomAddressText('')
+              }}
+            >
+              Clear
+            </Button>
+          </Grid>
+        </Grid>
+        {userPoolWeight !== undefined && customAddressText &&
+          <Box>
+            Address: {getShorterAddress(customAddressText, 8)}, Stake amount: {formatNumberDecimals(Number(userStakedAmount), 4)}, Pool weight: {formatNumberDecimals(Number(userPoolWeight))}
+          </Box>
+        }
+      </Paper>
     </>
   );
 };
