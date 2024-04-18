@@ -19,6 +19,7 @@ import { useRouter } from 'next/router';
 import { FC, useEffect, useMemo, useState } from 'react';
 import DashboardCard from '../DashboardCard';
 import DashboardHeader from '../DashboardHeader';
+import { StakeData, StakeSnapshot } from '@server/services/syncApi';
 
 const Dashboard: FC = () => {
   const router = useRouter();
@@ -41,6 +42,13 @@ const Dashboard: FC = () => {
   const getRawUtxosMultiAddress = trpc.sync.getRawUtxosMultiAddress.useMutation();
   const getBalanceFromRawUtxos = trpc.sync.getBalanceFromRawUtxos.useMutation();
 
+  const queryStakeSnapshot = trpc.sync.getStakeSnapshot.useQuery(selectedAddresses, { retry: 0, refetchInterval: 5000 });
+  const snapshot = useMemo(() => queryStakeSnapshot.data, [queryStakeSnapshot.data]);
+
+  const userTotalWeight = useMemo(() => {
+    return snapshot?.data.reduce((totalWeight, { cummulativeWeight }) => totalWeight + cummulativeWeight ,0)
+  }, [snapshot])
+
   const summary = useMemo(() => {
     if (queryStakeSummary.data?.poolStats[STAKE_POOL_SUBJECT] === undefined) return undefined;
     return queryStakeSummary.data;
@@ -49,7 +57,7 @@ const Dashboard: FC = () => {
   useEffect(() => {
     setIsLoading(!queryStakeSummary.isSuccess || !isStakingKeysLoaded);
   }, [isStakingKeysLoaded, queryStakeSummary.isSuccess]);
-  
+
   const formatNumber = (num: number, key: string) => `${num.toLocaleString(undefined, {
     maximumFractionDigits: 2
   })}${key !== '' && key != null ? ` ${key}` : ''}`;
@@ -91,118 +99,223 @@ const Dashboard: FC = () => {
   const { cnctDecimals } = useToken();
 
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
-  
+
   return (
-    <Box sx={{ position: 'relative' }} >
-      <DashboardHeader title="Overview" />
-      <Grid container spacing={2} sx={{ mb: 1 }}>
-        <Grid xs={12} md={5}>
-          <DashboardCard center>
-            <Typography>
-              Total portfolio value
-            </Typography>
-            <Typography variant="h5">
+    <>
+      <Box sx={{ mb: 4 }}>
+        <DashboardHeader title="CNCT Stake Stats" />
+        <Grid container spacing={2} sx={{ mb: 1 }}>
+          <Grid xs={12} md={4}>
+            <DashboardCard center>
+              <Typography>
+                Total Stakers
+              </Typography>
+              <Typography variant="h5">
+                {isLoading ?
+                  <>
+                    <Skeleton animation='wave' width={160} />
+                  </> :
+                  <>
+                    <Box sx={{ mb: 1 }}>
+                      <Typography align='center' variant='h5'>{formatNumber(snapshot?.totalStakers ?? 0, '')}</Typography>
+                    </Box>
+                  </>
+                }
+              </Typography>
+            </DashboardCard>
+          </Grid>
+          <Grid xs={12} md={4}>
+            <DashboardCard center>
+              <Typography>
+                Total CNCT Staked
+              </Typography>
+              <Typography variant="h5">
+                {isLoading ?
+                  <>
+                    <Skeleton animation='wave' width={160} />
+                  </> :
+                  <>
+                    <Box sx={{ mb: 1 }}>
+                      <Typography align='center' variant='h5'>{formatNumber(formatWithDecimals(snapshot?.totalStake ?? "0"), '')}</Typography>
+                    </Box>
+                  </>
+                }
+              </Typography>
+            </DashboardCard>
+          </Grid>
+          <Grid xs={12} md={4}>
+            <DashboardCard center>
+              <Typography>
+                Total Pool Weight
+              </Typography>
+              <Typography variant="h5">
+                {isLoading ?
+                  <>
+                    <Skeleton animation='wave' width={160} />
+                  </> :
+                  <>
+                    <Box sx={{ mb: 1 }}>
+                      <Typography align='center' variant='h5'>{formatNumber(parseInt(snapshot?.totalCummulativeWeight ?? "0"), '')}</Typography>
+                    </Box>
+                  </>
+                }
+              </Typography>
+            </DashboardCard>
+          </Grid>
+        </Grid>
+      </Box>
+
+      <Box sx={{ position: 'relative' }} >
+        <DashboardHeader title="Overview" isDropdownHidden />
+        <Grid container spacing={2} sx={{ mb: 1 }}>
+          <Grid xs={12} md={5}>
+            <DashboardCard center>
+              <Typography>
+                Total portfolio value
+              </Typography>
+              <Typography variant="h5">
+                {isLoading ?
+                  <>
+                    <Skeleton animation='wave' width={160} />
+                    <Skeleton animation='wave' width={160} />
+                  </> :
+                  <>
+                    <Box sx={{ mb: 1 }}>
+                      <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT]?.totalPortfolio ?? "0")), '₳')}</Typography>
+                      <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
+                    </Box>
+                  </>
+                }
+              </Typography>
+            </DashboardCard>
+          </Grid>
+          <Grid xs={12} md={7}>
+            <DashboardCard center>
+              <DataSpread
+                title="CNCT"
+                data={formatNumber(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), '')}
+                usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), "CNCT"), '')}`}
+                isLoading={isLoading}
+              />
+            </DashboardCard>
+          </Grid>
+          <Grid xs={12} md={4}>
+            <DashboardCard center>
+              <Typography>
+                Total Vested
+              </Typography>
               {isLoading ?
-                <>
-                  <Skeleton animation='wave' width={160} />
-                  <Skeleton animation='wave' width={160} />
-                </> :
-                <>
-                  <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT]?.totalPortfolio ?? "0")), '₳')}</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
-                  </Box>
-                </>
-              }
-            </Typography>
-          </DashboardCard>
-        </Grid>
-        <Grid xs={12} md={7}>
-          <DashboardCard center>
-            <DataSpread
-              title="CNCT"
-              data={formatNumber(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), '')}
-              usdValue={`$${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), "CNCT"), '')}`}
-              isLoading={isLoading}
-            />
-          </DashboardCard>
-        </Grid>
-        <Grid xs={12} md={4}>
-          <DashboardCard center>
-            <Typography>
-              Total Vested
-            </Typography>
-            {isLoading ?
-              <Box sx={{ mb: 1 }}>
-                <Skeleton animation='wave' width={100} />
-                <Skeleton animation='wave' width={100} />
-              </Box> :
-              <Box sx={{ mb: 1 }}>
-                <Typography align='center' variant='h5'>-</Typography>
-                <Typography sx={{ color: theme.palette.grey[500] }} align='center'>-</Typography>
-              </Box>}
-            <Button disabled variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/unlock-vested")}>
-              Unlock now
-            </Button>
-          </DashboardCard>
-        </Grid>
-        <Grid xs={12} md={4}>
-          <DashboardCard center>
-            <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-around', gap: '5px' }}>
-              <Box sx={{ flexGrow: '1' }}>
-                <Typography align='center'>Total Staked</Typography>
-                {isLoading ?
-                  <Box sx={{ mb: 1 }}>
-                    <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
-                    <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
-                  </Box> :
-                  <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalStaked ?? "0")), '₳')}</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalStaked ?? "0"), "CNCT"), '')}</Typography>
-                  </Box>}
-              </Box>
-              <Divider orientation='vertical' variant='middle' flexItem />
-              <Box sx={{ width: '50%' }}>
-                <Typography align='center'>Claimable Stake</Typography>
-                {isLoading ?
-                  <Box sx={{ mb: 1 }}>
-                    <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
-                    <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
-                  </Box> :
-                  <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].unclaimedTokens ?? "0")), '₳')}</Typography>
-                    <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].unclaimedTokens ?? "0"), "CNCT"), '')}</Typography>
-                  </Box>}
-              </Box>
-            </Box>
-            <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, width: '100%' }}>
-              <Button sx={{ margin: "auto" }} disabled={isLoading ? true : false} variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
-                Manage positions
+                <Box sx={{ mb: 1 }}>
+                  <Skeleton animation='wave' width={100} />
+                  <Skeleton animation='wave' width={100} />
+                </Box> :
+                <Box sx={{ mb: 1 }}>
+                  <Typography align='center' variant='h5'>-</Typography>
+                  <Typography sx={{ color: theme.palette.grey[500] }} align='center'>-</Typography>
+                </Box>}
+              <Button disabled variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/unlock-vested")}>
+                Unlock now
               </Button>
-            </Box>
-          </DashboardCard>
+            </DashboardCard>
+          </Grid>
+          <Grid xs={12} md={4}>
+            <DashboardCard center>
+              <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-around', gap: '5px' }}>
+                <Box sx={{ flexGrow: '1' }}>
+                  <Typography align='center'>Total Staked</Typography>
+                  {isLoading ?
+                    <Box sx={{ mb: 1 }}>
+                      <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
+                      <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
+                    </Box> :
+                    <Box sx={{ mb: 1 }}>
+                      <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalStaked ?? "0")), '₳')}</Typography>
+                      <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalStaked ?? "0"), "CNCT"), '')}</Typography>
+                    </Box>}
+                </Box>
+                <Divider orientation='vertical' variant='middle' flexItem />
+                <Box sx={{ width: '50%' }}>
+                  <Typography align='center'>Claimable Stake</Typography>
+                  {isLoading ?
+                    <Box sx={{ mb: 1 }}>
+                      <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
+                      <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
+                    </Box> :
+                    <Box sx={{ mb: 1 }}>
+                      <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].unclaimedTokens ?? "0")), '₳')}</Typography>
+                      <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].unclaimedTokens ?? "0"), "CNCT"), '')}</Typography>
+                    </Box>}
+                </Box>
+              </Box>
+              <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, width: '100%' }}>
+                <Button sx={{ margin: "auto" }} disabled={isLoading ? true : false} variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
+                  Manage positions
+                </Button>
+              </Box>
+            </DashboardCard>
+          </Grid>
+          <Grid xs={12} md={4}>
+            <DashboardCard center>
+              <Typography>
+                Unclaimed tokens
+              </Typography>
+              {isLoading ?
+                <Box sx={{ mb: 1 }}>
+                  <Skeleton animation='wave' width={100} />
+                  <Skeleton animation='wave' width={100} />
+                </Box> :
+                <Box sx={{ mb: 1 }}>
+                  <Typography align='center' variant='h5'>-</Typography>
+                  <Typography sx={{ color: theme.palette.grey[500] }} align='center'>-</Typography>
+                </Box>}
+              <Button disabled variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/claim-tokens")}>
+                Claim now
+              </Button>
+            </DashboardCard>
+          </Grid>
+          <Grid xs={12} md={6}>
+            <DashboardCard center>
+              <Typography>
+                Total Staked
+              </Typography>
+              <Typography variant="h5">
+                {isLoading ?
+                  <>
+                    <Skeleton animation='wave' width={160} />
+                    <Skeleton animation='wave' width={160} />
+                  </> :
+                  <>
+                    <Box sx={{ mb: 1 }}>
+                      <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT]?.totalPortfolio ?? "0")), '₳')}</Typography>
+                      <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
+                    </Box>
+                  </>
+                }
+              </Typography>
+            </DashboardCard>
+          </Grid>
+          <Grid xs={12} md={6}>
+            <DashboardCard center>
+              <Typography>
+                Your Pool Weight
+              </Typography>
+              <Typography variant="h5">
+                {isLoading ?
+                  <>
+                    <Skeleton animation='wave' width={160} />
+                  </> :
+                  <>
+                    <Box sx={{ mb: 1 }}>
+                      <Typography align='center' variant='h5'>{userTotalWeight}</Typography>
+                    </Box>
+                  </>
+                }
+              </Typography>
+            </DashboardCard>
+          </Grid>
         </Grid>
-        <Grid xs={12} md={4}>
-          <DashboardCard center>
-            <Typography>
-              Unclaimed tokens
-            </Typography>
-            {isLoading ?
-              <Box sx={{ mb: 1 }}>
-                <Skeleton animation='wave' width={100} />
-                <Skeleton animation='wave' width={100} />
-              </Box> :
-              <Box sx={{ mb: 1 }}>
-                <Typography align='center' variant='h5'>-</Typography>
-                <Typography sx={{ color: theme.palette.grey[500] }} align='center'>-</Typography>
-              </Box>}
-            <Button disabled variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/claim-tokens")}>
-              Claim now
-            </Button>
-          </DashboardCard>
-        </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </>
   );
 };
 

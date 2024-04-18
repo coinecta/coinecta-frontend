@@ -127,6 +127,20 @@ export type ClaimStakeRequest = {
   changeAddress: string;
 };
 
+export interface StakeData {
+  address: string;
+  uniqueNfts: number;
+  totalStake: string;
+  cummulativeWeight: number;
+}
+
+export type StakeSnapshot = {
+  data: StakeData[];
+  totalCummulativeWeight: string;
+  totalStake: string;
+  totalStakers: number;
+}
+
 export const coinectaSyncApi = {
   async getStakeSummary(stakeKeys: string[]): Promise<StakeSummary | null> {
     try {
@@ -149,6 +163,23 @@ export const coinectaSyncApi = {
     try {
       if (stakeKeys.length === 0) return [];
       const response = await syncApi.post("/stake/positions", stakeKeys);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw mapAxiosErrorToTRPCError(error);
+      } else {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An unknown error occurred",
+        });
+      }
+    }
+  },
+  async getStakeSnapshot(addresses: string[]): Promise<StakeSnapshot | null> {
+    try {
+      if (addresses.length === 0) return null;
+      const response = await syncApi.post("/stake/snapshot", addresses);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
