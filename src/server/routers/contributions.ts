@@ -237,7 +237,7 @@ export const contributionRouter = createTRPCRouter({
         });
 
         // Step 2: Fetch Pool Weights Data
-        const response = await axios.post('https://api.coinecta.fi/stake/snapshot', [], {
+        const response = await axios.post('https://api.coinecta.fi/stake/snapshot?limit=1000', [], {
           headers: {
             'Content-Type': 'application/json; charset=utf-8'
           }
