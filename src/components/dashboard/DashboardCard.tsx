@@ -1,15 +1,15 @@
 import React, { FC, ReactNode } from 'react';
 import { Box, Paper, SxProps, Theme } from '@mui/material';
 import { useWalletContext } from '@contexts/WalletContext';
-import { minHeight } from '@mui/system';
 
 interface DashboardCardProps {
   children?: ReactNode;
   sx?: SxProps<Theme>;
   center?: true;
+  standard?: boolean;
 }
 
-const DashboardCard: FC<DashboardCardProps> = ({ children, sx, center }) => {
+const DashboardCard: FC<DashboardCardProps> = ({ children, sx, center, standard }) => {
   const { sessionStatus } = useWalletContext();
 
   const baseStyles: SxProps<Theme> = {
@@ -39,11 +39,13 @@ const DashboardCard: FC<DashboardCardProps> = ({ children, sx, center }) => {
 
   return (
     <Paper variant="outlined" sx={finalStyles}>
-      {sessionStatus === 'loading'
+      {standard ?
+        children :
+        (sessionStatus === 'loading'
         ? 'Loading...'
         : sessionStatus === 'unauthenticated'
           ? 'Sign in to see positions'
-          : children}
+          : children)}
     </Paper>
   );
 };

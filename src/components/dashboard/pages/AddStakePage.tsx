@@ -17,7 +17,6 @@ import React, { FC, useEffect, useMemo, useState } from 'react';
 import DashboardHeader from '../DashboardHeader';
 import StakeConfirm from '../staking/StakeConfirm';
 import StakeDuration from '../staking/StakeDuration';
-import { pink, orange, purple } from '@mui/material/colors';
 
 const options = [
   {
@@ -232,94 +231,128 @@ const AddStakePage: FC = () => {
           },
         }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', textAlign: 'center' }}>
-            <Box sx={{ textAlign: 'center', py: 1, px: 3, backgroundColor: pink[400], borderRadius: '6px' }}>
-              <Typography variant='h6'>TIER 6</Typography>
-            </Box>
-            <DashboardCard sx={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)' }} center>
-              <Typography sx={{ fontWeight: 700 }}>1,500,000 $IDP</Typography>
-              <Typography>Seed Round with allocation capped at:</Typography>
-              <Typography sx={{ fontWeight: 900 }}>10K USD</Typography>
-            </DashboardCard>
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', textAlign: 'center' }}>
-            <Box sx={{ textAlign: 'center', py: 1, px: 3, backgroundColor: pink[400], borderRadius: '6px' }}>
-              <Typography variant='h6'>TIER 5</Typography>
-            </Box>
-            <DashboardCard sx={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)' }} center>
-              <Typography sx={{ fontWeight: 700 }}>700,000 $IDP</Typography>
-              <Typography>Private round with allocation capped at:</Typography>
-              <Typography sx={{ fontWeight: 900 }}>2.5k USD</Typography>
-            </DashboardCard>
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', textAlign: 'center' }}>
-            <Box sx={{ textAlign: 'center', py: 1, px: 3, backgroundColor: orange[400], borderRadius: '6px' }}>
-              <Typography variant='h6'>TIER 4</Typography>
-            </Box>
-            <DashboardCard sx={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)' }} center>
-              <Typography sx={{ fontWeight: 700 }}>400,000 $IDP</Typography>
-              <Typography>Guaranteed allocation capped at:</Typography>
-              <Typography sx={{ fontWeight: 900 }}>1.25K USD</Typography>
-            </DashboardCard>
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', textAlign: 'center' }}>
-            <Box sx={{ textAlign: 'center', py: 1, px: 3, backgroundColor: orange[400], borderRadius: '6px' }}>
-              <Typography variant='h6'>TIER 3</Typography>
-            </Box>
-            <DashboardCard sx={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)' }} center>
-              <Typography sx={{ fontWeight: 700 }}>150,000 $IDP</Typography>
-              <Typography>Guaranteed allocation capped at:</Typography>
-              <Typography sx={{ fontWeight: 900 }}>600 USD</Typography>
-            </DashboardCard>
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', textAlign: 'center' }}>
-            <Box sx={{ textAlign: 'center', py: 1, px: 3, backgroundColor: purple[400], borderRadius: '6px' }}>
-              <Typography variant='h6'>TIER 2</Typography>
-            </Box>
-            <DashboardCard sx={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)' }} center>
-              <Typography sx={{ fontWeight: 700 }}>50,000 $IDP</Typography>
-              <Typography>Lottery-based allocation of up to:</Typography>
-              <Typography sx={{ fontWeight: 900 }}>200 USD</Typography>
-            </DashboardCard>
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', textAlign: 'center' }}>
-            <Box sx={{ textAlign: 'center', py: 1, px: 3, backgroundColor: purple[400], borderRadius: '6px' }}>
+            <Box sx={{ textAlign: 'center', py: 1, px: 3, backgroundColor: theme.palette.primary.main, borderRadius: '6px' }}>
               <Typography variant='h6'>TIER 1</Typography>
             </Box>
-            <DashboardCard sx={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)' }} center>
-              <Typography sx={{ fontWeight: 700 }}>25,000 $IDP</Typography>
-              <Typography>Lottery-based allocation of up to:</Typography>
-              <Typography sx={{ fontWeight: 900 }}>75 USD</Typography>
+            <DashboardCard sx={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)', justifyContent: 'center' }} center standard>
+              <Typography sx={{ fontWeight: 900 }}>Initiate</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Amount Staked: 5,000</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Weight: 80</Typography>
+            </DashboardCard>
+          </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', textAlign: 'center' }}>
+            <Box sx={{ textAlign: 'center', py: 1, px: 3, backgroundColor: theme.palette.primary.main, borderRadius: '6px' }}>
+              <Typography variant='h6'>TIER 2</Typography>
+            </Box>
+            <DashboardCard sx={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)', justifyContent: 'center' }} center standard>
+              <Typography sx={{ fontWeight: 900 }}>Discoverer</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Amount Staked: 10,000</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Weight: 200</Typography>
+            </DashboardCard>
+          </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', textAlign: 'center' }}>
+            <Box sx={{ textAlign: 'center', py: 1, px: 3, backgroundColor: '#c98e88', borderRadius: '6px' }}>
+              <Typography variant='h6'>TIER 3</Typography>
+            </Box>
+            <DashboardCard sx={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)', justifyContent: 'center' }} center standard>
+              <Typography sx={{ fontWeight: 900 }}>Inovator</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Amount Staked: 20,000</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Weight: 500</Typography>
+            </DashboardCard>
+          </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', textAlign: 'center' }}>
+            <Box sx={{ textAlign: 'center', py: 1, px: 3, backgroundColor: '#c98e88', borderRadius: '6px' }}>
+              <Typography variant='h6'>TIER 4</Typography>
+            </Box>
+            <DashboardCard sx={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)', justifyContent: 'center' }} center standard>
+              <Typography sx={{ fontWeight: 900 }}>Expert</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Amount Staked: 40,000</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Weight: 1,250</Typography>
+            </DashboardCard>
+          </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', textAlign: 'center' }}>
+            <Box sx={{ textAlign: 'center', py: 1, px: 3, backgroundColor: theme.palette.secondary.main, borderRadius: '6px' }}>
+              <Typography variant='h6'>TIER 5</Typography>
+            </Box>
+            <DashboardCard sx={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)', justifyContent: 'center' }} center standard>
+              <Typography sx={{ fontWeight: 900 }}>Visionary</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Amount Staked: 80,000</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Weight: 3,125</Typography>
+            </DashboardCard>
+          </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', textAlign: 'center' }}>
+            <Box sx={{ textAlign: 'center', py: 1, px: 3, backgroundColor: theme.palette.secondary.main, borderRadius: '6px' }}>
+              <Typography variant='h6'>TIER 6</Typography>
+            </Box>
+            <DashboardCard sx={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)', justifyContent: 'center' }} center standard>
+              <Typography sx={{ fontWeight: 900 }}>Oracle</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Amount Staked: 160,000</Typography>
+              <Typography sx={{ fontWeight: 700 }}>Weight: 8,000</Typography>
             </DashboardCard>
           </Box>
         </Box>
       </Box>
-      <Box sx={{ mb: 4 }}>
+
+      <Box mb={4}>
         <DashboardHeader title="Learn more" isDropdownHidden />
-        <Box sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 2,
-          '@media (min-width: 1280px)': {
-            gridTemplateColumns: 'repeat(4, 1fr)'
-          },
-        }}>
-          <DashboardCard sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-            <Typography>How it works</Typography>
-            <Link component={'a'} target='_blank' href="https://docs.coinecta.fi/launchpad/how-it-works" sx={{ wordBreak: 'break-all' }}>https://docs.coinecta.fi/launchpad/how-it-works</Link>
-          </DashboardCard>
-          <DashboardCard sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-            <Typography>Staking overview</Typography>
-            <Link component={'a'} target='_blank' href="https://docs.coinecta.fi/launchpad/staking" sx={{ wordBreak: 'break-all' }}>https://docs.coinecta.fi/launchpad/staking</Link>
-          </DashboardCard>
-          <DashboardCard sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-            <Typography>How to stake</Typography>
-            <Link component={'a'} target='_blank' href="https://coinecta.medium.com/62ed3fb5dd21" sx={{ wordBreak: 'break-all' }}>https://coinecta.medium.com/62ed3fb5dd21</Link>
-          </DashboardCard>
-          <DashboardCard sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-            <Typography>How to redeem</Typography>
-            <Link component={'a'} target='_blank' href="https://coinecta.medium.com/27ab254b4d33" sx={{ wordBreak: 'break-all' }}>https://coinecta.medium.com/27ab254b4d33</Link>
-          </DashboardCard>
-        </Box>
+        <Grid container spacing={2}>
+          <Grid xs={12} sm={6} md={3}>
+            <Button
+              href='https://docs.coinecta.fi/launchpad/how-it-works'
+              color='secondary'
+              variant='contained'
+              size='large'
+              target='_blank'
+              sx={{
+                width: '100%',
+                fontWeight: 700
+              }}>
+              How it works
+            </Button>
+          </Grid>
+          <Grid xs={12} sm={6} md={3}>
+            <Button
+              href='https://docs.coinecta.fi/launchpad/staking'
+              color='secondary'
+              variant='contained'
+              size='large'
+              target='_blank'
+              sx={{
+                width: '100%',
+                fontWeight: 700
+              }}>
+              Staking overview
+            </Button>
+          </Grid>
+          <Grid xs={12} sm={6} md={3}>
+            <Button
+              href='https://coinecta.medium.com/62ed3fb5dd21'
+              color='secondary'
+              variant='contained'
+              size='large'
+              target='_blank'
+              sx={{
+                width: '100%',
+                fontWeight: 700
+              }}>
+              How to stake
+            </Button>
+          </Grid>
+          <Grid xs={12} sm={6} md={3}>
+            <Button
+              href='https://coinecta.medium.com/27ab254b4d33'
+              color='secondary'
+              variant='contained'
+              size='large'
+              target='_blank'
+              sx={{
+                width: '100%',
+                fontWeight: 700
+              }}>
+              How to redeem
+            </Button>
+          </Grid>
+        </Grid>
       </Box>
       <StakeConfirm
         open={openConfirmationDialog}
