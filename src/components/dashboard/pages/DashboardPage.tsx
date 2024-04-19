@@ -128,10 +128,12 @@ const Dashboard: FC = () => {
                 {isLoading ?
                   <>
                     <Skeleton animation='wave' width={160} />
+                    <Skeleton animation='wave' width={160} />
                   </> :
                   <>
                     <Box sx={{ mb: 1 }}>
                       <Typography align='center' variant='h5'>{formatNumber(formatWithDecimals(snapshot?.totalStake ?? "0"), '')}</Typography>
+                      <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(snapshot?.totalStake ?? "0"), "CNCT"), '')}</Typography>
                     </Box>
                   </>
                 }
@@ -163,7 +165,7 @@ const Dashboard: FC = () => {
       <Box sx={{ position: 'relative' }} >
         <DashboardHeader title="Overview" isDropdownHidden />
         <Grid container spacing={2} sx={{ mb: 1 }}>
-          <Grid xs={12} md={5}>
+          <Grid xs={12} md={6}>
             <DashboardCard center>
               <Typography>
                 Total portfolio value
@@ -178,6 +180,46 @@ const Dashboard: FC = () => {
                     <Box sx={{ mb: 1 }}>
                       <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT]?.totalPortfolio ?? "0")), '₳')}</Typography>
                       <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
+                    </Box>
+                  </>
+                }
+              </Typography>
+            </DashboardCard>
+          </Grid>
+          <Grid xs={12} md={6}>
+            <DashboardCard center>
+              <Typography>
+                Total Staked
+              </Typography>
+              <Typography variant="h5">
+                {isLoading ?
+                  <>
+                    <Skeleton animation='wave' width={160} />
+                    <Skeleton animation='wave' width={160} />
+                  </> :
+                  <>
+                    <Box sx={{ mb: 1 }}>
+                      <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT]?.totalPortfolio ?? "0")), '₳')}</Typography>
+                      <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
+                    </Box>
+                  </>
+                }
+              </Typography>
+            </DashboardCard>
+          </Grid>
+          <Grid xs={12} md={5}>
+            <DashboardCard center>
+              <Typography>
+                Your Pool Weight
+              </Typography>
+              <Typography variant="h5">
+                {isLoading ?
+                  <>
+                    <Skeleton animation='wave' width={160} />
+                  </> :
+                  <>
+                    <Box sx={{ mb: 1 }}>
+                      <Typography align='center' variant='h5'>{userTotalWeight}</Typography>
                     </Box>
                   </>
                 }
@@ -215,20 +257,7 @@ const Dashboard: FC = () => {
           </Grid>
           <Grid xs={12} md={4}>
             <DashboardCard center>
-              <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-around', gap: '5px' }}>
-                <Box sx={{ flexGrow: '1' }}>
-                  <Typography align='center'>Total Staked</Typography>
-                  {isLoading ?
-                    <Box sx={{ mb: 1 }}>
-                      <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
-                      <Skeleton sx={{ margin: 'auto' }} animation='wave' width={100} />
-                    </Box> :
-                    <Box sx={{ mb: 1 }}>
-                      <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalStaked ?? "0")), '₳')}</Typography>
-                      <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalStaked ?? "0"), "CNCT"), '')}</Typography>
-                    </Box>}
-                </Box>
-                <Divider orientation='vertical' variant='middle' flexItem />
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', gap: '5px' }}>
                 <Box sx={{ width: '50%' }}>
                   <Typography align='center'>Claimable Stake</Typography>
                   {isLoading ?
@@ -266,46 +295,6 @@ const Dashboard: FC = () => {
               <Button disabled variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/claim-tokens")}>
                 Claim now
               </Button>
-            </DashboardCard>
-          </Grid>
-          <Grid xs={12} md={6}>
-            <DashboardCard center>
-              <Typography>
-                Total Staked
-              </Typography>
-              <Typography variant="h5">
-                {isLoading ?
-                  <>
-                    <Skeleton animation='wave' width={160} />
-                    <Skeleton animation='wave' width={160} />
-                  </> :
-                  <>
-                    <Box sx={{ mb: 1 }}>
-                      <Typography align='center' variant='h5'>{formatNumber(convertCnctToADA(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT]?.totalPortfolio ?? "0")), '₳')}</Typography>
-                      <Typography sx={{ color: theme.palette.grey[500] }} align='center'>${formatNumber(convertToUSD(formatWithDecimals(summary?.poolStats[STAKE_POOL_SUBJECT].totalPortfolio ?? "0"), "CNCT"), '')}</Typography>
-                    </Box>
-                  </>
-                }
-              </Typography>
-            </DashboardCard>
-          </Grid>
-          <Grid xs={12} md={6}>
-            <DashboardCard center>
-              <Typography>
-                Your Pool Weight
-              </Typography>
-              <Typography variant="h5">
-                {isLoading ?
-                  <>
-                    <Skeleton animation='wave' width={160} />
-                  </> :
-                  <>
-                    <Box sx={{ mb: 1 }}>
-                      <Typography align='center' variant='h5'>{userTotalWeight}</Typography>
-                    </Box>
-                  </>
-                }
-              </Typography>
             </DashboardCard>
           </Grid>
         </Grid>
