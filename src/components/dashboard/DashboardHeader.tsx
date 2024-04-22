@@ -4,9 +4,10 @@ import WalletSelectDropdown from '@components/WalletSelectDropdown';
 
 interface IDashboardHeaderProps {
   title: string;
+  isDropdownHidden?: boolean;
 }
 
-const DashboardHeader: FC<IDashboardHeaderProps> = ({ title }) => {
+const DashboardHeader: FC<IDashboardHeaderProps> = ({ title, isDropdownHidden = false }) => {
   const theme = useTheme()
   return (
     <>
@@ -21,7 +22,7 @@ const DashboardHeader: FC<IDashboardHeaderProps> = ({ title }) => {
         <Typography variant="h5">
           {title}
         </Typography>
-        <Box sx={{ minWidth: '250px' }}>
+        <Box sx={{ minWidth: '250px', display: isDropdownHidden ? 'none' : 'block' }}>
           <WalletSelectDropdown />
         </Box>
       </Box>

@@ -13,6 +13,11 @@ export const syncRouter = createTRPCRouter({
     .query(async ({ input }) => {
       return await coinectaSyncApi.getStakePositions(input);
     }),
+  getStakeSnapshot: protectedProcedure
+    .input(z.array(z.string()))
+    .query(async ({ input }) => {
+      return await coinectaSyncApi.getStakeSnapshot(input);
+    }),
   getStakePool: protectedProcedure
     .input(z.object({
       address: z.string(),
