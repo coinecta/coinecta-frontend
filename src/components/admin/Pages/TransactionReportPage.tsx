@@ -85,6 +85,16 @@ const TransactionReport: FC = () => {
     { enabled: !!formRound }
   )
 
+  const onchainTransactions = trpc.contributions.getOnchainTransactions.useQuery(
+    {
+      address: process.env.CONTRIBUTION_ADDRESS || '',
+      contributionId: formRound?.id || 0
+    },
+    { enabled: !!formRound }
+  )
+
+  console.log(onchainTransactions.data)
+
   useEffect(() => {
     const round = roundQuery.data?.find(round => round.id === Number(selectedRound))
     if (round) {
@@ -100,15 +110,14 @@ const TransactionReport: FC = () => {
     }
   }, [transactionQuery.data])
 
-  const getTableDataAsString = (transactions: TransactionDetails[]) => {
+  const getTableDataAsString = (transactions: CombinedTransactionInfo[]) => {
     // Header row
-    let tableString = 'Address\tToken\tContribution\tSumSub ID\n';
+    let tableString = 'Address\tContribution\tTx ID\tPool Weight\n';
 
     // Data rows
     transactions.forEach(item => {
-      const token = (parseFloat(item.amount) / (formRound?.price || 1)).toString();
-      const sumSubIdLink = `https://cockpit.sumsub.com/checkus#/applicant/${item.userSumsubId}`;
-      tableString += `${item.address}\t${token}\t${item.amount}\t${sumSubIdLink}\n`;
+      const token = item.amountAda
+      tableString += `${item.address}\t${token}\t${item.txId}\t${item.userPoolWeight ?? ''}\n`;
     });
 
     return tableString;
@@ -121,7 +130,7 @@ const TransactionReport: FC = () => {
   };
 
   const handleCopy = () => {
-    const tableString = getTableDataAsString(aggregatedTransactions);
+    const tableString = getTableDataAsString(onchainTransactions.data || []);
     copyToClipboard(tableString);
   };
 
@@ -152,7 +161,6 @@ const TransactionReport: FC = () => {
   };
 
   const filteredTransactions = filterTransactionsByUsdValue(aggregatedTransactions);
-
 
   return (
     <AdminMenu>
@@ -187,13 +195,13 @@ const TransactionReport: FC = () => {
           />
         </Box>
         <Button onClick={handleCopy}>Copy Table</Button>
-        {
+        {/* {
           transactionQuery.isLoading ? (
             <Typography>Loading...</Typography>
           ) : transactionQuery.isError ? (
             <Typography>Error fetching.</Typography>
           ) : (
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} sx={{ mb: 2 }}>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -227,6 +235,49 @@ const TransactionReport: FC = () => {
                       <TableCell><Link target="_blank" href={`https://cockpit.sumsub.com/checkus#/applicant/${item.userSumsubId}`}>{item.userSumsubId}</Link></TableCell>
                     </TableRow>
                   ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )
+        } */}
+        {
+          onchainTransactions.isLoading ? (
+            <Typography>Loading...</Typography>
+          ) : onchainTransactions.isError ? (
+            <Typography>Error fetching.</Typography>
+          ) : (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Address</TableCell>
+                    <TableCell>Contribution</TableCell>
+
+                    <TableCell>Tx ID</TableCell>
+                    <TableCell>User pool weight</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {onchainTransactions.data.map((item, index) => {
+                    return (
+                      <TableRow key={index}>
+                        <TableCell
+                          sx={{
+                            maxWidth: '200px',
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap'
+                          }}
+                        >
+                          {item.address}
+                        </TableCell>
+                        <TableCell>{`${item.amountAda} ${getSymbol('ada')}`}</TableCell>
+
+                        <TableCell>{item.txId}</TableCell>
+                        <TableCell>{item.userPoolWeight}</TableCell>
+                      </TableRow>
+                    )
+                  })}
                 </TableBody>
               </Table>
             </TableContainer>

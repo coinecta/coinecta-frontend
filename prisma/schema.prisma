@@ -114,7 +114,17 @@ model Transaction {
   contribution_id   Int
   contributionRound ContributionRound @relation(fields: [contribution_id], references: [id])
 
+  onChainTxData Json? @map("on_chain_tx_data")
+
   @@map("transactions")
+}
+
+model NewTx {
+  id            String @id @default(cuid())
+  txId          String
+  onChainTxData Json?  @map("on_chain_tx_data")
+
+  @@map("new_transactions")
 }
 
 model Project {
