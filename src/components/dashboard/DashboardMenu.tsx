@@ -33,15 +33,15 @@ const links = {
   Other: [
     {
       name: 'Overview',
-      link: '/dashboard'
+      link: '/staking'
     },
     {
       name: 'Add Stake',
-      link: '/dashboard/add-stake'
+      link: '/staking/add'
     },
     {
       name: 'Manage Positions',
-      link: '/dashboard/manage-stake'
+      link: '/staking/manage-stake'
     }
   ]
 }
