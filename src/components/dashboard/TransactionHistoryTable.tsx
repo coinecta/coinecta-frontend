@@ -85,6 +85,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const { addAlert } = useAlert();
   const tableRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
+  const [openRowIndex, setOpenRowIndex] = useState(-1)
 
 
   const utils = trpc.useUtils();
@@ -290,7 +291,15 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                 {data.map((item, index) => {
                   const wallet = walletsList.find(w => w.connectName === cardano.getAddressWalletType(item.address));
                   const icon = theme.palette.mode === 'dark' ? wallet?.iconDark : wallet?.icon;
-                  const [open, setOpen] = React.useState(false);
+                  const isOpen = index === openRowIndex;
+
+                  const toggleOpen = () => {
+                    if (isOpen) {
+                      setOpenRowIndex(-1);
+                    } else {
+                      setOpenRowIndex(index);
+                    }
+                  };
 
                   return (
                     <>
@@ -300,7 +309,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                           '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
                           '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)', cursor: 'pointer' }
                         }}
-                        onClick={() => setOpen(!open)}
+                        onClick={toggleOpen}
                       >
                         <TableCell sx={{ borderBottom: 'none', width: '22px' }}>
                           <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={icon} />
@@ -392,15 +401,15 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                           <IconButton
                             aria-label="expand row"
                             size="small"
-                            onClick={() => setOpen(!open)}
+                            onClick={toggleOpen}
                           >
-                            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                            {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                           </IconButton>
                         </TableCell>
                       </TableRow>
                       <TableRow key={index}>
                         <TableCell sx={{ paddingBottom: 0, paddingTop: 0, paddingLeft: '45px', borderBottom: 'none' }} colSpan={8}>
-                          <Collapse in={open} timeout="auto" unmountOnExit>
+                          <Collapse in={isOpen} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: 1 }}>
                               <Table size="small" aria-label="purchases">
                                 <TableHead>
