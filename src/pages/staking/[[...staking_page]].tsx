@@ -3,12 +3,10 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import ErrorPage from '@components/ErrorPage';
 import DashboardMenu from '@components/dashboard/DashboardMenu';
-import DashboardPage from '@components/staking/pages/DashboardPage';
+import DashboardPage from '@components/dashboard/pages/DashboardPage';
 import StakePositionsPage from '@components/dashboard/pages/StakePositionsPage';
-import AddStakePage from '@components/staking/pages/AddStakePage';
-import UnlockVested from '@components/dashboard/pages/UnlockVested';
-import ClaimTokens from '@components/dashboard/pages/ClaimTokens';
-import TransactionHistory from '@components/dashboard/pages/TransactionHistoryPage';
+import AddStakePage from '@components/dashboard/pages/AddStakePage';
+
 
 const Staking: NextPage = () => {
   const router = useRouter()
@@ -17,7 +15,6 @@ const Staking: NextPage = () => {
   console.log(route)
 
   const pageMapper: { [key: string]: React.ReactElement } = {
-    "transaction-history": <TransactionHistory />,
     "add": <AddStakePage />,
     "manage-stake": <StakePositionsPage />
   }
