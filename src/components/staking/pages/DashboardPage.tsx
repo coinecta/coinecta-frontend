@@ -16,8 +16,8 @@ import Skeleton from '@mui/material/Skeleton';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import { useRouter } from 'next/router';
 import { FC, useEffect, useMemo, useState } from 'react';
-import DashboardCard from '../DashboardCard';
-import DashboardHeader from '../DashboardHeader';
+import DashboardCard from '../../dashboard/DashboardCard';
+import DashboardHeader from '../../dashboard/DashboardHeader';
 
 const Dashboard: FC = () => {
   const router = useRouter();

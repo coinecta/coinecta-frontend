@@ -14,9 +14,9 @@ import {
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import DashboardHeader from '../DashboardHeader';
-import StakeConfirm from '../staking/StakeConfirm';
-import StakeDuration from '../staking/StakeDuration';
+import DashboardHeader from '../../dashboard/DashboardHeader';
+import StakeConfirm from '../../dashboard/staking/StakeConfirm';
+import StakeDuration from '../../dashboard/staking/StakeDuration';
 
 const options = [
   {

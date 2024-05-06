@@ -79,7 +79,8 @@ const TransactionHistory: FC = () => {
       sx={{
         maxWidth: '1536px',
         margin: 'auto',
-        pt: '20px'
+        pt: '20px',
+        px: '16px'
       }}>
       <DashboardHeader title="Transaction History" />
       <TransactionHistoryTable
