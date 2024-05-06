@@ -40,7 +40,7 @@ const Header: FC = () => {
       link: "/projects"
     },
     {
-      name: "Dashboard",
+      name: "Staking",
       link: "/dashboard"
     }
   ];

@@ -9,7 +9,6 @@ import { useWallet } from '@meshsdk/react';
 import {
   Box,
   Button,
-  Divider,
   Typography,
   useTheme
 } from '@mui/material';
@@ -163,7 +162,7 @@ const Dashboard: FC = () => {
       </Box>
 
       <Box sx={{ position: 'relative' }} >
-        <DashboardHeader title="Overview" isDropdownHidden />
+        <DashboardHeader title="Your Staking Overview" isDropdownHidden />
         <Grid container spacing={2} sx={{ mb: 1 }}>
           <Grid xs={12} md={6}>
             <DashboardCard center>
