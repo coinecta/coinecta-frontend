@@ -49,7 +49,7 @@ const Dashboard: FC = () => {
   }, [queryStakeSummary.data, STAKE_POOL_SUBJECT]);
 
   useEffect(() => {
-    setIsLoading(!queryStakeSummary.isSuccess || !isStakingKeysLoaded);
+    setIsLoading(!queryStakeSummary.isSuccess || !isStakingKeysLoaded || !snapshot);
   }, [isStakingKeysLoaded, queryStakeSummary.isSuccess]);
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString(undefined, {
