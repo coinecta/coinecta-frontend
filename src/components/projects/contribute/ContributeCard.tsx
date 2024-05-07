@@ -16,6 +16,7 @@ interface IContributeCardProps {
   live: boolean;
   contributionRoundId: number;
   recipientAddress: string | null;
+  allowed: boolean;
 }
 
 const ContributeCard: FC<IContributeCardProps> = ({
@@ -28,7 +29,8 @@ const ContributeCard: FC<IContributeCardProps> = ({
   exchangeRate,
   whitelisted,
   live,
-  recipientAddress
+  recipientAddress,
+  allowed
 }) => {
   const { sessionData } = useWalletContext()
 
@@ -91,7 +93,8 @@ const ContributeCard: FC<IContributeCardProps> = ({
               !live ||
               !recipientAddress ||
               Number(inputValue) === 0 ||
-              sessionData == null
+              sessionData == null ||
+              !allowed
             }
             sx={{
               textTransform: 'none',
@@ -107,6 +110,11 @@ const ContributeCard: FC<IContributeCardProps> = ({
         {!recipientAddress &&
           <Typography color="error" sx={{ mt: 1, fontSize: '0.9rem!important' }}>
             Contribution form error, please notify support if you are trying to contribute.
+          </Typography>
+        }
+        {!allowed &&
+          <Typography color="error" sx={{ mt: 1, fontSize: '0.9rem!important' }}>
+            We apologize, but we are unable to accept contributions from the restricted countries listed above.
           </Typography>
         }
         {sessionData == null &&

@@ -13,6 +13,8 @@ import UnlabelledTextField from '@components/styled-components/UnlabelledTextFie
 import { checkPoolWeight } from '@lib/utils/checkPoolWeight';
 import { useAlert } from '@contexts/AlertContext';
 import { getShorterAddress } from '@lib/utils/general';
+import { countryList } from '@lib/utils/countryList';
+import axios from 'axios';
 
 const ProRataForm: FC<TProRataFormProps> = ({
   id,
@@ -45,7 +47,30 @@ const ProRataForm: FC<TProRataFormProps> = ({
   const isCurrentDateBetween = currentDate >= startDate && currentDate <= endDate;
   const usersTransactions = trpc.contributions.sumTransactions.useQuery({ contributionId: id })
   const { addAlert } = useAlert()
+  const [allowed, setAllowed] = useState(false);
 
+  useEffect(() => {
+    const fetchUserLocation = async () => {
+      try {
+        // const response = await fetch(`https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.IPGEOLOCATION_API_KEY}`);
+        const response = await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.IPGEOLOCATION_API_KEY}`);
+        const data = response.data;
+
+        console.log(data)
+
+        if (restrictedCountries.includes(data.country_code2)) {
+          setAllowed(false);
+        } else {
+          setAllowed(true)
+        }
+      } catch (error) {
+        console.error('Error fetching geolocation:', error);
+        setAllowed(true)
+      }
+    };
+
+    fetchUserLocation();
+  }, []);
 
   useEffect(() => {
     if (sessionStatus === 'authenticated' && getUserWhitelistSignups.data?.data) {
@@ -103,8 +128,20 @@ const ProRataForm: FC<TProRataFormProps> = ({
     }
   }, [wallets, poolData.data?.apiResponse])
 
+  const restrictedCountriesFiltered = countryList.filter(country => restrictedCountries.includes(country.code))
+
   return (
     <>
+      {restrictedCountries.length > 0 &&
+        <Box sx={{ mb: 2 }}>
+          <Typography>
+            Please note, the project is unable to accept contributions from residents of the following countries: {' '}
+            {restrictedCountriesFiltered.map((country, i) => (
+              <React.Fragment key={country.code}>{`${country.label}${i + 1 === restrictedCountries.length ? '. ' : ', '}`}</React.Fragment>
+            ))}
+          </Typography>
+        </Box>
+      }
       <Grid container spacing={2} alignItems="stretch" direction={{ xs: 'column-reverse', md: 'row' }} sx={{ mb: 2 }}>
         <Grid xs={12} md={7}>
           <Paper variant="outlined" sx={{ px: 2, py: 4, height: '100%' }}>
@@ -119,6 +156,7 @@ const ProRataForm: FC<TProRataFormProps> = ({
               live={isCurrentDateBetween}
               contributionRoundId={id}
               recipientAddress={recipientAddress}
+              allowed={allowed}
             />
           </Paper>
         </Grid>
