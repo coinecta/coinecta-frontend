@@ -63,7 +63,7 @@ const aggregateTransactions = (transactions: TransactionDetails[]): TransactionD
 const TransactionReport: FC = () => {
   const { addAlert } = useAlert();
   const [formRound, setFormRound] = useState<TContributionRound | undefined>(undefined);
-  const [selectedRound, setSelectedRound] = useState<string | null>(null);
+  const [selectedRound, setSelectedRound] = useState<number | null>(null);
   const [selectedProject, setSelectedProject] = useState<string | null>(null)
   const [aggregatedTransactions, setAggregatedTransactions] = useState<TransactionDetails[]>([])
   const [minUsdValue, setMinUsdValue] = useState<number | null>(null);
