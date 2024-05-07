@@ -115,7 +115,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
               Please sign in to contribute
             </Typography>
             <Typography sx={{ mt: 1, fontSize: '0.9rem!important' }}>
-              The wallet you send funds from doesn't need to be the same wallet you sign-in from.
+              The wallet you send funds from doesn&apos;t need to be the same wallet you sign-in from.
             </Typography>
             <Typography sx={{ mt: 1, fontSize: '0.9rem!important' }}>
               LEDGER USERS: Sign in with another wallet then contribute from your Ledger.
