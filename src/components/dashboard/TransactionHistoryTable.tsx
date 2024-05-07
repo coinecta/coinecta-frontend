@@ -4,10 +4,15 @@ import { useCardano } from '@lib/utils/cardano';
 import { trpc } from '@lib/utils/trpc';
 import { walletNameToId, walletsList } from '@lib/walletsList';
 import { useWallet } from '@meshsdk/react';
+import CallMadeIcon from '@mui/icons-material/CallMade';
+import CallReceivedIcon from '@mui/icons-material/CallReceived';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import LaunchIcon from '@mui/icons-material/Launch';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import {
   Avatar,
   Box,
@@ -27,18 +32,14 @@ import {
   Typography,
   useTheme
 } from '@mui/material';
+import Collapse from '@mui/material/Collapse';
 import { TimeIcon } from '@mui/x-date-pickers';
+import { TransactionHistory } from '@server/services/syncApi';
 import copy from 'copy-to-clipboard';
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ActionBar, { IActionBarButton } from './ActionBar';
 import DashboardCard from './DashboardCard';
-import Collapse from '@mui/material/Collapse';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import RedeemIcon from '@mui/icons-material/Redeem';
-import HandshakeIcon from '@mui/icons-material/Handshake';
 
 interface ITransactionHistoryTableProps<T> {
   title?: string;
@@ -122,6 +123,67 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     }
   };
 
+  const transactionTypeLabel = (type: string) => {
+    switch (type) {
+      case 'StakePositionReceived':
+        return 'Stake Receive';
+      case 'StakePositionRedeemed':
+        return 'Unlock Stake';
+      case 'StakePositionTransferred':
+        return 'Stake Send';
+      case 'StakeRequestPending':
+        return 'Pending';
+      case 'StakeRequestExecuted':
+        return 'Executed';
+      case 'StakeRequestCanceled':
+        return 'Canceled';
+      default:
+        return type;
+    }
+  }
+
+//   <Tooltip title='View transaction details'>
+//   <IconButton href={item[key].transactionLink} size='small' target='_blank'>
+//     <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+//   </IconButton>
+// </Tooltip>
+  // column -> value -> render
+  const renderAdditionalTxHistoryData = (data: TransactionHistory) => {
+
+    const STAKE_KEY_PREFIX = process.env.STAKE_KEY_PREFIX!;
+    const CARDANO_ASSET_EXPLORER_URL = process.env.CARDANO_ASSET_EXPLORER_URL!;
+    const CARDANO_ADDRESS_EXPLORER_URL = process.env.CARDANO_ADDRESS_EXPLORER_URL!;
+
+    let policyId;
+    let assetName;
+
+    switch (data.txType)
+    {
+      case 'StakePositionReceived':
+      case 'StakePositionRedeemed':
+        policyId = data.stakeKey?.substring(0, 56);
+        assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
+        return {
+          assetLink: `${CARDANO_ASSET_EXPLORER_URL}/${policyId + assetName}`,
+          unlockTime: dayjs.unix(data.unlockTime ?? 0 / 1_000).format('DD MMM, YY HH:mm'),
+        }
+      case 'StakeRequestPending':
+      case 'StakeRequestExecuted':
+      case 'StakeRequestCanceled':
+        return {
+          lockDuration: "1 month",
+        }
+      case 'StakePositionTransferred':
+        policyId = data.stakeKey?.substring(0, 56);
+        assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
+        return {
+          assetLink: `${CARDANO_ASSET_EXPLORER_URL}/${policyId + assetName}`,
+          unlockTime: dayjs.unix(data.unlockTime ?? 0 / 1_000).format('DD MMM, YY HH:mm'),
+          transferAddressLink: `${CARDANO_ADDRESS_EXPLORER_URL}/${data.transferredToAddress}`,
+        }
+    }
+  }
+
   const onDragMove = (e: React.MouseEvent<Element, MouseEvent> | React.TouchEvent<Element>, clientX: number, clientY: number) => {
     if (!isDragging || !tableRef.current) return;
 
@@ -187,7 +249,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   useEffect(() => {
     const execute = async () => {
       if (connected) {
-        const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
+        const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!]?.enable();
         setCardanoApi(api);
       }
     };
@@ -266,8 +328,9 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                     background: theme.palette.background.paper,
                   }
                 }}>
+                  <TableCell />
                   {columns.map((column) => {
-                    if (column === "txHash" || column === "txIndex" || column == "address") return null;
+                    if (column === "txHash" || column === "txIndex" || column == "address" || column == "data") return null;
                     if (column === "type") return (
                       <TableCell key={String(column)} sx={{ pl: '58px' }}>
                         {camelCaseToTitle(String(column))}
@@ -314,7 +377,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                           <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={icon} />
                         </TableCell>
                         {Object.keys(item).map((key, colIndex) => {
-                          if (key === "txHash" || key === "txIndex" || key === "address") return null;
+                          if (key === "txHash" || key === "txIndex" || key === "address" || key === "data") return null;
 
                           if (key === "type") {
                             return (
@@ -324,32 +387,18 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                     <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
                                   </Skeleton>) :
                                   <>
-                                    {(item[key] === "Stake" &&
-                                      <Chip icon={<AttachMoneyIcon fontSize='small' />} variant='outlined' label="Stake" color='primary' sx={{ width: '140px' }} />)}
-                                    {(item[key] === "Unlock Stake" &&
-                                      <Chip icon={<RedeemIcon fontSize='small' />} variant='outlined' label="Unlock Stake" color='secondary' sx={{ width: '140px' }} />)}
-                                    {(item[key] === "Contribute" &&
-                                      <Chip icon={<HandshakeIcon fontSize='small' />} variant='outlined' label="Contribute" color='warning' sx={{ width: '140px' }} />)}
-                                  </>
-                                }
-                              </TableCell>
-                            )
-                          }
-
-                          if (key === "status") {
-                            return (
-                              <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                                {isLoading ?
-                                  (<Skeleton>
-                                    <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
-                                  </Skeleton>) :
-                                  <>
-                                    {(item[key] === "Executed" &&
-                                      <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' label="Executed" color='success' sx={{ width: '120px' }} />)}
-                                    {(item[key] === "Pending" &&
-                                      <Chip icon={<TimeIcon fontSize='small' />} variant='outlined' label="Pending" color='primary' sx={{ width: '120px' }} />)}
-                                    {(item[key] === "Cancelled" &&
-                                      <Chip icon={<ClearIcon fontSize='small' />} variant='outlined' label="Cancelled" color='error' sx={{ width: '120px' }} />)}
+                                    {(item[key] === "StakePositionReceived" &&
+                                      <Chip icon={<CallReceivedIcon fontSize='small' />} variant='outlined' label="Stake Receive" color='success' sx={{ width: '140px' }} />)}
+                                    {(item[key] === "StakePositionRedeemed" &&
+                                      <Chip icon={<LockOpenIcon fontSize='small' />} variant='outlined' label="Unlock Stake" color='secondary' sx={{ width: '140px' }} />)}
+                                    {(item[key] === "StakePositionTransferred" &&
+                                      <Chip icon={<CallMadeIcon fontSize='small' />} variant='outlined' label="Stake Send" color='error' sx={{ width: '140px' }} />)}
+                                    {(item[key] === "StakeRequestPending" &&
+                                      <Chip icon={<TimeIcon fontSize='small' />} variant='outlined' label="Pending" color='warning' sx={{ width: '140px' }} />)}
+                                    {(item[key] === "StakeRequestExecuted" &&
+                                      <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' label="Executed" color='success' sx={{ width: '140px' }} />)}
+                                    {(item[key] === "StakeRequestCanceled" &&
+                                      <Chip icon={<ClearIcon fontSize='small' />} variant='outlined' label="Canceled" color='error' sx={{ width: '140px' }} />)}
                                   </>
                                 }
                               </TableCell>
@@ -390,7 +439,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                           )
                         })}
                         <TableCell sx={{ borderBottom: 'none' }}>
-                          {item.status === "Pending" && !isLoading && <>
+                          {item.type === "StakeRequestPending" && !isLoading && <>
                             <Button disabled={isLoading} key={index} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex, item.address)}>
                               Cancel
                             </Button>
@@ -415,9 +464,11 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                   <TableRow>
                                     <TableCell sx={{ color: 'gray', borderBottom: 'none' }}>Wallet</TableCell>
                                     {columns.map((column) => {
-                                      if (column === "txHash" || column === "txIndex" || column == "address" || column === "actions") return null;
+                                      if (column === "txHash" || column === "txIndex" || column == "address" || column === "actions" || column === "data") return null;
                                       return <TableCell key={String(column)} sx={{ color: 'gray', borderBottom: 'none' }}>
-                                        {camelCaseToTitle(String(column))}
+                                        {column === "data" ? 
+                                        "Data" : 
+                                        camelCaseToTitle(String(column) as string)}
                                       </TableCell>
                                     })}
                                   </TableRow>
@@ -427,12 +478,12 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                     <TableCell sx={{ borderBottom: 'none' }}>
                                       {isLoading ?
                                         <Skeleton width={100} /> : <>
-                                          <Avatar component={'span'} variant='square' sx={{ width: '22px', height: '22px', display: 'inline-flex', marginRight: '5px', transform: 'translate(0px, 4px)' }} src={'wallets/nami-light.svg'} />
-                                          <span>Nami</span>
+                                          <Avatar component={'span'} variant='square' sx={{ width: '22px', height: '22px', display: 'inline-flex', marginRight: '5px', transform: 'translate(0px, 4px)' }} src={icon} />
+                                          <span>{wallet?.name}</span>
                                         </>}
                                     </TableCell>
                                     {Object.keys(item).map((key, colIndex) => {
-                                      if (key === "txHash" || key === "txIndex" || key === "address" || key === "actions") return null;
+                                      if (key === "txHash" || key === "txIndex" || key === "address" || key === "actions" || key === "data") return null;
                                       if (key === "type") {
                                         return (
                                           <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
@@ -440,20 +491,46 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                               (<Skeleton>
                                                 <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
                                               </Skeleton>) :
-                                              item[key]
-                                            }
+                                              transactionTypeLabel(item[key])
+                                            } 
                                           </TableCell>
                                         )
                                       }
 
-                                      if (key === "status") {
+                                      if (key == "data") {
+                                        const additionalData = renderAdditionalTxHistoryData(item[key]);
                                         return (
                                           <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
                                             {isLoading ?
                                               (<Skeleton>
                                                 <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
                                               </Skeleton>) :
-                                              item[key]
+                                              <>
+                                                {additionalData?.assetLink && (
+                                                  <Tooltip title='View asset details'>
+                                                    <IconButton href={additionalData?.assetLink} size='small' target='_blank'>
+                                                      <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                                                    </IconButton>
+                                                  </Tooltip>
+                                                )}
+                                                {additionalData?.unlockTime && (
+                                                  <Typography variant='body2' sx={{ display: 'block' }}>
+                                                    Unlock Time: {additionalData?.unlockTime}
+                                                  </Typography>
+                                                )}
+                                                {additionalData?.transferAddressLink && (
+                                                  <Tooltip title='View transfer address details'>
+                                                    <IconButton href={additionalData?.transferAddressLink} size='small' target='_blank'>
+                                                      <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                                                    </IconButton>
+                                                  </Tooltip>
+                                                )}
+                                                {additionalData?.lockDuration && (
+                                                  <Typography variant='body2' sx={{ display: 'block' }}>
+                                                    Lock Duration: {additionalData?.lockDuration}
+                                                  </Typography>
+                                                )}
+                                              </>
                                             }
                                           </TableCell>
                                         )

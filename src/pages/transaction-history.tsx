@@ -1,15 +1,13 @@
+import DashboardHeader from '@components/dashboard/DashboardHeader';
+import TransactionHistoryTable from '@components/dashboard/TransactionHistoryTable';
 import { useToken } from '@components/hooks/useToken';
 import { useWalletContext } from '@contexts/WalletContext';
-import { formatNumber, formatTokenWithDecimals } from '@lib/utils/assets';
+import { formatNumberDecimals } from '@lib/utils/assets';
 import { trpc } from '@lib/utils/trpc';
 import { Box } from '@mui/material';
 import { StakeRequestsResponse } from '@server/services/syncApi';
 import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
-import DashboardHeader from '@components/dashboard/DashboardHeader';
-import TransactionHistoryTable from '@components/dashboard/TransactionHistoryTable';
 
 const TransactionHistory: FC = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -21,6 +19,7 @@ const TransactionHistory: FC = () => {
   const { selectedAddresses } = useWalletContext();
 
   const queryGetStakeRequests = trpc.sync.getStakeRequests.useQuery({ walletAddresses: selectedAddresses, page: currentRequestPage, limit: requestPageLimit }, { refetchInterval: 5000 });
+  const queryGetTransactionHistory = trpc.sync.getTransactionHistory.useQuery({ addresses: selectedAddresses, offset: (currentRequestPage - 1) * requestPageLimit, limit: requestPageLimit }, { refetchInterval: 5000 });
 
   useEffect(() => {
     setIsLoading(queryGetStakeRequests.isLoading);
@@ -34,43 +33,21 @@ const TransactionHistory: FC = () => {
 
   const { cnctDecimals } = useToken();
 
-  const statusToString = (status: number) => {
-    switch (status) {
-      case 0:
-        return "Pending";
-      case 1:
-        return "Executed";
-      case 2:
-        return "Cancelled";
-      default:
-        return "Unknown";
-    }
-  }
+  const processedTransactionHistory = useMemo(() => {
+    return queryGetTransactionHistory?.data?.data.map((request) => {
 
-  const processedStakeRequests = useMemo(() => {
-    return stakeRequestResponse?.data?.map((request) => {
       const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY!;
       const STAKE_POOL_ASSET_NAME = process.env.STAKE_POOL_ASSET_NAME!;
-      const formattedTokenAmount = formatNumber(parseFloat(formatTokenWithDecimals(BigInt(request.amount.multiAsset[STAKE_POOL_ASSET_POLICY][STAKE_POOL_ASSET_NAME]), cnctDecimals)), '');
-      const formattedDate = dayjs(stakeRequestResponse?.extra.slotData[request.slot]! * 1000).format('DD MMM, YY HH:mm');
-      const status = statusToString(request.status);
       const CARDANO_TX_EXPLORER_URL = process.env.CARDANO_TX_EXPLORER_URL!;
-
-      dayjs.extend(duration);
-      dayjs.extend(relativeTime);
-      const lockDuration = dayjs.duration(parseInt(request.stakePoolProxy.lockTime)).humanize();
 
       return {
         address: request.address,
-        amount: `${formattedTokenAmount} CNCT`,
-        lockDuration,
-        "Date & Time": formattedDate,
-        type: 'Stake',
-        status,
-        txHash: request.txHash,
-        txIndex: request.txIndex,
-        actions: { transactionLink: `${CARDANO_TX_EXPLORER_URL}/${request.txHash}` }
-      };
+        amount: `${formatNumberDecimals(request.assets[STAKE_POOL_ASSET_POLICY][STAKE_POOL_ASSET_NAME], cnctDecimals)} CNCT`,
+        createdAt: dayjs.unix(request.createdAt).format("DD MMM, YY - HH:mm").toString(),
+        type: request.txType,
+        actions: { transactionLink: `${CARDANO_TX_EXPLORER_URL}/${request.txHash}`},
+        data: request
+      }
     });
   }, [stakeRequestResponse, cnctDecimals]);
 
@@ -85,7 +62,7 @@ const TransactionHistory: FC = () => {
       }}>
       <DashboardHeader title="Transaction History" />
       <TransactionHistoryTable
-        data={fakeTrpcDashboardData.data}
+        data={processedTransactionHistory ?? fakeTrpcDashboardData.data}
         error={false}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
@@ -108,57 +85,45 @@ const fakeTrpcDashboardData = {
   data: [
     {
       amount: '1000 CNCT',
-      type: 'Stake',
-      "Date & Time": "27 Feb, 24 10:31",
-      status: "Executed",
+      createdAt: "27 Feb, 24 10:31",
+      type: 'StakeRequestPending',
       actions: { transactionLink: "#" },
-      txHash: "",
-      txIndex: "0"
+      data: {}
     },
     {
       amount: '2500 CNCT',
+      createdAt: "07 Feb, 24 06:42",
       type: 'Unlock Stake',
-      "Date & Time": "07 Feb, 24 06:42",
-      status: "Pending",
       actions: { transactionLink: "#" },
-      txHash: "",
-      txIndex: "0"
+      data: {}
     },
     {
       amount: '500 CNCT',
+      createdAt: "01 Feb, 24 04:22",
       type: 'Contribute',
-      "Date & Time": "01 Feb, 24 04:22",
-      status: "Pending",
       actions: { transactionLink: "#" },
-      txHash: "",
-      txIndex: "0"
+      data: {}
     },
     {
       amount: '1300 CNCT',
+      createdAt: "16 Feb, 24 03:32",
       type: 'Stake',
-      "Date & Time": "16 Feb, 24 03:32",
-      status: "Executed",
       actions: { transactionLink: "#" },
-      txHash: "",
-      txIndex: "0"
+      data: {}
     },
     {
       amount: '1000 CNCT',
+      createdAt: "27 Feb, 24 10:31",
       type: 'Unlock Stake',
-      "Date & Time": "27 Feb, 24 10:31",
-      status: "Executed",
       actions: { transactionLink: "#" },
-      txHash: "",
-      txIndex: "0"
+      data: {}
     },
     {
       amount: '2500 CNCT',
+      createdAt: "07 Feb, 24 06:42",
       type: 'Contribute',
-      "Date & Time": "07 Feb, 24 06:42",
-      status: "Pending",
       actions: { transactionLink: "#" },
-      txHash: "",
-      txIndex: "0"
+      data: {}
     }
   ]
 }

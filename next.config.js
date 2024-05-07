@@ -14,6 +14,9 @@ const nextConfig = {
     CARDANO_TX_EXPLORER_URL: process.env.CARDANO_TX_EXPLORER_URL,
     COINECTA_SYNC_API: process.env.COINECTA_SYNC_API,
     DEXHUNTER_PARTNER_CODE: process.env.DEXHUNTER_PARTNER_CODE,
+    STAKE_KEY_PREFIX: process.env.STAKE_KEY_PREFIX,
+    CARDANO_ASSET_EXPLORER_URL: process.env.CARDANO_ASSET_EXPLORER_URL,
+    CARDANO_ADDRESS_EXPLORER_URL: process.env.CARDANO_ADDRESS_EXPLORER_URL,
   },
   swcMinify: true,
   webpack: function (config, options) {
