@@ -56,8 +56,6 @@ const ProRataForm: FC<TProRataFormProps> = ({
         const response = await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.IPGEOLOCATION_API_KEY}`);
         const data = response.data;
 
-        console.log(data)
-
         if (restrictedCountries.includes(data.country_code2)) {
           setAllowed(false);
         } else {
