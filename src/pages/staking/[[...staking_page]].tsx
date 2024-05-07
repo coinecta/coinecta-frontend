@@ -12,7 +12,6 @@ const Staking: NextPage = () => {
   const router = useRouter()
   const { staking_page } = router.query
   const route = staking_page?.toString()
-  console.log(route)
 
   const pageMapper: { [key: string]: React.ReactElement } = {
     "add": <AddStakePage />,
