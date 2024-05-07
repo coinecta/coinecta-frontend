@@ -266,7 +266,6 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                     background: theme.palette.background.paper,
                   }
                 }}>
-                  <TableCell />
                   {columns.map((column) => {
                     if (column === "txHash" || column === "txIndex" || column == "address") return null;
                     if (column === "type") return (
@@ -291,7 +290,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                 {data.map((item, index) => {
                   const wallet = walletsList.find(w => w.connectName === cardano.getAddressWalletType(item.address));
                   const icon = theme.palette.mode === 'dark' ? wallet?.iconDark : wallet?.icon;
-                  const isOpen = index === openRowIndex;
+                  let isOpen = index === openRowIndex;
 
                   const toggleOpen = () => {
                     if (isOpen) {
@@ -306,7 +305,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                       <TableRow
                         key={index}
                         sx={{
-                          '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
+                          backgroundColor: index % 2 === 0 ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)',
                           '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)', cursor: 'pointer' }
                         }}
                         onClick={toggleOpen}
@@ -411,31 +410,29 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                         <TableCell sx={{ paddingBottom: 0, paddingTop: 0, paddingLeft: '45px', borderBottom: 'none' }} colSpan={8}>
                           <Collapse in={isOpen} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: 1 }}>
-                              <Table size="small" aria-label="purchases">
+                              <Table size="small">
                                 <TableHead>
                                   <TableRow>
-                                    <TableCell sx={{ color: 'gray', borderBottom: 'none' }}>Amount</TableCell>
-                                    <TableCell sx={{ color: 'gray', borderBottom: 'none' }}>Type</TableCell>
-                                    <TableCell sx={{ color: 'gray', borderBottom: 'none' }}>Status</TableCell>
-                                    <TableCell sx={{ borderBottom: 'none' }} />
-                                    <TableCell sx={{ borderBottom: 'none' }} />
-                                    <TableCell sx={{ borderBottom: 'none' }} />
-                                    <TableCell sx={{ borderBottom: 'none' }} />
-                                    <TableCell sx={{ borderBottom: 'none' }} />
-                                    <TableCell sx={{ borderBottom: 'none' }} />
-                                    <TableCell sx={{ borderBottom: 'none' }} />
-                                    <TableCell sx={{ borderBottom: 'none' }} />
-                                    <TableCell sx={{ borderBottom: 'none' }} />
-                                    <TableCell sx={{ borderBottom: 'none' }} />
-                                    <TableCell sx={{ borderBottom: 'none' }} />
-                                    <TableCell sx={{ borderBottom: 'none' }} />
+                                    <TableCell sx={{ color: 'gray', borderBottom: 'none' }}>Wallet</TableCell>
+                                    {columns.map((column) => {
+                                      if (column === "txHash" || column === "txIndex" || column == "address" || column === "actions") return null;
+                                      return <TableCell key={String(column)} sx={{ color: 'gray', borderBottom: 'none' }}>
+                                        {camelCaseToTitle(String(column))}
+                                      </TableCell>
+                                    })}
                                   </TableRow>
                                 </TableHead>
                                 <TableBody>
                                   <TableRow>
+                                    <TableCell sx={{ borderBottom: 'none' }}>
+                                      {isLoading ?
+                                        <Skeleton width={100} /> : <>
+                                          <Avatar component={'span'} variant='square' sx={{ width: '22px', height: '22px', display: 'inline-flex', marginRight: '5px', transform: 'translate(0px, 4px)' }} src={'wallets/nami-light.svg'} />
+                                          <span>Nami</span>
+                                        </>}
+                                    </TableCell>
                                     {Object.keys(item).map((key, colIndex) => {
-                                      if (key === "txHash" || key === "txIndex" || key === "address" || key === "Date & Time" || key === "actions") return null;
-
+                                      if (key === "txHash" || key === "txIndex" || key === "address" || key === "actions") return null;
                                       if (key === "type") {
                                         return (
                                           <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>

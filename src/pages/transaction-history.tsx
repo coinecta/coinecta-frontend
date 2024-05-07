@@ -65,6 +65,7 @@ const TransactionHistory: FC = () => {
         amount: `${formattedTokenAmount} CNCT`,
         lockDuration,
         "Date & Time": formattedDate,
+        type: 'Stake',
         status,
         txHash: request.txHash,
         txIndex: request.txIndex,
