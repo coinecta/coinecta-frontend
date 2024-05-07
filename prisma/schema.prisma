@@ -119,6 +119,14 @@ model Transaction {
   @@map("transactions")
 }
 
+model NewTx {
+  id            String @id @default(cuid())
+  txId          String
+  onChainTxData Json?  @map("on_chain_tx_data")
+
+  @@map("new_transactions")
+}
+
 model Project {
   id                 Int                 @id @default(autoincrement())
   created_at         DateTime            @default(now())
