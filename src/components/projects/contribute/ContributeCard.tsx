@@ -3,6 +3,7 @@ import React, { ChangeEvent, FC, useState } from 'react';
 import TokenInput from './TokenInput';
 import Link from '@components/Link';
 import ContributeConfirm from './ContributeConfirm';
+import { useWalletContext } from '@contexts/WalletContext';
 
 interface IContributeCardProps {
   projectName: string;
@@ -13,7 +14,8 @@ interface IContributeCardProps {
   exchangeRate: number;
   whitelisted: boolean;
   live: boolean;
-  contributionRoundId: number
+  contributionRoundId: number;
+  recipientAddress: string | null;
 }
 
 const ContributeCard: FC<IContributeCardProps> = ({
@@ -25,8 +27,11 @@ const ContributeCard: FC<IContributeCardProps> = ({
   remainingTokens,
   exchangeRate,
   whitelisted,
-  live
+  live,
+  recipientAddress
 }) => {
+  const { sessionData } = useWalletContext()
+
   const theme = useTheme()
   const [termsCheck, setTermsCheck] = useState(false)
   const [openContribution, setOpenContribution] = useState(false)
@@ -75,35 +80,65 @@ const ContributeCard: FC<IContributeCardProps> = ({
           </Typography>}
         />
       </Box>
-      <Box>
-        <Button
-          variant="contained"
-          color="secondary"
-          disabled={!termsCheck || !whitelisted || !live}
-          sx={{
-            textTransform: 'none',
-            fontSize: '20px',
-            fontWeight: 600,
-            borderRadius: '6px'
-          }}
-          onClick={() => setOpenContribution(true)}
-        >
-          Contribute now
-        </Button>
+      <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
+        <Box sx={{ width: '100%', textAlign: 'center' }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            disabled={
+              !termsCheck ||
+              !whitelisted ||
+              !live ||
+              !recipientAddress ||
+              Number(inputValue) === 0 ||
+              sessionData == null
+            }
+            sx={{
+              textTransform: 'none',
+              fontSize: '20px',
+              fontWeight: 600,
+              borderRadius: '6px'
+            }}
+            onClick={() => setOpenContribution(true)}
+          >
+            Contribute now
+          </Button>
+        </Box>
+        {!recipientAddress &&
+          <Typography color="error" sx={{ mt: 1, fontSize: '0.9rem!important' }}>
+            Contribution form error, please notify support if you are trying to contribute.
+          </Typography>
+        }
+        {sessionData == null &&
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography color="error" sx={{ mt: 1, fontSize: '0.9rem!important' }}>
+              Please sign in to contribute
+            </Typography>
+            <Typography sx={{ mt: 1, fontSize: '0.9rem!important' }}>
+              The wallet you send funds from doesn't need to be the same wallet you sign-in from.
+            </Typography>
+            <Typography sx={{ mt: 1, fontSize: '0.9rem!important' }}>
+              LEDGER USERS: Sign in with another wallet then contribute from your Ledger.
+            </Typography>
+          </Box>
+        }
       </Box>
       {!whitelisted && <Box>
         <Typography color="text.secondary" sx={{ fontSize: '0.9rem!important', fontStyle: 'italic' }}>
-          You must be whitelisted to contribute
+          You must be whitelisted to contribute.
         </Typography>
       </Box>}
-      <ContributeConfirm
-        open={openContribution}
-        setOpen={setOpenContribution}
-        paymentAmount={inputValue}
-        receiveAmount={outputValue}
-        receiveCurrency={tokenTicker}
-        contributionRoundId={contributionRoundId}
-      />
+      {recipientAddress !== null &&
+        <ContributeConfirm
+          open={openContribution}
+          setOpen={setOpenContribution}
+          paymentAmount={inputValue}
+          receiveAmount={outputValue}
+          receiveCurrency={tokenTicker}
+          contributionRoundId={contributionRoundId}
+          recipientAddress={recipientAddress}
+        />
+      }
     </Box>
   );
 };

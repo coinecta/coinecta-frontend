@@ -63,6 +63,8 @@ type TProRataFormProps = {
   projectIcon: string;
   projectSlug: string;
   whitelistSlug: string | null;
+  recipientAddress: string | null;
+  restrictedCountries: string[];
 }
 
 type TWalletListItem = {
@@ -173,4 +175,9 @@ interface CombinedTransactionInfo {
   dbId?: string;
   txId?: string;
   userPoolWeight?: number;
+}
+
+interface Country {
+  label: string;
+  code: string;
 }

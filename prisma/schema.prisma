@@ -119,14 +119,6 @@ model Transaction {
   @@map("transactions")
 }
 
-model NewTx {
-  id            String @id @default(cuid())
-  txId          String
-  onChainTxData Json?  @map("on_chain_tx_data")
-
-  @@map("new_transactions")
-}
-
 model Project {
   id                 Int                 @id @default(autoincrement())
   created_at         DateTime            @default(now())
@@ -155,22 +147,24 @@ model Project {
 }
 
 model ContributionRound {
-  id            Int           @id @default(autoincrement())
-  name          String
-  saleType      String        @map("sale_type")
-  startDate     DateTime      @map("start_date")
-  endDate       DateTime      @map("end_date")
-  tokenTicker   String        @map("token_ticker")
-  tokenTarget   Int           @map("token_target")
-  currency      String
-  price         Float
-  deposited     Float
-  whitelistSlug String?       @unique @map("whitelist_slug")
-  whitelist     Whitelist?    @relation(fields: [whitelistSlug], references: [slug])
-  Transaction   Transaction[]
-  projectName   String        @map("project_name")
-  projectSlug   String        @map("project_slug")
-  project       Project       @relation(fields: [projectSlug], references: [slug], onDelete: Cascade)
+  id                  Int           @id @default(autoincrement())
+  name                String
+  saleType            String        @map("sale_type")
+  startDate           DateTime      @map("start_date")
+  endDate             DateTime      @map("end_date")
+  tokenTicker         String        @map("token_ticker")
+  tokenTarget         Int           @map("token_target")
+  currency            String
+  price               Float
+  deposited           Float
+  whitelistSlug       String?       @unique @map("whitelist_slug")
+  whitelist           Whitelist?    @relation(fields: [whitelistSlug], references: [slug])
+  Transaction         Transaction[]
+  projectName         String        @map("project_name")
+  projectSlug         String        @map("project_slug")
+  project             Project       @relation(fields: [projectSlug], references: [slug], onDelete: Cascade)
+  recipientAddress    String?       @map("recipient_address")
+  restrictedCountries String[]      @map("restricted_countries")
 
   @@map("contribution_round")
 }

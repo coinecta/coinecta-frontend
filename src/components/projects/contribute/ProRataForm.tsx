@@ -27,7 +27,9 @@ const ProRataForm: FC<TProRataFormProps> = ({
   projectName,
   projectIcon,
   projectSlug,
-  whitelistSlug
+  whitelistSlug,
+  recipientAddress,
+  restrictedCountries
 }) => {
   const theme = useTheme()
   const { sessionStatus } = useWalletContext()
@@ -116,6 +118,7 @@ const ProRataForm: FC<TProRataFormProps> = ({
               whitelisted={whitelistSlug ? whitelisted : true}
               live={isCurrentDateBetween}
               contributionRoundId={id}
+              recipientAddress={recipientAddress}
             />
           </Paper>
         </Grid>
