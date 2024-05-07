@@ -407,7 +407,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                           </IconButton>
                         </TableCell>
                       </TableRow>
-                      <TableRow key={index}>
+                      <TableRow>
                         <TableCell sx={{ paddingBottom: 0, paddingTop: 0, paddingLeft: '45px', borderBottom: 'none' }} colSpan={8}>
                           <Collapse in={isOpen} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: 1 }}>
