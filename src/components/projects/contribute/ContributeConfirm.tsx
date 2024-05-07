@@ -25,8 +25,6 @@ import { getShorterAddress } from '@lib/utils/general';
 import { useAlert } from '@contexts/AlertContext';
 import { trpc } from '@lib/utils/trpc';
 
-const CONTRIBUTION_ADDRESS = process.env.CONTRIBUTION_ADDRESS
-
 interface IContributeConfirmProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,6 +33,7 @@ interface IContributeConfirmProps {
   receiveAmount: string;
   receiveCurrency: string;
   contributionRoundId: number;
+  recipientAddress: string;
 }
 
 const ContributeConfirm: FC<IContributeConfirmProps> = ({
@@ -44,7 +43,8 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
   paymentCurrency = 'ADA',
   receiveAmount,
   receiveCurrency,
-  contributionRoundId
+  contributionRoundId,
+  recipientAddress
 }) => {
   const { addAlert } = useAlert()
   const theme = useTheme();
@@ -128,7 +128,7 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
       try {
         const tx = new Transaction({ initiator: wallet })
           .sendLovelace(
-            CONTRIBUTION_ADDRESS,
+            recipientAddress,
             (Number(paymentAmount) * 1000000).toString()
           );
 
