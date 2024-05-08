@@ -97,11 +97,11 @@ const fakeTrpcDashboardData = {
     {
       amount: '2500 CNCT',
       createdAt: "07 Feb, 24 06:42",
-      type: 'StakePositionTransferred',
+      type: 'StakePositionReceived',
       actions: { transactionLink: "#" },
       data: {
         address: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp",
-        txType: "StakePositionTransferred",
+        txType: "StakePositionReceived",
         lovelace: "1000",
         assets: {},
         txHash: "hash1",
@@ -114,11 +114,11 @@ const fakeTrpcDashboardData = {
     {
       amount: '500 CNCT',
       createdAt: "01 Feb, 24 04:22",
-      type: 'StakePositionTransferred',
+      type: 'StakePositionRedeemed',
       actions: { transactionLink: "#" },
       data: {
         address: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp",
-        txType: "StakePositionTransferred",
+        txType: "StakePositionRedeemed",
         lovelace: "1000",
         assets: {},
         txHash: "hash1",
@@ -131,11 +131,11 @@ const fakeTrpcDashboardData = {
     {
       amount: '1300 CNCT',
       createdAt: "16 Feb, 24 03:32",
-      type: 'StakePositionTransferred',
+      type: 'StakeRequestPending',
       actions: { transactionLink: "#" },
       data: {
         address: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp",
-        txType: "StakePositionTransferred",
+        txType: "StakeRequestPending",
         lovelace: "1000",
         assets: {},
         txHash: "hash1",
@@ -148,11 +148,11 @@ const fakeTrpcDashboardData = {
     {
       amount: '1000 CNCT',
       createdAt: "27 Feb, 24 10:31",
-      type: "StakePositionTransferred",
+      type: "StakeRequestExecuted",
       actions: { transactionLink: "#" },
       data: {
         address: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp",
-        txType: "StakePositionTransferred",
+        txType: "StakeRequestExecuted",
         lovelace: "1000",
         assets: {},
         txHash: "hash1",

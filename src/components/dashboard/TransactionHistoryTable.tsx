@@ -439,7 +439,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                         })}
                         <TableCell sx={{ borderBottom: 'none' }}>
                           {item.type === "StakeRequestPending" && !isLoading && <>
-                            <Button disabled={isLoading} key={index} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex, item.address)}>
+                            <Button disabled={isLoading} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex, item.address)}>
                               Cancel
                             </Button>
                           </>}
