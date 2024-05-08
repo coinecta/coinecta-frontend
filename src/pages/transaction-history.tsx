@@ -5,7 +5,7 @@ import { useWalletContext } from '@contexts/WalletContext';
 import { formatNumberDecimals } from '@lib/utils/assets';
 import { trpc } from '@lib/utils/trpc';
 import { Box } from '@mui/material';
-import { StakeRequestsResponse } from '@server/services/syncApi';
+import { StakeRequestsResponse, TransactionHistoryResponse } from '@server/services/syncApi';
 import dayjs from 'dayjs';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -15,26 +15,25 @@ const TransactionHistory: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentRequestPage, setCurrentRequestPage] = useState<number>(1);
   const [requestPageLimit, setRequestPageLimit] = useState<number>(5);
-  const [stakeRequestResponse, setStakeRequestResponse] = useState<StakeRequestsResponse | null>(null);
+  const [transactionHistoryResponse, setTransactionHistoryResponse] = useState<TransactionHistoryResponse | null>(null);
   const { selectedAddresses } = useWalletContext();
 
-  const queryGetStakeRequests = trpc.sync.getStakeRequests.useQuery({ walletAddresses: selectedAddresses, page: currentRequestPage, limit: requestPageLimit }, { refetchInterval: 5000 });
   const queryGetTransactionHistory = trpc.sync.getTransactionHistory.useQuery({ addresses: selectedAddresses, offset: (currentRequestPage - 1) * requestPageLimit, limit: requestPageLimit }, { refetchInterval: 5000 });
 
   useEffect(() => {
-    setIsLoading(queryGetStakeRequests.isLoading);
-  }, [queryGetStakeRequests.isLoading]);
+    setIsLoading(queryGetTransactionHistory.isLoading);
+  }, [queryGetTransactionHistory.isLoading]);
 
   useEffect(() => {
-    if (queryGetStakeRequests.data !== undefined) {
-      setStakeRequestResponse(queryGetStakeRequests.data);
+    if (queryGetTransactionHistory.data !== undefined) {
+      setTransactionHistoryResponse(queryGetTransactionHistory.data)
     }
-  }, [queryGetStakeRequests.data]);
+  }, [queryGetTransactionHistory.data]);
 
   const { cnctDecimals } = useToken();
 
   const processedTransactionHistory = useMemo(() => {
-    return queryGetTransactionHistory?.data?.data.map((request) => {
+    return transactionHistoryResponse?.data.map((request) => {
 
       const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY!;
       const STAKE_POOL_ASSET_NAME = process.env.STAKE_POOL_ASSET_NAME!;
@@ -49,7 +48,7 @@ const TransactionHistory: FC = () => {
         data: request
       }
     });
-  }, [stakeRequestResponse, cnctDecimals]);
+  }, [transactionHistoryResponse, cnctDecimals]);
 
   return (
     <Box
@@ -68,7 +67,7 @@ const TransactionHistory: FC = () => {
         setSelectedRows={setSelectedRows}
         parentContainerRef={parentRef}
         isLoading={isLoading}
-        totalRequests={queryGetStakeRequests.data?.total ?? 0}
+        totalRequests={queryGetTransactionHistory.data?.total ?? 0}
         currentRequestPage={currentRequestPage}
         requestPageLimit={requestPageLimit}
         setCurrentRequestPage={setCurrentRequestPage}
