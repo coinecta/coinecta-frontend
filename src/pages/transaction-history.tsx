@@ -5,7 +5,6 @@ import { useWalletContext } from '@contexts/WalletContext';
 import { formatNumberDecimals } from '@lib/utils/assets';
 import { trpc } from '@lib/utils/trpc';
 import { Box } from '@mui/material';
-import { StakeRequestsResponse, TransactionHistoryResponse } from '@server/services/syncApi';
 import dayjs from 'dayjs';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -15,25 +14,20 @@ const TransactionHistory: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentRequestPage, setCurrentRequestPage] = useState<number>(1);
   const [requestPageLimit, setRequestPageLimit] = useState<number>(5);
-  const [transactionHistoryResponse, setTransactionHistoryResponse] = useState<TransactionHistoryResponse | null>(null);
   const { selectedAddresses } = useWalletContext();
 
   const queryGetTransactionHistory = trpc.sync.getTransactionHistory.useQuery({ addresses: selectedAddresses, offset: (currentRequestPage - 1) * requestPageLimit, limit: requestPageLimit }, { refetchInterval: 5000 });
+  const transactionHistory = useMemo(() => queryGetTransactionHistory.data, [queryGetTransactionHistory.data]);
 
   useEffect(() => {
     setIsLoading(queryGetTransactionHistory.isLoading);
   }, [queryGetTransactionHistory.isLoading]);
 
-  useEffect(() => {
-    if (queryGetTransactionHistory.data !== undefined) {
-      setTransactionHistoryResponse(queryGetTransactionHistory.data)
-    }
-  }, [queryGetTransactionHistory.data]);
 
   const { cnctDecimals } = useToken();
 
   const processedTransactionHistory = useMemo(() => {
-    return transactionHistoryResponse?.data.map((request) => {
+    return transactionHistory?.data.map((request) => {
 
       const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY!;
       const STAKE_POOL_ASSET_NAME = process.env.STAKE_POOL_ASSET_NAME!;
@@ -48,7 +42,7 @@ const TransactionHistory: FC = () => {
         data: request
       }
     });
-  }, [transactionHistoryResponse, cnctDecimals]);
+  }, [transactionHistory, cnctDecimals]);
 
   return (
     <Box

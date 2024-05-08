@@ -142,12 +142,6 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     }
   }
 
-//   <Tooltip title='View transaction details'>
-//   <IconButton href={item[key].transactionLink} size='small' target='_blank'>
-//     <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-//   </IconButton>
-// </Tooltip>
-  // column -> value -> render
   const renderAdditionalTxHistoryData = (data: TransactionHistory) => {
 
     const STAKE_KEY_PREFIX = process.env.STAKE_KEY_PREFIX!;
@@ -164,8 +158,8 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         policyId = data.stakeKey?.substring(0, 56);
         assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
         return {
-          assetLink: `${CARDANO_ASSET_EXPLORER_URL}/${policyId + assetName}`,
           unlockTime: dayjs.unix(data.unlockTime ?? 0 / 1_000).format('DD MMM, YY HH:mm'),
+          assetLink: `${CARDANO_ASSET_EXPLORER_URL}/${policyId + assetName}`,
         }
       case 'StakeRequestPending':
       case 'StakeRequestExecuted':
@@ -177,9 +171,9 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         policyId = data.stakeKey?.substring(0, 56);
         assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
         return {
-          assetLink: `${CARDANO_ASSET_EXPLORER_URL}/${policyId + assetName}`,
           unlockTime: dayjs.unix(data.unlockTime ?? 0 / 1_000).format('DD MMM, YY HH:mm'),
           transferAddressLink: `${CARDANO_ADDRESS_EXPLORER_URL}/${data.transferredToAddress}`,
+          assetLink: `${CARDANO_ASSET_EXPLORER_URL}/${policyId + assetName}`,
         }
     }
   }
@@ -341,6 +335,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                         {camelCaseToTitle(String(column))}
                       </TableCell>
                     )
+
                     return <TableCell key={String(column)}>
                       {camelCaseToTitle(String(column))}
                     </TableCell>
@@ -355,7 +350,8 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                   const icon = theme.palette.mode === 'dark' ? wallet?.iconDark : wallet?.icon;
                   let isOpen = index === openRowIndex;
 
-                  const toggleOpen = () => {
+                  const toggleOpen = (e: any) => {
+                    if((e.target as HTMLElement).closest('button, a')) return;
                     if (isOpen) {
                       setOpenRowIndex(-1);
                     } else {
@@ -464,11 +460,23 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                   <TableRow>
                                     <TableCell sx={{ color: 'gray', borderBottom: 'none' }}>Wallet</TableCell>
                                     {columns.map((column) => {
-                                      if (column === "txHash" || column === "txIndex" || column == "address" || column === "actions" || column === "data") return null;
-                                      return <TableCell key={String(column)} sx={{ color: 'gray', borderBottom: 'none' }}>
-                                        {column === "data" ? 
-                                        "Data" : 
-                                        camelCaseToTitle(String(column) as string)}
+                                      if (column === "txHash" || column === "txIndex" || column == "address" || column === "actions") return null;
+
+                                      if (column === "data")
+                                      {
+                                        const data = renderAdditionalTxHistoryData(item[column]);
+                                        if (data === undefined) return null;
+                                        return Object.keys(data!).map((key) => {
+                                          return (
+                                          <TableCell key={String(column)} sx={{ color: 'gray', borderBottom: 'none' }}>
+                                            {camelCaseToTitle(String(key) as string)}
+                                          </TableCell>
+                                          );
+                                        });
+                                      }
+
+                                      return column !== "data" && <TableCell key={String(column)} sx={{ color: 'gray', borderBottom: 'none' }}>
+                                        {camelCaseToTitle(String(column) as string)}
                                       </TableCell>
                                     })}
                                   </TableRow>
@@ -483,7 +491,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                         </>}
                                     </TableCell>
                                     {Object.keys(item).map((key, colIndex) => {
-                                      if (key === "txHash" || key === "txIndex" || key === "address" || key === "actions" || key === "data") return null;
+                                      if (key === "txHash" || key === "txIndex" || key === "address" || key === "actions") return null;
                                       if (key === "type") {
                                         return (
                                           <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
@@ -499,41 +507,57 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
 
                                       if (key == "data") {
                                         const additionalData = renderAdditionalTxHistoryData(item[key]);
-                                        return (
-                                          <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                                            {isLoading ?
-                                              (<Skeleton>
-                                                <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
-                                              </Skeleton>) :
-                                              <>
-                                                {additionalData?.assetLink && (
-                                                  <Tooltip title='View asset details'>
-                                                    <IconButton href={additionalData?.assetLink} size='small' target='_blank'>
+                                        if (additionalData === undefined) return null;
+                                        return Object.entries(additionalData!).map(([key, value]) => {
+                                          switch(key){
+                                            case "unlockTime":
+                                              return (
+                                                <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                                                  {isLoading ?
+                                                    <Skeleton width={100} /> : 
+                                                    <Typography variant='body2' sx={{ display: 'block' }}>
+                                                      {additionalData?.unlockTime}
+                                                    </Typography>
+                                                  }
+                                                </TableCell>
+                                              )
+                                            case "assetLink":
+                                              return (
+                                                <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                                                  {isLoading ?
+                                                    <Skeleton width={100} /> : 
+                                                    <Tooltip title='View asset details'>
+                                                      <IconButton href={value!} size='small' target='_blank'>
+                                                        <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                                                      </IconButton>
+                                                    </Tooltip>
+                                                  }
+                                                </TableCell>
+                                              )
+                                            case "transferAddressLink":
+                                              return (
+                                                <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                                                  {isLoading ?
+                                                    <Skeleton width={100} /> : 
+                                                    <IconButton href={value!} size='small' target='_blank'>
                                                       <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
                                                     </IconButton>
-                                                  </Tooltip>
-                                                )}
-                                                {additionalData?.unlockTime && (
-                                                  <Typography variant='body2' sx={{ display: 'block' }}>
-                                                    Unlock Time: {additionalData?.unlockTime}
-                                                  </Typography>
-                                                )}
-                                                {additionalData?.transferAddressLink && (
-                                                  <Tooltip title='View transfer address details'>
-                                                    <IconButton href={additionalData?.transferAddressLink} size='small' target='_blank'>
-                                                      <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                                                    </IconButton>
-                                                  </Tooltip>
-                                                )}
-                                                {additionalData?.lockDuration && (
-                                                  <Typography variant='body2' sx={{ display: 'block' }}>
-                                                    Lock Duration: {additionalData?.lockDuration}
-                                                  </Typography>
-                                                )}
-                                              </>
-                                            }
-                                          </TableCell>
-                                        )
+                                                  }
+                                                </TableCell>
+                                              )
+                                            case "lockDuration":
+                                              return (
+                                                <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                                                  {isLoading ?
+                                                    <Skeleton width={100} /> : 
+                                                    <Typography variant='body2' sx={{ display: 'block' }}>
+                                                      {value!}
+                                                    </Typography>
+                                                  }
+                                                </TableCell>
+                                              )
+                                          }
+                                        })
                                       }
 
                                       return (
