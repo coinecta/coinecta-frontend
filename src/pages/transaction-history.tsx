@@ -5,6 +5,7 @@ import { useWalletContext } from '@contexts/WalletContext';
 import { formatNumberDecimals } from '@lib/utils/assets';
 import { trpc } from '@lib/utils/trpc';
 import { Box } from '@mui/material';
+import { TransactionHistory as TransactionHistoryModel } from '@server/services/syncApi';
 import dayjs from 'dayjs';
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -79,44 +80,105 @@ const fakeTrpcDashboardData = {
     {
       amount: '1000 CNCT',
       createdAt: "27 Feb, 24 10:31",
-      type: 'StakeRequestPending',
+      type: 'StakePositionTransferred',
       actions: { transactionLink: "#" },
-      data: {}
+      data: {
+        address: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp",
+        txType: "StakePositionTransferred",
+        lovelace: "1000",
+        assets: {},
+        txHash: "hash1",
+        createdAt: 1709995166,
+        stakeKey: "61b3802ce748ed1fdaad2d6c744b19f104285f7d318172a5d4f06a4ebbe09406a1d15f65337f801ba7a9439595ebc79fc8947373d8540035",
+        unlockTime: 1709995166000,
+        transferredToAddress: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp"
+      } as TransactionHistoryModel
     },
     {
       amount: '2500 CNCT',
       createdAt: "07 Feb, 24 06:42",
-      type: 'Unlock Stake',
+      type: 'StakePositionTransferred',
       actions: { transactionLink: "#" },
-      data: {}
+      data: {
+        address: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp",
+        txType: "StakePositionTransferred",
+        lovelace: "1000",
+        assets: {},
+        txHash: "hash1",
+        createdAt: 1709995166,
+        stakeKey: "61b3802ce748ed1fdaad2d6c744b19f104285f7d318172a5d4f06a4ebbe09406a1d15f65337f801ba7a9439595ebc79fc8947373d8540035",
+        unlockTime: 1709995166000,
+        transferredToAddress: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp"
+      } as TransactionHistoryModel
     },
     {
       amount: '500 CNCT',
       createdAt: "01 Feb, 24 04:22",
-      type: 'Contribute',
+      type: 'StakePositionTransferred',
       actions: { transactionLink: "#" },
-      data: {}
+      data: {
+        address: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp",
+        txType: "StakePositionTransferred",
+        lovelace: "1000",
+        assets: {},
+        txHash: "hash1",
+        createdAt: 1709995166,
+        stakeKey: "61b3802ce748ed1fdaad2d6c744b19f104285f7d318172a5d4f06a4ebbe09406a1d15f65337f801ba7a9439595ebc79fc8947373d8540035",
+        unlockTime: 1709995166000,
+        transferredToAddress: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp"
+      } as TransactionHistoryModel
     },
     {
       amount: '1300 CNCT',
       createdAt: "16 Feb, 24 03:32",
-      type: 'Stake',
+      type: 'StakePositionTransferred',
       actions: { transactionLink: "#" },
-      data: {}
+      data: {
+        address: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp",
+        txType: "StakePositionTransferred",
+        lovelace: "1000",
+        assets: {},
+        txHash: "hash1",
+        createdAt: 1709995166,
+        stakeKey: "61b3802ce748ed1fdaad2d6c744b19f104285f7d318172a5d4f06a4ebbe09406a1d15f65337f801ba7a9439595ebc79fc8947373d8540035",
+        unlockTime: 1709995166000,
+        transferredToAddress: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp"
+      } as TransactionHistoryModel
     },
     {
       amount: '1000 CNCT',
       createdAt: "27 Feb, 24 10:31",
-      type: 'Unlock Stake',
+      type: "StakePositionTransferred",
       actions: { transactionLink: "#" },
-      data: {}
+      data: {
+        address: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp",
+        txType: "StakePositionTransferred",
+        lovelace: "1000",
+        assets: {},
+        txHash: "hash1",
+        createdAt: 1709995166,
+        stakeKey: "61b3802ce748ed1fdaad2d6c744b19f104285f7d318172a5d4f06a4ebbe09406a1d15f65337f801ba7a9439595ebc79fc8947373d8540035",
+        unlockTime: 1709995166000,
+        transferredToAddress: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp"
+      } as TransactionHistoryModel
     },
     {
       amount: '2500 CNCT',
       createdAt: "07 Feb, 24 06:42",
-      type: 'Contribute',
+      type: 'StakeRequestCanceled',
       actions: { transactionLink: "#" },
-      data: {}
+      data: {
+        address: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp",
+        txType: "StakeRequestCanceled",
+        lovelace: "1000",
+        assets: {},
+        txHash: "hash1",
+        lockDuration: "1003200000",
+        createdAt: 1709995166,
+        stakeKey: "61b3802ce748ed1fdaad2d6c744b19f104285f7d318172a5d4f06a4ebbe09406a1d15f65337f801ba7a9439595ebc79fc8947373d8540035",
+        unlockTime: 1709995166000,
+        transferredToAddress: "addr1q9cxqfg6xrzqus5qshxmgaa2pj5yv2h9mzm22hj7jct2ad59q2pfxagx7574360xl47vhw79wxtdtze2z83k5a4xpptscvshgp"
+      } as TransactionHistoryModel
     }
   ]
 }

@@ -1,6 +1,7 @@
 import { useAlert } from '@contexts/AlertContext';
 import { useWalletContext } from '@contexts/WalletContext';
 import { useCardano } from '@lib/utils/cardano';
+import { getShorterAddress } from '@lib/utils/general';
 import { trpc } from '@lib/utils/trpc';
 import { walletNameToId, walletsList } from '@lib/walletsList';
 import { useWallet } from '@meshsdk/react';
@@ -19,6 +20,7 @@ import {
   Button,
   Chip,
   IconButton,
+  Link,
   Paper,
   Skeleton,
   Table,
@@ -37,6 +39,8 @@ import { TimeIcon } from '@mui/x-date-pickers';
 import { TransactionHistory } from '@server/services/syncApi';
 import copy from 'copy-to-clipboard';
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ActionBar, { IActionBarButton } from './ActionBar';
 import DashboardCard from './DashboardCard';
@@ -143,10 +147,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   }
 
   const renderAdditionalTxHistoryData = (data: TransactionHistory) => {
-
     const STAKE_KEY_PREFIX = process.env.STAKE_KEY_PREFIX!;
-    const CARDANO_ASSET_EXPLORER_URL = process.env.CARDANO_ASSET_EXPLORER_URL!;
-    const CARDANO_ADDRESS_EXPLORER_URL = process.env.CARDANO_ADDRESS_EXPLORER_URL!;
 
     let policyId;
     let assetName;
@@ -158,22 +159,24 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         policyId = data.stakeKey?.substring(0, 56);
         assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
         return {
-          unlockTime: dayjs.unix(data.unlockTime ?? 0 / 1_000).format('DD MMM, YY HH:mm'),
-          assetLink: `${CARDANO_ASSET_EXPLORER_URL}/${policyId + assetName}`,
+          unlockTime: dayjs(data.unlockTime).format('DD MMM, YY HH:mm'),
+          stakeKey: policyId + assetName,
         }
       case 'StakeRequestPending':
       case 'StakeRequestExecuted':
       case 'StakeRequestCanceled':
+        dayjs.extend(duration);
+        dayjs.extend(relativeTime);
         return {
-          lockDuration: "1 month",
+          lockDuration: dayjs.duration(parseInt(data.lockDuration!)).humanize(),
         }
       case 'StakePositionTransferred':
         policyId = data.stakeKey?.substring(0, 56);
         assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
         return {
-          unlockTime: dayjs.unix(data.unlockTime ?? 0 / 1_000).format('DD MMM, YY HH:mm'),
-          transferAddressLink: `${CARDANO_ADDRESS_EXPLORER_URL}/${data.transferredToAddress}`,
-          assetLink: `${CARDANO_ASSET_EXPLORER_URL}/${policyId + assetName}`,
+          unlockTime: dayjs(data.unlockTime).format('DD MMM, YY HH:mm'),
+          sentTo: data.transferredToAddress,
+          stakeKey: policyId + assetName,
         }
     }
   }
@@ -351,7 +354,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                   let isOpen = index === openRowIndex;
 
                   const toggleOpen = (e: any) => {
-                    if((e.target as HTMLElement).closest('button, a')) return;
+                    if((e.target as HTMLElement).closest('button:not([data-role="expand-control"]), a')) return;
                     if (isOpen) {
                       setOpenRowIndex(-1);
                     } else {
@@ -446,6 +449,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                             aria-label="expand row"
                             size="small"
                             onClick={toggleOpen}
+                            data-role="expand-control"
                           >
                             {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                           </IconButton>
@@ -515,33 +519,27 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                                 <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
                                                   {isLoading ?
                                                     <Skeleton width={100} /> : 
-                                                    <Typography variant='body2' sx={{ display: 'block' }}>
+                                                    <Typography variant='body2' sx={{ display: 'block', mb: '0' }}>
                                                       {additionalData?.unlockTime}
                                                     </Typography>
                                                   }
                                                 </TableCell>
                                               )
-                                            case "assetLink":
+                                            case "stakeKey":
                                               return (
                                                 <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
                                                   {isLoading ?
                                                     <Skeleton width={100} /> : 
-                                                    <Tooltip title='View asset details'>
-                                                      <IconButton href={value!} size='small' target='_blank'>
-                                                        <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                                                      </IconButton>
-                                                    </Tooltip>
+                                                    <Link href={`${process.env.CARDANO_ASSET_EXPLORER_URL}/${value}`} target='_blank'>{getShorterAddress(value!, 4)}</Link>
                                                   }
                                                 </TableCell>
                                               )
-                                            case "transferAddressLink":
+                                            case "sentTo":
                                               return (
                                                 <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
                                                   {isLoading ?
                                                     <Skeleton width={100} /> : 
-                                                    <IconButton href={value!} size='small' target='_blank'>
-                                                      <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                                                    </IconButton>
+                                                    <Link href={`${process.env.CARDANO_ADDRESS_EXPLORER_URL}/${value!}`} target='_blank'>{getShorterAddress(value!, 6)}</Link>
                                                   }
                                                 </TableCell>
                                               )
@@ -550,7 +548,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                                 <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
                                                   {isLoading ?
                                                     <Skeleton width={100} /> : 
-                                                    <Typography variant='body2' sx={{ display: 'block' }}>
+                                                    <Typography variant='body2' sx={{ display: 'block', mb: '0'}}>
                                                       {value!}
                                                     </Typography>
                                                   }

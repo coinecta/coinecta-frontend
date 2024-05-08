@@ -144,7 +144,7 @@ export type StakeSnapshot = {
 export type TransactionHistory = {
   address: string;
   txType: string;
-  lovelace: number;
+  lovelace: string;
   assets: {
     [policyId: string]: {
       [assetName: string]: number;
