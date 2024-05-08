@@ -282,5 +282,169 @@ export const contributionRouter = createTRPCRouter({
           code: 'INTERNAL_SERVER_ERROR',
         });
       }
-    })
+    }),
+
+  getOnchainTransactions: adminProcedure
+    .input(z.object({
+      address: z.string(),
+      contributionId: z.number()
+    }))
+    .query(async ({ input }) => {
+      const { address, contributionId } = input;
+      let combinedTransactions: CombinedTransactionInfo[] = [];
+      let page = 1;
+
+      if (address && contributionId) {
+        try {
+          console.log('start')
+          // Fetch on-chain transactions
+          let allUtxos: IOnChainUtxo[] = [];
+          while (true) {
+            const response = await axios.get<IOnChainUtxo[]>(`https://cardano-mainnet.blockfrost.io/api/v0/addresses/${address}/utxos`, {
+              params: {
+                count: 100,
+                page: page
+              },
+              headers: {
+                'project_id': process.env.BLOCKFROST_PROJECT_ID
+              }
+            });
+
+            if (response.data.length === 0) {
+              break; // Exit the loop if no more data
+            }
+            allUtxos = allUtxos.concat(response.data);
+            page++;
+          }
+
+          // Fetch database transactions for the contribution
+          const dbTransactions = await prisma.transaction.findMany({
+            where: {
+              contribution_id: contributionId
+            }
+          });
+
+          const dbTransactionMap = new Map(dbTransactions.map(tx => [tx.txId, tx]));
+
+          const stakeData = await fetchAllStakeData();
+          const stakeDataMap = new Map(stakeData.map(item => [item.address, item]));
+
+          for (const utxo of allUtxos) {
+            const dbTransaction = dbTransactionMap.get(utxo.tx_hash);
+            let txDetails: ITransactionDetails
+            if (dbTransaction && dbTransaction.onChainTxData) {
+              // Ensure the data is correctly parsed and structured
+              txDetails = dbTransaction.onChainTxData as ITransactionDetails;
+              if (!Array.isArray(txDetails.inputs)) {
+                console.error('Invalid or missing inputs array in the transaction details from database');
+                continue; // Skip this iteration or handle the error appropriately
+              }
+            }
+            else {
+              const checkDbTx = await prisma.newTx.findFirst({
+                where: { txId: utxo.tx_hash }
+              })
+
+              if (checkDbTx) {
+                txDetails = checkDbTx.onChainTxData as ITransactionDetails
+              } else {
+                const txDetailResponse = await axios.get<ITransactionDetails>(`https://cardano-mainnet.blockfrost.io/api/v0/txs/${utxo.tx_hash}/utxos`, {
+                  headers: {
+                    'project_id': process.env.BLOCKFROST_PROJECT_ID
+                  }
+                });
+                txDetails = txDetailResponse.data;
+
+                const newTxData = await prisma.transaction.findFirst({
+                  where: { txId: utxo.tx_hash },
+                });
+
+                if (newTxData) {
+                  await prisma.transaction.update({
+                    where: { id: newTxData.id },
+                    data: { onChainTxData: txDetails },
+                  })
+                } else {
+                  await prisma.newTx.create({
+                    data: {
+                      onChainTxData: txDetails,
+                      txId: utxo.tx_hash
+                    }
+                  })
+                }
+
+                if (!Array.isArray(txDetails.inputs)) {
+                  console.error('Invalid or missing inputs array in the transaction details from API');
+                  continue; // Skip this iteration or handle the error appropriately
+                }
+              }
+            }
+
+            let totalAdaOutputToAddress = 0;
+            txDetails.outputs.forEach(output => {
+              if (output.address === address) {
+                totalAdaOutputToAddress += output.amount.filter(a => a.unit === "lovelace").reduce((sum, current) => sum + Number(current.quantity) * 0.000001, 0);
+              }
+            });
+
+            if (totalAdaOutputToAddress > 0) { // Only consider transactions that have outputs to the specified address
+              const combinedInfo = {
+                address: txDetails.inputs[0].address,
+                amountAda: totalAdaOutputToAddress,
+                txId: utxo.tx_hash,
+                userPoolWeight: stakeDataMap.get(txDetails.inputs[0].address)?.cummulativeWeight // Assuming the input address is what we're checking pool weight against
+              };
+
+              combinedTransactions.push(combinedInfo);
+            }
+          }
+
+          return combinedTransactions;
+        } catch (error) {
+          console.error('Error fetching transactions', error);
+          throw new TRPCError({
+            message: 'An unexpected error occurred while fetching transactions',
+            code: 'INTERNAL_SERVER_ERROR',
+          });
+        }
+      }
+      else return []
+    }),
 })
+
+async function fetchAllUtxos(address: string) {
+  let allUtxos: any[] = [];
+  let page = 1;
+  while (true) {
+    const response = await axios.get<IOnChainUtxo[]>(`https://cardano-mainnet.blockfrost.io/api/v0/addresses/${address}/utxos`, {
+      params: { count: 100, page },
+      headers: { 'project_id': process.env.BLOCKFROST_PROJECT_ID }
+    });
+    if (response.data.length === 0) break;
+    allUtxos = allUtxos.concat(response.data);
+    page++;
+  }
+  return allUtxos;
+}
+
+async function fetchAllStakeData() {
+  const response = await axios.post('https://api.coinecta.fi/stake/snapshot?limit=1000', [], {
+    headers: { 'Content-Type': 'application/json; charset=utf-8' }
+  });
+  return response.data.data as IPoolWeightDataItem[];
+}
+
+async function fetchTransactionDetails(utxo: IOnChainUtxo, dbTransactionMap: Map<string, any>) {
+  let txDetails: ITransactionDetails;
+  const dbTransaction = dbTransactionMap.get(utxo.tx_hash);
+  if (dbTransaction && dbTransaction.onChainTxData) {
+    txDetails = dbTransaction.onChainTxData as ITransactionDetails;
+  } else {
+    const response = await axios.get<ITransactionDetails>(`https://cardano-mainnet.blockfrost.io/api/v0/txs/${utxo.tx_hash}/utxos`, {
+      headers: { 'project_id': process.env.BLOCKFROST_PROJECT_ID }
+    });
+    txDetails = response.data;
+    // Optionally update the transaction with onChainTxData if needed
+  }
+  return txDetails;
+}

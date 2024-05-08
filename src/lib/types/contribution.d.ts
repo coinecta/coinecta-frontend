@@ -16,5 +16,7 @@ declare global {
     projectName: string;
     projectSlug: string;
     whitelistSlug: string | null | undefined;
+    recipientAddress: string | null;
+    restrictedCountries: string[];
   };
 }

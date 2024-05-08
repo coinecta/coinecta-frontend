@@ -13,7 +13,9 @@ export const ZContributionRound = z.object({
   deposited: z.number(),
   projectName: z.string(),
   projectSlug: z.string(),
-  whitelistSlug: z.string().nullable().optional()
+  whitelistSlug: z.string().nullable().optional(),
+  recipientAddress: z.string().nullable().optional(),
+  restrictedCountries: z.array(z.string())
 });
 
 export const ZPoolWeightItem = z.object({

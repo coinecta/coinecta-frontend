@@ -63,6 +63,8 @@ type TProRataFormProps = {
   projectIcon: string;
   projectSlug: string;
   whitelistSlug: string | null;
+  recipientAddress: string | null;
+  restrictedCountries: string[];
 }
 
 type TWalletListItem = {
@@ -91,4 +93,91 @@ interface IPoolWeightAPI {
   totalStakers: number;
   totalStake: string;
   totalCummulativeWeight: string;
+}
+
+interface IOnChainAmount {
+  unit: string;
+  quantity: string;
+}
+
+interface IOnChainUtxo {
+  address: string;
+  tx_hash: string;
+  tx_index: number;
+  output_index: number;
+  amount: IOnChainAmount[];
+  block: string;
+  data_hash: string | null;
+  inline_datum: string | null;
+  reference_script_hash: string | null;
+}
+
+interface BlockDetails {
+  time: number;
+  height: number;
+  hash: string;
+  slot: number;
+  epoch: number;
+  epoch_slot: number;
+  slot_leader: string;
+  size: number;
+  tx_count: number;
+  output: string;
+  fees: string;
+  block_vrf: string;
+  op_cert: string;
+  op_cert_counter: string;
+  previous_block: string;
+  next_block: string;
+  confirmations: number;
+}
+
+interface IOnChainAmount {
+  unit: string;
+  quantity: string;
+}
+
+
+interface IOnChainInput {
+  address: string;
+  amount: IOnChainAmount[];
+  tx_hash: string;
+  output_index: number;
+  data_hash: string | null;
+  inline_datum: string | null;
+  reference_script_hash: string | null;
+  collateral: boolean;
+  reference: boolean;
+}
+
+interface IOnChainOutput {
+  address: string;
+  amount: IOnChainAmount[];
+  output_index: number;
+  data_hash: string | null;
+  inline_datum: string | null;
+  collateral: boolean;
+  reference_script_hash: string | null;
+  reference: boolean;
+}
+
+interface ITransactionDetails {
+  [key: string]: string | number | boolean | Date | ITransactionDetails | ITransactionDetails[] | null;
+  hash: string;
+  inputs: IOnChainInput[];
+  outputs: IOnChainOutput[];
+}
+
+interface CombinedTransactionInfo {
+  address: string;
+  amountAda: number;
+  time?: number;
+  dbId?: string;
+  txId?: string;
+  userPoolWeight?: number;
+}
+
+interface Country {
+  label: string;
+  code: string;
 }

@@ -11,7 +11,7 @@ interface IDeleteContributionRoundProps {
 
 const DeleteContributionRound: FC<IDeleteContributionRoundProps> = ({ selectedProject }) => {
   const { addAlert } = useAlert();
-  const [selectedRound, setSelectedRound] = useState<string | null>(null);
+  const [selectedRound, setSelectedRound] = useState<number | null>(null);
   const deleteRoundMutation = trpc.contributions.deleteContributionRound.useMutation();
   const roundQuery = trpc.contributions.getContributionRoundsByProjectSlug.useQuery(
     { projectSlug: selectedProject || '' },
