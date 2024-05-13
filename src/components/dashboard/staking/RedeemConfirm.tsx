@@ -27,7 +27,7 @@ interface IRedeemConfirmProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   redeemList: IRedeemListItem[];
   redeemWallet: string;
-  claimStakeRequest: ClaimStakeRequest;
+  claimStakeRequest: Promise<ClaimStakeRequest | undefined>;
 }
 
 const RedeemConfirm: FC<IRedeemConfirmProps> = ({
@@ -67,7 +67,11 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
     try {
       if (connected) {
         setIsSigning(true);
-        const unsignedTxCbor = await claimStakeTxMutation.mutateAsync(claimStakeRequest);
+        const finalClaimStakeRequest = await claimStakeRequest;
+
+        if (finalClaimStakeRequest === undefined) return;
+
+        const unsignedTxCbor = await claimStakeTxMutation.mutateAsync(finalClaimStakeRequest);
         const witnesssetCbor = await cardanoApi.signTx(unsignedTxCbor, true);
 
         const signedTxCbor = await finalizeTxMutation.mutateAsync({
