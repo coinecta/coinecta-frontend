@@ -223,9 +223,9 @@ const StakePositions: FC = () => {
     const api = await window.cardano[walletNameToId(walletType)!].enable();
     const currentChangeWallet = await browserWallet.getChangeAddress();
     const utxos = await api.getUtxos(undefined);
-    const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
-    const walletUtxos = Array.from(new Set([...utxos!, ...(collateral ?? [])]));
-
+    const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral() as string[];
+    const walletUtxos = Array.from(new Set(utxos!));
+    // @TODO show user error message if collateral is empty
     return {
       stakeUtxoOutputReferences: selectedPositions.map((position) => {
         if (position === undefined) {
@@ -241,6 +241,7 @@ const StakePositions: FC = () => {
         }
       }),
       walletUtxoListCbor: walletUtxos,
+      collateralUtxoCbor: collateral[0],
       changeAddress: currentChangeWallet
     } as ClaimStakeRequest
   }, [selectedPositions, stakeKeyWalletMapping]);

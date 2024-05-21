@@ -124,6 +124,7 @@ export type CancelStakeRequest = {
 export type ClaimStakeRequest = {
   stakeUtxoOutputReferences: OutputReference[];
   walletUtxoListCbor: string[];
+  collateralUtxoCbor: string;
   changeAddress: string;
 };
 

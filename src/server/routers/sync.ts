@@ -77,6 +77,7 @@ export const syncRouter = createTRPCRouter({
         index: z.string(),
       })),
       walletUtxoListCbor: z.array(z.string()),
+      collateralUtxoCbor: z.string(),
       changeAddress: z.string(),
     }))
     .mutation(async ({ input }) => {
