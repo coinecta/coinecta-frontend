@@ -5,13 +5,10 @@ import {
   useMediaQuery,
   Drawer,
   useTheme,
-  Divider,
   List,
   ListItem,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
-  Button,
   Container,
   Fab,
   Zoom,
@@ -36,33 +33,17 @@ const links = {
   Other: [
     {
       name: 'Overview',
-      link: '/dashboard'
+      link: '/staking'
     },
     {
-      name: 'Transaction History',
-      link: '/dashboard/transaction-history'
-    }
-  ],
-  Staking: [
-    {
       name: 'Add Stake',
-      link: '/dashboard/add-stake'
+      link: '/staking/add'
     },
     {
       name: 'Manage Positions',
-      link: '/dashboard/manage-stake'
+      link: '/staking/manage-stake'
     }
-  ],
-  // Vesting: [
-  //   {
-  //     name: 'Unlock Vested',
-  //     link: '/dashboard/unlock-vested'
-  //   },
-  //   {
-  //     name: 'Claim Tokens',
-  //     link: '/dashboard/claim-tokens'
-  //   },
-  // ]
+  ]
 }
 
 const DashboardMenu: FC<IDashboardMenuProps> = ({ children }) => {

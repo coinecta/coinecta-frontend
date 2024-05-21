@@ -16,6 +16,7 @@ import { useRouter } from 'next/router';
 import Logo from '@components/svgs/Logo';
 import UserMenu from '@components/user/UserMenu';
 import SocialGrid from './SocialGrid';
+import HistoryIcon from '@mui/icons-material/History';
 
 interface INavItemProps {
   size?: number;
@@ -40,8 +41,8 @@ const Header: FC = () => {
       link: "/projects"
     },
     {
-      name: "Dashboard",
-      link: "/dashboard"
+      name: "Staking",
+      link: "/staking"
     }
   ];
 
@@ -51,7 +52,6 @@ const Header: FC = () => {
     setTheme((prevTheme: Theme) => (prevTheme === LightTheme ? DarkTheme : LightTheme));
     let temp = theme === LightTheme ? "dark" : "light";
     localStorage.setItem('darkToggle', temp);
-    // console.log(temp)
   };
 
   const NavigationListItem: React.FC<INavItemProps> = ({ size, fontWeight, page }) => {
@@ -132,7 +132,6 @@ const Header: FC = () => {
           zIndex: 101,
           border: 'none',
           borderBottom: trigger ? `1px solid ${theme.palette.divider}` : 'none',
-          // backdropFilter: "blur(25px)",
           borderRadius: '0px',
           background: theme.palette.background.default,
         }}
@@ -215,8 +214,12 @@ const Header: FC = () => {
                 <Grid
                   item
                 >
-                  {/* <NotificationsMenu />*/}
                   <UserMenu />
+                </Grid>
+                <Grid item>
+                  <IconButton onClick={() => router.push("/transaction-history")} sx={{ color: theme.palette.text.primary }}>
+                    <HistoryIcon />
+                  </IconButton>
                 </Grid>
                 <Grid item sx={{ display: { xs: "flex", md: "none" } }}>
                   <Box
@@ -226,7 +229,6 @@ const Header: FC = () => {
                       width: "26px",
                       height: "40px",
                       color: theme.palette.text.primary,
-                      // focus: 'outline-none',
                     }}
                     onClick={() => setNavbarOpen(!navbarOpen)}
                   >
