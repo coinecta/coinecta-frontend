@@ -48,6 +48,20 @@ export const syncRouter = createTRPCRouter({
         limit,
       );
     }),
+  getTransactionHistory: protectedProcedure
+    .input(z.object({
+      addresses: z.array(z.string()),
+      offset: z.number().optional(),
+      limit: z.number().optional(),
+    }))
+    .query(async ({ input }) => {
+      const { addresses, offset, limit } = input;
+      return await coinectaSyncApi.getTransactionHistory(
+        addresses,
+        offset ?? 0,
+        limit,
+      );
+    }),
   getRawUtxos: protectedProcedure
     .input(z.string())
     .query(async ({ input }) => {
@@ -77,6 +91,7 @@ export const syncRouter = createTRPCRouter({
         index: z.string(),
       })),
       walletUtxoListCbor: z.array(z.string()),
+      collateralUtxoCbor: z.string(),
       changeAddress: z.string(),
     }))
     .mutation(async ({ input }) => {

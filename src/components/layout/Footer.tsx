@@ -57,25 +57,17 @@ const thirdPages = {
   title: 'Dashboard',
   links: [
     {
-      name: "Overview",
-      link: "/dashboard",
+      name: "Staking",
+      link: "/staking",
     },
     {
       name: "Add Stake",
-      link: "/dashboard/add-stake",
+      link: "/staking/add",
     },
     {
       name: "Manage Stake",
-      link: "/dashboard/manage-stake",
-    },
-    {
-      name: "Unlock Vested",
-      link: "/dashboard/unlock-vested",
-    },
-    {
-      name: "Claim Tokens",
-      link: "/dashboard/claim-tokens",
-    },
+      link: "/staking/manage-stake",
+    }
   ],
 };
 

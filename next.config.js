@@ -15,6 +15,9 @@ const nextConfig = {
     COINECTA_SYNC_API: process.env.COINECTA_SYNC_API,
     DEXHUNTER_PARTNER_CODE: process.env.DEXHUNTER_PARTNER_CODE,
     IPGEOLOCATION_API_KEY: process.env.IPGEOLOCATION_API_KEY,
+    STAKE_KEY_PREFIX: process.env.STAKE_KEY_PREFIX,
+    CARDANO_ASSET_EXPLORER_URL: process.env.CARDANO_ASSET_EXPLORER_URL,
+    CARDANO_ADDRESS_EXPLORER_URL: process.env.CARDANO_ADDRESS_EXPLORER_URL,
   },
   swcMinify: true,
   webpack: function (config, options) {

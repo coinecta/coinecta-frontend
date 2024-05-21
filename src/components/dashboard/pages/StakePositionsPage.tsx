@@ -58,7 +58,7 @@ const StakePositions: FC = () => {
   const [currentWallet, setCurrentWallet] = useState<string | undefined>(undefined);
   const queryStakeSummary = trpc.sync.getStakeSummary.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const summary = useMemo((() => queryStakeSummary.data), [queryStakeSummary.data]);
-  
+
   const queryStakePositions = trpc.sync.getStakePositions.useQuery(stakeKeys, { retry: 0, refetchInterval: 5000 });
   const positions = useMemo(() => queryStakePositions.data ?? [], [queryStakePositions.data]);
 
@@ -72,7 +72,7 @@ const StakePositions: FC = () => {
     if (sessionData?.user) {
       setCurrentWallet(sessionData.user.walletType!);
     }
-    
+
   }, [sessionData])
 
   const processedPositions = useMemo(() => {
@@ -125,7 +125,7 @@ const StakePositions: FC = () => {
     setLockedRows(newLockedRows);
 
   }, [processedPositions, selectedRows]);
-  
+
   const handleRedeem = () => {
     if (selectedPositions.length === 0) {
       addAlert('error', 'Select the positions to redeem');
@@ -146,20 +146,20 @@ const StakePositions: FC = () => {
     const execute = async () => {
       if (connected && sessionStatus === 'authenticated' && currentWallet) {
         try {
-            if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
-          
-            // Update Utxos
-            setWalletUtxosCbor([]);
-            if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
-            const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
-            const utxos = await api.getUtxos(undefined);
-            const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
-            setWalletUtxosCbor([...utxos!, ...(collateral ?? [])]);
+          if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
 
-            // Update change address
-            const browserWallet = await BrowserWallet.enable(currentWallet);
-            const changeAddress = await browserWallet.getChangeAddress();
-            setChangeAddress(changeAddress);
+          // Update Utxos
+          setWalletUtxosCbor([]);
+          if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
+          const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
+          const utxos = await api.getUtxos(undefined);
+          const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
+          setWalletUtxosCbor(Array.from(new Set([...utxos!, ...(collateral ?? [])])));
+
+          // Update change address
+          const browserWallet = await BrowserWallet.enable(currentWallet);
+          const changeAddress = await browserWallet.getChangeAddress();
+          setChangeAddress(changeAddress);
         } catch (ex) {
           console.error("Error getting utxos", ex);
         }
@@ -211,7 +211,21 @@ const StakePositions: FC = () => {
 
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
 
-  const claimStakeRequest = useMemo(() => {
+  const claimStakeRequest = useMemo(async () => {
+
+    const firstPosition = selectedPositions[0];
+    if (firstPosition === undefined) return;
+
+    const walletType = stakeKeyWalletMapping[firstPosition.stakeKey];
+    
+    if (window.cardano[walletNameToId(walletType)!] === undefined) return;
+    const browserWallet = await BrowserWallet.enable(walletType);
+    const api = await window.cardano[walletNameToId(walletType)!].enable();
+    const currentChangeWallet = await browserWallet.getChangeAddress();
+    const utxos = await api.getUtxos(undefined);
+    const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral() as string[];
+    const walletUtxos = Array.from(new Set(utxos!));
+    // @TODO show user error message if collateral is empty
     return {
       stakeUtxoOutputReferences: selectedPositions.map((position) => {
         if (position === undefined) {
@@ -226,10 +240,11 @@ const StakePositions: FC = () => {
           index: position.txIndex
         }
       }),
-      walletUtxoListCbor: walletUtxosCbor,
-      changeAddress: changeAddress
+      walletUtxoListCbor: walletUtxos,
+      collateralUtxoCbor: collateral[0],
+      changeAddress: currentChangeWallet
     } as ClaimStakeRequest
-  }, [changeAddress, selectedPositions, walletUtxosCbor]);
+  }, [selectedPositions, stakeKeyWalletMapping]);
 
   const actions: IActionBarButton[] = [
     {

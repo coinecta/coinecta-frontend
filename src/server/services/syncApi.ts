@@ -124,6 +124,7 @@ export type CancelStakeRequest = {
 export type ClaimStakeRequest = {
   stakeUtxoOutputReferences: OutputReference[];
   walletUtxoListCbor: string[];
+  collateralUtxoCbor: string;
   changeAddress: string;
 };
 
@@ -139,7 +140,29 @@ export type StakeSnapshot = {
   totalCummulativeWeight: string;
   totalStake: string;
   totalStakers: number;
-}
+};
+
+export type TransactionHistory = {
+  address: string;
+  txType: string;
+  lovelace: string;
+  assets: {
+    [policyId: string]: {
+      [assetName: string]: number;
+    };
+  };
+  txHash: string;
+  createdAt: number;
+  lockDuration?: string;
+  unlockTime?: number;
+  stakeKey?: string;
+  transferredToAddress?: string;
+};
+
+export type TransactionHistoryResponse = {
+  total: number;
+  data: TransactionHistory[];
+};
 
 export const coinectaSyncApi = {
   async getStakeSummary(stakeKeys: string[]): Promise<StakeSummary | null> {
@@ -276,6 +299,29 @@ export const coinectaSyncApi = {
       const response = await syncApi.post(
         `/transaction/utxos/raw/balance`,
         utxos,
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw mapAxiosErrorToTRPCError(error);
+      } else {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An unknown error occurred",
+        });
+      }
+    }
+  },
+  async getTransactionHistory(
+    addresses: string[],
+    offset: number,
+    limit?: number,
+  ): Promise<TransactionHistoryResponse> {
+    try {
+      const response = await syncApi.post(
+        `/transaction/history?offset=${offset}&limit=${limit}`,
+        addresses,
       );
       return response.data;
     } catch (error) {

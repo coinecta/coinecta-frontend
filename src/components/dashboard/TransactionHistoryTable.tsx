@@ -1,19 +1,26 @@
 import { useAlert } from '@contexts/AlertContext';
 import { useWalletContext } from '@contexts/WalletContext';
 import { useCardano } from '@lib/utils/cardano';
+import { getShorterAddress } from '@lib/utils/general';
 import { trpc } from '@lib/utils/trpc';
 import { walletNameToId, walletsList } from '@lib/walletsList';
 import { useWallet } from '@meshsdk/react';
+import CallMadeIcon from '@mui/icons-material/CallMade';
+import CallReceivedIcon from '@mui/icons-material/CallReceived';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import LaunchIcon from '@mui/icons-material/Launch';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import {
   Avatar,
   Box,
   Button,
   Chip,
   IconButton,
+  Link,
   Paper,
   Skeleton,
   Table,
@@ -27,9 +34,13 @@ import {
   Typography,
   useTheme
 } from '@mui/material';
+import Collapse from '@mui/material/Collapse';
 import { TimeIcon } from '@mui/x-date-pickers';
+import { TransactionHistory } from '@server/services/syncApi';
 import copy from 'copy-to-clipboard';
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ActionBar, { IActionBarButton } from './ActionBar';
 import DashboardCard from './DashboardCard';
@@ -79,11 +90,13 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   const { addAlert } = useAlert();
   const tableRef = useRef<HTMLDivElement>(null);
   const paperRef = useRef<HTMLDivElement>(null);
+  const [openRowIndex, setOpenRowIndex] = useState(-1)
+
 
   const utils = trpc.useUtils();
   const cancelStakeTxMutation = trpc.sync.cancelStakeTx.useMutation();
   const finaliseTxMutation = trpc.sync.finalizeTx.useMutation();
-  
+
   const cardano = useCardano();
 
   const sensitivityThreshold = 2;
@@ -113,6 +126,60 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
       tableRef.current.style.userSelect = 'none';
     }
   };
+
+  const transactionTypeLabel = (type: string) => {
+    switch (type) {
+      case 'StakePositionReceived':
+        return 'Stake Receive';
+      case 'StakePositionRedeemed':
+        return 'Unlock Stake';
+      case 'StakePositionTransferred':
+        return 'Stake Send';
+      case 'StakeRequestPending':
+        return 'Pending';
+      case 'StakeRequestExecuted':
+        return 'Executed';
+      case 'StakeRequestCanceled':
+        return 'Canceled';
+      default:
+        return type;
+    }
+  }
+
+  const renderAdditionalTxHistoryData = (data: TransactionHistory) => {
+    const STAKE_KEY_PREFIX = process.env.STAKE_KEY_PREFIX!;
+
+    let policyId;
+    let assetName;
+
+    switch (data.txType)
+    {
+      case 'StakePositionReceived':
+      case 'StakePositionRedeemed':
+        policyId = data.stakeKey?.substring(0, 56);
+        assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
+        return {
+          unlockTime: dayjs(data.unlockTime).format('DD MMM, YY HH:mm'),
+          stakeKey: policyId + assetName,
+        }
+      case 'StakeRequestPending':
+      case 'StakeRequestExecuted':
+      case 'StakeRequestCanceled':
+        dayjs.extend(duration);
+        dayjs.extend(relativeTime);
+        return {
+          lockDuration: dayjs.duration(parseInt(data.lockDuration!)).humanize(),
+        }
+      case 'StakePositionTransferred':
+        policyId = data.stakeKey?.substring(0, 56);
+        assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
+        return {
+          unlockTime: dayjs(data.unlockTime).format('DD MMM, YY HH:mm'),
+          sentTo: data.transferredToAddress,
+          stakeKey: policyId + assetName,
+        }
+    }
+  }
 
   const onDragMove = (e: React.MouseEvent<Element, MouseEvent> | React.TouchEvent<Element>, clientX: number, clientY: number) => {
     if (!isDragging || !tableRef.current) return;
@@ -179,7 +246,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   useEffect(() => {
     const execute = async () => {
       if (connected) {
-        const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!].enable();
+        const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!]?.enable();
         setCardanoApi(api);
       }
     };
@@ -212,7 +279,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   }, [connected, cardanoApi, cancelStakeTxMutation, finaliseTxMutation]);
 
   if (error) return <div>Error loading</div>;
-  
+
   return (
     <Box
       ref={tableRef}
@@ -258,94 +325,253 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                     background: theme.palette.background.paper,
                   }
                 }}>
-                  <TableCell></TableCell>
+                  <TableCell />
                   {columns.map((column) => {
-                    if (column === "txHash" || column === "txIndex" || column == "address") return null;
+                    if (column === "txHash" || column === "txIndex" || column == "address" || column == "data") return null;
+                    if (column === "type") return (
+                      <TableCell key={String(column)} sx={{ pl: '58px' }}>
+                        {camelCaseToTitle(String(column))}
+                      </TableCell>
+                    )
+                    if (column === "status") return (
+                      <TableCell key={String(column)} sx={{ pl: '50px' }}>
+                        {camelCaseToTitle(String(column))}
+                      </TableCell>
+                    )
+
                     return <TableCell key={String(column)}>
                       {camelCaseToTitle(String(column))}
                     </TableCell>
                   })}
-                  <TableCell></TableCell>
+                  <TableCell />
+                  <TableCell />
                 </TableRow>
               </TableHead>
               <TableBody>
                 {data.map((item, index) => {
                   const wallet = walletsList.find(w => w.connectName === cardano.getAddressWalletType(item.address));
                   const icon = theme.palette.mode === 'dark' ? wallet?.iconDark : wallet?.icon;
+                  let isOpen = index === openRowIndex;
+
+                  const toggleOpen = (e: any) => {
+                    if((e.target as HTMLElement).closest('button:not([data-role="expand-control"]), a')) return;
+                    if (isOpen) {
+                      setOpenRowIndex(-1);
+                    } else {
+                      setOpenRowIndex(index);
+                    }
+                  };
 
                   return (
-                    <TableRow key={index}
-                    sx={{
-                      '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
-                      '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)' }
-                    }}
-                  >
-                    <TableCell sx={{ borderBottom: 'none', width: '22px' }}>
-                      <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={icon} />
-                    </TableCell>
-                    {Object.keys(item).map((key, colIndex) => {
-                      if (key === "txHash" || key === "txIndex" || key === "address") return null;
-                      if (key === "status") {
-                        return (
-                          <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                            {isLoading ?
-                              (<Skeleton>
-                                <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
-                              </Skeleton>) :
-                              <>
-                                {(item[key] === "Executed" &&
-                                  <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' label="Executed" color='success' sx={{ width: '120px' }} />)}
-                                {(item[key] === "Pending" &&
-                                  <Chip icon={<TimeIcon fontSize='small' />} variant='outlined' label="Pending" color='primary' sx={{ width: '120px' }} />)}
-                                {(item[key] === "Cancelled" &&
-                                  <Chip icon={<ClearIcon fontSize='small' />} variant='outlined' label="Cancelled" color='error' sx={{ width: '120px' }} />)}
-                              </>
-                            }
-                          </TableCell>
-                        )
-                      }
-
-                      if (key === "actions") {
-                        return (
-                          <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                            {isLoading ?
-                              (<Box sx={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
-                                <Skeleton>
-                                  <LaunchIcon fontSize='small' />
-                                </Skeleton>
-                                <Skeleton>
-                                  <ContentCopyIcon fontSize='small' />
-                                </Skeleton>
-                              </Box>) :
-                              (<Box sx={{ display: 'flex', gap: '5px', marginTop: '8px' }}>
-                                <Tooltip title='View transaction details'>
-                                  <IconButton href={item[key].transactionLink} size='small' target='_blank'>
-                                    <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                                  </IconButton>
-                                </Tooltip>
-                                <Tooltip title='Copy transaction link' >
-                                  <IconButton size='small' onClick={() => { copy(item[key].transactionLink) }}>
-                                    <ContentCopyIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
-                                  </IconButton>
-                                </Tooltip>
-                              </Box>)}
-                          </TableCell>)
-                      }
-
-                      return (
-                        <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
-                          {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
+                    <>
+                      <TableRow
+                        key={index}
+                        sx={{
+                          backgroundColor: index % 2 === 0 ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)',
+                          '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.15)' : 'rgba(0,0,0,0.1)', cursor: 'pointer' }
+                        }}
+                        onClick={toggleOpen}
+                      >
+                        <TableCell sx={{ borderBottom: 'none', width: '22px' }}>
+                          <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={icon} />
                         </TableCell>
-                      )
-                    })}
-                    <TableCell sx={{ borderBottom: 'none' }}>
-                      {item.status === "Pending" && !isLoading && <>
-                        <Button disabled={isLoading} key={index} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex, item.address)}>
-                          Cancel
-                        </Button>
-                      </>}
-                    </TableCell>
-                  </TableRow>
+                        {Object.keys(item).map((key, colIndex) => {
+                          if (key === "txHash" || key === "txIndex" || key === "address" || key === "data") return null;
+
+                          if (key === "type") {
+                            return (
+                              <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                                {isLoading ?
+                                  (<Skeleton>
+                                    <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
+                                  </Skeleton>) :
+                                  <>
+                                    {(item[key] === "StakePositionReceived" &&
+                                      <Chip icon={<CallReceivedIcon fontSize='small' />} variant='outlined' label="Stake Receive" color='success' sx={{ width: '140px' }} />)}
+                                    {(item[key] === "StakePositionRedeemed" &&
+                                      <Chip icon={<LockOpenIcon fontSize='small' />} variant='outlined' label="Unlock Stake" color='secondary' sx={{ width: '140px' }} />)}
+                                    {(item[key] === "StakePositionTransferred" &&
+                                      <Chip icon={<CallMadeIcon fontSize='small' />} variant='outlined' label="Stake Send" color='error' sx={{ width: '140px' }} />)}
+                                    {(item[key] === "StakeRequestPending" &&
+                                      <Chip icon={<TimeIcon fontSize='small' />} variant='outlined' label="Pending" color='warning' sx={{ width: '140px' }} />)}
+                                    {(item[key] === "StakeRequestExecuted" &&
+                                      <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' label="Executed" color='success' sx={{ width: '140px' }} />)}
+                                    {(item[key] === "StakeRequestCanceled" &&
+                                      <Chip icon={<ClearIcon fontSize='small' />} variant='outlined' label="Canceled" color='error' sx={{ width: '140px' }} />)}
+                                  </>
+                                }
+                              </TableCell>
+                            )
+                          }
+
+                          if (key === "actions") {
+                            return (
+                              <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                                {isLoading ?
+                                  (<Box sx={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                                    <Skeleton>
+                                      <LaunchIcon fontSize='small' />
+                                    </Skeleton>
+                                    <Skeleton>
+                                      <ContentCopyIcon fontSize='small' />
+                                    </Skeleton>
+                                  </Box>) :
+                                  (<Box sx={{ display: 'flex', gap: '5px', marginTop: '8px' }}>
+                                    <Tooltip title='View transaction details'>
+                                      <IconButton href={item[key].transactionLink} size='small' target='_blank'>
+                                        <LaunchIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                                      </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title='Copy transaction link' >
+                                      <IconButton size='small' onClick={() => { copy(item[key].transactionLink) }}>
+                                        <ContentCopyIcon fontSize='small' sx={{ '&:hover': { color: theme.palette.secondary.main, transition: 'color 0.3s ease 0.2s' } }} />
+                                      </IconButton>
+                                    </Tooltip>
+                                  </Box>)}
+                              </TableCell>)
+                          }
+
+                          return (
+                            <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                              {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
+                            </TableCell>
+                          )
+                        })}
+                        <TableCell sx={{ borderBottom: 'none' }}>
+                          {item.type === "StakeRequestPending" && !isLoading && <>
+                            <Button disabled={isLoading} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex, item.address)}>
+                              Cancel
+                            </Button>
+                          </>}
+                        </TableCell>
+                        <TableCell sx={{ borderBottom: 'none', width: '22px' }}>
+                          <IconButton
+                            aria-label="expand row"
+                            size="small"
+                            onClick={toggleOpen}
+                            data-role="expand-control"
+                          >
+                            {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell sx={{ paddingBottom: 0, paddingTop: 0, paddingLeft: '45px', borderBottom: 'none' }} colSpan={8}>
+                          <Collapse in={isOpen} timeout="auto" unmountOnExit>
+                            <Box sx={{ margin: 1 }}>
+                              <Table size="small">
+                                <TableHead>
+                                  <TableRow>
+                                    <TableCell sx={{ color: 'gray', borderBottom: 'none' }}>Wallet</TableCell>
+                                    {columns.map((column) => {
+                                      if (column === "txHash" || column === "txIndex" || column == "address" || column === "actions") return null;
+
+                                      if (column === "data")
+                                      {
+                                        const data = renderAdditionalTxHistoryData(item[column]);
+                                        if (data === undefined) return null;
+                                        return Object.keys(data!).map((key) => {
+                                          return (
+                                          <TableCell key={String(column)} sx={{ color: 'gray', borderBottom: 'none' }}>
+                                            {camelCaseToTitle(String(key) as string)}
+                                          </TableCell>
+                                          );
+                                        });
+                                      }
+
+                                      return column !== "data" && <TableCell key={String(column)} sx={{ color: 'gray', borderBottom: 'none' }}>
+                                        {camelCaseToTitle(String(column) as string)}
+                                      </TableCell>
+                                    })}
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  <TableRow>
+                                    <TableCell sx={{ borderBottom: 'none' }}>
+                                      {isLoading ?
+                                        <Skeleton width={100} /> : <>
+                                          <Avatar component={'span'} variant='square' sx={{ width: '22px', height: '22px', display: 'inline-flex', marginRight: '5px', transform: 'translate(0px, 4px)' }} src={icon} />
+                                          <span>{wallet?.name}</span>
+                                        </>}
+                                    </TableCell>
+                                    {Object.keys(item).map((key, colIndex) => {
+                                      if (key === "txHash" || key === "txIndex" || key === "address" || key === "actions") return null;
+                                      if (key === "type") {
+                                        return (
+                                          <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                                            {isLoading ?
+                                              (<Skeleton>
+                                                <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
+                                              </Skeleton>) :
+                                              transactionTypeLabel(item[key])
+                                            } 
+                                          </TableCell>
+                                        )
+                                      }
+
+                                      if (key == "data") {
+                                        const additionalData = renderAdditionalTxHistoryData(item[key]);
+                                        if (additionalData === undefined) return null;
+                                        return Object.entries(additionalData!).map(([key, value]) => {
+                                          switch(key){
+                                            case "unlockTime":
+                                              return (
+                                                <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                                                  {isLoading ?
+                                                    <Skeleton width={100} /> : 
+                                                    <Typography variant='body2' sx={{ display: 'block', mb: '0' }}>
+                                                      {additionalData?.unlockTime}
+                                                    </Typography>
+                                                  }
+                                                </TableCell>
+                                              )
+                                            case "stakeKey":
+                                              return (
+                                                <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                                                  {isLoading ?
+                                                    <Skeleton width={100} /> : 
+                                                    <Link href={`${process.env.CARDANO_ASSET_EXPLORER_URL}/${value}`} target='_blank'>{getShorterAddress(value!, 4)}</Link>
+                                                  }
+                                                </TableCell>
+                                              )
+                                            case "sentTo":
+                                              return (
+                                                <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                                                  {isLoading ?
+                                                    <Skeleton width={100} /> : 
+                                                    <Link href={`${process.env.CARDANO_ADDRESS_EXPLORER_URL}/${value!}`} target='_blank'>{getShorterAddress(value!, 6)}</Link>
+                                                  }
+                                                </TableCell>
+                                              )
+                                            case "lockDuration":
+                                              return (
+                                                <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                                                  {isLoading ?
+                                                    <Skeleton width={100} /> : 
+                                                    <Typography variant='body2' sx={{ display: 'block', mb: '0'}}>
+                                                      {value!}
+                                                    </Typography>
+                                                  }
+                                                </TableCell>
+                                              )
+                                          }
+                                        })
+                                      }
+
+                                      return (
+                                        <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
+                                          {isLoading ? <Skeleton width={100} /> : renderCellContent(item, key)}
+                                        </TableCell>
+                                      )
+                                    })}
+                                  </TableRow>
+                                </TableBody>
+                              </Table>
+                            </Box>
+                          </Collapse>
+                        </TableCell>
+                      </TableRow>
+                    </>
                   )
                 })}
               </TableBody>
@@ -354,7 +580,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                   <TablePagination
                     rowsPerPageOptions={rowsPerPageOptions}
                     component={'td'}
-                    colSpan={7}
+                    colSpan={8}
                     count={totalRequests}
                     rowsPerPage={requestPageLimit}
                     page={currentRequestPage - 1}

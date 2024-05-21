@@ -9,7 +9,6 @@ import { useWallet } from '@meshsdk/react';
 import {
   Box,
   Button,
-  Divider,
   Typography,
   useTheme
 } from '@mui/material';
@@ -17,8 +16,8 @@ import Skeleton from '@mui/material/Skeleton';
 import Grid from '@mui/system/Unstable_Grid/Grid';
 import { useRouter } from 'next/router';
 import { FC, useEffect, useMemo, useState } from 'react';
-import DashboardCard from '../DashboardCard';
-import DashboardHeader from '../DashboardHeader';
+import DashboardCard from '../../dashboard/DashboardCard';
+import DashboardHeader from '../../dashboard/DashboardHeader';
 
 const Dashboard: FC = () => {
   const router = useRouter();
@@ -50,7 +49,7 @@ const Dashboard: FC = () => {
   }, [queryStakeSummary.data, STAKE_POOL_SUBJECT]);
 
   useEffect(() => {
-    setIsLoading(!queryStakeSummary.isSuccess || !isStakingKeysLoaded);
+    setIsLoading(!queryStakeSummary.isSuccess || !isStakingKeysLoaded || !snapshot);
   }, [isStakingKeysLoaded, queryStakeSummary.isSuccess]);
 
   const formatNumber = (num: number, key: string) => `${num.toLocaleString(undefined, {
@@ -163,7 +162,7 @@ const Dashboard: FC = () => {
       </Box>
 
       <Box sx={{ position: 'relative' }} >
-        <DashboardHeader title="Overview" isDropdownHidden />
+        <DashboardHeader title="Your Staking Overview" isDropdownHidden />
         <Grid container spacing={2} sx={{ mb: 1 }}>
           <Grid xs={12} md={6}>
             <DashboardCard center>
