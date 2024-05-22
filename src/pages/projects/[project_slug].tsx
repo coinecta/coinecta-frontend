@@ -218,7 +218,7 @@ const Project = () => {
                   {projectData.tokenomics.tokenPolicyId.length > 0 &&
                     <Grid item>
                       <Chip
-                        label="Buy CNCT"
+                        label={`Buy ${projectData.tokenomics.tokenTicker}`}
                         icon={<DexhunterLogomark sx={{ width: '16px', height: '16px', mr: -1, ml: 1 }} />}
                         // component="button"
                         clickable
