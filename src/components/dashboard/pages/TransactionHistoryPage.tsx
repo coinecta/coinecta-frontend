@@ -46,7 +46,7 @@ const TransactionHistory: FC = () => {
         return "Unknown";
     }
   }
-
+  
   const processedStakeRequests = useMemo(() => {
     return stakeRequestResponse?.data?.map((request) => {
       const STAKE_POOL_ASSET_POLICY = process.env.STAKE_POOL_ASSET_POLICY!;

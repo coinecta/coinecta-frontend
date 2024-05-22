@@ -104,6 +104,7 @@ export const syncRouter = createTRPCRouter({
         index: z.string(),
       }),
       walletUtxoListCbor: z.array(z.string()),
+      collateralUtxoCbor: z.string(),
     }))
     .mutation(async ({ input }) => {
       return await coinectaSyncApi.cancelStakeTx(input);

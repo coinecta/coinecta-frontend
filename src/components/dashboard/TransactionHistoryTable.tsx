@@ -265,7 +265,8 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
             txHash,
             index: txIndex
           },
-          walletUtxoListCbor: [...utxos!, ...(collateral ?? [])],
+          collateralUtxoCbor: collateral![0],
+          walletUtxoListCbor: Array.from(new Set(utxos)),
         });
         const witnessSetCbor = await api.signTx(cancelStakeTxCbor, true);
         const signedTxCbor = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
@@ -439,7 +440,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                         })}
                         <TableCell sx={{ borderBottom: 'none' }}>
                           {item.type === "StakeRequestPending" && !isLoading && <>
-                            <Button disabled={isLoading} variant="contained" color="secondary" onClick={() => cancelTx(item.txHash, item.txIndex, item.address)}>
+                            <Button disabled={isLoading} variant="contained" color="secondary" onClick={() => cancelTx(item.data.txHash, item.data.txIndex, item.address)}>
                               Cancel
                             </Button>
                           </>}
