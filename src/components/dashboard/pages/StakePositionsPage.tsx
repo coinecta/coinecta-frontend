@@ -213,14 +213,11 @@ const StakePositions: FC = () => {
 
   const claimStakeRequest = useMemo(async () => {
 
-    const firstPosition = selectedPositions[0];
-    if (firstPosition === undefined) return;
+    if (currentWallet === undefined) return;
 
-    const walletType = stakeKeyWalletMapping[firstPosition.stakeKey];
-    
-    if (window.cardano[walletNameToId(walletType)!] === undefined) return;
-    const browserWallet = await BrowserWallet.enable(walletType);
-    const api = await window.cardano[walletNameToId(walletType)!].enable();
+    if (window.cardano[walletNameToId(currentWallet)!] === undefined) return;
+    const browserWallet = await BrowserWallet.enable(currentWallet);
+    const api = await window.cardano[walletNameToId(currentWallet)!].enable();
     const currentChangeWallet = await browserWallet.getChangeAddress();
     const utxos = await api.getUtxos(undefined);
     const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral() as string[];
@@ -244,7 +241,7 @@ const StakePositions: FC = () => {
       collateralUtxoCbor: collateral[0],
       changeAddress: currentChangeWallet
     } as ClaimStakeRequest
-  }, [selectedPositions, stakeKeyWalletMapping]);
+  }, [selectedPositions, currentWallet]);
 
   const actions: IActionBarButton[] = [
     {

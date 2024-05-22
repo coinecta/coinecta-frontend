@@ -119,6 +119,7 @@ export type OutputReference = {
 export type CancelStakeRequest = {
   stakeRequestOutputReference: OutputReference;
   walletUtxoListCbor: string[];
+  collateralUtxoCbor: string;
 };
 
 export type ClaimStakeRequest = {
@@ -152,6 +153,7 @@ export type TransactionHistory = {
     };
   };
   txHash: string;
+  txIndex: string;
   createdAt: number;
   lockDuration?: string;
   unlockTime?: number;
