@@ -270,11 +270,16 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         });
         const witnessSetCbor = await api.signTx(cancelStakeTxCbor, true);
         const signedTxCbor = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
-        api.submitTx(signedTxCbor);
+        try {
+          await api.submitTx(signedTxCbor);
+        } catch(ex: any)
+        {
+          throw new Error('There was an error submitting your transaction.');
+        }
         addAlert('success', 'Cancel transaction submitted');
-      } catch (ex) {
+      } catch (ex: any) {
         console.error('Error cancelling stake', ex);
-        addAlert('error', 'Cancel transaction failed')
+        addAlert('error', ex.message)
       }
     }
   }, [connected, cardanoApi, cancelStakeTxMutation, finaliseTxMutation]);

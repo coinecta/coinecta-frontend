@@ -341,10 +341,14 @@ export const coinectaSyncApi = {
   async addStakeTx(request: AddStakeRequest): Promise<string> {
     try {
       const response = await syncApi.post("/transaction/stake/add", request);
+      console.log({response})
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw mapAxiosErrorToTRPCError(error);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: error.response?.data ?? "An unknown error occurred",
+        });
       } else {
         console.error(error);
         throw new TRPCError({
@@ -360,7 +364,10 @@ export const coinectaSyncApi = {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw mapAxiosErrorToTRPCError(error);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: error.response?.data ?? "An unknown error occurred",
+        });
       } else {
         console.error(error);
         throw new TRPCError({
@@ -376,7 +383,10 @@ export const coinectaSyncApi = {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw mapAxiosErrorToTRPCError(error);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: error.response?.data ?? "An unknown error occurred",
+        });
       } else {
         console.error(error);
         throw new TRPCError({
@@ -392,7 +402,10 @@ export const coinectaSyncApi = {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw mapAxiosErrorToTRPCError(error);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: error.response?.data ?? "An unknown error occurred",
+        });
       } else {
         console.error(error);
         throw new TRPCError({
