@@ -272,8 +272,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         const signedTxCbor = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
         try {
           await api.submitTx(signedTxCbor);
-        } catch(ex: any)
-        {
+        } catch(ex: any) {
           throw new Error('There was an error submitting your transaction.');
         }
         addAlert('success', 'Cancel transaction submitted');
