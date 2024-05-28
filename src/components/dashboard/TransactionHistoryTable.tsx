@@ -158,7 +158,6 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
       case 'StakePositionRedeemed':
         policyId = data.stakeKey?.substring(0, 56);
         assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
-        console.log({ d: data.unlockTime})
         return {
           unlockTime: dayjs(parseInt(data.unlockTime!.toString())).format('DD MMM, YY HH:mm'),
           stakeKey: policyId + assetName,

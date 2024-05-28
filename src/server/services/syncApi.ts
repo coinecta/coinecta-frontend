@@ -341,7 +341,6 @@ export const coinectaSyncApi = {
   async addStakeTx(request: AddStakeRequest): Promise<string> {
     try {
       const response = await syncApi.post("/transaction/stake/add", request);
-      console.log({response})
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
