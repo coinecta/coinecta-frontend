@@ -158,8 +158,9 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
       case 'StakePositionRedeemed':
         policyId = data.stakeKey?.substring(0, 56);
         assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
+        console.log({ d: data.unlockTime})
         return {
-          unlockTime: dayjs(data.unlockTime).format('DD MMM, YY HH:mm'),
+          unlockTime: dayjs(parseInt(data.unlockTime!.toString())).format('DD MMM, YY HH:mm'),
           stakeKey: policyId + assetName,
         }
       case 'StakeRequestPending':
@@ -174,7 +175,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         policyId = data.stakeKey?.substring(0, 56);
         assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
         return {
-          unlockTime: dayjs(data.unlockTime).format('DD MMM, YY HH:mm'),
+          unlockTime: dayjs(parseInt(data.unlockTime!.toString())).format('DD MMM, YY HH:mm'),
           sentTo: data.transferredToAddress,
           stakeKey: policyId + assetName,
         }
