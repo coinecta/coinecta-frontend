@@ -94,8 +94,8 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
       setOpen(false);
       setPaymentAmount('');
       addAlert('success', 'Stake transaction submitted');
-    } catch (ex) {
-      addAlert('error', 'Error adding stake!');
+    } catch (ex: any) {
+      addAlert('error', ex.message);
       console.error('Error adding stake', ex);
     }
     setIsSigning(false);
@@ -123,7 +123,13 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
     const unsignedTx = await addStakeTxMutation.mutateAsync(addStakeRequest);
     const witnessSetCbor = await api.signTx(unsignedTx, true);
     const signedTx = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: unsignedTx, txWitnessCbor: witnessSetCbor });
-    await api.submitTx(signedTx);
+    
+    try {
+      await api.submitTx(signedTx);
+    } catch(ex)
+    {
+      throw new Error('There was an error submitting your transaction.');
+    }
   }
 
   const onChose = async (walletAddress: string) => {
@@ -138,11 +144,11 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
         setPaymentAmount('');
         addAlert('success', 'Stake transaction submitted');
       } else {
-        addAlert('error', 'Error adding stake!');
+        addAlert('error', 'Wallet not found');
       }
-    } catch (ex) {
+    } catch (ex: any) {
       console.error('Error adding stake', ex);
-      addAlert('error', 'Error adding stake!');
+      addAlert('error', ex.message);
     }
     setIsSigning(false);
   }

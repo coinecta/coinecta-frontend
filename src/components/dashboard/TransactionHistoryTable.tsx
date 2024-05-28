@@ -159,7 +159,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         policyId = data.stakeKey?.substring(0, 56);
         assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
         return {
-          unlockTime: dayjs(data.unlockTime).format('DD MMM, YY HH:mm'),
+          unlockTime: dayjs(parseInt(data.unlockTime!.toString())).format('DD MMM, YY HH:mm'),
           stakeKey: policyId + assetName,
         }
       case 'StakeRequestPending':
@@ -174,7 +174,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         policyId = data.stakeKey?.substring(0, 56);
         assetName = STAKE_KEY_PREFIX + data.stakeKey?.substring(56);
         return {
-          unlockTime: dayjs(data.unlockTime).format('DD MMM, YY HH:mm'),
+          unlockTime: dayjs(parseInt(data.unlockTime!.toString())).format('DD MMM, YY HH:mm'),
           sentTo: data.transferredToAddress,
           stakeKey: policyId + assetName,
         }
@@ -270,11 +270,15 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         });
         const witnessSetCbor = await api.signTx(cancelStakeTxCbor, true);
         const signedTxCbor = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
-        api.submitTx(signedTxCbor);
+        try {
+          await api.submitTx(signedTxCbor);
+        } catch(ex: any) {
+          throw new Error('There was an error submitting your transaction.');
+        }
         addAlert('success', 'Cancel transaction submitted');
-      } catch (ex) {
+      } catch (ex: any) {
         console.error('Error cancelling stake', ex);
-        addAlert('error', 'Cancel transaction failed')
+        addAlert('error', ex.message)
       }
     }
   }, [connected, cardanoApi, cancelStakeTxMutation, finaliseTxMutation]);

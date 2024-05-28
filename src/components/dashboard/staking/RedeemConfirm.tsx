@@ -79,13 +79,17 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
           unsignedTxCbor: unsignedTxCbor
         });
 
-        await cardanoApi.submitTx(signedTxCbor);
+        try {
+          await cardanoApi.submitTx(signedTxCbor);
+        } catch(ex) {
+          throw new Error('There was an error submitting your transaction.');
+        }
         setOpen(false);
         addAlert('success', 'Redeem transaction submitted');
       }
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
-      addAlert('error', 'Redeem transaction failed');
+      addAlert('error', e.message);
     }
     setIsSigning(false);
   }
