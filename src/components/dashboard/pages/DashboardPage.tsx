@@ -40,7 +40,7 @@ const Dashboard: FC = () => {
   const snapshot = useMemo(() => queryStakeSnapshot.data, [queryStakeSnapshot.data]);
 
   const userTotalWeight = useMemo(() => {
-    return snapshot?.data.reduce((totalWeight, { cummulativeWeight }) => totalWeight + cummulativeWeight ,0)
+    return snapshot?.data.reduce((totalWeight, { cummulativeWeight }) => totalWeight + cummulativeWeight, 0)
   }, [snapshot])
 
   const summary = useMemo(() => {
@@ -271,7 +271,7 @@ const Dashboard: FC = () => {
                 </Box>
               </Box>
               <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, width: '100%' }}>
-                <Button sx={{ margin: "auto" }} disabled={isLoading ? true : false} variant="outlined" color="secondary" size="small" onClick={() => router.push("/dashboard/manage-stake")}>
+                <Button sx={{ margin: "auto" }} disabled={isLoading ? true : false} variant="outlined" color="secondary" size="small" onClick={() => router.push("/staking/manage-stake")}>
                   Manage positions
                 </Button>
               </Box>
