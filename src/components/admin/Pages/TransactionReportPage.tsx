@@ -87,7 +87,7 @@ const TransactionReport: FC = () => {
 
   const onchainTransactions = trpc.contributions.getOnchainTransactions.useQuery(
     {
-      address: process.env.CONTRIBUTION_ADDRESS || '',
+      address: formRound?.recipientAddress || '',
       contributionId: formRound?.id || 0
     },
     { enabled: !!formRound }
