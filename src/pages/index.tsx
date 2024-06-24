@@ -12,7 +12,8 @@ import {
   Paper,
   Grow,
   Slide,
-  useScrollTrigger
+  useScrollTrigger,
+  Card
 } from '@mui/material'
 import ErgopadLogo from '@components/svgs/ErgopadLogo';
 import PaideiaLogo from '@components/svgs/PaideiaLogo';
@@ -21,6 +22,7 @@ import DiscordIcon from '@components/svgs/DiscordIcon';
 import TelegramIcon from '@components/svgs/TelegramIcon';
 import { useInView } from 'react-intersection-observer';
 import wideBg from "@public/wide.jpg";
+import wideBgLight from "@public/wide-light.jpg";
 import bottomBg from "@public/bottom.jpg";
 import HarmonicLabsLogo from '@components/svgs/HarmonicLabsLogo';
 import Link from '@components/Link'
@@ -53,7 +55,7 @@ const Home: NextPage = () => {
   const logoLinkSx = {
     display: 'block',
     textAlign: 'center',
-    color: 'rgba(244,244,244,1)',
+    color: theme.palette.text.primary,
     '&:hover': {
       '& .MuiSvgIcon-root': {
         color: theme.palette.primary.main,
@@ -67,13 +69,17 @@ const Home: NextPage = () => {
     { enabled: true, retry: 0 }
   )
 
+  const cardSx = {
+    p: 4, height: '100%'
+  }
+
   return (
     <Box sx={{ overflowX: 'hidden' }}>
       {/* Hero section */}
       <Box sx={{
         backgroundColor: 'rgba(255,255,255,1)',
         color: 'rgba(23,21,21,1)',
-
+        mb: 12
       }}>
         <Box sx={{ position: 'relative' }}>
           <Box sx={{ position: 'relative' }}>
@@ -89,7 +95,7 @@ const Home: NextPage = () => {
             <Box sx={{
               width: '3440px',
               height: '430px',
-              backgroundImage: `url(${wideBg.src})`,
+              backgroundImage: theme.palette.mode === 'dark' ? `url(${wideBg.src})` : `url(${wideBgLight.src})`,
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
               position: 'absolute',
@@ -100,89 +106,7 @@ const Home: NextPage = () => {
             }}
             />
           </Box>
-          <Box sx={{ backgroundColor: 'rgb(8,8,16)', position: 'realtive' }}>
-            <Box
-              maxWidth='lg'
-              sx={{
-                mx: 'auto',
-                zIndex: 5,
-                mb: theme.palette.mode === 'dark' ? 12 : 0
-              }}
-            >
-              <Typography
-                variant="body1"
-                sx={{ pt: 4, textTransform: 'uppercase', color: 'rgba(244,244,244,1)', }}
-                align="center"
-                color="text.secondary"
-                paragraph
-              >
-                In partnership with:
-              </Typography>
-              <Grid container alignItems="center" justifyContent="space-around" spacing={2} sx={{ px: 2, mb: 4 }}>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Link
-                    href="https://www.xerberus.io/"
-                    sx={logoLinkSx}
-                  >
-                    <XerberusLogo sx={{ fontSize: '160px', height: '80px' }} />
-                  </Link>
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Link
-                    href="https://www.dexhunter.io/"
-                    sx={logoLinkSx}
-                  >
-                    <DexhunterLogo sx={{ fontSize: '160px', height: '80px' }} />
-                  </Link>
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Link
-                    href="https://www.crci.review/"
-                    sx={logoLinkSx}
-                  >
-                    <CrciLogo sx={{ fontSize: '160px', height: '80px' }} />
-                  </Link>
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Link
-                    href="https://www.harmoniclabs.tech"
-                    sx={logoLinkSx}
-                  >
-                    <HarmonicLabsLogo sx={{ fontSize: '190px', height: '80px' }} />
-                  </Link>
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Link
-                    href="https://www.ergopad.io"
-                    sx={logoLinkSx}
-                  >
-                    <ErgopadLogo sx={{ fontSize: '160px', height: '80px' }} />
-                  </Link>
-                </Grid>
-                <Grid item xs={12} sm={6} md={3}>
-                  <Link
-                    href="https://www.paideia.im"
-                    sx={logoLinkSx}
-                  >
-                    <PaideiaLogo sx={{ fontSize: '140px', height: '80px' }} />
-                  </Link>
-                </Grid>
 
-
-              </Grid>
-              <Box sx={{
-                display: theme.palette.mode === 'dark' ? 'none' : 'block',
-                width: '3440px',
-                height: '218px',
-                backgroundImage: `url(${bottomBg.src})`,
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                position: 'relative',
-                left: '50%',
-                transform: 'translateX(-50%)',
-              }} />
-            </Box>
-          </Box>
         </Box>
       </Box>
       {/* End hero section */}
@@ -222,39 +146,41 @@ const Home: NextPage = () => {
             </Grid>
           </Grow>
           <Grid container>
-            <Grid item md={3}></Grid>
-            <Grid item md={8}>
-              <Grid container spacing={6}>
+            <Grid item md={1}></Grid>
+            <Grid item md={10}>
+              <Grid container spacing={3} alignItems="stretch">
                 <Grow
                   in={inView2}
                   {...(inView2 ? { timeout: 800 } : {})}
                 >
-                  <Grid item md={6} ref={ref2}>
-                    <Typography variant="h5" fontWeight={600}>1. Stake The Token</Typography>
-                    <Typography variant="body2">To participate, first you have to get the Coinecta Finance token and stake it to reach a staking tier. Your tier will represent your pool weight in IDOs. </Typography>
-                    <Grid container spacing={3}>
-                      <Grid item>
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          startIcon={<DexhunterLogomark sx={{ width: '16px', height: '16px', mr: -1, ml: 1 }} />}
-                          onClick={() => setDexhunterModal(true)}
-                          aria-label={`CNCT DexHunter Swap`}
-                        >
-                          Get CNCT
-                        </Button>
-                      </Grid>
-                      <Grid item>
-                        <ButtonLink
-                          variant="outlined"
-                          color="secondary"
+                  <Grid item md={5} ref={ref2}>
+                    <Card sx={cardSx}>
+                      <Typography variant="h5" fontWeight={600}>1. Stake The Token</Typography>
+                      <Typography variant="body2">To participate, first you have to get the Coinecta Finance token and stake it to reach a staking tier. Your tier will represent your pool weight in IDOs. </Typography>
+                      <Grid container spacing={3}>
+                        <Grid item>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            startIcon={<DexhunterLogomark sx={{ width: '16px', height: '16px', mr: -1, ml: 1 }} />}
+                            onClick={() => setDexhunterModal(true)}
+                            aria-label={`CNCT DexHunter Swap`}
+                          >
+                            Get CNCT
+                          </Button>
+                        </Grid>
+                        <Grid item>
+                          <ButtonLink
+                            variant="outlined"
+                            color="secondary"
 
-                          href="/dashboard/add-stake"
-                        >
-                          Stake Now
-                        </ButtonLink>
+                            href="/dashboard/add-stake"
+                          >
+                            Stake Now
+                          </ButtonLink>
+                        </Grid>
                       </Grid>
-                    </Grid>
+                    </Card>
                   </Grid>
                 </Grow>
                 <Grow
@@ -262,26 +188,30 @@ const Home: NextPage = () => {
                   style={{ transformOrigin: '0 0 0' }}
                   {...(inView2 ? { timeout: 1200 } : {})}
                 >
-                  <Grid item md={6}>
-                    <Typography variant="h5" fontWeight={600}>2. Whitelist For IDOs</Typography>
-                    <Typography variant="body2">Keep an eye out for IDOs you like, and whitelist to invest. You will be approved for a specific number of tokens based on your staking tier weight. </Typography>
-                    <Button variant="contained" color="secondary" href="/projects">View Projects</Button>
+                  <Grid item md={7}>
+                    <Card sx={cardSx}>
+                      <Typography variant="h5" fontWeight={600}>2. Research projects</Typography>
+                      <Typography variant="body2">Research upcoming project launches and get ready for their upcoming token sales. Keep an eye on discord announcements and this website for more info. </Typography>
+                      <Button variant="contained" color="secondary" href="/projects">View Projects</Button>
+                    </Card>
                   </Grid>
                 </Grow>
                 <Grow
                   in={inView3}
                   {...(inView3 ? { timeout: 800 } : {})}
                 >
-                  <Grid item md={6} ref={ref3}>
-                    <Typography variant="h5" fontWeight={600}>3. Contribute</Typography>
-                    <Typography variant="body2">Once the contribute form opens, send ADA to reserve your tokens. Each project will have specific distribution details and we will post a place for you to claim your tokens. </Typography>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      href="https://docs.coinecta.fi/launchpad/redeeming"
-                    >
-                      Learn About Vesting
-                    </Button>
+                  <Grid item md={7} ref={ref3}>
+                    <Card sx={cardSx}>
+                      <Typography variant="h5" fontWeight={600}>3. Contribute</Typography>
+                      <Typography variant="body2">Once the contribute form opens, send ADA to reserve your tokens. Each project will have specific distribution details and we will post a place for you to claim your tokens. </Typography>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        href="https://docs.coinecta.fi/launchpad/redeeming"
+                      >
+                        Learn About Vesting
+                      </Button>
+                    </Card>
                   </Grid>
                 </Grow>
                 <Grow
@@ -289,16 +219,18 @@ const Home: NextPage = () => {
                   style={{ transformOrigin: '0 0 0' }}
                   {...(inView3 ? { timeout: 1200 } : {})}
                 >
-                  <Grid item md={6}>
-                    <Typography variant="h5" fontWeight={600}>4. Redeem or Claim</Typography>
-                    <Typography variant="body2">If there is a vesting period, you will be sent a vesting NFT which contains your locked tokens which you can redeem over time. Otherwise, claim any reserved tokens on your Dashboard. </Typography>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      disabled
-                    >
-                      Redeem Now
-                    </Button>
+                  <Grid item md={5}>
+                    <Card sx={cardSx}>
+                      <Typography variant="h5" fontWeight={600}>4. Redeem or Claim</Typography>
+                      <Typography variant="body2">If there is a vesting period, you will be sent a vesting NFT which contains your locked tokens which you can redeem over time. Otherwise, claim any reserved tokens on your Dashboard. </Typography>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        disabled
+                      >
+                        Redeem Now
+                      </Button>
+                    </Card>
                   </Grid>
                 </Grow>
               </Grid>
@@ -310,7 +242,7 @@ const Home: NextPage = () => {
       {/* END How it works */}
 
       {/* Whos it for? */}
-      < Container sx={{ mb: 14 }}>
+      {/* <Container sx={{ mb: 14 }}>
         <Grow in={inView5} {...(inView5 ? { timeout: 500 } : {})}>
           <Box>
             <Typography
@@ -353,7 +285,7 @@ const Home: NextPage = () => {
               </Typography>
               <Grid container spacing={3}>
                 <Grid item>
-                  <Button variant="outlined" color="secondary" href="https://docs.coinecta.fi">Read the Whitepaper</Button>
+                  <Button variant="outlined" color="secondary" href="https://docs.coinecta.fi">Read the Docs</Button>
                 </Grid>
               </Grid>
             </Grid>
@@ -377,7 +309,73 @@ const Home: NextPage = () => {
           </Slide>
           <Grid item md={1}></Grid>
         </Grid>
-      </Container >
+      </Container> */}
+      <Container>
+        <Box sx={{ position: 'realtive', pb: 12 }}>
+          <Box
+            maxWidth='lg'
+            sx={{
+              mx: 'auto',
+              zIndex: 5,
+              mb: theme.palette.mode === 'dark' ? 12 : 0
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{ pt: 4, textTransform: 'uppercase', color: theme.palette.text.primary, }}
+              align="center"
+              color="text.secondary"
+              paragraph
+            >
+              Our partners:
+            </Typography>
+            <Grid container alignItems="center" justifyContent="space-around" spacing={2} sx={{ px: 2, mb: 4 }}>
+              <Grid item xs={12} sm={6} md={4}>
+                <Link
+                  href="https://www.xerberus.io/"
+                  sx={logoLinkSx}
+                >
+                  <XerberusLogo sx={{ fontSize: '160px', height: '80px' }} />
+                </Link>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Link
+                  href="https://www.dexhunter.io/"
+                  sx={logoLinkSx}
+                >
+                  <DexhunterLogo sx={{ fontSize: '160px', height: '80px' }} />
+                </Link>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Link
+                  href="https://www.crci.review/"
+                  sx={logoLinkSx}
+                >
+                  <CrciLogo sx={{ fontSize: '160px', height: '80px' }} />
+                </Link>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Link
+                  href="https://www.ergopad.io"
+                  sx={logoLinkSx}
+                >
+                  <ErgopadLogo sx={{ fontSize: '160px', height: '80px' }} />
+                </Link>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Link
+                  href="https://www.paideia.im"
+                  sx={logoLinkSx}
+                >
+                  <PaideiaLogo sx={{ fontSize: '140px', height: '80px' }} />
+                </Link>
+              </Grid>
+
+
+            </Grid>
+          </Box>
+        </Box>
+      </Container>
       <Container
         maxWidth="lg"
         sx={{ mb: 12 }}
