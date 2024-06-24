@@ -36,7 +36,7 @@ const slides: THeroCarouselWithIds[] = [
     id: 0,
     title: 'Unlock the Cardano Community\'s Full Potential',
     subtitle: 'We believe the community is one of Cardano\'s greatest strengths. Working together, we can grow the ecosystem to provide inclusive financial services to the entire globe.',
-    buttonTitle: 'Read the Whitepaper',
+    buttonTitle: 'Read the Docs',
     buttonLink: 'https://docs.coinecta.fi',
     image: null,
     order: 0
