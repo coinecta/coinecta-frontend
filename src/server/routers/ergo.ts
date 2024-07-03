@@ -7,7 +7,13 @@ import { nanoid } from 'nanoid';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
-
+type StatusResponse = {
+  status: 'VERIFIED' | 'SIGNED' | 'PENDING' | 'INITIATED' | 'FAILED';
+  signedMessage?: string | null;
+  defaultAddress?: string | null;
+  proof?: string | null;
+  addresses?: string[] | null;
+};
 
 export const ergoRouter = createTRPCRouter({
   initVerification: protectedProcedure
@@ -245,6 +251,9 @@ export const ergoRouter = createTRPCRouter({
           message: `An unexpected error occurred: ${error}`,
           code: 'INTERNAL_SERVER_ERROR',
         });
+      }
+      return {
+        status: 'FAILED'
       }
     }),
   getProofForUser: protectedProcedure

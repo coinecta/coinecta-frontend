@@ -530,95 +530,91 @@ const FisoManagementPage: FC = () => {
             </Box>
           </Box>
 
-          {stakepoolInfo.isLoading
+          {stakepoolInfo.isError
             ? <Box sx={{ mb: 1 }}>
-              Loading...
+              Error fetching stakepool info
             </Box>
-            : stakepoolInfo.isError
-              ? <Box sx={{ mb: 1 }}>
-                Error fetching stakepool info
-              </Box>
-              : stakepoolData.length > 0
-                ? <Box>
+            : stakepoolData.length > 0
+              ? <Box>
 
-                  <Box
-                    sx={{
-                      mb: 2,
-                      position: 'sticky',
-                      top: '70px',
-                      width: '100%',
-                      background: theme.palette.background.default,
-                      zIndex: 10,
-                    }}
-                    component="form"
-                    onSubmit={handleSubmitApprove}
+                <Box
+                  sx={{
+                    mb: 2,
+                    position: 'sticky',
+                    top: '70px',
+                    width: '100%',
+                    background: theme.palette.background.default,
+                    zIndex: 10,
+                  }}
+                  component="form"
+                  onSubmit={handleSubmitApprove}
+                >
+                  <Grid
+                    container
+                    alignItems="center"
+                    direction={{ xs: 'column', sm: 'row' }}
+                    spacing={2}
+
+                  // justifyContent="space-between"
                   >
-                    <Grid
-                      container
-                      alignItems="center"
-                      direction={{ xs: 'column', sm: 'row' }}
-                      spacing={2}
-
-                    // justifyContent="space-between"
-                    >
-                      <Grid container alignItems="center" spacing={1} xs>
-                        <Grid>
-                          Start epoch:
-                        </Grid>
-                        <Grid xs>
-                          <UnlabelledTextField
-                            type="number"
-                            name="startEpoch"
-                            value={epochs.startEpoch}
-                            onChange={handleChangeEpoch}
-                            error={epochsErrors.startEpoch}
-                          />
-                        </Grid>
-                      </Grid>
-                      <Grid container alignItems="center" spacing={1} xs>
-                        <Grid>
-                          End epoch:
-                        </Grid>
-                        <Grid xs>
-                          <UnlabelledTextField
-                            type="number"
-                            name="endEpoch"
-                            value={epochs.endEpoch}
-                            onChange={handleChangeEpoch}
-                            error={epochsErrors.endEpoch}
-                          />
-                        </Grid>
-                      </Grid>
+                    <Grid container alignItems="center" spacing={1} xs>
                       <Grid>
-                        <Button type="submit">
-                          Approve {checked.length} Stakepools
-                        </Button>
+                        Start epoch:
+                      </Grid>
+                      <Grid xs>
+                        <UnlabelledTextField
+                          type="number"
+                          name="startEpoch"
+                          value={epochs.startEpoch}
+                          onChange={handleChangeEpoch}
+                          error={epochsErrors.startEpoch}
+                        />
                       </Grid>
                     </Grid>
-                  </Box>
+                    <Grid container alignItems="center" spacing={1} xs>
+                      <Grid>
+                        End epoch:
+                      </Grid>
+                      <Grid xs>
+                        <UnlabelledTextField
+                          type="number"
+                          name="endEpoch"
+                          value={epochs.endEpoch}
+                          onChange={handleChangeEpoch}
+                          error={epochsErrors.endEpoch}
+                        />
+                      </Grid>
+                    </Grid>
+                    <Grid>
+                      <Button type="submit">
+                        Approve {checked.length} Stakepools
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Box>
 
-                  <Box sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: '6px' }}>
-                    {stakepoolData.map((item: TStakePoolWithStats, i: number) => {
-                      const labelId = `spo-signup-${item.pool_id}`;
-                      return (
-                        <>
-                          <FisoListItem
-                            stakepoolData={item}
-                            key={labelId}
-                            keyString={item.pool_id}
-                            checked={checked}
-                            setChecked={setChecked}
-                            loadingItem={dataLoading}
-                          />
-                          {i < stakepoolData.length - 1 && <Divider />}
-                        </>
-                      )
-                    })}
-                  </Box>
+                <Box sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: '6px' }}>
+                  {stakepoolData.map((item: TStakePoolWithStats, i: number) => {
+                    const labelId = `spo-signup-${item.pool_id}`;
+                    return (
+                      <>
+                        <FisoListItem
+                          stakepoolData={item}
+                          key={labelId}
+                          keyString={item.pool_id}
+                          checked={checked}
+                          setChecked={setChecked}
+                          loadingItem={dataLoading}
+                        />
+                        {i < stakepoolData.length - 1 && <Divider />}
+                      </>
+                    )
+                  })}
                 </Box>
-                : <Box sx={{ mb: 1 }}>
-                  No stakepool info to display...
-                </Box>
+              </Box>
+              : <Box sx={{ mb: 1 }}>
+                No stakepool info to display...
+              </Box>
           }
         </Box>
       </Box>

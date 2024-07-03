@@ -20,8 +20,8 @@ const tokenomicsHeading: { [key: string]: string } = {
   value: 'Value',
   tge: 'TGE',
   freq: 'Frequency',
-  length: 'Length',
-  lockup: 'Cliff'
+  length: 'Vested',
+  lockup: 'Lock'
 };
 
 interface IDistribution {

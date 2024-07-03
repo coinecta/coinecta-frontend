@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useAlert } from '@contexts/AlertContext';
 import { trpc } from '@lib/utils/trpc';
 import {
@@ -22,27 +22,28 @@ const Ergoauth: FC<IErgoauthProps> = ({ defaultAddress, walletType, verification
   const baseUrl = `${window.location.host}`;
   const ergoauthDomain = `ergoauth://${baseUrl}`;
 
-  trpc.ergo.checkProofStatus.useQuery(
-    // @ts-ignore
+  const { data, refetch } = trpc.ergo.checkProofStatus.useQuery(
     { verificationId },
     {
       enabled: !!verificationId,
-      refetchInterval: (data: { status: 'PENDING' | 'VERIFIED'; signedMessage: string, proof: string } | undefined) => {
-        // If the status is 'SIGNED', stop polling
-        if (data?.status === 'VERIFIED') {
-          return false;
-        }
-        // Otherwise, continue polling every 2 seconds
-        return 2000;
-      },
-      refetchIntervalInBackground: true,
-      onSuccess: (data) => {
-        if (data?.status === 'VERIFIED') {
-          callback(true, data.signedMessage, data.proof)
-        }
-      }
+      refetchOnWindowFocus: false,
     }
   );
+
+  useEffect(() => {
+    if (!verificationId) return;
+
+    const interval = setInterval(() => {
+      refetch();
+    }, 2000);
+
+    if (data?.status === 'VERIFIED' && data.signedMessage && data.proof) {
+      clearInterval(interval);
+      callback(true, data.signedMessage, data.proof);
+    }
+
+    return () => clearInterval(interval);
+  }, [verificationId, data, refetch, callback]);
 
   const link = `${ergoauthDomain}/api/ergo-mobile-proof/ergo-auth-request?verificationId=${verificationId}&address=${defaultAddress}`
 

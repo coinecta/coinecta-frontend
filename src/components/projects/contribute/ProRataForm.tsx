@@ -141,8 +141,8 @@ const ProRataForm: FC<TProRataFormProps> = ({
         </Box>
       }
       <Grid container spacing={2} alignItems="stretch" direction={{ xs: 'column-reverse', md: 'row' }} sx={{ mb: 2 }}>
-        <Grid xs={12} md={7}>
-          <Paper variant="outlined" sx={{ px: 2, py: 4, height: '100%' }}>
+        <Grid xs={12} md={7} sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Paper variant="outlined" sx={{ px: 2, py: 4, flexGrow: 1 }}>
             <ContributeCard
               projectName={projectName}
               projectIcon={projectIcon}
@@ -158,9 +158,9 @@ const ProRataForm: FC<TProRataFormProps> = ({
             />
           </Paper>
         </Grid>
-        <Grid xs={12} md={5}>
+        <Grid xs={12} md={5} sx={{ display: 'flex', flexDirection: 'column' }}>
           {whitelistSlug && <WhitelistResult whitelistStatus={whitelistStatus} sessionStatus={sessionStatus} />}
-          <Paper variant="outlined" sx={{ px: 3, py: 2, height: '100%' }}>
+          <Paper variant="outlined" sx={{ px: 3, py: 2, flexGrow: 1 }}>
             <Box
               sx={{
                 display: 'flex',

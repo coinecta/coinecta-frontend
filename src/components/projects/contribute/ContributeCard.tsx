@@ -4,6 +4,7 @@ import TokenInput from './TokenInput';
 import Link from '@components/Link';
 import ContributeConfirm from './ContributeConfirm';
 import { useWalletContext } from '@contexts/WalletContext';
+import ContributeUSDTConfirm from './ContributeUSDTConfirm';
 
 interface IContributeCardProps {
   projectName: string;
@@ -37,6 +38,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
   const theme = useTheme()
   const [termsCheck, setTermsCheck] = useState(false)
   const [openContribution, setOpenContribution] = useState(false)
+  const [openUSDTContribution, setOpenUSDTContribution] = useState(false)
   const [inputValue, setInputValue] = useState('');
   const [outputValue, setOutputValue] = useState('');
 
@@ -82,20 +84,21 @@ const ContributeCard: FC<IContributeCardProps> = ({
           </Typography>}
         />
       </Box>
+
       <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
-        <Box sx={{ width: '100%', textAlign: 'center' }}>
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', flexDirection: 'row', gap: 2 }}>
           <Button
             variant="contained"
             color="secondary"
-            disabled={
-              !termsCheck ||
-              !whitelisted ||
-              !live ||
-              !recipientAddress ||
-              Number(inputValue) === 0 ||
-              sessionData == null ||
-              !allowed
-            }
+            // disabled={
+            //   !termsCheck ||
+            //   !whitelisted ||
+            //   !live ||
+            //   !recipientAddress ||
+            //   Number(inputValue) === 0 ||
+            //   sessionData == null ||
+            //   !allowed
+            // }
             sx={{
               textTransform: 'none',
               fontSize: '20px',
@@ -104,8 +107,30 @@ const ContributeCard: FC<IContributeCardProps> = ({
             }}
             onClick={() => setOpenContribution(true)}
           >
-            Contribute now
+            Contribute with ADA
           </Button>
+          {/* <Button
+            variant="contained"
+            color="secondary"
+            // disabled={
+            //   !termsCheck ||
+            //   !whitelisted ||
+            //   !live ||
+            //   !recipientAddress ||
+            //   Number(inputValue) === 0 ||
+            //   sessionData == null ||
+            //   !allowed
+            // }
+            sx={{
+              textTransform: 'none',
+              fontSize: '20px',
+              fontWeight: 600,
+              borderRadius: '6px'
+            }}
+            onClick={() => setOpenUSDTContribution(true)}
+          >
+            Contribute with USDT
+          </Button> */}
         </Box>
         {!recipientAddress &&
           <Typography color="error" sx={{ mt: 1, fontSize: '0.9rem!important' }}>
@@ -137,15 +162,27 @@ const ContributeCard: FC<IContributeCardProps> = ({
         </Typography>
       </Box>}
       {recipientAddress !== null &&
-        <ContributeConfirm
-          open={openContribution}
-          setOpen={setOpenContribution}
-          paymentAmount={inputValue}
-          receiveAmount={outputValue}
-          receiveCurrency={tokenTicker}
-          contributionRoundId={contributionRoundId}
-          recipientAddress={recipientAddress}
-        />
+        <>
+          <ContributeConfirm
+            open={openContribution}
+            setOpen={setOpenContribution}
+            paymentAmount={inputValue}
+            receiveAmount={outputValue}
+            receiveCurrency={tokenTicker}
+            contributionRoundId={contributionRoundId}
+            recipientAddress={recipientAddress}
+          />
+          <ContributeUSDTConfirm
+            open={openUSDTContribution}
+            setOpen={setOpenUSDTContribution}
+            paymentAmount={inputValue}
+            paymentCurrency={'USDT'}
+            receiveAmount={outputValue}
+            receiveCurrency={tokenTicker}
+            contributionRoundId={contributionRoundId}
+            recipientAddress={recipientAddress}
+          />
+        </>
       }
     </Box>
   );

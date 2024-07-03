@@ -48,9 +48,9 @@ const Home: NextPage = () => {
   const [ref1, inView1] = useInView(inViewOptions);
   const [ref2, inView2] = useInView(inViewOptions);
   const [ref3, inView3] = useInView(inViewOptions);
-  const [ref4, inView4] = useInView({ ...inViewOptions, threshold: 0.5 });
-  const [ref5, inView5] = useInView(inViewOptions);
-  const [ref6, inView6] = useInView({ ...inViewOptions, threshold: 0.3 });
+  // const [ref4, inView4] = useInView({ ...inViewOptions, threshold: 0.5 });
+  // const [ref5, inView5] = useInView(inViewOptions);
+  // const [ref6, inView6] = useInView({ ...inViewOptions, threshold: 0.3 });
 
   const logoLinkSx = {
     display: 'block',

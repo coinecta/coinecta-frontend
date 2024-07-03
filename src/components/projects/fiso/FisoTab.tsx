@@ -151,7 +151,7 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
       }
     }
   };
-  const loadingCheck = fisoUserInfoQuery.status === 'loading' && !!fisos[0].id && (!!customRewardAddress || sessionStatus === 'authenticated')
+  const loadingCheck = fisoUserInfoQuery.isLoading && !!fisos[0].id && (!!customRewardAddress || sessionStatus === 'authenticated')
   return (
     <Box sx={{ mb: 2 }}>
       <Box sx={{ width: '100%', textAlign: 'center', mb: 2 }}>
@@ -319,17 +319,13 @@ const FisoTab: FC<FisoTabProps> = ({ fisos, projectSlug }) => {
             })}
           </Grid>
         </Box>
-        : stakepoolInfo.isLoading
+        : stakepoolInfo.isError
           ? <Box sx={{ mb: 1 }}>
-            Loading...
+            Error fetching stakepool info
           </Box>
-          : stakepoolInfo.isError
-            ? <Box sx={{ mb: 1 }}>
-              Error fetching stakepool info
-            </Box>
-            : <Box sx={{ mb: 1, textAlign: 'center' }}>
-              No FISO info to display currently.
-            </Box>
+          : <Box sx={{ mb: 1, textAlign: 'center' }}>
+            No FISO info to display currently.
+          </Box>
       }
     </Box>
   );

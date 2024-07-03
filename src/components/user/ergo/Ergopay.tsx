@@ -41,7 +41,7 @@ const Ergopay: FC<IErgopayProps> = ({ open, setOpen, walletType, messageSigning,
         return 2000;
       },
       refetchIntervalInBackground: true,
-      onSuccess: (data) => {
+      onSuccess: (data: { status: string; defaultAddress: string; }) => {
         if (data?.status === 'PENDING') {
           callback(true, data.defaultAddress, verificationId!)
         }

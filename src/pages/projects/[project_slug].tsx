@@ -108,7 +108,7 @@ const Project = () => {
 
   return (
     <>
-      {project.status === 'loading' || !projectData && project.status !== 'error'
+      {project.isLoading || !projectData && project.status !== 'error'
         ? <Box sx={{ mb: 3, position: 'relative', height: '100vh', width: '100vw' }}>
           <Box sx={{
             position: "absolute",

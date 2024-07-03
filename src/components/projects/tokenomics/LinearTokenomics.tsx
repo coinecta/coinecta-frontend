@@ -18,9 +18,7 @@ function LinearProgressWithLabel(props: any) {
       </Box>
       <Box sx={{ minWidth: 35 }}>
         <Typography color="text.secondary">
-          {`${Math.round(
-            props.value
-          )}%`}
+          {`${props.value.toFixed(1).replace(/\.0$/, '')}%`}
         </Typography>
       </Box>
     </Box>

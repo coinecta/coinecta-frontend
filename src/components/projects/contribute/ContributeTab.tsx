@@ -48,7 +48,6 @@ const ContributeTab: FC<ContributeTabProps> = ({ projectName, projectIcon, proje
         : <Typography>
           No contribution rounds available at this time. Check back soon.
         </Typography>}
-
     </Box>
   );
 };

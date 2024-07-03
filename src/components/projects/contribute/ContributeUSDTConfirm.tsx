@@ -24,6 +24,7 @@ import { WalletListItemComponent } from '@components/user/WalletListItem';
 import { getShorterAddress } from '@lib/utils/general';
 import { useAlert } from '@contexts/AlertContext';
 import { trpc } from '@lib/utils/trpc';
+import { useAccount } from 'wagmi'
 
 interface IContributeConfirmProps {
   open: boolean;
@@ -58,6 +59,12 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
   const [alternateWalletType, setAlternateWalletType] = useState<TWalletListItem | undefined>(undefined)
   const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined)
   const createTransaction = trpc.contributions.createTransaction.useMutation();
+
+  function ConnectButton() {
+    return <w3m-button />
+  }
+
+  const ethAccount = useAccount()
 
   const handleOpenAlternativeWallet = () => {
     setOpenAlternativeWallet(!openAlternativeWallet)
@@ -179,6 +186,9 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
 
   const installedWallets = filterInstalledWallets(wallets)
 
+  // ADA price conversion
+  const { data: adaPrice } = trpc.price.getCardanoPrice.useQuery();
+
   return (
     <Dialog
       open={open}
@@ -188,11 +198,20 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
         variant: 'outlined',
         elevation: 0
       }}
-      sx={{
-        '& .MuiBackdrop-root': {
-          backdropFilter: 'blur(4px)',
-        }
+      // slots={{ backdrop: Backdrop }}
+      slotProps={{
+        backdrop: {
+          sx: {
+            backdropFilter: 'blur(4px)',
+            backgroundColor: 'rgba(0,0,0,0.4)'
+          },
+        },
       }}
+    // sx={{
+    //   '& .MuiBackdrop-root': {
+    //     backdropFilter: 'blur(4px)',
+    //   }
+    // }}
     >
       <DialogTitle
         sx={{
@@ -201,7 +220,7 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
           fontSize: "32px",
         }}
       >
-        Select Sending Wallet
+        Contribution Details
       </DialogTitle>
       <IconButton
         aria-label="close"
@@ -216,9 +235,19 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
         <CloseIcon />
       </IconButton>
       <DialogContent sx={{ minWidth: '350px', maxWidth: !fullScreen ? '460px' : null }}>
-        <Typography sx={{ mb: 2 }}>
-          You are contributing {paymentAmount} {paymentCurrency} for {receiveAmount} {receiveCurrency}
+        <Typography sx={{ fontSize: '1rem!important', mb: 1 }}>
+          You are contributing {paymentAmount} ADA worth of {paymentCurrency} at an exchange of {adaPrice} ADA to {paymentCurrency}.
         </Typography>
+        <Typography>
+          Contribution amount: {(Number(paymentAmount) * adaPrice).toFixed(2)} {paymentCurrency}
+        </Typography>
+        <Typography>
+          Expected tokens: {receiveAmount} {receiveCurrency}
+        </Typography>
+        <Typography>
+          If the round is oversubscribed, you will receive a proportional refund along with a portion of the tokens. Please note that Ethereum gas fees will be paid from your refund amount.
+        </Typography>
+
         <Typography sx={{ fontSize: '1rem!important', mb: 1 }}>
           You may choose an alternate wallet to contribute from, other than your signed in wallet.
         </Typography>
@@ -275,6 +304,10 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
               </Box>}
           </>
         }
+        <ConnectButton />
+        <Box>
+          Eth address: {ethAccount.address}
+        </Box>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center', mb: 1 }}>
         <Button variant="contained" color="secondary" onClick={handleSubmit} disabled={buttonDisabled}>

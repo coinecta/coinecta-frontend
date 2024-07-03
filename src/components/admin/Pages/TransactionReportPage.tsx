@@ -258,7 +258,7 @@ const TransactionReport: FC = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {onchainTransactions.data.map((item, index) => {
+                  {onchainTransactions.data?.map((item, index) => {
                     return (
                       <TableRow key={index}>
                         <TableCell
