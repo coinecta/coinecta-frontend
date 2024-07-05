@@ -43,6 +43,10 @@ const Header: FC = () => {
     {
       name: "Staking",
       link: "/staking"
+    },
+    {
+      name: "Vesting",
+      link: "/vesting"
     }
   ];
 
