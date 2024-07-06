@@ -82,7 +82,13 @@ const TokenInput: FC<ITokenInputProps> = ({
   };
 
   return (
-    <Box sx={{ position: 'relative' }}>
+    <Box sx={{
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}>
       <Box
         sx={{
           border: `1px solid ${theme.palette.divider}`,

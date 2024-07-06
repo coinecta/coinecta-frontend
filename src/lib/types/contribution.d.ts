@@ -18,5 +18,6 @@ declare global {
     whitelistSlug: string | null | undefined;
     recipientAddress: string | null;
     restrictedCountries: string[];
+    saleTerms: string | null; // JSON array with object { header: string; bodyText: string; }
   };
 }

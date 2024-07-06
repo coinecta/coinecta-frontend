@@ -121,7 +121,7 @@ export const countryList: ICountryList[] = [
   { label: 'Kazakhstan', code: 'KZ' },
   { label: 'Kenya', code: 'KE' },
   { label: 'Kiribati', code: 'KI' },
-  { label: 'Democratic People\'s Republic of Korea', code: 'KP' },
+  { label: 'North Korea', code: 'KP' },
   { label: 'Korea, Republic of', code: 'KR' },
   { label: 'Kuwait', code: 'KW' },
   { label: 'Kyrgyzstan', code: 'KG' },

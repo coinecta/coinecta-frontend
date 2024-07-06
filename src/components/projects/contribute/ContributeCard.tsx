@@ -61,7 +61,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
         </Typography>
       </Box>
       <Box sx={{ mb: 2 }}>
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 4 }}>
           <TokenInput
             outputTokenTicker={tokenTicker}
             remainingTokens={remainingTokens}
@@ -72,15 +72,17 @@ const ContributeCard: FC<IContributeCardProps> = ({
             setOutputValue={setOutputValue}
           />
         </Box>
-        <FormControlLabel
-          control={
-            <Checkbox checked={termsCheck} onChange={handleCheckTerms} name="terms" size="small" color="secondary" />
-          }
-          sx={{ mb: 2 }}
-          label={<Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.secondary }}>
-            I agree to the&nbsp;<Link href="/terms" target="_blank">Terms of Use</Link> and <Link href="/privacy" target="_blank">Privacy Policy</Link>.
-          </Typography>}
-        />
+        <Box>
+          <FormControlLabel
+            control={
+              <Checkbox checked={termsCheck} onChange={handleCheckTerms} name="terms" size="small" color="secondary" />
+            }
+            sx={{ mb: 2, maxWidth: '500px' }}
+            label={<Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.secondary }}>
+              I agree to the&nbsp;<Link href="/terms" target="_blank">Terms of Use</Link>, <Link href="/privacy" target="_blank">Privacy Policy</Link>, and the Additional Sale Terms and Disclaimer on this page.
+            </Typography>}
+          />
+        </Box>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
         <Box sx={{ width: '100%', textAlign: 'center' }}>
@@ -131,12 +133,15 @@ const ContributeCard: FC<IContributeCardProps> = ({
           </Box>
         }
       </Box>
-      {!whitelisted && <Box>
-        <Typography color="text.secondary" sx={{ fontSize: '0.9rem!important', fontStyle: 'italic' }}>
-          You must be whitelisted to contribute.
-        </Typography>
-      </Box>}
-      {recipientAddress !== null &&
+      {
+        !whitelisted && <Box>
+          <Typography color="text.secondary" sx={{ fontSize: '0.9rem!important', fontStyle: 'italic' }}>
+            You must be whitelisted to contribute.
+          </Typography>
+        </Box>
+      }
+      {
+        recipientAddress !== null &&
         <ContributeConfirm
           open={openContribution}
           setOpen={setOpenContribution}
@@ -147,7 +152,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
           recipientAddress={recipientAddress}
         />
       }
-    </Box>
+    </Box >
   );
 };
 
