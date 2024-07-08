@@ -9,8 +9,8 @@ type PickNotNullable<T> = {
 type OptionalNullable<T> = T extends object ? {
   [K in keyof PickNullable<T>]?: OptionalNullable<Exclude<T[K], null>>
 } & {
-    [K in keyof PickNotNullable<T>]: OptionalNullable<T[K]>
-  } : T;
+  [K in keyof PickNotNullable<T>]: OptionalNullable<T[K]>
+} : T;
 
 type TNonceResponse = {
   nonce: string;
@@ -65,6 +65,7 @@ type TProRataFormProps = {
   whitelistSlug: string | null;
   recipientAddress: string | null;
   restrictedCountries: string[];
+  saleTerms: string | null;
 }
 
 type TWalletListItem = {
@@ -180,4 +181,9 @@ interface CombinedTransactionInfo {
 interface Country {
   label: string;
   code: string;
+}
+
+interface ISalesTerm {
+  header: string;
+  bodyText: string;
 }
