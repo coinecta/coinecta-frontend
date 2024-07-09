@@ -173,6 +173,7 @@ model ContributionRound {
   project             Project       @relation(fields: [projectSlug], references: [slug], onDelete: Cascade)
   recipientAddress    String?       @map("recipient_address")
   restrictedCountries String[]      @map("restricted_countries")
+  saleTerms           String?
 
   @@map("contribution_round")
 }

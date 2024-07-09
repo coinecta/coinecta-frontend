@@ -11,6 +11,8 @@ import { trpc } from '@lib/utils/trpc';
 import { useAlert } from '@contexts/AlertContext';
 import MultiSelectCountry from '@components/MultiSelectCountry';
 import SelectWhitelist from './SelectWhitelist';
+import DraggableList from '../hero-carousel/ItemReorder';
+import SalesTermsReorder from './SaleTermsReorder';
 
 type EditAndCreateContributionFormProps = {
   mode: 'create' | 'edit';
@@ -32,7 +34,8 @@ const initForm = {
   projectSlug: '',
   whitelistSlug: '',
   restrictedCountries: [],
-  recipientAddress: ''
+  recipientAddress: '',
+  saleTerms: ''
 };
 
 const formatDateForDateTimeLocal = (date: Date) => {
@@ -53,6 +56,8 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
   const [isLoading, setLoading] = useState(false);
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
   const [selectedWhitelist, setSelectedWhitelist] = useState<string | null>(null)
+  const [salesTerms, setSalesTerms] = useState<ISalesTerm[]>([]);
+  const [newTerm, setNewTerm] = useState<ISalesTerm>({ header: '', bodyText: '' });
   const { data: whitelistData } = trpc.whitelist.listProjectWhitelists.useQuery({ projectSlug: project?.slug ?? '' })
 
   const roundQuery = trpc.contributions.getContributionRoundsByProjectSlug.useQuery(
@@ -74,6 +79,7 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
             }
             setForm(datesToString);
             setSelectedCountries(round.restrictedCountries);
+            if (round.saleTerms) setSalesTerms(JSON.parse(round.saleTerms))
           }
           else setForm(initForm)
         } catch (error) {
@@ -83,6 +89,25 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
       fetchRound();
     }
   }, [mode, selectedRound]);
+
+  const handleSalesTermChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setNewTerm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const addSalesTerm = () => {
+    if (newTerm.header && newTerm.bodyText) {
+      setSalesTerms(prev => [...prev, newTerm]);
+      setNewTerm({ header: '', bodyText: '' });
+    }
+  };
+
+  const removeSalesTerm = (index: number) => {
+    setSalesTerms(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleReoderItems = (newOrder: ISalesTerm[]) => {
+    setSalesTerms(newOrder);
+  }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -104,7 +129,8 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
       endDate: new Date(form.endDate),
       projectName: project.name,
       projectSlug: project.slug,
-      restrictedCountries: selectedCountries
+      restrictedCountries: selectedCountries,
+      saleTerms: JSON.stringify(salesTerms)
     };
 
     try {
@@ -228,6 +254,44 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
         <Grid item xs={12}>
           <MultiSelectCountry selectedCountries={selectedCountries} setSelectedCountries={setSelectedCountries} />
         </Grid>
+
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>Sales Terms</Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={5}>
+              <TextField
+                fullWidth
+                name="header"
+                label="Term Header"
+                variant="filled"
+                value={newTerm.header}
+                onChange={handleSalesTermChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <TextField
+                fullWidth
+                name="bodyText"
+                label="Term Body"
+                variant="filled"
+                value={newTerm.bodyText}
+                onChange={handleSalesTermChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={2}>
+              <Button variant="contained" onClick={addSalesTerm} fullWidth>
+                Add Term
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+
+        {salesTerms && <SalesTermsReorder
+          salesTerms={salesTerms}
+          setNewOrder={handleReoderItems}
+          removeSalesTerm={removeSalesTerm}
+        />}
+
         <Button type="submit" variant="contained" disabled={isLoading} sx={{ mt: 2 }}>
           {mode === 'create' ? 'Create' : 'Update'}
         </Button>
