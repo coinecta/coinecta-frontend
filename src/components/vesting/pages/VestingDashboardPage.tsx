@@ -131,7 +131,7 @@ const staticPositionsData = {
   data: [
     {
       projectName: 'Coinecta',
-      tokenName: "CNCT",
+      token: "CNCT",
       total: "217.29",
       claimable: "15.29",
       frequency: "1 month",
@@ -141,7 +141,7 @@ const staticPositionsData = {
     },
     {
       projectName: 'SundaeSwap',
-      tokenName: "CNCT",
+      token: "CNCT",
       total: "328.59",
       claimable: "200.29",
       frequency: "1 month",
@@ -151,7 +151,7 @@ const staticPositionsData = {
     },
     {
       projectName: 'Coinecta',
-      tokenName: "CNCT",
+      token: "CNCT",
       total: "117.19",
       claimable: "16.79",
       frequency: "1 month",
