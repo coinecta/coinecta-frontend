@@ -80,7 +80,7 @@ const VestingStatsTable = <T extends Record<string, any>>({data,isLoading}: IVes
                     }}
                 >
                     <TableCell sx={{ borderBottom: 'none', width: '30px' }}>
-                        {item.icon && <Avatar variant='rounded' sx={{ width: '30px', height: '30px', marginLeft: '15px', marginRight: '10px'  }} src={item.icon} />}
+                        {item.icon && <Avatar variant='rounded' sx={{ width: '30px', height: '30px', marginLeft: '15px', marginRight: '10px', borderRadius: '9999px' }} src={item.icon} />}
                     </TableCell>
                     {Object.keys(item).map((key, colIndex) => (
                         key !== 'icon' &&

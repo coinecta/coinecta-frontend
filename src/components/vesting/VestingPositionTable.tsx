@@ -63,7 +63,7 @@ const VestingPositionTable = <T extends Record<string, any>>({
     return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
   };
 
-  const isCheckboxDisabled = (item: T) => item.unlockDate > new Date();
+  const isCheckboxDisabled = (item: T) => item.nextUnlockDate > new Date();
 
   const handleSelectRow = (item: T) => {
     if (setSelectedRows) {
@@ -132,9 +132,9 @@ const VestingPositionTable = <T extends Record<string, any>>({
                   }}
                 >
                   <TableCell sx={{ borderBottom: 'none', width: '30px' }}>
-                    <Avatar variant='rounded' sx={{ width: '30px', height: '30px', marginLeft: '15px', marginRight: '10px' }} />
+                    <Avatar variant='rounded' sx={{ width: '30px', height: '30px', marginLeft: '15px', marginRight: '10px' }} src={'https://i.imgur.com/0689zZr.png'}/>
                   </TableCell>
-                  <TableCell padding="checkbox" sx={{ borderBottom: 'none' }}>
+                  <TableCell padding="checkbox" sx={{ borderBottom: 'none', paddingRight: '15px' }}>
                   <Checkbox
                       checked={selectedRows?.has(item)}
                       onChange={() => handleSelectRow(item)}
@@ -144,7 +144,14 @@ const VestingPositionTable = <T extends Record<string, any>>({
                   </TableCell>
                   {Object.keys(item).map((key, colIndex) => (
                   <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none', color: theme.palette.mode === 'dark' ? '#ffffff' : '#424242' }}>
-                      {isLoading ? <Skeleton width={100} /> : formatData(item, key as keyof T)}
+                    {key === 'projectName' ? (
+                      <Box sx={{ display: 'flex', alignItems: 'center'}}>
+                          <Avatar variant='rounded' sx={{ width: '30px', height: '30px', marginRight: '10px', borderRadius: '9999px' }} src={'https://i.imgur.com/4KkO0mV.jpg'}/>
+                          {isLoading ? <Skeleton width={100} /> : formatData(item, key)}
+                      </Box>
+                    ) : (
+                      isLoading ? <Skeleton width={100} /> : formatData(item, key as keyof T)
+                    )}  
                   </TableCell>
                   ))}
                 </TableRow>
