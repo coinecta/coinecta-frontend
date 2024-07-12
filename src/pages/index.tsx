@@ -174,7 +174,7 @@ const Home: NextPage = () => {
                             variant="outlined"
                             color="secondary"
 
-                            href="/dashboard/add-stake"
+                            href="/staking/add"
                           >
                             Stake Now
                           </ButtonLink>
