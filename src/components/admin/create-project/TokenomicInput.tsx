@@ -59,7 +59,7 @@ const TokenomicInput: FC<ITokenomicInputProps> = ({ data, setData }) => {
               InputProps={{ disableUnderline: true }}
               fullWidth
               variant="filled"
-              value={elem.amount}
+              value={elem.amount.toString()}
               onChange={(e) => handleChange(e, index)}
             />
           </Grid>
@@ -140,7 +140,7 @@ const TokenomicInput: FC<ITokenomicInputProps> = ({ data, setData }) => {
             ...data,
             {
               name: '',
-              amount: 0,
+              amount: BigInt(0),
               value: '',
               tge: '',
               freq: '',

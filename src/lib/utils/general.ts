@@ -124,3 +124,12 @@ export const calculateFutureDateMonths = (months: number): string => {
     day: '2-digit',
   });
 };
+
+export const safeBigIntToNumber = (value: bigint): number => {
+  // Check if the BigInt value can be safely converted to a number
+  if (value > BigInt(Number.MAX_SAFE_INTEGER) || value < BigInt(Number.MIN_SAFE_INTEGER)) {
+    throw new Error("Value is too large to safely convert to a number");
+  }
+
+  return Number(value);
+}

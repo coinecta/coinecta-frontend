@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import { LinearProgressStyled } from '@components/styled-components/LinearProgress';
 import React, { FC } from 'react';
 import { useTheme } from '@mui/material';
+import { safeBigIntToNumber } from '@lib/utils/general';
 
 function LinearProgressWithLabel(props: any) {
   const theme = useTheme()
@@ -18,7 +19,7 @@ function LinearProgressWithLabel(props: any) {
       </Box>
       <Box sx={{ minWidth: 35 }}>
         <Typography color="text.secondary">
-          {`${(Math.round(props.value * 10) / 10).toFixed(1).replace(/\.0$/, '')}%`}
+          {`${(Math.round(safeBigIntToNumber(props.value) * 10) / 10).toFixed(1).replace(/\.0$/, '')}%`}
         </Typography>
       </Box>
     </Box>
@@ -26,11 +27,11 @@ function LinearProgressWithLabel(props: any) {
 }
 
 const LinearTokenomics: FC<{ tokenomics: TTokenomic[] }> = ({ tokenomics }) => {
-  const total = tokenomics.reduce((a: any, data: any) => a + data.amount, 0);
+  const total = tokenomics.reduce((a: any, data: any) => a + safeBigIntToNumber(data.amount), 0);
   const tokenSections = tokenomics.map((data: any) => {
     return {
       name: data.name,
-      percent: (data.amount * 100) / total,
+      percent: (safeBigIntToNumber(data.amount) * 100) / total,
     };
   });
 

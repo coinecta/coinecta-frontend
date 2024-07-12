@@ -218,7 +218,7 @@ model Team {
 model Tokenomics {
   id           Int         @id @default(autoincrement())
   tokenName    String      @map("token_name")
-  totalTokens  Int         @map("total_tokens")
+  totalTokens  BigInt      @map("total_tokens")
   tokenTicker  String      @map("token_ticker")
   policyId     String?     @map("policy_id")
   project_slug String      @unique
@@ -231,7 +231,7 @@ model Tokenomics {
 model Tokenomic {
   id            Int        @id @default(autoincrement())
   name          String
-  amount        Int
+  amount        BigInt
   value         String?
   tge           String?
   freq          String?

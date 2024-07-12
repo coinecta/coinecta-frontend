@@ -40,7 +40,7 @@ const TTeam = z.object({
 const TTokenomic = z.object({
   id: z.number().optional(),
   name: z.string(),
-  amount: z.number(),
+  amount: z.bigint(),
   value: z.string().optional(),
   tge: z.string().optional(),
   freq: z.string().optional(),
@@ -52,7 +52,7 @@ const TTokenomic = z.object({
 const TTokenomics = z.object({
   id: z.number().optional(),
   tokenName: z.string(),
-  totalTokens: z.number(),
+  totalTokens: z.bigint(),
   tokenTicker: z.string(),
   tokenomics: z.array(TTokenomic),
   tokenPolicyId: z.string(),

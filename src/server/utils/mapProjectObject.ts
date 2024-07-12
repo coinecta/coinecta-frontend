@@ -77,7 +77,7 @@ export const mapFullProjectFromDb = (projectDb: ProjectWithRelations | null): z.
     })),
   } : { // default empty object if tokenomics is null
     tokenName: '',
-    totalTokens: 0,
+    totalTokens: BigInt(0),
     tokenTicker: '',
     tokenPolicyId: '',
     tokenomics: [],
