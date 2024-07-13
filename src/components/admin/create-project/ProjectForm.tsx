@@ -51,7 +51,7 @@ const initialFormData: TProject = {
   team: [],
   tokenomics: {
     tokenName: '',
-    totalTokens: 0,
+    totalTokens: BigInt(0),
     tokenTicker: '',
     tokenPolicyId: '',
     tokenomics: [],
@@ -220,13 +220,13 @@ const ProjectForm: FC<ProjectFormProps> = ({ project, edit }) => {
 
     newProject.fundsRaised = Number(newProject.fundsRaised) || 0;
 
-    // Convert totalTokens from string to number
-    newProject.tokenomics.totalTokens = Number(newProject.tokenomics.totalTokens) || 0;
+    // Convert totalTokens from string to BigInt
+    newProject.tokenomics.totalTokens = BigInt(newProject.tokenomics.totalTokens) || BigInt(0);
 
     // Loop through all tokenomics and convert amounts from string to number
     newProject.tokenomics.tokenomics = newProject.tokenomics.tokenomics.map((tokenomic: TTokenomic) => ({
       ...tokenomic,
-      amount: Number(tokenomic.amount) || 0,
+      amount: BigInt(tokenomic.amount) || BigInt(0),
     }));
 
     // Loop through all whitelists and convert maxPerSignup and hardCap from string to number
@@ -269,8 +269,8 @@ const ProjectForm: FC<ProjectFormProps> = ({ project, edit }) => {
       errorCheck && emptyCheck
     ) {
       const data = { ...formData };
-      const serializedData = JSON.stringify(data);
-      localStorage.setItem('myFormData', serializedData);
+      // const serializedData = JSON.stringify(data);
+      // localStorage.setItem('myFormData', serializedData);
       const sanitizedData = convertStringsInObject(data)
       try {
         const response = await submitProject.mutateAsync(sanitizedData);
@@ -635,7 +635,7 @@ const ProjectForm: FC<ProjectFormProps> = ({ project, edit }) => {
             name="totalTokens"
             variant="filled"
             type="number"
-            value={formData.tokenomics.totalTokens}
+            value={formData.tokenomics.totalTokens.toString()}
             onChange={handleChange}
           />
         </Grid>

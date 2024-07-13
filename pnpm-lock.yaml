@@ -69,8 +69,8 @@ importers:
         specifier: ^5.5.2
         version: 5.14.0(prisma@5.14.0)
       '@sumsub/websdk-react':
-        specifier: ^2.0.1
-        version: 2.3.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^2.3.1
+        version: 2.3.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@trpc/client':
         specifier: ^10.35.0
         version: 10.45.2(@trpc/server@10.45.2)
@@ -1834,8 +1834,8 @@ packages:
     resolution: {integrity: sha512-+fEXJxGDLCoqRKVSmo0auGxaqbiCo+8oph+4auefYjaNxjOLKSY2MxVQfRzo65PaZv4fr+5lWg+au7vSuJJ/zw==}
     engines: {node: '>=16.0.0'}
 
-  '@sumsub/websdk-react@2.3.0':
-    resolution: {integrity: sha512-kHuKDu/YRymv+zg/G3MrVhP5bag/kG2PUxWvA3ALWZhbtx4tJVXee9CvhgsOV9Ml7gcVKsG64IUng7dqCAxvgQ==}
+  '@sumsub/websdk-react@2.3.1':
+    resolution: {integrity: sha512-v6ZKsz3DRBNRzB36hx4pPGlMJH7Biwso3YWVtApgb0pJlhWkONUnuokhd58qnA4qwAPQAamI5JOkjFL8qsFhmw==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -6854,7 +6854,7 @@ snapshots:
       '@smithy/types': 3.0.0
       tslib: 2.6.2
 
-  '@sumsub/websdk-react@2.3.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@sumsub/websdk-react@2.3.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)

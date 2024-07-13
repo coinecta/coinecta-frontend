@@ -29,7 +29,7 @@ const initialFormData: TProject = {
   team: [],
   tokenomics: {
     tokenName: '',
-    totalTokens: 0,
+    totalTokens: BigInt(0),
     tokenTicker: '',
     tokenPolicyId: '',
     tokenomics: [],
