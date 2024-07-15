@@ -26,7 +26,7 @@ const WhitelistTab: FC<WhitelistTabProps> = ({ whitelists, projectSlug }) => {
   const refetchSumsub = trpc.user.refetchSumsubResult.useMutation()
 
   const handleRefresh = async () => {
-    await refetchSumsub.mutateAsync()
+    await refetchSumsub.mutateAsync({})
     console.log(refetchSumsub)
     await checkVerificationResult.refetch()
   }

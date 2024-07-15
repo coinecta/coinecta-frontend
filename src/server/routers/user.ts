@@ -270,6 +270,7 @@ export const userRouter = createTRPCRouter({
       };
     }),
   refetchSumsubResult: protectedProcedure
+    .input(z.object({}))
     .mutation(async ({ ctx }) => {
       const appToken = process.env.SUMSUB_TOKEN!;
       const secretKey = process.env.SUMSUB_SECRET_KEY!;
@@ -283,6 +284,13 @@ export const userRouter = createTRPCRouter({
       });
 
       if (user) {
+        if (!user.sumsubId) {
+          throw new TRPCError({
+            message: 'User SumSubID not present',
+            code: 'UNPROCESSABLE_CONTENT',
+          });
+        }
+
         try {
           // Generate the signature
           const requestUrl = 'https://api.sumsub.com'
