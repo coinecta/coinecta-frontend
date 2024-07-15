@@ -74,7 +74,7 @@ const Sumsub: FC<SumsubProps> = ({ setSumsubStatus }) => {
         <Box sx={{
           p: 4,
           pb: 0,
-          background: '#ffffff',
+          background: 'rgb(32, 37, 44)',
           borderRadius: '16px',
           minHeight: { xs: '457px', md: '570px' }
         }}>
@@ -91,7 +91,7 @@ const Sumsub: FC<SumsubProps> = ({ setSumsubStatus }) => {
         ? (
           <Box sx={{
             p: 4,
-            background: '#ffffff',
+            background: 'rgb(32, 37, 44)',
             borderRadius: '16px',
             height: { xs: '457px', md: '570px' },
             position: 'relative'
@@ -112,7 +112,7 @@ const Sumsub: FC<SumsubProps> = ({ setSumsubStatus }) => {
         ) : (
           <Box sx={{
             p: 4,
-            background: '#ffffff',
+            background: 'rgb(32, 37, 44)',
             borderRadius: '16px',
             height: { xs: '457px', md: '570px' },
             position: 'relative'
