@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Box, Typography, useTheme, Paper, IconButton, Button, Alert, Skeleton, List, ListItem } from '@mui/material';
+import { Box, Typography, useTheme, Paper, IconButton, Button, Alert, Skeleton, List, ListItem, Stack } from '@mui/material';
 import TimeRemaining from '@components/TimeRemaining';
 import { LinearProgressStyled } from '@components/styled-components/LinearProgress';
 import Grid from '@mui/system/Unstable_Grid/Grid';
@@ -132,7 +132,7 @@ const ProRataForm: FC<TProRataFormProps> = ({
 
   return (
     <>
-      <Grid container spacing={2} alignItems="stretch" direction={{ xs: 'column-reverse', md: 'row' }} sx={{ mb: 1 }}>
+      <Grid container spacing={2} alignItems="stretch" sx={{ mb: 1 }}>
         <Grid xs={12} md={7}>
           <Paper variant="outlined" sx={{ px: 2, py: 4, height: '100%' }}>
             <ContributeCard
@@ -151,126 +151,127 @@ const ProRataForm: FC<TProRataFormProps> = ({
           </Paper>
         </Grid>
         <Grid xs={12} md={5}>
-          {whitelistSlug && <WhitelistResult whitelistStatus={whitelistStatus} sessionStatus={sessionStatus} />}
-          <Paper variant="outlined" sx={{ px: 3, py: 2, height: '100%' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', height: '100%' }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-around',
-                  mb: 2,
-                  textAlign: 'center'
-                }}
-              >
-                <Box>
-                  <Typography variant="overline">
-                    Start time
-                  </Typography>
-                  <Typography variant="h5" sx={{ mt: -1 }}>
-                    <TimeRemaining noDay endTime={startDate} />
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="overline">
-                    End time
-                  </Typography>
-                  <Typography variant="h5" sx={{ mt: -1 }}>
-                    <TimeRemaining noDay endTime={endDate} />
-                  </Typography>
-                </Box>
-              </Box>
-              <Box>
-                <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mb: 2, }}>
+          <Stack spacing={2} sx={{ height: '100%' }}>
+            {whitelistSlug && <WhitelistResult whitelistStatus={whitelistStatus} sessionStatus={sessionStatus} />}
+            <Paper variant="outlined" sx={{ px: 3, py: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', height: '100%' }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-around',
+                    mb: 2,
+                    textAlign: 'center'
+                  }}
+                >
                   <Box>
                     <Typography variant="overline">
-                      {tokenTicker} Claimed
+                      Start time
                     </Typography>
-                    <Typography variant="h6" sx={{ mt: -1 }}>
-                      {(claimedAmount > tokenTarget ? tokenTarget : claimedAmount).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    <Typography variant="h5" sx={{ mt: -1 }}>
+                      <TimeRemaining noDay endTime={startDate} />
                     </Typography>
                   </Box>
-                  <Box sx={{ textAlign: 'right' }}>
+                  <Box>
                     <Typography variant="overline">
-                      {tokenTicker} Target
+                      End time
                     </Typography>
-                    <Typography variant="h6" sx={{ mt: -1 }}>
-                      {tokenTarget.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    <Typography variant="h5" sx={{ mt: -1 }}>
+                      <TimeRemaining noDay endTime={endDate} />
                     </Typography>
                   </Box>
                 </Box>
-                <Box sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  mb: 2,
-                  gap: 1
-                }}>
-                  <LinearProgressStyled
-                    variant="determinate"
-                    value={((claimedAmount / tokenTarget) * 100) <= 100 ? ((claimedAmount / tokenTarget) * 100) : 100}
-                    barColorStart={theme.palette.secondary.main}
-                    barColorEnd={theme.palette.secondary.light}
-                    sx={{ width: '100%' }}
-                    bgColor={theme.palette.divider}
-                  />
-                  <Typography sx={{ fontWeight: '700' }}>
-                    {(claimedAmount / tokenTarget * 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}%
-                  </Typography>
-                </Box>
-                <Grid container>
-                  <Grid xs={12} sm={6}>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        mb: 2
-                      }}
-                    >
-                      <Box>
-                        <Typography variant="overline">
-                          Price
-                        </Typography>
-                        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', mt: -1 }}>
-                          <Box>
-                            <Typography variant="h6">
-                              {priceSet}
-                            </Typography>
+                <Box>
+                  <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mb: 2, }}>
+                    <Box>
+                      <Typography variant="overline">
+                        {tokenTicker} Claimed
+                      </Typography>
+                      <Typography variant="h6" sx={{ mt: -1 }}>
+                        {(claimedAmount > tokenTarget ? tokenTarget : claimedAmount).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'right' }}>
+                      <Typography variant="overline">
+                        {tokenTicker} Target
+                      </Typography>
+                      <Typography variant="h6" sx={{ mt: -1 }}>
+                        {tokenTarget.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mb: 2,
+                    gap: 1
+                  }}>
+                    <LinearProgressStyled
+                      variant="determinate"
+                      value={((claimedAmount / tokenTarget) * 100) <= 100 ? ((claimedAmount / tokenTarget) * 100) : 100}
+                      barColorStart={theme.palette.secondary.main}
+                      barColorEnd={theme.palette.secondary.light}
+                      sx={{ width: '100%' }}
+                      bgColor={theme.palette.divider}
+                    />
+                    <Typography sx={{ fontWeight: '700' }}>
+                      {(claimedAmount / tokenTarget * 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}%
+                    </Typography>
+                  </Box>
+                  <Grid container>
+                    <Grid xs={12} sm={6}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          mb: 2
+                        }}
+                      >
+                        <Box>
+                          <Typography variant="overline">
+                            Price
+                          </Typography>
+                          <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', mt: -1 }}>
+                            <Box>
+                              <Typography variant="h6">
+                                {priceSet}
+                              </Typography>
+                            </Box>
+                            <Button
+                              variant="outlined"
+                              color="inherit"
+                              sx={{
+                                width: '24px',
+                                height: '24px',
+                                borderRadius: '3px',
+                                background: theme.palette.background.paper,
+                                border: `1px solid ${theme.palette.divider}`,
+                                ml: 1,
+                                minWidth: '0!important',
+                                p: 0
+                              }}
+                              onClick={handleFlipPrice}
+                            >
+                              <AutorenewIcon sx={{
+                                width: '20px',
+                                height: '20px',
+                                color: theme.palette.text.secondary
+                              }} />
+                            </Button>
                           </Box>
-                          <Button
-                            variant="outlined"
-                            color="inherit"
-                            sx={{
-                              width: '24px',
-                              height: '24px',
-                              borderRadius: '3px',
-                              background: theme.palette.background.paper,
-                              border: `1px solid ${theme.palette.divider}`,
-                              ml: 1,
-                              minWidth: '0!important',
-                              p: 0
-                            }}
-                            onClick={handleFlipPrice}
-                          >
-                            <AutorenewIcon sx={{
-                              width: '20px',
-                              height: '20px',
-                              color: theme.palette.text.secondary
-                            }} />
-                          </Button>
                         </Box>
-                      </Box>
-                      <Box>
-                        <Typography variant="overline">
-                          Total {currency} Deposited
-                        </Typography>
-                        <Typography variant="h6" sx={{ mt: -1 }}>
-                          {(deposited).toLocaleString(undefined, { maximumFractionDigits: 2 })} {currencySymbol}
-                        </Typography>
-                      </Box>
-                      {/* <Box>
+                        <Box>
+                          <Typography variant="overline">
+                            Total {currency} Deposited
+                          </Typography>
+                          <Typography variant="h6" sx={{ mt: -1 }}>
+                            {(deposited).toLocaleString(undefined, { maximumFractionDigits: 2 })} {currencySymbol}
+                          </Typography>
+                        </Box>
+                        {/* <Box>
                     <Typography variant="overline">
                       Total {currency} to be refunded
                     </Typography>
@@ -278,49 +279,50 @@ const ProRataForm: FC<TProRataFormProps> = ({
                       {(deposited - depositTarget) > 0 ? (deposited - depositTarget).toLocaleString(undefined, { maximumFractionDigits: 2 }) : 0} {currencySymbol}
                     </Typography>
                   </Box> */}
-                    </Box>
-                  </Grid>
-                  <Grid xs={12} sm={6}>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        mb: 2,
-                        textAlign: { xs: 'left', sm: 'right' }
-                      }}
-                    >
-                      <Box>
-                        <Typography variant="overline">
-                          Pool Weight of Contributors
-                        </Typography>
-                        <Typography variant="h6" sx={{ mt: -1 }}>
-                          {poolData.isLoading ?
-                            <Skeleton variant="text" />
-                            : poolData.data?.totalPoolWeight !== undefined
-                              ? formatNumber(poolData.data?.totalPoolWeight, '')
-                              : 'Error loading'}
-                        </Typography>
                       </Box>
-                      {usersTransactions.data !== undefined
-                        && usersTransactions.data > 0
-                        &&
+                    </Grid>
+                    <Grid xs={12} sm={6}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          mb: 2,
+                          textAlign: { xs: 'left', sm: 'right' }
+                        }}
+                      >
                         <Box>
                           <Typography variant="overline">
-                            Your contribution
+                            Pool Weight of Contributors
                           </Typography>
-
                           <Typography variant="h6" sx={{ mt: -1 }}>
-                            {formatNumber(usersTransactions.data, '')} ₳
+                            {poolData.isLoading ?
+                              <Skeleton variant="text" />
+                              : poolData.data?.totalPoolWeight !== undefined
+                                ? formatNumber(poolData.data?.totalPoolWeight, '')
+                                : 'Error loading'}
                           </Typography>
                         </Box>
-                      }
-                    </Box>
+                        {usersTransactions.data !== undefined
+                          && usersTransactions.data > 0
+                          &&
+                          <Box>
+                            <Typography variant="overline">
+                              Your contribution
+                            </Typography>
+
+                            <Typography variant="h6" sx={{ mt: -1 }}>
+                              {formatNumber(usersTransactions.data, '')} ₳
+                            </Typography>
+                          </Box>
+                        }
+                      </Box>
+                    </Grid>
                   </Grid>
-                </Grid>
+                </Box>
               </Box>
-            </Box>
-          </Paper>
+            </Paper>
+          </Stack>
         </Grid>
       </Grid>
       <Grid container spacing={2} alignItems="stretch" direction={{ xs: 'column', md: 'row' }} sx={{ mb: 1 }}>
