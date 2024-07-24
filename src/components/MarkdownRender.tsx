@@ -51,9 +51,9 @@ const MarkdownRender = (props: { description: string }) => {
               sx={{
                 pl: "40px",
                 pb: "32px",
-                fontSize: "0.9rem",
+                // fontSize: "0.9rem",
                 lineHeight: 1.5,
-                letterSpacing: "0.0225em",
+                // letterSpacing: "0.0225em",
                 listStyleType: "disc",
                 "& li": {
                   display: "list-item",
@@ -68,9 +68,9 @@ const MarkdownRender = (props: { description: string }) => {
               disablePadding
               sx={{
                 pl: "40px",
-                fontSize: "0.9rem",
+                // fontSize: "0.9rem",
                 lineHeight: 1.5,
-                letterSpacing: "0.0225em",
+                // letterSpacing: "0.0225em",
                 listStyleType: "circle",
                 "& li": {
                   display: "list-item",
@@ -96,9 +96,9 @@ const MarkdownRender = (props: { description: string }) => {
               sx={{
                 pl: "40px",
                 mb: "32px",
-                fontSize: "0.9rem",
+                // fontSize: "0.9rem",
                 lineHeight: 1.5,
-                letterSpacing: "0.0225em",
+                // letterSpacing: "0.0225em",
                 listStyleType: "decimal",
                 "& li": {
                   display: "list-item",
@@ -114,9 +114,9 @@ const MarkdownRender = (props: { description: string }) => {
               disablePadding
               sx={{
                 pl: "40px",
-                fontSize: "0.9rem",
+                // fontSize: "0.9rem",
                 lineHeight: 1.5,
-                letterSpacing: "0.0225em",
+                // letterSpacing: "0.0225em",
                 listStyleType: "upper-alpha",
                 "& li": {
                   display: "list-item",
