@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import { Box, Paper, Typography, useTheme } from '@mui/material';
 import { trpc } from '@lib/utils/trpc';
@@ -14,15 +15,43 @@ type ContributeTabProps = {
 }
 
 const ContributeTab: FC<ContributeTabProps> = ({ projectName, projectIcon, projectSlug }) => {
-  const theme = useTheme()
+  const theme = useTheme();
+  const router = useRouter();
   const { data: rounds } = trpc.contributions.getContributionRoundsByProjectSlug.useQuery(
     { projectSlug: projectSlug || '' },
     { enabled: !!projectSlug }
   );
+  const [tabValue, setTabValue] = useState(0);
 
-  const [tabValue, setTabValue] = useState(0)
+  useEffect(() => {
+    if (rounds && rounds.length > 0) {
+      const roundId = Number(router.query.roundId);
+      const index = rounds.findIndex(round => round.id === roundId);
+      if (index !== -1) {
+        setTabValue(index);
+      } else {
+        // If no roundId in URL or invalid roundId, set URL to first round
+        updateUrl(0);
+      }
+    }
+  }, [rounds, router.query.roundId]);
+
+  const updateUrl = (index: number) => {
+    if (rounds && rounds[index]) {
+      router.push({
+        pathname: router.pathname,
+        query: {
+          ...router.query,
+          tab: 'contribute',
+          roundId: rounds[index].id
+        },
+      }, undefined, { shallow: true });
+    }
+  };
+
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
+    updateUrl(newValue);
   };
 
   return (
@@ -48,7 +77,6 @@ const ContributeTab: FC<ContributeTabProps> = ({ projectName, projectIcon, proje
         : <Typography>
           No contribution rounds available at this time. Check back soon.
         </Typography>}
-
     </Box>
   );
 };
