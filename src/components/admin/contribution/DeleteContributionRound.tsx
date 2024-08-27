@@ -46,7 +46,7 @@ const DeleteContributionRound: FC<IDeleteContributionRoundProps> = ({ selectedPr
 
   return (
     <>
-      <Typography variant="h6" sx={{ mb: 1 }}>Delete Contribution Round</Typography>
+      <Typography variant="h3" sx={{ mb: 1 }}>Delete Contribution Round</Typography>
       <Box sx={{ maxWidth: '350px' }}>
         <SelectContributionRound roundData={roundQuery.data} selectedRound={selectedRound} setSelectedRound={setSelectedRound} />
       </Box>

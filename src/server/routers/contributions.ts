@@ -11,7 +11,12 @@ export const contributionRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       try {
         const newRound = await prisma.contributionRound.create({
-          data: input,
+          data: {
+            ...input,
+            acceptedCurrencies: {
+              create: input.acceptedCurrencies.map(({ id, contributionRoundId, ...currencyData }) => currencyData) || []
+            },
+          },
         });
         return newRound;
       } catch (error) {
@@ -23,16 +28,23 @@ export const contributionRouter = createTRPCRouter({
       }
     }),
 
-  // Update ContributionRound
   updateContributionRound: adminProcedure
-    .input(ZContributionRound.extend({ id: z.number() })) // Include 'id' for updates
+    .input(ZContributionRound.extend({ id: z.number() }))
     .mutation(async ({ input }) => {
-      const { id, ...data } = input;
+      const { id, acceptedCurrencies, ...data } = input;
       try {
         const updatedRound = await prisma.contributionRound.update({
           where: { id },
-          data,
+          data: {
+            ...data,
+            acceptedCurrencies: {
+              deleteMany: {},
+              create: acceptedCurrencies.map(({ id, contributionRoundId, ...currencyData }) => currencyData),
+            },
+          },
+          include: { acceptedCurrencies: true },
         });
+
         return updatedRound;
       } catch (error) {
         console.error('Error updating contribution round:', error);
@@ -68,7 +80,8 @@ export const contributionRouter = createTRPCRouter({
         const { projectSlug } = input;
         const rounds = await prisma.contributionRound.findMany({
           where: { projectSlug },
-          orderBy: { startDate: 'asc' }
+          orderBy: { startDate: 'asc' },
+          include: { acceptedCurrencies: true }
         });
         return rounds;
       } catch (error) {

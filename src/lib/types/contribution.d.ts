@@ -1,9 +1,11 @@
 import { z } from 'zod';
-import { ZContributionRound } from "./zod-schemas/contributionSchema";
+import { ZAcceptedCurrency, ZContributionRound } from "./zod-schemas/contributionSchema";
 
 declare global {
   type TContributionRound = z.infer<typeof ZContributionRound>;
+  type TAcceptedCurrency = z.infer<typeof ZAcceptedCurrency>;
   type TContributionRoundForm = {
+    id: number;
     name: string;
     saleType: string;
     startDate: string; // Use string for simplicity in handling date input
@@ -19,5 +21,6 @@ declare global {
     recipientAddress: string | null;
     restrictedCountries: string[];
     saleTerms: string | null; // JSON array with object { header: string; bodyText: string; }
+    acceptedCurrencies: TAcceptedCurrency[];
   };
 }

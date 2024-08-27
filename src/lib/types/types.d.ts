@@ -187,3 +187,19 @@ interface ISalesTerm {
   header: string;
   bodyText: string;
 }
+
+interface AcceptedToken {
+  symbol: string;
+  name: string;
+  contractAddress: string | null;
+  hexName?: string;
+  decimals: number;
+  imageUrl: string;
+}
+
+interface AcceptedBlockchain {
+  name: string;
+  symbol: string;
+  imageUrl: string;
+  tokens: AcceptedToken[];
+}

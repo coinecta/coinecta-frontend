@@ -58,3 +58,5 @@ ssl.key
 bun.lockb
 
 .vscode/
+
+/deployments

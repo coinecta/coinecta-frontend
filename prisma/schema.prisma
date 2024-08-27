@@ -103,8 +103,8 @@ model Transaction {
   id                String            @id @default(cuid())
   description       String?
   amount            String
-  currency          String
-  address           String
+  currency          String // legacy, uses ticker, new uses GlobalSupportedCurrency id. 
+  address           String // sender address
   completed         Boolean           @default(false)
   txId              String?           @map("tx_id")
   created_at        DateTime          @default(now())
@@ -162,8 +162,8 @@ model ContributionRound {
   endDate             DateTime      @map("end_date")
   tokenTicker         String        @map("token_ticker")
   tokenTarget         Int           @map("token_target")
-  currency            String
-  price               Float
+  currency            String // base currency
+  price               Float // base price
   deposited           Float
   whitelistSlug       String?       @unique @map("whitelist_slug")
   whitelist           Whitelist?    @relation(fields: [whitelistSlug], references: [slug])
@@ -175,7 +175,20 @@ model ContributionRound {
   restrictedCountries String[]      @map("restricted_countries")
   saleTerms           String?
 
+  acceptedCurrencies AcceptedCurrency[]
+
   @@map("contribution_round")
+}
+
+model AcceptedCurrency {
+  id                  String            @id @default(cuid())
+  receiveAddress      String            @map("receive_address")
+  currency            String
+  blockchain          String
+  contributionRound   ContributionRound @relation(fields: [contributionRoundId], references: [id])
+  contributionRoundId Int
+
+  @@map("accepted_currencies")
 }
 
 model Socials {

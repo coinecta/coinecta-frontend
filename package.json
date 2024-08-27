@@ -36,6 +36,7 @@
     "@trpc/next": "^10.35.0",
     "@trpc/server": "^10.35.0",
     "@vercel/postgres": "^0.4.1",
+    "@web3modal/ethers": "^5.1.1",
     "axios": "^1.4.0",
     "clsx": "^2.0.0",
     "cookie": "^0.5.0",
@@ -45,6 +46,7 @@
     "dayjs": "^1.11.9",
     "easymde": "^2.18.0",
     "ergo-lib-wasm-nodejs": "^0.26.0",
+    "ethers": "^6.13.2",
     "nanoid": "^5.0.1",
     "next": "^13.4.12",
     "next-auth": "^4.22.3",
@@ -65,7 +67,9 @@
     "slick-carousel": "^1.8.1",
     "superjson": "^1.13.1",
     "swiper": "^10.0.4",
+    "tailwindcss": "^3.4.10",
     "tss-react": "^4.8.8",
+    "utf-8-validate": "5.0.2",
     "zod": "^3.21.4"
   },
   "devDependencies": {

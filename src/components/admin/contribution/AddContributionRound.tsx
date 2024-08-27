@@ -23,7 +23,7 @@ const AddContributionRound: FC<AddContributionRoundProps> = ({ projectList, sele
 
   return (
     <Box>
-      <Typography variant="h6" sx={{ mb: 1 }}>
+      <Typography variant="h3" sx={{ mb: 1 }}>
         Add Contribution Round
       </Typography>
       {project

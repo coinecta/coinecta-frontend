@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+export const ZAcceptedCurrency = z.object({
+  id: z.string().optional(),
+  receiveAddress: z.string(),
+  currency: z.string(),
+  blockchain: z.string(),
+  contributionRoundId: z.number()
+})
+
 export const ZContributionRound = z.object({
   id: z.number().optional(),
   name: z.string(),
@@ -16,7 +24,8 @@ export const ZContributionRound = z.object({
   whitelistSlug: z.string().nullable().optional(),
   recipientAddress: z.string().nullable().optional(),
   restrictedCountries: z.array(z.string()),
-  saleTerms: z.string().nullable().optional()
+  saleTerms: z.string().nullable().optional(),
+  acceptedCurrencies: z.array(ZAcceptedCurrency)
 });
 
 export const ZPoolWeightItem = z.object({

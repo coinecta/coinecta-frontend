@@ -35,6 +35,7 @@ import DexhunterDialog from '@components/projects/DexhunterDialog';
 import { trpc } from '@lib/utils/trpc';
 import DexhunterLogomark from '@components/svgs/DexhunterLogomark';
 import ButtonLink from '@components/ButtonLink';
+import EthereumPayment from '@components/ethereum-payments/EthereumPayment';
 
 const inViewOptions = {
   threshold: 1,
@@ -116,6 +117,10 @@ const Home: NextPage = () => {
       <Projects />
       {/* </Box> */}
       {/* </Grow > */}
+
+      <w3m-button />
+      <EthereumPayment />
+
 
       {/* How it works */}
       <Box sx={{

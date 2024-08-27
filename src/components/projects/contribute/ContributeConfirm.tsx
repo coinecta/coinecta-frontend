@@ -30,6 +30,7 @@ interface IContributeConfirmProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   paymentAmount: string;
   paymentCurrency?: string;
+  blockchain?: string;
   receiveAmount: string;
   receiveCurrency: string;
   contributionRoundId: number;
