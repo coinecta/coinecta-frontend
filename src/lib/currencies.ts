@@ -77,7 +77,7 @@ export const BLOCKCHAINS: AcceptedBlockchain[] = [
       }
     ]
   }
-] as const;
+];
 
 // Helper function to get all supported tokens across all blockchains
 export const getAllSupportedTokens = (): (AcceptedToken & { parentBlockchainSymbol: string, parentBlockchainName: string })[] => {
