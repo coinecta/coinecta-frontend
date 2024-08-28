@@ -111,30 +111,6 @@ const EthereumBasePayment: React.FC = () => {
     }
   };
 
-  // https://api.basescan.org/api?module=account&action=tokentx&address=0xCb4Bd2f477A3209168dDE67741B1249C34f4a02b&page=1&offset=100&startblock=0&endblock=18831255&sort=asc&apikey=YourApiKeyToken
-
-  // {
-  //   "blockNumber": "18830081",
-  //   "timeStamp": "1724449509",
-  //   "hash": "0xd05f96fa6ac5a9e0907fb6bae04b0dbc33de680038a2514a3496752265756169",
-  //   "nonce": "3",
-  //   "blockHash": "0xa79c962c091138f1855c3126c9f8ebc070aa8dd075b4c0844a2d440ea164077e",
-  //   "from": "0xc28a8a0e62be9da694c77c3e9c0e8c9845f86611",
-  //   "contractAddress": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
-  //   "to": "0xcb4bd2f477a3209168dde67741b1249c34f4a02b",
-  //   "value": "10000000",
-  //   "tokenName": "USDC",
-  //   "tokenSymbol": "USDC",
-  //   "tokenDecimal": "6",
-  //   "transactionIndex": "75",
-  //   "gas": "94483",
-  //   "gasPrice": "10343550",
-  //   "gasUsed": "62159",
-  //   "cumulativeGasUsed": "12029266",
-  //   "input": "deprecated",
-  //   "confirmations": "123107"
-  //   },
-
   return (
     <div>
       <select

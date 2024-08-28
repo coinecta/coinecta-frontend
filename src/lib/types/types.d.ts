@@ -49,25 +49,6 @@ type TErgoBox = {
   transactionId: TransactionId;
 };
 
-type TProRataFormProps = {
-  id: number;
-  startDate: Date;
-  endDate: Date;
-  tokenTarget: number;
-  tokenTicker: string;
-  price: number;
-  currency: string;
-  deposited: number;
-  name: string;
-  projectName: string;
-  projectIcon: string;
-  projectSlug: string;
-  whitelistSlug: string | null;
-  recipientAddress: string | null;
-  restrictedCountries: string[];
-  saleTerms: string | null;
-}
-
 type TWalletListItem = {
   name: string;
   connectName: string;

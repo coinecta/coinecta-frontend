@@ -1,8 +1,12 @@
-import { Box, InputBase, Paper, Typography, useTheme } from '@mui/material';
+import { Box, FormControl, InputBase, MenuItem, Paper, Select, Typography, useTheme } from '@mui/material';
 import React, { FC, useEffect, useState } from 'react';
 import { useWallet } from '@meshsdk/react';
 import { trpc } from '@lib/utils/trpc';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { ContributionRoundWithId } from './ProRataForm';
+import CurrencyButton from './ui/CurrencyButton';
+import { getToken } from '@lib/currencies';
+import CurrencySelectDialog from './CurrencySelectDialog';
 
 interface ITokenInputProps {
   inputTokenTicker?: string;
@@ -13,6 +17,7 @@ interface ITokenInputProps {
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
   outputValue: string;
   setOutputValue: React.Dispatch<React.SetStateAction<string>>;
+  contributionRound: ContributionRoundWithId;
 }
 
 const TokenInput: FC<ITokenInputProps> = ({
@@ -23,7 +28,8 @@ const TokenInput: FC<ITokenInputProps> = ({
   inputValue,
   setInputValue,
   outputValue,
-  setOutputValue
+  setOutputValue,
+  contributionRound
 }) => {
   const theme = useTheme();
   const { data: adaPrice } = trpc.price.getCardanoPrice.useQuery();
@@ -81,6 +87,15 @@ const TokenInput: FC<ITokenInputProps> = ({
     return (numericalValue * (adaPrice || 0)).toLocaleString(undefined, { maximumFractionDigits: 2 });
   };
 
+  const [selectedCurrency, setSelectedCurrency] = useState<TAcceptedCurrency | undefined>(undefined);
+  const [selectedCurrencyDialogOpen, setSelectedCurrencyDialogOpen] = useState(false);
+  const handleCurrencyClicked = () => {
+    setSelectedCurrencyDialogOpen(true)
+  }
+  const handleCurrencySelect = (currency: TAcceptedCurrency) => {
+    setSelectedCurrency(currency)
+  }
+
   return (
     <Box sx={{
       position: 'relative',
@@ -118,12 +133,9 @@ const TokenInput: FC<ITokenInputProps> = ({
             placeholder={"0.00"}
             value={inputValue}
             onChange={handleInputChange}
+            onClick={!selectedCurrency ? () => setSelectedCurrencyDialogOpen(true) : () => { }}
           />
-          <Typography sx={{
-            fontSize: '26px!important', fontWeight: 700, whiteSpace: 'nowrap',
-          }}>
-            ADA ₳
-          </Typography>
+          <CurrencyButton selectedCurrency={selectedCurrency} onClick={handleCurrencyClicked} />
         </Box>
         <Box
           sx={{
@@ -135,12 +147,7 @@ const TokenInput: FC<ITokenInputProps> = ({
             ${calculateUSDValue()}
           </Typography>
           <Typography sx={{ fontSize: '1rem!important', whiteSpace: 'nowrap' }}>
-            Balance:&nbsp;
-            {adaAmount
-              ? <Box component="span" onClick={handleInputMax} sx={{ cursor: 'pointer' }}>
-                {adaAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-              </Box>
-              : '0'}
+            {selectedCurrency !== undefined && `${getToken(selectedCurrency?.blockchain, selectedCurrency?.currency)?.token.symbol} on ${getToken(selectedCurrency?.blockchain, selectedCurrency?.currency)?.parentBlockchainName}`}
           </Typography>
         </Box>
       </Box>
@@ -197,6 +204,14 @@ const TokenInput: FC<ITokenInputProps> = ({
       >
         <ExpandMoreIcon />
       </Paper>
+
+      <CurrencySelectDialog
+        open={selectedCurrencyDialogOpen}
+        setOpen={setSelectedCurrencyDialogOpen}
+        acceptedCurrencies={contributionRound.acceptedCurrencies}
+        onCurrencySelect={handleCurrencySelect}
+      />
+
     </Box>
   );
 };

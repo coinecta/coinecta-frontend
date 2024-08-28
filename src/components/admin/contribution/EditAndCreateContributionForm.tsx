@@ -90,7 +90,7 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
               startDate: formatDateForDateTimeLocal(round.startDate),
               endDate: formatDateForDateTimeLocal(round.endDate),
             }
-            console.log(datesToString)
+            // console.log(datesToString)
             setForm(datesToString);
             setSelectedCountries(round.restrictedCountries);
             if (round.saleTerms) setSalesTerms(JSON.parse(round.saleTerms))

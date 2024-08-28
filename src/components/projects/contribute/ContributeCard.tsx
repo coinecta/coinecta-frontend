@@ -4,35 +4,27 @@ import TokenInput from './TokenInput';
 import Link from '@components/Link';
 import ContributeConfirm from './ContributeConfirm';
 import { useWalletContext } from '@contexts/WalletContext';
+import { ContributionRoundWithId } from './ProRataForm';
 
 interface IContributeCardProps {
-  projectName: string;
-  projectIcon: string;
-  roundName: string;
-  tokenTicker: string;
+  contributionRound: ContributionRoundWithId;
   remainingTokens: number;
-  exchangeRate: number;
   whitelisted: boolean;
+  exchangeRate: number;
   live: boolean;
-  contributionRoundId: number;
-  recipientAddress: string | null;
   allowed: boolean;
 }
 
 const ContributeCard: FC<IContributeCardProps> = ({
-  projectName,
-  projectIcon,
-  roundName,
-  contributionRoundId,
-  tokenTicker,
+  contributionRound,
   remainingTokens,
-  exchangeRate,
   whitelisted,
+  exchangeRate,
   live,
-  recipientAddress,
   allowed
 }) => {
   const { sessionData } = useWalletContext()
+  const { projectName, name: roundName, tokenTicker } = contributionRound;
 
   const theme = useTheme()
   const [termsCheck, setTermsCheck] = useState(false)
@@ -70,6 +62,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
             setInputValue={setInputValue}
             outputValue={outputValue}
             setOutputValue={setOutputValue}
+            contributionRound={contributionRound}
           />
         </Box>
         <Box>
@@ -93,7 +86,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
               !termsCheck ||
               !whitelisted ||
               !live ||
-              !recipientAddress ||
+              // !recipientAddress ||
               Number(inputValue) === 0 ||
               sessionData == null ||
               !allowed
@@ -109,11 +102,11 @@ const ContributeCard: FC<IContributeCardProps> = ({
             Contribute now
           </Button>
         </Box>
-        {!recipientAddress &&
+        {/* {!recipientAddress &&
           <Typography color="error" sx={{ mt: 1, fontSize: '0.9rem!important' }}>
             Contribution form error, please notify support if you are trying to contribute.
           </Typography>
-        }
+        } */}
         {!allowed &&
           <Typography color="error" sx={{ mt: 1, fontSize: '0.9rem!important' }}>
             We apologize, but we are unable to accept contributions from the restricted countries listed above.
@@ -140,7 +133,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
           </Typography>
         </Box>
       }
-      {
+      {/* {
         recipientAddress !== null &&
         <ContributeConfirm
           open={openContribution}
@@ -151,7 +144,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
           contributionRoundId={contributionRoundId}
           recipientAddress={recipientAddress}
         />
-      }
+      } */}
     </Box >
   );
 };

@@ -70,7 +70,7 @@ const ContributeTab: FC<ContributeTabProps> = ({ projectName, projectIcon, proje
           <Box sx={{ my: 2 }}>
             {rounds.map((round, i) => (
               tabValue === i &&
-              <ProRataForm key={`form-${i}`} {...round} projectName={projectName} projectIcon={projectIcon} />
+              <ProRataForm key={`form-${i}`} contributionRound={round} projectIcon={projectIcon} />
             ))}
           </Box>
         </>

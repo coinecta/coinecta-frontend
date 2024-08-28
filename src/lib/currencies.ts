@@ -9,7 +9,7 @@ export const BLOCKCHAINS: AcceptedBlockchain[] = [
         name: 'Cardano',
         contractAddress: null,
         decimals: 6,
-        imageUrl: '/images/tokens/cardano.png'
+        imageUrl: '/images/blockchains/cardano.png'
       },
       {
         symbol: 'USDM',
@@ -17,63 +17,63 @@ export const BLOCKCHAINS: AcceptedBlockchain[] = [
         contractAddress: 'c48cbb3d5e57ed56e276bc45f99ab39abe94e6cd7ac39fb402da47ad',
         hexName: '0014df105553444d',
         decimals: 6,
-        imageUrl: '/images/tokens/usdm.png'
+        imageUrl: '/images/tokens/mehen.png'
       },
     ]
   },
   {
     name: "Ethereum",
     symbol: "ETH",
-    imageUrl: "/images/blockchains/ethereum.png",
+    imageUrl: "/images/blockchains/ethereum.svg",
     tokens: [
       {
         symbol: 'ETH',
         name: 'Ethereum',
         contractAddress: null,
         decimals: 18,
-        imageUrl: '/images/tokens/ethereum.png'
+        imageUrl: '/images/blockchains/ethereum.svg'
       },
       {
         symbol: 'USDC',
         name: 'USD Coin',
         contractAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
         decimals: 6,
-        imageUrl: '/images/tokens/usdc.png'
+        imageUrl: '/images/tokens/usdc.svg'
       },
       {
         symbol: 'USDT',
         name: 'Tether',
         contractAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
         decimals: 6,
-        imageUrl: '/images/tokens/usdt.png'
+        imageUrl: '/images/tokens/tether.svg'
       }
     ]
   },
   {
     name: "Base",
     symbol: "BASE",
-    imageUrl: "/images/blockchains/base.png",
+    imageUrl: "/images/blockchains/base.svg",
     tokens: [
       {
         symbol: 'ETH',
         name: 'Ethereum',
         contractAddress: null,
         decimals: 18,
-        imageUrl: '/images/tokens/eth.png'
+        imageUrl: '/images/blockchains/ethereum.svg'
       },
       {
         symbol: 'USDC',
-        name: 'USD Coin',
+        name: 'USDC',
         contractAddress: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
         decimals: 6,
-        imageUrl: '/images/tokens/usdc.png'
+        imageUrl: '/images/tokens/usdc.svg'
       },
       {
         symbol: 'USDT',
         name: 'Tether',
         contractAddress: '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb',
         decimals: 6,
-        imageUrl: '/images/tokens/usdt.png'
+        imageUrl: '/images/tokens/tether.svg'
       }
     ]
   }
