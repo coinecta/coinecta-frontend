@@ -22,13 +22,13 @@ const CurrencyButton: React.FC<{ selectedCurrency: TAcceptedCurrency | undefined
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         {selectedCurrency?.currency &&
-          <Box sx={{ position: 'relative', width: 32, height: 32 }}> {/* Container for Badge */}
+          <Box sx={{ position: 'relative', width: 32, height: 32 }}>
             <Avatar
-              src={BLOCKCHAINS.find(blockchain => selectedCurrency?.blockchain === blockchain.symbol)?.tokens.find(token => selectedCurrency?.currency === token.symbol)?.imageUrl}
+              src={BLOCKCHAINS.find(blockchain => selectedCurrency?.blockchain === blockchain.name)?.tokens.find(token => selectedCurrency?.currency === token.symbol)?.imageUrl}
               sx={{ width: 32, height: 32 }}
             />
             <Avatar
-              src={BLOCKCHAINS.find(blockchain => selectedCurrency?.blockchain === blockchain.symbol)?.imageUrl}
+              src={BLOCKCHAINS.find(blockchain => selectedCurrency?.blockchain === blockchain.name)?.imageUrl}
               sx={{
                 width: 16,
                 height: 16,
@@ -45,7 +45,6 @@ const CurrencyButton: React.FC<{ selectedCurrency: TAcceptedCurrency | undefined
             {selectedCurrency?.currency}
           </Typography>
           : <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>Select currency</Typography>}
-
         <ArrowDropDownIcon />
       </Box>
     </Button>

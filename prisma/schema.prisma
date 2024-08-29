@@ -454,3 +454,13 @@ model CardanoPrice {
 
   @@map("cardano_price")
 }
+
+model TokenUsdPrice {
+  id        String   @id @default(cuid())
+  price     Float
+  geckoId   String   @unique @map("gecko_id")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("token_usd_price")
+}

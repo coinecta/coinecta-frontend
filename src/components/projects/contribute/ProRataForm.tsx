@@ -148,7 +148,8 @@ const ProRataForm: FC<TProRataFormProps> = ({
           <Paper variant="outlined" sx={{ px: 2, py: 4, height: '100%' }}>
             <ContributeCard
               remainingTokens={tokenTarget - claimedAmount}
-              exchangeRate={1 / price}
+              exchangePrice={price}
+              exchangeCurrency={currency}
               whitelisted={whitelistSlug ? whitelisted : true}
               live={isCurrentDateBetween}
               allowed={allowed}

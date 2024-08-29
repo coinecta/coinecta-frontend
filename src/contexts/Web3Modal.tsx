@@ -29,7 +29,10 @@ export const Web3Modal: FC<PropsWithChildren> = ({ children }) => {
       ethersConfig,
       chains: [ETHEREUM_MAINNET, BASE_MAINNET],
       projectId,
-      enableAnalytics: true // Optional - defaults to WalletConnect Cloud configuration
+      enableAnalytics: true, // Optional - defaults to WalletConnect Cloud configuration
+      themeVariables: {
+        '--w3m-z-index': 9999,
+      }
     })
   }, [])
 

@@ -237,7 +237,7 @@ const AcceptedCurrencies: FC<Props> = ({ contributionRound, setForm, setRefetchB
               onChange={handleBlockchainChange}
             >
               {BLOCKCHAINS.map((blockchain) => (
-                <MenuItem key={blockchain.symbol} value={blockchain.symbol}>
+                <MenuItem key={blockchain.symbol} value={blockchain.name}>
                   {blockchain.name}
                 </MenuItem>
               ))}

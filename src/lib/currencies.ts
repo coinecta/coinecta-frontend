@@ -79,6 +79,29 @@ export const BLOCKCHAINS: AcceptedBlockchain[] = [
   }
 ];
 
+export const COINGECKO_IDS = [
+  {
+    tokenAliases: ['USDT', 'Tether'],
+    geckoId: 'tether'
+  },
+  {
+    tokenAliases: ['USDC', 'USD Coin'],
+    geckoId: 'usd-coin'
+  },
+  {
+    tokenAliases: ['USDM', 'Mehen USDM', 'Mehen'],
+    geckoId: 'usdm-2'
+  },
+  {
+    tokenAliases: ['ADA', 'Cardano'],
+    geckoId: 'cardano'
+  },
+  {
+    tokenAliases: ['Ethereum', 'ETH'],
+    geckoId: 'ethereum'
+  },
+]
+
 // Helper function to get all supported tokens across all blockchains
 export const getAllSupportedTokens = (): (AcceptedToken & { parentBlockchainSymbol: string, parentBlockchainName: string })[] => {
   return BLOCKCHAINS.flatMap(blockchain =>
@@ -91,8 +114,8 @@ export const getAllSupportedTokens = (): (AcceptedToken & { parentBlockchainSymb
 };
 
 // Helper function to get a specific token by blockchain and symbol
-export const getToken = (blockchainSymbol: string, tokenSymbol: string): { token: AcceptedToken, parentBlockchainSymbol: string, parentBlockchainName: string } | undefined => {
-  const blockchain = BLOCKCHAINS.find(b => b.symbol === blockchainSymbol);
+export const getToken = (blockchainName: string, tokenSymbol: string): { token: AcceptedToken, parentBlockchainSymbol: string, parentBlockchainName: string } | undefined => {
+  const blockchain = BLOCKCHAINS.find(b => b.name === blockchainName);
   const token = blockchain?.tokens.find(t => t.symbol === tokenSymbol);
   return blockchain && token
     ? { token, parentBlockchainSymbol: blockchain.symbol, parentBlockchainName: blockchain.name }

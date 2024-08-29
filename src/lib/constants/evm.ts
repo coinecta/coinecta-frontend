@@ -27,7 +27,7 @@ export const TOKENS = {
       decimals: 6
     }
   }
-} as const;
+};
 
 
 /* 
@@ -40,7 +40,7 @@ export const ETHEREUM_MAINNET = {
   currency: 'ETH',
   explorerUrl: 'https://etherscan.io',
   rpcUrl: 'https://cloudflare-eth.com'
-} as const
+};
 
 export const BASE_MAINNET = {
   chainId: 8453,
@@ -48,7 +48,7 @@ export const BASE_MAINNET = {
   currency: 'ETH',
   explorerUrl: 'https://basescan.org',
   rpcUrl: 'https://base.llamarpc.com'
-} as const
+};
 
 export const POLYGON_MAINNET = {
   chainId: 137,
@@ -56,4 +56,4 @@ export const POLYGON_MAINNET = {
   currency: 'MATIC',
   explorerUrl: 'https://polygonscan.com',
   rpcUrl: 'https://polygon-rpc.com'
-} as const;
+};

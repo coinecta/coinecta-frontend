@@ -24,7 +24,6 @@ import { useInView } from 'react-intersection-observer';
 import wideBg from "@public/wide.jpg";
 import wideBgLight from "@public/wide-light.jpg";
 import bottomBg from "@public/bottom.jpg";
-import HarmonicLabsLogo from '@components/svgs/HarmonicLabsLogo';
 import Link from '@components/Link'
 import bannerBg from '@public/banner.jpg'
 import HeroSlider from '@components/landing/HeroSlider';
@@ -35,7 +34,6 @@ import DexhunterDialog from '@components/projects/DexhunterDialog';
 import { trpc } from '@lib/utils/trpc';
 import DexhunterLogomark from '@components/svgs/DexhunterLogomark';
 import ButtonLink from '@components/ButtonLink';
-import EthereumPayment from '@components/ethereum-payments/EthereumPayment';
 
 const inViewOptions = {
   threshold: 1,
@@ -117,10 +115,6 @@ const Home: NextPage = () => {
       <Projects />
       {/* </Box> */}
       {/* </Grow > */}
-
-      <w3m-button />
-      <EthereumPayment />
-
 
       {/* How it works */}
       <Box sx={{

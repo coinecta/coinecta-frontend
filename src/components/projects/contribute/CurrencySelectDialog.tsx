@@ -58,8 +58,8 @@ const CurrencySelectDialog: FC<ICurrencySelectDialogProps> = ({
       <DialogTitle>Select a Currency</DialogTitle>
       <DialogContent sx={{ p: 0 }}>
         <List>
-          {acceptedCurrencies.map((currency) => (
-            <ListItemButton onClick={() => handleCurrencySelect(currency)}>
+          {acceptedCurrencies.map((currency, i) => (
+            <ListItemButton key={`${currency.currency}-${i}`} onClick={() => handleCurrencySelect(currency)}>
               <ListItem
                 key={`${currency.blockchain}-${currency.currency}`}
                 alignItems="flex-start"
@@ -67,11 +67,11 @@ const CurrencySelectDialog: FC<ICurrencySelectDialogProps> = ({
                 <ListItemAvatar>
                   <Box sx={{ position: 'relative', width: 40, height: 40 }}>
                     <Avatar
-                      src={BLOCKCHAINS.find(blockchain => currency.blockchain === blockchain.symbol)?.tokens.find(token => currency.currency === token.symbol)?.imageUrl}
+                      src={BLOCKCHAINS.find(blockchain => currency.blockchain === blockchain.name)?.tokens.find(token => currency.currency === token.symbol)?.imageUrl}
                       sx={{ width: 40, height: 40 }}
                     />
                     <Avatar
-                      src={BLOCKCHAINS.find(blockchain => currency.blockchain === blockchain.symbol)?.imageUrl}
+                      src={BLOCKCHAINS.find(blockchain => currency.blockchain === blockchain.name)?.imageUrl}
                       sx={{
                         width: 20,
                         height: 20,

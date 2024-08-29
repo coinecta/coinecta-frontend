@@ -9,7 +9,7 @@ const NETWORK_CHAIN_IDS: Record<NetworkType, number> = {
   Base: 8453
 };
 
-const EthereumBasePayment: React.FC = () => {
+const EvmPayment: React.FC = () => {
   const { address, chainId, isConnected } = useWeb3ModalAccount();
   const { walletProvider } = useWeb3ModalProvider();
   const [amount, setAmount] = useState<string>('');
@@ -143,4 +143,4 @@ const EthereumBasePayment: React.FC = () => {
   );
 };
 
-export default EthereumBasePayment;
+export default EvmPayment;
