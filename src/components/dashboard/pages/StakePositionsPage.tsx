@@ -152,7 +152,7 @@ const StakePositions: FC = () => {
           setWalletUtxosCbor([]);
           if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
           const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
-          const utxos = await api.getUtxos(undefined);
+          const utxos = await api.getUtxos();
           const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
           setWalletUtxosCbor(Array.from(new Set([...utxos!, ...(collateral ?? [])])));
 
@@ -187,7 +187,7 @@ const StakePositions: FC = () => {
             if (selectedAddresses.indexOf(userWallet.changeAddress) === -1) return [];
             const browserWallet = await BrowserWallet.enable(userWallet.type);
             const balance = await browserWallet.getBalance();
-            const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
+            const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY!!));
             const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
             stakeKeys.forEach((key) => {
               stakeKeyWallet[key.unit.replace('000de140', '')] = userWallet.type;
@@ -219,7 +219,7 @@ const StakePositions: FC = () => {
     const browserWallet = await BrowserWallet.enable(currentWallet);
     const api = await window.cardano[walletNameToId(currentWallet)!].enable();
     const currentChangeWallet = await browserWallet.getChangeAddress();
-    const utxos = await api.getUtxos(undefined);
+    const utxos = await api.getUtxos();
     const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral() as string[];
     const walletUtxos = Array.from(new Set(utxos!));
     // @TODO show user error message if collateral is empty

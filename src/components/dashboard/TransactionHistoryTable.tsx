@@ -152,8 +152,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     let policyId;
     let assetName;
 
-    switch (data.txType)
-    {
+    switch (data.txType) {
       case 'StakePositionReceived':
       case 'StakePositionRedeemed':
         policyId = data.stakeKey?.substring(0, 56);
@@ -258,7 +257,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
       try {
         const walletType = cardano.getAddressWalletType(address);
         const api = await window.cardano[walletNameToId(walletType!)!].enable();
-        const utxos = await api.getUtxos(undefined);
+        const utxos = await api.getUtxos();
         const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
         const cancelStakeTxCbor = await cancelStakeTxMutation.mutateAsync({
           stakeRequestOutputReference: {
@@ -272,7 +271,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
         const signedTxCbor = await finaliseTxMutation.mutateAsync({ unsignedTxCbor: cancelStakeTxCbor, txWitnessCbor: witnessSetCbor });
         try {
           await api.submitTx(signedTxCbor);
-        } catch(ex: any) {
+        } catch (ex: any) {
           throw new Error('There was an error submitting your transaction.');
         }
         addAlert('success', 'Cancel transaction submitted');
@@ -359,7 +358,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                   let isOpen = index === openRowIndex;
 
                   const toggleOpen = (e: any) => {
-                    if((e.target as HTMLElement).closest('button:not([data-role="expand-control"]), a')) return;
+                    if ((e.target as HTMLElement).closest('button:not([data-role="expand-control"]), a')) return;
                     if (isOpen) {
                       setOpenRowIndex(-1);
                     } else {
@@ -471,15 +470,14 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                     {columns.map((column) => {
                                       if (column === "txHash" || column === "txIndex" || column == "address" || column === "actions") return null;
 
-                                      if (column === "data")
-                                      {
+                                      if (column === "data") {
                                         const data = renderAdditionalTxHistoryData(item[column]);
                                         if (data === undefined) return null;
                                         return Object.keys(data!).map((key) => {
                                           return (
-                                          <TableCell key={String(column)} sx={{ color: 'gray', borderBottom: 'none' }}>
-                                            {camelCaseToTitle(String(key) as string)}
-                                          </TableCell>
+                                            <TableCell key={String(column)} sx={{ color: 'gray', borderBottom: 'none' }}>
+                                              {camelCaseToTitle(String(key) as string)}
+                                            </TableCell>
                                           );
                                         });
                                       }
@@ -509,7 +507,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                                 <Chip icon={<CheckIcon fontSize='small' />} variant='outlined' sx={{ width: '104px' }} />
                                               </Skeleton>) :
                                               transactionTypeLabel(item[key])
-                                            } 
+                                            }
                                           </TableCell>
                                         )
                                       }
@@ -518,12 +516,12 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                         const additionalData = renderAdditionalTxHistoryData(item[key]);
                                         if (additionalData === undefined) return null;
                                         return Object.entries(additionalData!).map(([key, value]) => {
-                                          switch(key){
+                                          switch (key) {
                                             case "unlockTime":
                                               return (
                                                 <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
                                                   {isLoading ?
-                                                    <Skeleton width={100} /> : 
+                                                    <Skeleton width={100} /> :
                                                     <Typography variant='body2' sx={{ display: 'block', mb: '0' }}>
                                                       {additionalData?.unlockTime}
                                                     </Typography>
@@ -534,7 +532,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                               return (
                                                 <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
                                                   {isLoading ?
-                                                    <Skeleton width={100} /> : 
+                                                    <Skeleton width={100} /> :
                                                     <Link href={`${process.env.CARDANO_ASSET_EXPLORER_URL}/${value}`} target='_blank'>{getShorterAddress(value!, 4)}</Link>
                                                   }
                                                 </TableCell>
@@ -543,7 +541,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                               return (
                                                 <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
                                                   {isLoading ?
-                                                    <Skeleton width={100} /> : 
+                                                    <Skeleton width={100} /> :
                                                     <Link href={`${process.env.CARDANO_ADDRESS_EXPLORER_URL}/${value!}`} target='_blank'>{getShorterAddress(value!, 6)}</Link>
                                                   }
                                                 </TableCell>
@@ -552,8 +550,8 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
                                               return (
                                                 <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none' }}>
                                                   {isLoading ?
-                                                    <Skeleton width={100} /> : 
-                                                    <Typography variant='body2' sx={{ display: 'block', mb: '0'}}>
+                                                    <Skeleton width={100} /> :
+                                                    <Typography variant='body2' sx={{ display: 'block', mb: '0' }}>
                                                       {value!}
                                                     </Typography>
                                                   }

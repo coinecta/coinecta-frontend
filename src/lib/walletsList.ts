@@ -56,15 +56,15 @@ export const walletsList: TWalletListItem[] = [
   },
   {
     name: "Nami",
-    connectName: "Nami",
+    connectName: "nami",
     icon: "/wallets/nami-light.svg",
     iconDark: "/wallets/nami-light.svg",
     mobile: false,
     url: "https://namiwallet.io/",
   },
   {
-    name: "NuFi",
-    connectName: "NuFi",
+    name: "MetaMask",
+    connectName: "nufiSnap",
     icon: "/wallets/nufi-navbar-light.svg",
     iconDark: "/wallets/nufi-navbar-dark.svg",
     mobile: false,
@@ -99,7 +99,7 @@ export const walletsList: TWalletListItem[] = [
 export const filterInstalledWallets = (wallets: Wallet[]) => {
   return walletsList.filter((walletListEntry) => {
     const correspondingWallet = wallets.find((wallet) =>
-      walletListEntry.connectName === wallet.name &&
+      walletListEntry.connectName === wallet.id &&
       !(wallet.icon === VESPR_ICON && wallet.name !== "VESPR")
     );
 

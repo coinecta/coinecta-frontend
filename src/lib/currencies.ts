@@ -17,7 +17,7 @@ export const BLOCKCHAINS: AcceptedBlockchain[] = [
         contractAddress: 'c48cbb3d5e57ed56e276bc45f99ab39abe94e6cd7ac39fb402da47ad',
         hexName: '0014df105553444d',
         decimals: 6,
-        imageUrl: '/images/tokens/mehen.png'
+        imageUrl: '/images/tokens/usdm.png'
       },
     ]
   },

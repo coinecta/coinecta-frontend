@@ -11,6 +11,10 @@ import { useWalletList, useWallet } from '@meshsdk/react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { WalletListItemComponent } from "./WalletListItem";
 import { walletsList, filterInstalledWallets } from "@lib/walletsList";
+import { BrowserWallet } from '@meshsdk/core';
+import { CardanoWallet, MeshBadge } from "@meshsdk/react";
+
+
 
 interface IWalletList {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,7 +24,7 @@ interface IWalletList {
 export const WalletList: FC<IWalletList> = ({ setOpen, setLoading }) => {
   const theme = useTheme();
   const wallets = useWalletList();
-  const { connecting, connect } = useWallet()
+  const { connecting, connect, error } = useWallet()
   const [openAddWallet, setOpenAddWallet] = useState(false)
 
   const handleClose = () => {
@@ -31,8 +35,10 @@ export const WalletList: FC<IWalletList> = ({ setOpen, setLoading }) => {
     try {
       setLoading(true)
       await connect(walletName)
+    } catch {
+      if (error) console.log(error)
     } finally {
-      handleClose()
+      // handleClose()
       setLoading(false)
     }
   }

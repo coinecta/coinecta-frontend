@@ -73,7 +73,7 @@ const Dashboard: FC = () => {
           try {
             const browserWallet = await BrowserWallet.enable(userWallet.type);
             const balance = await browserWallet.getBalance();
-            const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY));
+            const stakeKeys = balance.filter((asset) => asset.unit.includes(STAKING_KEY_POLICY!!));
             const processedStakeKeys = stakeKeys.map((key) => key.unit.replace('000de140', ''));
             return processedStakeKeys;
           } catch {

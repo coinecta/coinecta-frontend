@@ -19,11 +19,21 @@ const nextConfig = {
     WALLETCONNECT_PUBLIC_PROJECT_ID: process.env.WALLETCONNECT_PUBLIC_PROJECT_ID
   },
   swcMinify: true,
-  webpack: function (config, options) {
+  webpack: (config, { isServer, webpack }) => {
     config.experiments = {
+      ...config.experiments,
       asyncWebAssembly: true,
       layers: true,
     };
+
+    config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm'
+
+    config.plugins.push(new webpack.ProvidePlugin({
+      TextDecoder: ['text-encoding', 'TextDecoder'],
+      TextEncoder: ['text-encoding', 'TextEncoder']
+    }))
+
+
     config.ignoreWarnings = [
       /Critical dependency: the request of a dependency is an expression/,
     ];

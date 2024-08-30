@@ -77,7 +77,7 @@ const TokenInput: FC<ITokenInputProps> = ({
     setInputValue(rawValue);
     // Convert to a number for output value, handling potential NaN
     const numericValue = Number(rawValue);
-    if (!isNaN(numericValue)) {
+    if (!isNaN(numericValue) && exchangeRate > 0) {
       setOutputValue((numericValue / exchangeRate).toFixed(0));
     } else {
       setOutputValue('');
