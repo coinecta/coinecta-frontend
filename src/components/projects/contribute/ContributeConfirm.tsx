@@ -25,6 +25,7 @@ import { getShorterAddress } from '@lib/utils/general';
 import { useAlert } from '@contexts/AlertContext';
 import { trpc } from '@lib/utils/trpc';
 import EvmPayment from '@components/ethereum-payments/EvmPayment';
+import { BLOCKCHAINS } from '@lib/currencies';
 
 
 interface IContributeConfirmProps {
@@ -36,6 +37,7 @@ interface IContributeConfirmProps {
   receiveCurrency: string;
   contributionRoundId: number;
   recipientAddress: string;
+  exchangeRateToBaseCurrency: number;
 }
 
 const ContributeConfirm: FC<IContributeConfirmProps> = ({
@@ -46,7 +48,8 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
   receiveAmount,
   receiveCurrency,
   contributionRoundId,
-  recipientAddress
+  recipientAddress,
+  exchangeRateToBaseCurrency
 }) => {
   const { addAlert } = useAlert()
   const theme = useTheme();
@@ -126,52 +129,71 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
   }, [open])
 
   const handleSubmitCardano = async () => {
-    if (changeAddress || sessionData?.user.address) {
+    if ((changeAddress || sessionData?.user.address) && paymentCurrency) {
       try {
-        const tx = new Transaction({ initiator: wallet })
-          .sendLovelace(
-            recipientAddress,
-            (Number(paymentAmount) * 1000000).toString()
-          );
-
-        let unsignedTx, signedTx, txHash;
-
-        try {
-          unsignedTx = await tx.build();
-        } catch (error) {
-          console.error("Error building the transaction:", error);
-          addAlert('error', 'Failed to build the transaction. Please try again.');
-          return;
-        }
-
-        try {
-          signedTx = await wallet.signTx(unsignedTx);
-          try {
-            txHash = await wallet.submitTx(signedTx);
-            console.log("Transaction submitted successfully. Transaction Hash: ", txHash);
-            addAlert('success', <>Transaction submitted successfully.
-              Hash: <Link target="_blank" href={`https://cardanoscan.io/transaction/${txHash}`}>{txHash}</Link>
-            </>);
-            const integerValue = parseInt(paymentAmount, 10).toString();
-            try {
-              await createTransaction.mutateAsync({
-                amount: integerValue,
-                currency: paymentCurrency?.currency || 'ADA',
-                address: (changeAddress || sessionData?.user.address)!,
-                txId: txHash,
-                contributionId: contributionRoundId
-              })
-            } catch (e: any) {
-              console.log(e)
-            }
-            setOpen(false)
-          } catch (error) {
-            console.error("Error submitting the transaction:", error);
-            addAlert('error', `Error submitting the transaction: ${error}`);
+        const paymentObject = BLOCKCHAINS.find(item => item.name === paymentCurrency.blockchain)?.tokens.find(item => item.symbol === paymentCurrency.currency)
+        if (paymentObject) {
+          let tx: Transaction;
+          if (paymentObject.symbol === 'ADA') {
+            tx = new Transaction({ initiator: wallet })
+              .sendLovelace(
+                recipientAddress,
+                (Number(paymentAmount) * 1000000).toString()
+              );
           }
-        } catch (error) {
-          console.error("Error signing the transaction:", error);
-          addAlert('error', 'Failed to sign the transaction. Please try again.');
+          else {
+            tx = new Transaction({ initiator: wallet })
+              .sendAssets(
+                recipientAddress,
+                [{
+                  unit: `${paymentObject.contractAddress}${paymentObject.hexName}`,
+                  quantity: (Number(paymentAmount) * Math.pow(10, paymentObject.decimals)).toString(),
+                }]
+              );
+          }
+
+          let unsignedTx, signedTx, txHash;
+
+          try {
+            unsignedTx = await tx.build();
+          } catch (error) {
+            console.error("Error building the transaction:", error);
+            addAlert('error', 'Failed to build the transaction. Please try again.');
+            return;
+          }
+
+          try {
+            signedTx = await wallet.signTx(unsignedTx);
+            try {
+              txHash = await wallet.submitTx(signedTx);
+              console.log("Transaction submitted successfully. Transaction Hash: ", txHash);
+              addAlert('success', <>Transaction submitted successfully.
+                Hash: <Link target="_blank" href={`https://cardanoscan.io/transaction/${txHash}`}>{txHash}</Link>
+              </>);
+              const integerValue = parseInt(paymentAmount, 10).toString();
+              try {
+                await createTransaction.mutateAsync({
+                  amount: integerValue,
+                  currency: paymentCurrency.currency,
+                  blockchain: paymentCurrency.blockchain,
+                  adaReceiveAddress: changeAddress || sessionData?.user.address!,
+                  address: changeAddress || sessionData?.user.address!,
+                  exchangeRate: exchangeRateToBaseCurrency,
+                  txId: txHash,
+                  contributionId: contributionRoundId
+                })
+              } catch (e: any) {
+                console.log(e)
+              }
+              setOpen(false)
+            } catch (error) {
+              console.error("Error submitting the transaction:", error);
+              addAlert('error', `Error submitting the transaction: ${error}`);
+            }
+          } catch (error) {
+            console.error("Error signing the transaction:", error);
+            addAlert('error', 'Failed to sign the transaction. Please try again.');
+          }
         }
       } catch (error) {
         // Handle the final error
@@ -183,12 +205,8 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
 
   const installedWallets = filterInstalledWallets(wallets)
 
-  /*
-  <w3m-button />
-  <EthereumPayment />
-  */
-
   const onSuccessEvm = () => {
+    // TODO: Add success message
     console.log('evm success message')
   }
 
@@ -289,7 +307,7 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
                     </Box>
                     <Collapse in={errorMessage}><Box>
                       <Typography color="text.secondary" sx={{ fontSize: '0.9rem!important', fontStyle: 'italic', mt: 1 }}>
-                        Please choose a wallet with at least {paymentAmount} ADA available
+                        Please choose a wallet with at least {paymentAmount} {paymentCurrency.currency} available
                       </Typography>
                     </Box></Collapse>
                   </Box>}

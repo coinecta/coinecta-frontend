@@ -5,7 +5,7 @@ export const VESPR_ICON =
 
 export const walletNameToId = (name: string) => {
   return {
-    Nami: "nami",
+    nami: "nami",
     "Begin Wallet": "begin",
     eternl: "eternl",
     "Flint Wallet": "flint",

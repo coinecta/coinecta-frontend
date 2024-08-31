@@ -103,8 +103,11 @@ model Transaction {
   id                String            @id @default(cuid())
   description       String?
   amount            String
-  currency          String // legacy, uses ticker, new uses GlobalSupportedCurrency id. 
+  currency          String
+  blockchain        String?
+  exchangeRate      String?           @map("exchange_rate") // at the time of transaction, vs the exchange currency selected in the contribution round
   address           String // sender address
+  adaReceiveAddress String?           @map("ada_receive_address")
   completed         Boolean           @default(false)
   txId              String?           @map("tx_id")
   created_at        DateTime          @default(now())

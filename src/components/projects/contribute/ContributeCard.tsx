@@ -40,7 +40,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
     setTermsCheck(!termsCheck)
   }
 
-  const { data: tokenPrices, isLoading: isPriceLoading } = trpc.price.getTokenPrices.useQuery(
+  const { data: tokenPrices, isLoading: isPriceLoading, refetch: refetchTokenPrices } = trpc.price.getTokenPrices.useQuery(
     selectedCurrency ? [selectedCurrency.currency, exchangeCurrency] : [],
     {
       enabled: !!selectedCurrency && !!exchangeCurrency,
@@ -48,17 +48,22 @@ const ContributeCard: FC<IContributeCardProps> = ({
   );
 
   const [exchangeRate, setExchangeRate] = useState(0)
+  const [exchangeRateToBaseCurrency, setExchangeRateToBaseCurrency] = useState(0)
 
   useEffect(() => {
     if (tokenPrices && selectedCurrency && exchangeCurrency) {
-      const selectedCurrencyUSDPrice = 1 / tokenPrices[selectedCurrency.currency].usd;
-      const exchangeCurrencyUSDPrice = 1 / tokenPrices[exchangeCurrency].usd;
+      if (tokenPrices[selectedCurrency.currency]) {
+        const selectedCurrencyUSDPrice = 1 / tokenPrices[selectedCurrency.currency].usd;
+        const exchangeCurrencyUSDPrice = 1 / tokenPrices[exchangeCurrency].usd;
 
-      if (selectedCurrencyUSDPrice && exchangeCurrencyUSDPrice) {
-        const calculatedExchangeRate = (selectedCurrencyUSDPrice / exchangeCurrencyUSDPrice) * exchangePrice;
-        console.log(calculatedExchangeRate)
-        setExchangeRate(calculatedExchangeRate);
+        if (selectedCurrencyUSDPrice && exchangeCurrencyUSDPrice) {
+          const calcToBaseCurrency = selectedCurrencyUSDPrice / exchangeCurrencyUSDPrice
+          setExchangeRateToBaseCurrency(calcToBaseCurrency)
+          const calculatedExchangeRate = calcToBaseCurrency * exchangePrice;
+          setExchangeRate(calculatedExchangeRate);
+        }
       }
+      else refetchTokenPrices();
     }
   }, [tokenPrices, selectedCurrency, exchangeCurrency, exchangePrice]);
 
@@ -166,6 +171,7 @@ const ContributeCard: FC<IContributeCardProps> = ({
         open={openContribution}
         setOpen={setOpenContribution}
         paymentCurrency={selectedCurrency}
+        exchangeRateToBaseCurrency={exchangeRateToBaseCurrency}
         paymentAmount={inputValue}
         receiveAmount={outputValue}
         receiveCurrency={tokenTicker}

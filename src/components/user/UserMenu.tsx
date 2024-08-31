@@ -52,32 +52,32 @@ const UserMenu: FC<IUserMenuProps> = () => {
   const { clearSelectedAddresses } = useCardano();
 
   useEffect(() => {
-    console.log(`connected: ${connected}`)
-    console.log(`rewardAddress: ${rewardAddress}`)
-    console.log(`sessionStatus: ${sessionStatus}`)
-    console.log(`sessionData: ${sessionData?.user.walletType}`)
-    console.log(`walletName: ${name}`)
+    // console.log(`connected: ${connected}`)
+    // console.log(`rewardAddress: ${rewardAddress}`)
+    // console.log(`sessionStatus: ${sessionStatus}`)
+    // console.log(`sessionData: ${sessionData?.user.walletType}`)
+    // console.log(`walletName: ${name}`)
 
     if (connected && !rewardAddress && sessionStatus === 'unauthenticated') {
-      console.log('getting addresses')
+      // console.log('getting addresses')
       getAddresses()
     }
 
     // user has a wallet connected, we've got the reward address, but they still need to sign in
     if (connected && rewardAddress && sessionStatus === 'unauthenticated') {
-      console.log('refetching (initiate login flow)')
+      // console.log('refetching (initiate login flow)')
       refetchData()
     }
 
     // user doesn't have a wallet connected, but navigates to the page with an active session
     // we have to verify the wallet type that should automatically be connected
     if (!connected && !rewardAddress && sessionStatus === 'authenticated' && sessionData?.user.walletType) {
-      console.log('connect first then get addresses')
+      // console.log('connect first then get addresses')
       connectFirstThenGetAddresses()
     }
 
     if (connected && sessionData?.user.walletType) {
-      console.log('setting wallet icon')
+      // console.log('setting wallet icon')
       if (!rewardAddress) getAddresses()
       const thisWallet = walletsList.filter(wallet => wallet.id === sessionData.user.walletType)
       setWalletIcon(thisWallet[0].icon)
@@ -143,7 +143,7 @@ const UserMenu: FC<IUserMenuProps> = () => {
 
     try {
       const signature = await wallet.signData(nonce.nonce, address)
-      console.log(signature)
+      // console.log(signature)
       if (!signature.signature || !signature.key) {
         console.error('signature failed to generate');
         addAlert('error', 'Message signing failed. ')

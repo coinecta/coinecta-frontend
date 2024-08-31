@@ -255,7 +255,7 @@ const AcceptedCurrencies: FC<Props> = ({ contributionRound, setForm, setRefetchB
               onChange={handleCurrencyChange}
               disabled={!newCurrency.blockchain}
             >
-              {BLOCKCHAINS.find(b => b.symbol === newCurrency.blockchain)?.tokens.map((token) => (
+              {BLOCKCHAINS.find(b => b.name === newCurrency.blockchain)?.tokens.map((token) => (
                 <MenuItem key={token.symbol} value={token.symbol}>
                   {token.name}
                 </MenuItem>

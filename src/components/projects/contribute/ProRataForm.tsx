@@ -311,16 +311,20 @@ const ProRataForm: FC<TProRataFormProps> = ({
                           </Typography>
                         </Box>
                         {usersTransactions.data !== undefined
-                          && usersTransactions.data > 0
+                          && usersTransactions.data.length > 0
                           &&
                           <Box>
                             <Typography variant="overline">
-                              Your contribution
+                              Your contribution totals
                             </Typography>
 
-                            <Typography variant="h6" sx={{ mt: -1 }}>
-                              {formatNumber(usersTransactions.data, '')} ₳
-                            </Typography>
+                            {usersTransactions.data.map((total, index) => (
+                              <Typography key={index} sx={{
+                                fontSize: '0.9rem'
+                              }}>
+                                {formatNumber(total.amount, '')} {total.currency} ({total.blockchain})
+                              </Typography>
+                            ))}
                           </Box>
                         }
                       </Box>

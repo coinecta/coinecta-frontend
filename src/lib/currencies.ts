@@ -19,6 +19,14 @@ export const BLOCKCHAINS: AcceptedBlockchain[] = [
         decimals: 6,
         imageUrl: '/images/tokens/usdm.png'
       },
+      {
+        symbol: 'CNCT',
+        name: 'Coinecta',
+        contractAddress: 'c27600f3aff3d94043464a33786429b78e6ab9df5e1d23b774acb34c',
+        hexName: '434e4354',
+        decimals: 4,
+        imageUrl: '/images/tokens/coinecta.jpg'
+      }
     ]
   },
   {
@@ -100,6 +108,10 @@ export const COINGECKO_IDS = [
     tokenAliases: ['Ethereum', 'ETH'],
     geckoId: 'ethereum'
   },
+  {
+    tokenAliases: ['CNCT', 'Coinecta'],
+    geckoId: 'coinecta'
+  }
 ]
 
 // Helper function to get all supported tokens across all blockchains

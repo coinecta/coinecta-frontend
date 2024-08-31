@@ -46,7 +46,6 @@ export const priceRouter = createTRPCRouter({
       const oneMinuteAgo = new Date(new Date().getTime() - 60000);
       const geckoIds = getGeckoIdsFromSymbols(tokenSymbols);
       const geckoIdToSymbolMap = mapGeckoIdsToSymbols(tokenSymbols);
-
       // Fetch all existing prices from the database
       const existingPrices = await prisma.tokenUsdPrice.findMany();
       const existingGeckoIds = existingPrices.map(item => item.geckoId)

@@ -96,6 +96,9 @@ export const contributionRouter = createTRPCRouter({
   createTransaction: protectedProcedure
     .input(z.object({
       description: z.string().optional(),
+      blockchain: z.string(),
+      adaReceiveAddress: z.string(),
+      exchangeRate: z.number(),
       amount: z.string(),
       currency: z.string(),
       address: z.string(),
@@ -112,6 +115,9 @@ export const contributionRouter = createTRPCRouter({
             amount: input.amount,
             currency: input.currency,
             address: input.address,
+            blockchain: input.blockchain,
+            adaReceiveAddress: input.adaReceiveAddress,
+            exchangeRate: input.exchangeRate.toString(),
             txId: input.txId,
             user_id: userId,
             contribution_id: input.contributionId,
@@ -124,7 +130,7 @@ export const contributionRouter = createTRPCRouter({
           },
           data: {
             deposited: {
-              increment: Number(input.amount),
+              increment: (Number(input.amount) / Number(input.exchangeRate)),
             },
           },
         });
@@ -145,22 +151,33 @@ export const contributionRouter = createTRPCRouter({
     }))
     .query(async ({ input, ctx }) => {
       const userId = ctx.session.user.id
-
       const transactions = await prisma.transaction.findMany({
         where: {
           contribution_id: input.contributionId,
           user_id: userId
         },
         select: {
-          amount: true, // Select only the amount field
+          amount: true,
+          blockchain: true,
+          currency: true,
         },
       });
 
-      const totalAmount = transactions.reduce((sum, transaction) => {
-        return sum + parseFloat(transaction.amount);
-      }, 0);
+      const totals: { amount: number; blockchain: string; currency: string }[] = [];
 
-      return totalAmount
+      for (const tx of transactions) {
+        const existingTotal = totals.find(t => t.blockchain === tx.blockchain && t.currency === tx.currency);
+        if (existingTotal) {
+          existingTotal.amount += parseFloat(tx.amount);
+        } else {
+          totals.push({ amount: parseFloat(tx.amount), blockchain: tx.blockchain || 'Cardano', currency: tx.currency });
+        }
+      }
+
+      return totals.map(total => ({
+        ...total,
+        amount: Number(total.amount.toFixed(2)),
+      }));
     }),
 
   listTransactionsByContribution: adminProcedure
