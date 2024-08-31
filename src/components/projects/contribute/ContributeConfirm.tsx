@@ -327,6 +327,7 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
           </Button>
           : <EvmPayment
             paymentAmount={paymentAmount}
+            exchangeRate={exchangeRateToBaseCurrency}
             paymentCurrency={paymentCurrency}
             blockchain={paymentCurrency?.blockchain || ''}
             recipientAddress={recipientAddress}

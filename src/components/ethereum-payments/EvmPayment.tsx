@@ -6,11 +6,13 @@ import { trpc } from '@lib/utils/trpc';
 import { Box, Button, Typography } from '@mui/material';
 import { useAlert } from '@contexts/AlertContext';
 import { BLOCKCHAINS } from '@lib/currencies';
+import { useWalletContext } from '@contexts/WalletContext';
 
 interface EvmPaymentProps {
   paymentAmount: string;
   paymentCurrency: TAcceptedCurrency | undefined;
   blockchain: string;
+  exchangeRate: number;
   recipientAddress: string;
   contributionRoundId: number;
   onSuccess: () => void;
@@ -19,11 +21,13 @@ interface EvmPaymentProps {
 const EvmPayment: React.FC<EvmPaymentProps> = ({
   paymentAmount,
   paymentCurrency,
+  exchangeRate,
   blockchain,
   recipientAddress,
   contributionRoundId,
   onSuccess
 }) => {
+  const { sessionData } = useWalletContext()
   const { address, chainId, isConnected } = useWeb3ModalAccount();
   const { walletProvider } = useWeb3ModalProvider();
   const [status, setStatus] = useState<string>('');
@@ -84,9 +88,13 @@ const EvmPayment: React.FC<EvmPaymentProps> = ({
         const receipt = await tx.wait();
         setStatus(`${paymentCurrency.currency} Transaction confirmed in block ${receipt?.blockNumber}`);
 
+        // TODO: Update adaReceiveAddress with an input box or selection from user's existing connected wallets
         await createTransaction.mutateAsync({
           amount: paymentAmount,
           currency: paymentCurrency.currency,
+          adaReceiveAddress: sessionData?.user.address || '',
+          exchangeRate: exchangeRate,
+          blockchain: paymentCurrency.blockchain,
           address: address!,
           txId: tx.hash,
           contributionId: contributionRoundId
@@ -106,10 +114,14 @@ const EvmPayment: React.FC<EvmPaymentProps> = ({
         const receipt = await tx.wait();
         setStatus(`${paymentCurrency.currency} Transaction confirmed in block ${receipt?.blockNumber}`);
 
+        // TODO: Update adaReceiveAddress with an input box or selection from user's existing connected wallets
         await createTransaction.mutateAsync({
           amount: paymentAmount,
           currency: paymentCurrency.currency,
           address: address!,
+          adaReceiveAddress: sessionData?.user.address || '',
+          exchangeRate: exchangeRate,
+          blockchain: paymentCurrency.blockchain,
           txId: tx.hash,
           contributionId: contributionRoundId
         });
