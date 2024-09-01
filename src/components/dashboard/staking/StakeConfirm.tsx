@@ -73,7 +73,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
   useEffect(() => {
     const execute = async () => {
       if (connected && sessionData !== null) {
-        const api = await window.cardano[walletNameToId(sessionData.user.walletType!)!].enable();
+        const api = await window.cardano[sessionData.user.walletType!].enable();
         setCardanoApi(api);
       }
     };
