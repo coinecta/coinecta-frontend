@@ -9,8 +9,8 @@ export const walletDataByName = (name: string) => {
 
 export const walletsList: TWalletListItem[] = [
   {
-    name: "Begin",
-    connectName: "Begin Wallet",
+    name: "Begin Wallet",
+    connectName: "begin",
     icon: "/wallets/begin-light.svg",
     iconDark: "/wallets/begin-dark.svg",
     mobile: true,
@@ -25,8 +25,8 @@ export const walletsList: TWalletListItem[] = [
     url: "https://eternl.io/",
   },
   {
-    name: "Flint",
-    connectName: "Flint Wallet",
+    name: "Flint Wallet",
+    connectName: "flint",
     icon: "/wallets/flint-light.svg",
     iconDark: "/wallets/flint-light.svg",
     mobile: true,
@@ -57,16 +57,16 @@ export const walletsList: TWalletListItem[] = [
     url: "https://nu.fi/",
   },
   {
-    name: "Gero",
-    connectName: "GeroWallet",
+    name: "GeroWallet",
+    connectName: "gerowallet",
     icon: "/wallets/gerowallet.svg",
     iconDark: "/wallets/gerowallet.svg",
     mobile: true,
     url: "https://gerowallet.io/",
   },
   {
-    name: "Typhon",
-    connectName: "Typhon Wallet",
+    name: "Typhon Wallet",
+    connectName: "typhoncip30",
     icon: "/wallets/typhon-light.svg",
     iconDark: "/wallets/typhon-dark.svg",
     mobile: false,
@@ -74,7 +74,7 @@ export const walletsList: TWalletListItem[] = [
   },
   {
     name: "VESPR",
-    connectName: "VESPR",
+    connectName: "vespr",
     icon: "/wallets/vespr-light.svg",
     iconDark: "/wallets/vespr-dark.svg",
     mobile: true,
@@ -85,8 +85,8 @@ export const walletsList: TWalletListItem[] = [
 export const filterInstalledWallets = (wallets: Wallet[]) => {
   return walletsList.filter((walletListEntry) => {
     const correspondingWallet = wallets.find((wallet) =>
-      walletListEntry.connectName === wallet.id &&
-      !(wallet.icon === VESPR_ICON && wallet.name !== "VESPR")
+      walletListEntry.connectName === wallet.id
+      && !(wallet.icon === VESPR_ICON && wallet.name !== "VESPR")
     );
 
     return correspondingWallet !== undefined;
