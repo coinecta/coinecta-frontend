@@ -49,25 +49,6 @@ type TErgoBox = {
   transactionId: TransactionId;
 };
 
-type TProRataFormProps = {
-  id: number;
-  startDate: Date;
-  endDate: Date;
-  tokenTarget: number;
-  tokenTicker: string;
-  price: number;
-  currency: string;
-  deposited: number;
-  name: string;
-  projectName: string;
-  projectIcon: string;
-  projectSlug: string;
-  whitelistSlug: string | null;
-  recipientAddress: string | null;
-  restrictedCountries: string[];
-  saleTerms: string | null;
-}
-
 type TWalletListItem = {
   name: string;
   connectName: string;
@@ -186,4 +167,20 @@ interface Country {
 interface ISalesTerm {
   header: string;
   bodyText: string;
+}
+
+interface AcceptedToken {
+  symbol: string;
+  name: string;
+  contractAddress: string | null;
+  hexName?: string;
+  decimals: number;
+  imageUrl: string;
+}
+
+interface AcceptedBlockchain {
+  name: string;
+  symbol: string;
+  imageUrl: string;
+  tokens: AcceptedToken[];
 }

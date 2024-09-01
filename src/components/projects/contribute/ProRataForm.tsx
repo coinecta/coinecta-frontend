@@ -17,24 +17,35 @@ import { countryList } from '@lib/utils/countryList';
 import axios from 'axios';
 import SalesTerm from './SaleTerm';
 
+export type ContributionRoundWithId = Omit<TContributionRound, 'id'> & { id: number }
+
+type TProRataFormProps = {
+  contributionRound: ContributionRoundWithId;
+  projectIcon: string;
+
+}
+
 const ProRataForm: FC<TProRataFormProps> = ({
-  id,
-  startDate,
-  endDate,
-  tokenTarget,
-  tokenTicker,
-  price,
-  currency,
-  deposited,
-  name,
-  projectName,
+  contributionRound,
   projectIcon,
-  projectSlug,
-  whitelistSlug,
-  recipientAddress,
-  restrictedCountries,
-  saleTerms
 }) => {
+
+  const { id,
+    startDate,
+    endDate,
+    tokenTarget,
+    tokenTicker,
+    price,
+    currency,
+    deposited,
+    name,
+    projectName,
+    projectSlug,
+    whitelistSlug,
+    recipientAddress,
+    restrictedCountries,
+    saleTerms } = contributionRound;
+
   const theme = useTheme()
   const { sessionStatus } = useWalletContext()
   const currencySymbol = getSymbol(currency)
@@ -136,17 +147,13 @@ const ProRataForm: FC<TProRataFormProps> = ({
         <Grid xs={12} md={7}>
           <Paper variant="outlined" sx={{ px: 2, py: 4, height: '100%' }}>
             <ContributeCard
-              projectName={projectName}
-              projectIcon={projectIcon}
-              roundName={name}
-              tokenTicker={tokenTicker}
               remainingTokens={tokenTarget - claimedAmount}
-              exchangeRate={1 / price}
+              exchangePrice={price}
+              exchangeCurrency={currency}
               whitelisted={whitelistSlug ? whitelisted : true}
               live={isCurrentDateBetween}
-              contributionRoundId={id}
-              recipientAddress={recipientAddress}
               allowed={allowed}
+              contributionRound={contributionRound}
             />
           </Paper>
         </Grid>
@@ -304,16 +311,20 @@ const ProRataForm: FC<TProRataFormProps> = ({
                           </Typography>
                         </Box>
                         {usersTransactions.data !== undefined
-                          && usersTransactions.data > 0
+                          && usersTransactions.data.length > 0
                           &&
                           <Box>
                             <Typography variant="overline">
-                              Your contribution
+                              Your contribution totals
                             </Typography>
 
-                            <Typography variant="h6" sx={{ mt: -1 }}>
-                              {formatNumber(usersTransactions.data, '')} ₳
-                            </Typography>
+                            {usersTransactions.data.map((total, index) => (
+                              <Typography key={index} sx={{
+                                fontSize: '0.9rem'
+                              }}>
+                                {formatNumber(total.amount, '')} {total.currency} ({total.blockchain})
+                              </Typography>
+                            ))}
                           </Box>
                         }
                       </Box>

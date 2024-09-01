@@ -104,7 +104,10 @@ model Transaction {
   description       String?
   amount            String
   currency          String
-  address           String
+  blockchain        String?
+  exchangeRate      String?           @map("exchange_rate") // at the time of transaction, vs the exchange currency selected in the contribution round
+  address           String // sender address
+  adaReceiveAddress String?           @map("ada_receive_address")
   completed         Boolean           @default(false)
   txId              String?           @map("tx_id")
   created_at        DateTime          @default(now())
@@ -162,8 +165,8 @@ model ContributionRound {
   endDate             DateTime      @map("end_date")
   tokenTicker         String        @map("token_ticker")
   tokenTarget         Int           @map("token_target")
-  currency            String
-  price               Float
+  currency            String // base currency
+  price               Float // base price
   deposited           Float
   whitelistSlug       String?       @unique @map("whitelist_slug")
   whitelist           Whitelist?    @relation(fields: [whitelistSlug], references: [slug])
@@ -175,7 +178,20 @@ model ContributionRound {
   restrictedCountries String[]      @map("restricted_countries")
   saleTerms           String?
 
+  acceptedCurrencies AcceptedCurrency[]
+
   @@map("contribution_round")
+}
+
+model AcceptedCurrency {
+  id                  String            @id @default(cuid())
+  receiveAddress      String            @map("receive_address")
+  currency            String
+  blockchain          String
+  contributionRound   ContributionRound @relation(fields: [contributionRoundId], references: [id])
+  contributionRoundId Int
+
+  @@map("accepted_currencies")
 }
 
 model Socials {
@@ -440,4 +456,14 @@ model CardanoPrice {
   updatedAt DateTime @updatedAt
 
   @@map("cardano_price")
+}
+
+model TokenUsdPrice {
+  id        String   @id @default(cuid())
+  price     Float
+  geckoId   String   @unique @map("gecko_id")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("token_usd_price")
 }

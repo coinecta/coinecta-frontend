@@ -24,7 +24,6 @@ import { useInView } from 'react-intersection-observer';
 import wideBg from "@public/wide.jpg";
 import wideBgLight from "@public/wide-light.jpg";
 import bottomBg from "@public/bottom.jpg";
-import HarmonicLabsLogo from '@components/svgs/HarmonicLabsLogo';
 import Link from '@components/Link'
 import bannerBg from '@public/banner.jpg'
 import HeroSlider from '@components/landing/HeroSlider';

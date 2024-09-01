@@ -51,11 +51,14 @@ const UserMenu: FC<IUserMenuProps> = () => {
   const walletsList = useWalletList();
   const { clearSelectedAddresses } = useCardano();
 
+  console.log(walletsList)
+
   useEffect(() => {
     // console.log(`connected: ${connected}`)
     // console.log(`rewardAddress: ${rewardAddress}`)
     // console.log(`sessionStatus: ${sessionStatus}`)
     // console.log(`sessionData: ${sessionData?.user.walletType}`)
+    // console.log(`walletName: ${name}`)
 
     if (connected && !rewardAddress && sessionStatus === 'unauthenticated') {
       // console.log('getting addresses')
@@ -78,7 +81,7 @@ const UserMenu: FC<IUserMenuProps> = () => {
     if (connected && sessionData?.user.walletType) {
       // console.log('setting wallet icon')
       if (!rewardAddress) getAddresses()
-      const thisWallet = walletsList.filter(wallet => wallet.name === sessionData.user.walletType)
+      const thisWallet = walletsList.filter(wallet => wallet.id === sessionData.user.walletType)
       setWalletIcon(thisWallet[0].icon)
     }
   }, [rewardAddress, connected, sessionStatus]);
@@ -141,7 +144,8 @@ const UserMenu: FC<IUserMenuProps> = () => {
     setProviderLoading(true)
 
     try {
-      const signature = await wallet.signData(address, nonce.nonce)
+      const signature = await wallet.signData(nonce.nonce, address)
+      // console.log(signature)
       if (!signature.signature || !signature.key) {
         console.error('signature failed to generate');
         addAlert('error', 'Message signing failed. ')

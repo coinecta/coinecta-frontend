@@ -16,6 +16,7 @@ import { WalletProvider } from "@contexts/WalletContext";
 import { AlertProvider } from '@contexts/AlertContext';
 import AlertComponent from '@components/Alert';
 import { DialogProvider } from "@contexts/DialogContext";
+import { Web3Modal } from "@contexts/Web3Modal";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [theme, setTheme] = useState(LightTheme);
@@ -45,11 +46,13 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                 <DialogProvider>
                   <MeshProvider>
                     <WalletProvider>
-                      <CssBaseline enableColorScheme />
-                      <Layout>
-                        <Component {...pageProps} />
-                      </Layout>
-                      <AlertComponent />
+                      <Web3Modal>
+                        <CssBaseline enableColorScheme />
+                        <Layout>
+                          <Component {...pageProps} />
+                        </Layout>
+                        <AlertComponent />
+                      </Web3Modal>
                     </WalletProvider>
                   </MeshProvider>
                 </DialogProvider>

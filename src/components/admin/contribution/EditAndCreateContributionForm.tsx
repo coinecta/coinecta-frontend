@@ -5,7 +5,13 @@ import {
   Typography,
   TextField,
   Button,
-  Grid
+  Grid,
+  SelectChangeEvent,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  useTheme
 } from '@mui/material';
 import { trpc } from '@lib/utils/trpc';
 import { useAlert } from '@contexts/AlertContext';
@@ -13,6 +19,8 @@ import MultiSelectCountry from '@components/MultiSelectCountry';
 import SelectWhitelist from './SelectWhitelist';
 import DraggableList from '../hero-carousel/ItemReorder';
 import SalesTermsReorder from './SaleTermsReorder';
+import AcceptedCurrencies from './AcceptedCurrencies';
+import { getAllSupportedTokens } from '@lib/currencies';
 
 type EditAndCreateContributionFormProps = {
   mode: 'create' | 'edit';
@@ -21,6 +29,7 @@ type EditAndCreateContributionFormProps = {
 };
 
 const initForm = {
+  id: 0,
   name: '',
   saleType: 'pro-rata',
   startDate: '',
@@ -35,7 +44,8 @@ const initForm = {
   whitelistSlug: '',
   restrictedCountries: [],
   recipientAddress: '',
-  saleTerms: ''
+  saleTerms: '',
+  acceptedCurrencies: []
 };
 
 const formatDateForDateTimeLocal = (date: Date) => {
@@ -58,6 +68,9 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
   const [selectedWhitelist, setSelectedWhitelist] = useState<string | null>(null)
   const [salesTerms, setSalesTerms] = useState<ISalesTerm[]>([]);
   const [newTerm, setNewTerm] = useState<ISalesTerm>({ header: '', bodyText: '' });
+  const [refetchContributionRound, setRefetchContributionRounds] = useState(false)
+  const theme = useTheme()
+
   const { data: whitelistData } = trpc.whitelist.listProjectWhitelists.useQuery({ projectSlug: project?.slug ?? '' })
 
   const roundQuery = trpc.contributions.getContributionRoundsByProjectSlug.useQuery(
@@ -77,6 +90,7 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
               startDate: formatDateForDateTimeLocal(round.startDate),
               endDate: formatDateForDateTimeLocal(round.endDate),
             }
+            // console.log(datesToString)
             setForm(datesToString);
             setSelectedCountries(round.restrictedCountries);
             if (round.saleTerms) setSalesTerms(JSON.parse(round.saleTerms))
@@ -88,7 +102,7 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
       };
       fetchRound();
     }
-  }, [mode, selectedRound]);
+  }, [mode, selectedRound, refetchContributionRound]);
 
   const handleSalesTermChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewTerm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -112,6 +126,12 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
+
+  const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
+    setForm(prev => ({ ...prev, currency: event.target.value }));
+  };
+
+  const allTokens = getAllSupportedTokens();
 
   const editContributionRoundMutation = trpc.contributions.updateContributionRound.useMutation();
   const addContributionRoundMutation = trpc.contributions.addContributionRound.useMutation();
@@ -150,10 +170,10 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
 
   return (
     <Box component="form" onSubmit={handleSubmit}>
-      <Box sx={{ mb: 2 }}>
-        <SelectWhitelist selectedWhitelist={selectedWhitelist} setSelectedWhitelist={setSelectedWhitelist} whitelistData={whitelistData} />
-      </Box>
       <Grid container spacing={2} maxWidth="md">
+        <Grid item xs={12}>
+          <SelectWhitelist selectedWhitelist={selectedWhitelist} setSelectedWhitelist={setSelectedWhitelist} whitelistData={whitelistData} />
+        </Grid>
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
@@ -225,16 +245,22 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <TextField
-            fullWidth
-            required
-            name="currency"
-            label="Exchange Currency"
-            variant="filled"
-            disabled
-            value={form.currency}
-            onChange={handleChange}
-          />
+          <FormControl fullWidth required variant="filled">
+            <InputLabel id="currency-select-label">Exchange Currency</InputLabel>
+            <Select
+              labelId="currency-select-label"
+              id="currency-select"
+              value={form.currency}
+              label="Exchange Currency"
+              onChange={handleCurrencyChange}
+            >
+              {allTokens.map((token) => (
+                <MenuItem key={`${token.symbol}-${token.parentBlockchainName}`} value={token.symbol}>
+                  {`${token.name} (${token.symbol}) on ${token.parentBlockchainName}`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
@@ -248,53 +274,63 @@ const EditAndCreateContributionForm: FC<EditAndCreateContributionFormProps> = ({
             type="number"
           />
         </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField fullWidth required name="recipientAddress" label="Recipient Address" variant="filled" value={form.recipientAddress} onChange={handleChange} />
+        <Grid item xs={12}>
+          <Box sx={{
+            background: 'rgba(155,155,155,0.1)',
+            border: '1px solid rgba(155,155,155,0.5)',
+            borderRadius: '12px',
+            p: 2
+          }}>
+            <AcceptedCurrencies setRefetchBool={setRefetchContributionRounds} contributionRound={form} setForm={setForm} />
+          </Box>
         </Grid>
         <Grid item xs={12}>
           <MultiSelectCountry selectedCountries={selectedCountries} setSelectedCountries={setSelectedCountries} />
         </Grid>
-
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>Sales Terms</Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={5}>
-              <TextField
-                fullWidth
-                name="header"
-                label="Term Header"
-                variant="filled"
-                value={newTerm.header}
-                onChange={handleSalesTermChange}
-              />
+        <Grid item xs={12}>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>Sales Terms</Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={5}>
+                <TextField
+                  fullWidth
+                  name="header"
+                  label="Term Header"
+                  variant="filled"
+                  value={newTerm.header}
+                  onChange={handleSalesTermChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={5}>
+                <TextField
+                  fullWidth
+                  name="bodyText"
+                  label="Term Body"
+                  variant="filled"
+                  value={newTerm.bodyText}
+                  onChange={handleSalesTermChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <Button variant="contained" onClick={addSalesTerm} fullWidth>
+                  Add Term
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={5}>
-              <TextField
-                fullWidth
-                name="bodyText"
-                label="Term Body"
-                variant="filled"
-                value={newTerm.bodyText}
-                onChange={handleSalesTermChange}
-              />
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <Button variant="contained" onClick={addSalesTerm} fullWidth>
-                Add Term
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
 
-        {salesTerms && <SalesTermsReorder
-          salesTerms={salesTerms}
-          setNewOrder={handleReoderItems}
-          removeSalesTerm={removeSalesTerm}
-        />}
+          </Box>
+          {salesTerms && <SalesTermsReorder
+            salesTerms={salesTerms}
+            setNewOrder={handleReoderItems}
+            removeSalesTerm={removeSalesTerm}
+          />}
+        </Grid>
 
-        <Button type="submit" variant="contained" disabled={isLoading} sx={{ mt: 2 }}>
-          {mode === 'create' ? 'Create' : 'Update'}
-        </Button>
+        <Grid item xs={12}>
+          <Button type="submit" variant="contained" disabled={isLoading} sx={{ mt: 2 }}>
+            {mode === 'create' ? 'Create' : 'Update'}
+          </Button>
+        </Grid>
       </Grid>
     </Box>
   );

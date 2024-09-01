@@ -4,7 +4,6 @@ import { useAlert } from '@contexts/AlertContext';
 import { useWalletContext } from '@contexts/WalletContext';
 import { formatTokenWithDecimals } from '@lib/utils/assets';
 import { trpc } from '@lib/utils/trpc';
-import { walletNameToId } from '@lib/walletsList';
 import { useWallet } from '@meshsdk/react';
 import CloseIcon from '@mui/icons-material/Close';
 import {
@@ -53,8 +52,8 @@ const RedeemConfirm: FC<IRedeemConfirmProps> = ({
   useEffect(() => {
     const execute = async () => {
       if (connected && sessionStatus === 'authenticated' && redeemWallet) {
-        if (window.cardano[walletNameToId(redeemWallet!)!] === undefined) return;
-        const api = await window.cardano[walletNameToId(redeemWallet)!].enable();
+        if (window.cardano[redeemWallet] === undefined) return;
+        const api = await window.cardano[redeemWallet].enable();
         setCardanoApi(api);
       }
     };

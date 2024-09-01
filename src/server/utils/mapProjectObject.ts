@@ -99,7 +99,8 @@ export const mapFullProjectFromDb = (projectDb: ProjectWithRelations | null): z.
 
   // Map Contribution Rounds
   const contributionRounds = projectDb.contributionRounds.map(contributionRound => ({
-    ...contributionRound
+    ...contributionRound,
+    acceptedCurrencies: [] // not something that is pulled from this project object, so leave it blank here
   }));
 
   // Combine everything into a project

@@ -65,7 +65,7 @@ export const authOptions = (
       throw new Error(`No nonce available`)
     }
 
-    const result = checkSignature(user.nonce, walletParse.rewardAddress, signatureParse);
+    const result = checkSignature(user.nonce, signatureParse);
 
     if (result) {
       // set a new nonce for the user to make sure an attacker can't reuse this one
@@ -102,7 +102,7 @@ export const authOptions = (
       throw new Error(`No nonce available`)
     }
 
-    const result = checkSignature(user.nonce, walletParse.rewardAddress, signatureParse);
+    const result = checkSignature(user.nonce, signatureParse);
 
     try {
       if (!result) {

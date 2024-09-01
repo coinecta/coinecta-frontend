@@ -65,7 +65,7 @@ const EditContributionRound: FC<EditContributionRoundProps> = ({ projectList, se
 
   return (
     <Box>
-      <Typography variant="h6" sx={{ mb: 1 }}>
+      <Typography variant="h3" sx={{ mb: 1 }}>
         Edit Contribution Round
       </Typography>
       <Box sx={{ mb: 1, maxWidth: '350px' }}>

@@ -1,38 +1,34 @@
 import { Avatar, Box, Button, Checkbox, FormControlLabel, Typography, useTheme } from '@mui/material';
-import React, { ChangeEvent, FC, useState } from 'react';
+import React, { ChangeEvent, FC, useEffect, useState } from 'react';
 import TokenInput from './TokenInput';
 import Link from '@components/Link';
 import ContributeConfirm from './ContributeConfirm';
 import { useWalletContext } from '@contexts/WalletContext';
+import { ContributionRoundWithId } from './ProRataForm';
+import { trpc } from '@lib/utils/trpc';
 
 interface IContributeCardProps {
-  projectName: string;
-  projectIcon: string;
-  roundName: string;
-  tokenTicker: string;
+  contributionRound: ContributionRoundWithId;
   remainingTokens: number;
-  exchangeRate: number;
   whitelisted: boolean;
+  exchangePrice: number;
+  exchangeCurrency: string;
   live: boolean;
-  contributionRoundId: number;
-  recipientAddress: string | null;
   allowed: boolean;
 }
 
 const ContributeCard: FC<IContributeCardProps> = ({
-  projectName,
-  projectIcon,
-  roundName,
-  contributionRoundId,
-  tokenTicker,
+  contributionRound,
   remainingTokens,
-  exchangeRate,
   whitelisted,
+  exchangePrice,
+  exchangeCurrency,
   live,
-  recipientAddress,
   allowed
 }) => {
   const { sessionData } = useWalletContext()
+  const { projectName, name: roundName, tokenTicker } = contributionRound;
+  const [selectedCurrency, setSelectedCurrency] = useState<TAcceptedCurrency | undefined>(undefined);
 
   const theme = useTheme()
   const [termsCheck, setTermsCheck] = useState(false)
@@ -43,6 +39,33 @@ const ContributeCard: FC<IContributeCardProps> = ({
   const handleCheckTerms = (e: ChangeEvent) => {
     setTermsCheck(!termsCheck)
   }
+
+  const { data: tokenPrices, isLoading: isPriceLoading, refetch: refetchTokenPrices } = trpc.price.getTokenPrices.useQuery(
+    selectedCurrency ? [selectedCurrency.currency, exchangeCurrency] : [],
+    {
+      enabled: !!selectedCurrency && !!exchangeCurrency,
+    }
+  );
+
+  const [exchangeRate, setExchangeRate] = useState(0)
+  const [exchangeRateToBaseCurrency, setExchangeRateToBaseCurrency] = useState(0)
+
+  useEffect(() => {
+    if (tokenPrices && selectedCurrency && exchangeCurrency) {
+      if (tokenPrices[selectedCurrency.currency]) {
+        const selectedCurrencyUSDPrice = 1 / tokenPrices[selectedCurrency.currency].usd;
+        const exchangeCurrencyUSDPrice = 1 / tokenPrices[exchangeCurrency].usd;
+
+        if (selectedCurrencyUSDPrice && exchangeCurrencyUSDPrice) {
+          const calcToBaseCurrency = selectedCurrencyUSDPrice / exchangeCurrencyUSDPrice
+          setExchangeRateToBaseCurrency(calcToBaseCurrency)
+          const calculatedExchangeRate = calcToBaseCurrency * exchangePrice;
+          setExchangeRate(calculatedExchangeRate);
+        }
+      }
+      else refetchTokenPrices();
+    }
+  }, [tokenPrices, selectedCurrency, exchangeCurrency, exchangePrice]);
 
   return (
     <Box sx={{
@@ -70,6 +93,9 @@ const ContributeCard: FC<IContributeCardProps> = ({
             setInputValue={setInputValue}
             outputValue={outputValue}
             setOutputValue={setOutputValue}
+            contributionRound={contributionRound}
+            selectedCurrency={selectedCurrency}
+            setSelectedCurrency={setSelectedCurrency}
           />
         </Box>
         <Box>
@@ -89,15 +115,16 @@ const ContributeCard: FC<IContributeCardProps> = ({
           <Button
             variant="contained"
             color="secondary"
-            disabled={
-              !termsCheck ||
-              !whitelisted ||
-              !live ||
-              !recipientAddress ||
-              Number(inputValue) === 0 ||
-              sessionData == null ||
-              !allowed
-            }
+            // TODO: turn disabled scenarios back on
+            // disabled={
+            //   !termsCheck ||
+            //   !whitelisted ||
+            //   !live ||
+            //   // !recipientAddress ||
+            //   Number(inputValue) === 0 ||
+            //   sessionData == null ||
+            //   !allowed
+            // }
             sx={{
               textTransform: 'none',
               fontSize: '20px',
@@ -109,11 +136,11 @@ const ContributeCard: FC<IContributeCardProps> = ({
             Contribute now
           </Button>
         </Box>
-        {!recipientAddress &&
+        {/* {!recipientAddress &&
           <Typography color="error" sx={{ mt: 1, fontSize: '0.9rem!important' }}>
             Contribution form error, please notify support if you are trying to contribute.
           </Typography>
-        }
+        } */}
         {!allowed &&
           <Typography color="error" sx={{ mt: 1, fontSize: '0.9rem!important' }}>
             We apologize, but we are unable to accept contributions from the restricted countries listed above.
@@ -140,18 +167,17 @@ const ContributeCard: FC<IContributeCardProps> = ({
           </Typography>
         </Box>
       }
-      {
-        recipientAddress !== null &&
-        <ContributeConfirm
-          open={openContribution}
-          setOpen={setOpenContribution}
-          paymentAmount={inputValue}
-          receiveAmount={outputValue}
-          receiveCurrency={tokenTicker}
-          contributionRoundId={contributionRoundId}
-          recipientAddress={recipientAddress}
-        />
-      }
+      <ContributeConfirm
+        open={openContribution}
+        setOpen={setOpenContribution}
+        paymentCurrency={selectedCurrency}
+        exchangeRateToBaseCurrency={exchangeRateToBaseCurrency}
+        paymentAmount={inputValue}
+        receiveAmount={outputValue}
+        receiveCurrency={tokenTicker}
+        contributionRoundId={contributionRound.id}
+        recipientAddress={contributionRound.acceptedCurrencies.find(currency => selectedCurrency?.currency === currency.currency && selectedCurrency.blockchain === currency.blockchain)?.receiveAddress || ''}
+      />
     </Box >
   );
 };

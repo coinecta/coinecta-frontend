@@ -24,27 +24,32 @@ import { WalletListItemComponent } from '@components/user/WalletListItem';
 import { getShorterAddress } from '@lib/utils/general';
 import { useAlert } from '@contexts/AlertContext';
 import { trpc } from '@lib/utils/trpc';
+import EvmPayment from '@components/ethereum-payments/EvmPayment';
+import { BLOCKCHAINS } from '@lib/currencies';
+
 
 interface IContributeConfirmProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   paymentAmount: string;
-  paymentCurrency?: string;
+  paymentCurrency: TAcceptedCurrency | undefined;
   receiveAmount: string;
   receiveCurrency: string;
   contributionRoundId: number;
   recipientAddress: string;
+  exchangeRateToBaseCurrency: number;
 }
 
 const ContributeConfirm: FC<IContributeConfirmProps> = ({
   open,
   setOpen,
   paymentAmount,
-  paymentCurrency = 'ADA',
+  paymentCurrency,
   receiveAmount,
   receiveCurrency,
   contributionRoundId,
-  recipientAddress
+  recipientAddress,
+  exchangeRateToBaseCurrency
 }) => {
   const { addAlert } = useAlert()
   const theme = useTheme();
@@ -64,9 +69,9 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
   }
 
   const handleClose = (event: SyntheticEvent, reason?: string) => {
-    if (reason !== 'backdropClick') {
-      setOpen(false);
-    }
+
+    setOpen(false);
+
   };
 
   const handleConnect = async (walletName: string) => {
@@ -123,53 +128,72 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
     else setAlternateWalletType(undefined)
   }, [open])
 
-  const handleSubmit = async () => {
-    if (changeAddress || sessionData?.user.address) {
+  const handleSubmitCardano = async () => {
+    if ((changeAddress || sessionData?.user.address) && paymentCurrency) {
       try {
-        const tx = new Transaction({ initiator: wallet })
-          .sendLovelace(
-            recipientAddress,
-            (Number(paymentAmount) * 1000000).toString()
-          );
-
-        let unsignedTx, signedTx, txHash;
-
-        try {
-          unsignedTx = await tx.build();
-        } catch (error) {
-          console.error("Error building the transaction:", error);
-          addAlert('error', 'Failed to build the transaction. Please try again.');
-          return;
-        }
-
-        try {
-          signedTx = await wallet.signTx(unsignedTx);
-          try {
-            txHash = await wallet.submitTx(signedTx);
-            console.log("Transaction submitted successfully. Transaction Hash: ", txHash);
-            addAlert('success', <>Transaction submitted successfully.
-              Hash: <Link target="_blank" href={`https://cardanoscan.io/transaction/${txHash}`}>{txHash}</Link>
-            </>);
-            const integerValue = parseInt(paymentAmount, 10).toString();
-            try {
-              await createTransaction.mutateAsync({
-                amount: integerValue,
-                currency: paymentCurrency || 'ADA',
-                address: (changeAddress || sessionData?.user.address)!,
-                txId: txHash,
-                contributionId: contributionRoundId
-              })
-            } catch (e: any) {
-              console.log(e)
-            }
-            setOpen(false)
-          } catch (error) {
-            console.error("Error submitting the transaction:", error);
-            addAlert('error', `Error submitting the transaction: ${error}`);
+        const paymentObject = BLOCKCHAINS.find(item => item.name === paymentCurrency.blockchain)?.tokens.find(item => item.symbol === paymentCurrency.currency)
+        if (paymentObject) {
+          let tx: Transaction;
+          if (paymentObject.symbol === 'ADA') {
+            tx = new Transaction({ initiator: wallet })
+              .sendLovelace(
+                recipientAddress,
+                (Number(paymentAmount) * 1000000).toString()
+              );
           }
-        } catch (error) {
-          console.error("Error signing the transaction:", error);
-          addAlert('error', 'Failed to sign the transaction. Please try again.');
+          else {
+            tx = new Transaction({ initiator: wallet })
+              .sendAssets(
+                recipientAddress,
+                [{
+                  unit: `${paymentObject.contractAddress}${paymentObject.hexName}`,
+                  quantity: (Number(paymentAmount) * Math.pow(10, paymentObject.decimals)).toString(),
+                }]
+              );
+          }
+
+          let unsignedTx, signedTx, txHash;
+
+          try {
+            unsignedTx = await tx.build();
+          } catch (error) {
+            console.error("Error building the transaction:", error);
+            addAlert('error', 'Failed to build the transaction. Please try again.');
+            return;
+          }
+
+          try {
+            signedTx = await wallet.signTx(unsignedTx);
+            try {
+              txHash = await wallet.submitTx(signedTx);
+              console.log("Transaction submitted successfully. Transaction Hash: ", txHash);
+              addAlert('success', <>Transaction submitted successfully.
+                Hash: <Link target="_blank" href={`https://cardanoscan.io/transaction/${txHash}`}>{txHash}</Link>
+              </>);
+              const integerValue = parseInt(paymentAmount, 10).toString();
+              try {
+                await createTransaction.mutateAsync({
+                  amount: integerValue,
+                  currency: paymentCurrency.currency,
+                  blockchain: paymentCurrency.blockchain,
+                  adaReceiveAddress: changeAddress || sessionData?.user.address!,
+                  address: changeAddress || sessionData?.user.address!,
+                  exchangeRate: exchangeRateToBaseCurrency,
+                  txId: txHash,
+                  contributionId: contributionRoundId
+                })
+              } catch (e: any) {
+                console.log(e)
+              }
+              setOpen(false)
+            } catch (error) {
+              console.error("Error submitting the transaction:", error);
+              addAlert('error', `Error submitting the transaction: ${error}`);
+            }
+          } catch (error) {
+            console.error("Error signing the transaction:", error);
+            addAlert('error', 'Failed to sign the transaction. Please try again.');
+          }
         }
       } catch (error) {
         // Handle the final error
@@ -181,11 +205,26 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
 
   const installedWallets = filterInstalledWallets(wallets)
 
+  const onSuccessEvm = () => {
+    // TODO: Add success message
+    console.log('evm success message')
+  }
+
   return (
     <Dialog
       open={open}
       onClose={handleClose}
       fullScreen={fullScreen}
+      sx={{
+        '& .MuiPaper-root': {
+          background: theme.palette.background.paper,
+          minWidth: '350px', // Added minimum width
+        },
+        '& .MuiBackdrop-root': {
+          backdropFilter: 'blur(5px)',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      }}
       PaperProps={{
         variant: 'outlined',
         elevation: 0
@@ -198,7 +237,7 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
           fontSize: "32px",
         }}
       >
-        Select Sending Wallet
+        Confirm Payment
       </DialogTitle>
       <IconButton
         aria-label="close"
@@ -214,69 +253,88 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
       </IconButton>
       <DialogContent sx={{ minWidth: '350px', maxWidth: !fullScreen ? '460px' : null }}>
         <Typography sx={{ mb: 2 }}>
-          You are contributing {paymentAmount} {paymentCurrency} for {receiveAmount} {receiveCurrency}
+          You are contributing {paymentAmount} {paymentCurrency?.currency} on {paymentCurrency?.blockchain} for {receiveAmount} {receiveCurrency}
         </Typography>
-        <Typography sx={{ fontSize: '1rem!important', mb: 1 }}>
-          You may choose an alternate wallet to contribute from, other than your signed in wallet.
-        </Typography>
-        <Button
-          endIcon={<ExpandMoreIcon sx={{ transform: openAlternativeWallet ? 'rotate(180deg)' : null }} />}
-          startIcon={
-            <Box>
-              <Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.primary }}>
-                {openAlternativeWallet ? 'Close' : `Use alternative wallet`}
-              </Typography>
-            </Box>}
-          sx={{
-            background: theme.palette.background.paper,
-            border: `1px solid ${theme.palette.divider}`,
-            borderRadius: '6px',
-            mb: 1,
-            px: 2,
-            textTransform: 'none',
-            '& .MuiListItemSecondaryAction-root': {
-              height: '24px'
-            },
-            color: theme.palette.text.secondary,
-            justifyContent: "space-between"
-          }}
-          fullWidth
-          onClick={() => handleOpenAlternativeWallet()}
-        />
-        <Collapse in={openAlternativeWallet}>
-          {installedWallets.map((wallet) => (
-            <WalletListItemComponent {...wallet} key={wallet.name} handleConnect={() => handleConnect(wallet.connectName)} />
-          ))}
-        </Collapse>
-        {alternateWalletType &&
-          <>
-            <Typography sx={{ mb: 1, fontWeight: 700, textAlign: 'center' }}>
-              Selected wallet:
+        {paymentCurrency?.blockchain === 'Cardano'
+          ? <>
+            <Typography sx={{ fontSize: '1rem!important', mb: 1 }}>
+              You may choose an alternate wallet to contribute from, other than your signed in wallet.
             </Typography>
-            {connecting
-              ? 'Loading wallet...'
-              : <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center' }}>
-                  <Avatar src={theme.palette.mode === 'dark' ? alternateWalletType?.iconDark : alternateWalletType?.icon} sx={{ width: '24px', height: '24px', mr: 1 }} variant="square" />
-                  {changeAddress &&
-                    <Typography>
-                      {getShorterAddress(changeAddress, 12)}
-                    </Typography>
-                  }
-                </Box>
-                <Collapse in={errorMessage}><Box>
-                  <Typography color="text.secondary" sx={{ fontSize: '0.9rem!important', fontStyle: 'italic', mt: 1 }}>
-                    Please choose a wallet with at least {paymentAmount} ADA available
+            <Button
+              endIcon={<ExpandMoreIcon sx={{ transform: openAlternativeWallet ? 'rotate(180deg)' : null }} />}
+              startIcon={
+                <Box>
+                  <Typography sx={{ fontSize: '1rem !important', color: theme.palette.text.primary }}>
+                    {openAlternativeWallet ? 'Close' : `Use alternative wallet`}
                   </Typography>
-                </Box></Collapse>
-              </Box>}
+                </Box>}
+              sx={{
+                background: theme.palette.background.paper,
+                border: `1px solid ${theme.palette.divider}`,
+                borderRadius: '6px',
+                mb: 1,
+                px: 2,
+                textTransform: 'none',
+                '& .MuiListItemSecondaryAction-root': {
+                  height: '24px'
+                },
+                color: theme.palette.text.secondary,
+                justifyContent: "space-between"
+              }}
+              fullWidth
+              onClick={() => handleOpenAlternativeWallet()}
+            />
+            <Collapse in={openAlternativeWallet}>
+              {installedWallets.map((wallet) => (
+                <WalletListItemComponent {...wallet} key={wallet.name} handleConnect={() => handleConnect(wallet.connectName)} />
+              ))}
+            </Collapse>
+            {alternateWalletType &&
+              <>
+                <Typography sx={{ mb: 1, fontWeight: 700, textAlign: 'center' }}>
+                  Selected wallet:
+                </Typography>
+                {connecting
+                  ? 'Loading wallet...'
+                  : <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center' }}>
+                      <Avatar src={theme.palette.mode === 'dark' ? alternateWalletType?.iconDark : alternateWalletType?.icon} sx={{ width: '24px', height: '24px', mr: 1 }} variant="square" />
+                      {changeAddress &&
+                        <Typography>
+                          {getShorterAddress(changeAddress, 12)}
+                        </Typography>
+                      }
+                    </Box>
+                    <Collapse in={errorMessage}><Box>
+                      <Typography color="text.secondary" sx={{ fontSize: '0.9rem!important', fontStyle: 'italic', mt: 1 }}>
+                        Please choose a wallet with at least {paymentAmount} {paymentCurrency.currency} available
+                      </Typography>
+                    </Box></Collapse>
+                  </Box>}
+              </>
+            }
+          </>
+          : <>
+            <w3m-button />
           </>
         }
+
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center', mb: 1 }}>
-        <Button variant="contained" color="secondary" onClick={handleSubmit} disabled={buttonDisabled}>
-          {`Submit with ${alternateWalletType?.name || sessionData?.user.walletType} wallet`}
-        </Button>
+        {paymentCurrency?.blockchain === 'Cardano'
+          ? <Button variant="contained" color="secondary" onClick={handleSubmitCardano} disabled={buttonDisabled}>
+            {`Submit with ${alternateWalletType?.name || sessionData?.user.walletType} wallet`}
+          </Button>
+          : <EvmPayment
+            paymentAmount={paymentAmount}
+            exchangeRate={exchangeRateToBaseCurrency}
+            paymentCurrency={paymentCurrency}
+            blockchain={paymentCurrency?.blockchain || ''}
+            recipientAddress={recipientAddress}
+            contributionRoundId={contributionRoundId}
+            onSuccess={onSuccessEvm}
+          />
+        }
       </DialogActions>
     </Dialog>
   );
