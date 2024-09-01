@@ -6,7 +6,6 @@ import { useWalletContext } from '@contexts/WalletContext';
 import { formatNumber, formatTokenWithDecimals } from '@lib/utils/assets';
 import { useCardano } from '@lib/utils/cardano';
 import { trpc } from '@lib/utils/trpc';
-import { walletNameToId } from '@lib/walletsList';
 import { BrowserWallet } from '@meshsdk/core';
 import { useWallet } from '@meshsdk/react';
 import {
@@ -146,12 +145,12 @@ const StakePositions: FC = () => {
     const execute = async () => {
       if (connected && sessionStatus === 'authenticated' && currentWallet) {
         try {
-          if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
+          if (window.cardano[currentWallet] === undefined) return;
 
           // Update Utxos
           setWalletUtxosCbor([]);
-          if (window.cardano[walletNameToId(currentWallet!)!] === undefined) return;
-          const api = await window.cardano[walletNameToId(currentWallet!)!].enable();
+          if (window.cardano[currentWallet] === undefined) return;
+          const api = await window.cardano[currentWallet].enable();
           const utxos = await api.getUtxos();
           const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
           setWalletUtxosCbor(Array.from(new Set([...utxos!, ...(collateral ?? [])])));
@@ -212,12 +211,12 @@ const StakePositions: FC = () => {
   const formatWithDecimals = (value: string) => parseFloat(formatTokenWithDecimals(BigInt(value), cnctDecimals));
 
   const claimStakeRequest = useMemo(async () => {
-
+    
     if (currentWallet === undefined) return;
 
-    if (window.cardano[walletNameToId(currentWallet)!] === undefined) return;
+    if (window.cardano[currentWallet] === undefined) return;
     const browserWallet = await BrowserWallet.enable(currentWallet);
-    const api = await window.cardano[walletNameToId(currentWallet)!].enable();
+    const api = await window.cardano[currentWallet].enable();
     const currentChangeWallet = await browserWallet.getChangeAddress();
     const utxos = await api.getUtxos();
     const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral() as string[];
@@ -250,7 +249,7 @@ const StakePositions: FC = () => {
       handler: handleRedeem
     },
   ]
-
+  console.log({ isLoading, isLoading2: (walletUtxosCbor?.length ?? 0) <= 0 })
   return (
     <Box sx={{ position: 'relative' }} ref={parentRef}>
       <DashboardHeader title="Manage Staked Positions" />

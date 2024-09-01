@@ -5,7 +5,7 @@ import { useWalletContext } from '@contexts/WalletContext';
 import { parseTokenFromString } from '@lib/utils/assets';
 import { calculateFutureDateMonths } from '@lib/utils/general';
 import { trpc } from '@lib/utils/trpc';
-import { walletDataByName, walletNameToId } from '@lib/walletsList';
+import { walletDataByName } from '@lib/walletsList';
 import { BrowserWallet } from '@meshsdk/core';
 import { useWallet } from '@meshsdk/react';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
@@ -138,7 +138,7 @@ const StakeConfirm: FC<IStakeConfirmProps> = ({
     try {
       const wallet = userWallets?.find(w => w.changeAddress === walletAddress);
       if(wallet !== undefined) {
-        const api = await window.cardano[walletNameToId(wallet.type!)!].enable();
+        const api = await window.cardano[wallet.type].enable();
         await processTxWithApi(wallet.type, api);
         setOpen(false);
         setPaymentAmount('');

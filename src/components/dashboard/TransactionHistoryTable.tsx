@@ -3,7 +3,7 @@ import { useWalletContext } from '@contexts/WalletContext';
 import { useCardano } from '@lib/utils/cardano';
 import { getShorterAddress } from '@lib/utils/general';
 import { trpc } from '@lib/utils/trpc';
-import { walletNameToId, walletsList } from '@lib/walletsList';
+import { walletsList } from '@lib/walletsList';
 import { useWallet } from '@meshsdk/react';
 import CallMadeIcon from '@mui/icons-material/CallMade';
 import CallReceivedIcon from '@mui/icons-material/CallReceived';
@@ -245,7 +245,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
   useEffect(() => {
     const execute = async () => {
       if (connected) {
-        const api = await window.cardano[walletNameToId(sessionData?.user.walletType!)!]?.enable();
+        const api = await window.cardano[sessionData?.user.walletType!]?.enable();
         setCardanoApi(api);
       }
     };
@@ -256,7 +256,7 @@ const TransactionHistoryTable = <T extends Record<string, any>>({
     if (connected && cardanoApi !== undefined) {
       try {
         const walletType = cardano.getAddressWalletType(address);
-        const api = await window.cardano[walletNameToId(walletType!)!].enable();
+        const api = await window.cardano[walletType!].enable();
         const utxos = await api.getUtxos();
         const collateral = api.experimental.getCollateral === undefined ? [] : await api.experimental.getCollateral();
         const cancelStakeTxCbor = await cancelStakeTxMutation.mutateAsync({
