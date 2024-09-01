@@ -249,7 +249,6 @@ const StakePositions: FC = () => {
       handler: handleRedeem
     },
   ]
-  console.log({ isLoading, isLoading2: (walletUtxosCbor?.length ?? 0) <= 0 })
   return (
     <Box sx={{ position: 'relative' }} ref={parentRef}>
       <DashboardHeader title="Manage Staked Positions" />
