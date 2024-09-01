@@ -22,7 +22,7 @@ importers:
         version: 7.25.2
       '@dexhunterio/swaps':
         specifier: ^0.0.92
-        version: 0.0.92(@formkit/auto-animate@0.8.2)(@radix-ui/react-accordion@1.2.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-checkbox@1.1.1(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-dialog@1.1.1(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-dropdown-menu@2.1.1(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-label@2.1.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-popover@1.1.1(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-progress@1.1.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-select@1.2.2(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-separator@1.1.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-slider@1.2.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-slot@1.1.0(@types/react@18.2.17)(react@18.2.0))(@radix-ui/react-switch@1.1.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-toast@1.2.1(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-tooltip@1.1.2(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@tabler/icons-react@2.47.0(react@18.2.0))(@tailwindcss/container-queries@0.1.1(tailwindcss@3.4.10))(@tanstack/react-query-devtools@4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@tanstack/react-table@8.20.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@tanstack/react-virtual@3.10.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@vercel/analytics@1.3.1(next@13.5.6(@babel/core@7.25.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0))(axios@1.7.5)(bech32@2.0.0)(class-variance-authority@0.7.0)(clsx@2.1.1)(cmdk@0.2.1(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(i@0.3.7)(immer@10.1.1)(lucide-react@0.263.1(react@18.2.0))(moment@2.30.1)(npm@9.9.3)(overlayscrollbars-react@0.5.6(overlayscrollbars@2.10.0)(react@18.2.0))(react-confetti-explosion@2.1.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-currency-input-field@3.8.0(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react-hotkeys-hook@4.5.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-spinners@0.13.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-toastify@9.1.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-virtuoso@4.10.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)(sort-by@1.2.0)(tailwind-merge@1.14.0)(tailwindcss-animate@1.0.7(tailwindcss@3.4.10))(use-debounce@9.0.4(react@18.2.0))(zustand@4.5.5(@types/react@18.2.17)(immer@10.1.1)(react@18.2.0))
+        version: 0.0.92(xboz4mb7fwb6rtgcogsvkxdtce)
       '@emotion/cache':
         specifier: ^11.11.0
         version: 11.13.1
@@ -39,11 +39,11 @@ importers:
         specifier: ^16.3.0
         version: 16.6.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@meshsdk/core':
-        specifier: ^1.6.13
-        version: 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+        specifier: 1.7.0
+        version: 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
       '@meshsdk/react':
-        specifier: ^1.6.13
-        version: 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+        specifier: 1.7.0
+        version: 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
       '@mui/base':
         specifier: 5.0.0-beta.8
         version: 5.0.0-beta.8(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -878,29 +878,29 @@ packages:
   '@lit/reactive-element@2.0.4':
     resolution: {integrity: sha512-GFn91inaUa2oHLak8awSIigYz0cU0Payr1rcFsrkf5OJ5eSPxElyZfKh0f2p9FsTiZWXQdWGJeXZICEfXXYSXQ==}
 
-  '@meshsdk/common@1.6.13':
-    resolution: {integrity: sha512-MpHATa8LNgn/vjiDqAtx3JST0+ot8LbXzH8vcIizkCfUHVzDV7u9GoVcxjLQ0kTsuYo/b9PM4j+cbIdjoLzYvw==}
+  '@meshsdk/common@1.7.0':
+    resolution: {integrity: sha512-jx7mi7ELt9UWiZpLUH5J5gbXj7Z3RnHbGiuGBPkpbsO60lNLndIalybTVdYZH3EDsPjEZJVNvyAx53HF+aR80g==}
 
-  '@meshsdk/core-csl@1.6.13':
-    resolution: {integrity: sha512-3IK6Fj4yI1PYMMvrR8DFnHH/JWSVMmZSrgGMleqT+dFWVY2WNMnm71RlxeblKr0a8cd6Vfl7jRU5T4fs5zK/PQ==}
+  '@meshsdk/core-csl@1.7.0':
+    resolution: {integrity: sha512-CKOzYm6uTlHsYM94t1Irck48TbhIQ0+pJfrK0NV7F0GxtkMxcpj2abz4zzP6MpP+mHaxi11YsPiMP+T69heKaA==}
 
-  '@meshsdk/core-cst@1.6.13':
-    resolution: {integrity: sha512-QItQYDYcQmSr3fUxZXMyTs4OKyXqyCjmoCCRKpXPvH0OJQROrPkSLiK+Wic2fb4DE65eNsUXW20YGbcp2m/U5w==}
+  '@meshsdk/core-cst@1.7.0':
+    resolution: {integrity: sha512-lBP1YXAYmM6IeXtr94WXeoycYrhsN9rSbtDZS+1UmsY6+uLiVqXo1D3e+aYuAK4qD0EokJm5DsRKfhN9ZbwpSQ==}
 
-  '@meshsdk/core@1.6.13':
-    resolution: {integrity: sha512-ljH82bawEae7Q3Jaqt9BZCW0+9RrticK+oZ7divUZbKoEDqY04urEl10GQl7qKB9dKmcDNl1W7VfwJQhnan0ag==}
+  '@meshsdk/core@1.7.0':
+    resolution: {integrity: sha512-w88jlRsPzw/DjmhHAQy0yPQFw8fijCt+/8rk8iiwabMQW0+VX5TK45Dw2fibgKovJ+IBcO3PFP8/ItzfgQKUvQ==}
 
-  '@meshsdk/provider@1.6.13':
-    resolution: {integrity: sha512-UkA3rA66NB0m0IWYobCR35o7xkGmzUQTnDn+PHDoU0ETIDxkNdQIWJgFL5zfR1Kp5MRb9pjF3JpixrxhIzyuyA==}
+  '@meshsdk/provider@1.7.0':
+    resolution: {integrity: sha512-1bZ45c52erGIRXC9lAZISsu2XSfLHZfzOORMmiyXN619gI9IHRYjRfLFXSXrzdMo1c9P0SRFA/zhTWUb/A0IzQ==}
 
-  '@meshsdk/react@1.6.13':
-    resolution: {integrity: sha512-hBgivGOBQdUQLG+dJIfaiINxMJeGQpEOth5KDd5KCeV1ZWHoXQyysM2ze88fkK27IiyG2sA+P1Ilbh/F1zrQvQ==}
+  '@meshsdk/react@1.7.0':
+    resolution: {integrity: sha512-1vVpNA1dOv7kTGb8Iqnzwdx64dgHBl4bzorgLx7XaIgxILaCsAG/FhTif0weC++Oa897VoRO5EwsgeOIKTYjLA==}
 
-  '@meshsdk/transaction@1.6.13':
-    resolution: {integrity: sha512-OeVhzpBOhqxebvUevefOERXzWsIA1u/xl7wqD86J/PB54nXls9HNWGHjvozG44D70BvHD+s9SlnU6O+WnbexQQ==}
+  '@meshsdk/transaction@1.7.0':
+    resolution: {integrity: sha512-qy2OU9av6dQ3WzBVOdp7qiGm1MSnBYkjkIQsh1dVhfuy/OXJecHkfd2+aiQczjtQ0AGehMpeFFOm3QU1bdxHTA==}
 
-  '@meshsdk/wallet@1.6.13':
-    resolution: {integrity: sha512-UKbIsBfLBK4tHq25s3kFEx/uO7dgtWkGpK9kfcHxVBpnsn0xFxK/jtYP4Gm2QZzTujSNUMQ4Wq0v7/ENzuivUg==}
+  '@meshsdk/wallet@1.7.0':
+    resolution: {integrity: sha512-kWrE8/Uswu+TpaV5wrHL+67d0CdhgVGsIIFnQi8g4u6njcZBJjK92RlWfsQcD11gVyol1mdTn2dQlghogG9E8Q==}
 
   '@motionone/animation@10.18.0':
     resolution: {integrity: sha512-9z2p5GFGCm0gBsZbi8rVMOAJCtw1WqBTIPw3ozk06gDvZInBPIsQcHgYogEJ4yuHJ+akuW8g1SEIOpTOvYs8hw==}
@@ -2081,11 +2081,11 @@ packages:
   '@scure/base@1.1.7':
     resolution: {integrity: sha512-PPNYBslrLNNUQ/Yad37MHYsNQtK67EhWb6WtSvNLLPo7SdVZgkUjD6Dg+5On7zNwmskf8OX7I7Nx5oN+MIWE0g==}
 
-  '@sidan-lab/sidan-csl-rs-browser@0.7.5':
-    resolution: {integrity: sha512-ME/n158D65IpnOOkQS5XCyoRc77FiHknYaMwrzosE3ziu5qXWJ7gkkQ3K1DdHFfLATwZfcKVUC/sUvTjFAmbnQ==}
+  '@sidan-lab/sidan-csl-rs-browser@0.8.0':
+    resolution: {integrity: sha512-U3Qj9NOdqHR/sMBc3MVoMCZ2EodOZGBZQYJqErn52qJeDQA/ySqjKKL2ql3s+7UVNUiQw+Qj3ZjdxCN2UxV4nw==}
 
-  '@sidan-lab/sidan-csl-rs-nodejs@0.7.5':
-    resolution: {integrity: sha512-8IC7WsbrWrq/z/isvh/ceJljNuMOhPJSoRXuZO6GpKm0YLVShy6qWHzJ9JFsrTelWaAfElw4FsZjmZ6N9f5TGQ==}
+  '@sidan-lab/sidan-csl-rs-nodejs@0.8.0':
+    resolution: {integrity: sha512-bIinZwje1a79tmnsQq22AmZCl1H13uxlGtCsLN+9SCY0IiWI+jVhWVceaHoiyL6dYvLrQh+GbecfeZiMg90UJQ==}
 
   '@smithy/abort-controller@3.1.1':
     resolution: {integrity: sha512-MBJBiidoe+0cTFhyxT8g+9g7CeVccLM0IOKKUMCNQ1CNMJ/eIfoo0RTfVrXOONEI1UCN1W+zkiHSbzUNE9dZtQ==}
@@ -7219,8 +7219,8 @@ snapshots:
       preact: 10.23.2
       sha.js: 2.4.11
 
-  ? '@dexhunterio/swaps@0.0.92(@formkit/auto-animate@0.8.2)(@radix-ui/react-accordion@1.2.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-checkbox@1.1.1(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-dialog@1.1.1(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-dropdown-menu@2.1.1(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-label@2.1.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-popover@1.1.1(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-progress@1.1.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-select@1.2.2(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-separator@1.1.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-slider@1.2.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-slot@1.1.0(@types/react@18.2.17)(react@18.2.0))(@radix-ui/react-switch@1.1.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-toast@1.2.1(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@radix-ui/react-tooltip@1.1.2(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@tabler/icons-react@2.47.0(react@18.2.0))(@tailwindcss/container-queries@0.1.1(tailwindcss@3.4.10))(@tanstack/react-query-devtools@4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@tanstack/react-table@8.20.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@tanstack/react-virtual@3.10.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@vercel/analytics@1.3.1(next@13.5.6(@babel/core@7.25.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0))(axios@1.7.5)(bech32@2.0.0)(class-variance-authority@0.7.0)(clsx@2.1.1)(cmdk@0.2.1(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(i@0.3.7)(immer@10.1.1)(lucide-react@0.263.1(react@18.2.0))(moment@2.30.1)(npm@9.9.3)(overlayscrollbars-react@0.5.6(overlayscrollbars@2.10.0)(react@18.2.0))(react-confetti-explosion@2.1.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-currency-input-field@3.8.0(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react-hotkeys-hook@4.5.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-spinners@0.13.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-toastify@9.1.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-virtuoso@4.10.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)(sort-by@1.2.0)(tailwind-merge@1.14.0)(tailwindcss-animate@1.0.7(tailwindcss@3.4.10))(use-debounce@9.0.4(react@18.2.0))(zustand@4.5.5(@types/react@18.2.17)(immer@10.1.1)(react@18.2.0))'
-  : dependencies:
+  '@dexhunterio/swaps@0.0.92(xboz4mb7fwb6rtgcogsvkxdtce)':
+    dependencies:
       '@formkit/auto-animate': 0.8.2
       '@radix-ui/react-accordion': 1.2.0(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@radix-ui/react-checkbox': 1.1.1(@types/react-dom@18.2.7)(@types/react@18.2.17)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -7537,20 +7537,20 @@ snapshots:
     dependencies:
       '@lit-labs/ssr-dom-shim': 1.2.1
 
-  '@meshsdk/common@1.6.13':
+  '@meshsdk/common@1.7.0':
     dependencies:
       bech32: 2.0.0
       bip39: 3.1.0
       blake2b: 2.1.4
 
-  '@meshsdk/core-csl@1.6.13':
+  '@meshsdk/core-csl@1.7.0':
     dependencies:
-      '@meshsdk/common': 1.6.13
-      '@sidan-lab/sidan-csl-rs-browser': 0.7.5
-      '@sidan-lab/sidan-csl-rs-nodejs': 0.7.5
+      '@meshsdk/common': 1.7.0
+      '@sidan-lab/sidan-csl-rs-browser': 0.8.0
+      '@sidan-lab/sidan-csl-rs-nodejs': 0.8.0
       json-bigint: 1.0.0
 
-  '@meshsdk/core-cst@1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)':
+  '@meshsdk/core-cst@1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)':
     dependencies:
       '@cardano-sdk/core': 0.35.4(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
       '@cardano-sdk/crypto': 0.1.30
@@ -7558,7 +7558,7 @@ snapshots:
       '@harmoniclabs/cbor': 1.3.0
       '@harmoniclabs/plutus-data': 1.2.4(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/cbor@1.3.0)
       '@harmoniclabs/uplc': 1.2.4(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/cbor@1.3.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(@harmoniclabs/plutus-data@1.2.4(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/cbor@1.3.0))
-      '@meshsdk/common': 1.6.13
+      '@meshsdk/common': 1.7.0
       '@stricahq/bip32ed25519': 1.1.0
       '@stricahq/cbors': 1.0.3
       pbkdf2: 3.1.2
@@ -7576,15 +7576,15 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@meshsdk/core@1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)':
+  '@meshsdk/core@1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)':
     dependencies:
-      '@meshsdk/common': 1.6.13
-      '@meshsdk/core-csl': 1.6.13
-      '@meshsdk/core-cst': 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
-      '@meshsdk/provider': 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
-      '@meshsdk/react': 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
-      '@meshsdk/transaction': 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
-      '@meshsdk/wallet': 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+      '@meshsdk/common': 1.7.0
+      '@meshsdk/core-csl': 1.7.0
+      '@meshsdk/core-cst': 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+      '@meshsdk/provider': 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+      '@meshsdk/react': 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+      '@meshsdk/transaction': 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+      '@meshsdk/wallet': 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
     transitivePeerDependencies:
       - '@dcspark/cardano-multiplatform-lib-asmjs'
       - '@dcspark/cardano-multiplatform-lib-browser'
@@ -7599,10 +7599,10 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@meshsdk/provider@1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)':
+  '@meshsdk/provider@1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)':
     dependencies:
-      '@meshsdk/common': 1.6.13
-      '@meshsdk/core-cst': 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+      '@meshsdk/common': 1.7.0
+      '@meshsdk/core-cst': 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
       axios: 1.7.5
     transitivePeerDependencies:
       - '@dcspark/cardano-multiplatform-lib-asmjs'
@@ -7618,11 +7618,11 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@meshsdk/react@1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)':
+  '@meshsdk/react@1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)':
     dependencies:
-      '@meshsdk/common': 1.6.13
-      '@meshsdk/transaction': 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
-      '@meshsdk/wallet': 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+      '@meshsdk/common': 1.7.0
+      '@meshsdk/transaction': 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+      '@meshsdk/wallet': 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
       react: 18.2.0
     transitivePeerDependencies:
       - '@dcspark/cardano-multiplatform-lib-asmjs'
@@ -7638,11 +7638,11 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@meshsdk/transaction@1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)':
+  '@meshsdk/transaction@1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)':
     dependencies:
-      '@meshsdk/common': 1.6.13
-      '@meshsdk/core-csl': 1.6.13
-      '@meshsdk/core-cst': 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+      '@meshsdk/common': 1.7.0
+      '@meshsdk/core-csl': 1.7.0
+      '@meshsdk/core-cst': 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
       json-bigint: 1.0.0
     transitivePeerDependencies:
       - '@dcspark/cardano-multiplatform-lib-asmjs'
@@ -7658,12 +7658,12 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@meshsdk/wallet@1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)':
+  '@meshsdk/wallet@1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)':
     dependencies:
-      '@meshsdk/common': 1.6.13
-      '@meshsdk/core-csl': 1.6.13
-      '@meshsdk/core-cst': 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
-      '@meshsdk/transaction': 1.6.13(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+      '@meshsdk/common': 1.7.0
+      '@meshsdk/core-csl': 1.7.0
+      '@meshsdk/core-cst': 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
+      '@meshsdk/transaction': 1.7.0(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.4)(@harmoniclabs/pair@1.0.0)(bufferutil@4.0.7)(rxjs@7.8.1)(utf-8-validate@5.0.2)
       '@nufi/dapp-client-cardano': 0.3.5
       '@nufi/dapp-client-core': 0.3.5
     transitivePeerDependencies:
@@ -8842,9 +8842,9 @@ snapshots:
 
   '@scure/base@1.1.7': {}
 
-  '@sidan-lab/sidan-csl-rs-browser@0.7.5': {}
+  '@sidan-lab/sidan-csl-rs-browser@0.8.0': {}
 
-  '@sidan-lab/sidan-csl-rs-nodejs@0.7.5': {}
+  '@sidan-lab/sidan-csl-rs-nodejs@0.8.0': {}
 
   '@smithy/abort-controller@3.1.1':
     dependencies:
