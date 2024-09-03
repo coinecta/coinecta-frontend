@@ -510,5 +510,9 @@ const defaultSalesTerms: ISalesTerm[] = [
   {
     header: 'CNCT Stakers',
     bodyText: `You must have your stake NFTs in the wallet you contributed from at the closing time of the sale. We will do a snapshot at that time. Please let us know if your stake wallet wasn't reflected in your refund amount before the distribution is sent. `
+  },
+  {
+    header: 'Refund currency',
+    bodyText: 'Refunds will be sent in the original currency contributed, less on-chain fees needed to send them. We are not responsible for any price changes in the selected currency relative to USD or any other currency between the time you make the contribution and the time any refund is issued.'
   }
 ]

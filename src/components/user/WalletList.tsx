@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   Button,
   CircularProgress,
@@ -11,25 +11,17 @@ import { useWalletList, useWallet } from '@meshsdk/react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { WalletListItemComponent } from "./WalletListItem";
 import { walletsList, filterInstalledWallets } from "@lib/walletsList";
-import { BrowserWallet } from '@meshsdk/core';
-import { CardanoWallet, MeshBadge } from "@meshsdk/react";
-
-
 
 interface IWalletList {
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setConnectedCallback: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const WalletList: FC<IWalletList> = ({ setOpen, setLoading }) => {
+export const WalletList: FC<IWalletList> = ({ setLoading, setConnectedCallback }) => {
   const theme = useTheme();
   const wallets = useWalletList();
-  const { connecting, connect, error } = useWallet()
+  const { connecting, connect, error, connected } = useWallet()
   const [openAddWallet, setOpenAddWallet] = useState(false)
-
-  const handleClose = () => {
-    setOpen(false)
-  }
 
   const handleConnect = async (walletName: string) => {
     try {
@@ -38,7 +30,7 @@ export const WalletList: FC<IWalletList> = ({ setOpen, setLoading }) => {
     } catch {
       if (error) console.log(error)
     } finally {
-      // handleClose()
+      setConnectedCallback(true)
       setLoading(false)
     }
   }

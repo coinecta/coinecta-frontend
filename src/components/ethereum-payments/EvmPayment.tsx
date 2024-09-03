@@ -7,6 +7,7 @@ import { Box, Button, Typography } from '@mui/material';
 import { useAlert } from '@contexts/AlertContext';
 import { BLOCKCHAINS } from '@lib/currencies';
 import { useWalletContext } from '@contexts/WalletContext';
+import { getShorterAddress } from '@lib/utils/general';
 
 interface EvmPaymentProps {
   paymentAmount: string;
@@ -14,6 +15,7 @@ interface EvmPaymentProps {
   blockchain: string;
   exchangeRate: number;
   recipientAddress: string;
+  userAdaAddress?: string;
   contributionRoundId: number;
   onSuccess: () => void;
 }
@@ -25,6 +27,7 @@ const EvmPayment: React.FC<EvmPaymentProps> = ({
   blockchain,
   recipientAddress,
   contributionRoundId,
+  userAdaAddress,
   onSuccess
 }) => {
   const { sessionData } = useWalletContext()
@@ -84,15 +87,11 @@ const EvmPayment: React.FC<EvmPaymentProps> = ({
         };
         const tx = await signer.sendTransaction(transaction);
 
-        setStatus(`${paymentCurrency.currency} Transaction sent: ${tx.hash}`);
-        const receipt = await tx.wait();
-        setStatus(`${paymentCurrency.currency} Transaction confirmed in block ${receipt?.blockNumber}`);
-
-        // TODO: Update adaReceiveAddress with an input box or selection from user's existing connected wallets
+        setStatus(`${paymentCurrency.currency} Transaction sent: ${getShorterAddress(tx.hash, 6)}`);
         await createTransaction.mutateAsync({
           amount: paymentAmount,
           currency: paymentCurrency.currency,
-          adaReceiveAddress: sessionData?.user.address || '',
+          adaReceiveAddress: userAdaAddress || sessionData?.user.address || '',
           exchangeRate: exchangeRate,
           blockchain: paymentCurrency.blockchain,
           address: address!,
@@ -100,7 +99,13 @@ const EvmPayment: React.FC<EvmPaymentProps> = ({
           contributionId: contributionRoundId
         });
 
+        const receipt = await tx.wait();
+        setStatus(`${paymentCurrency.currency} Transaction confirmed in block ${receipt?.blockNumber}`);
+
+
+
         addAlert('success', `Transaction successful: ${tx.hash}`);
+        setStatus("Transaction Successful!");
         onSuccess();
       } else {
         if (!token?.contractAddress) throw new Error('Token address not found');
@@ -110,39 +115,49 @@ const EvmPayment: React.FC<EvmPaymentProps> = ({
 
         const tx = await tokenContract.transfer(recipientAddress, tokenAmount);
 
-        setStatus(`${paymentCurrency.currency} Transaction sent: ${tx.hash}`);
-        const receipt = await tx.wait();
-        setStatus(`${paymentCurrency.currency} Transaction confirmed in block ${receipt?.blockNumber}`);
-
-        // TODO: Update adaReceiveAddress with an input box or selection from user's existing connected wallets
+        setStatus(`${paymentCurrency.currency} Transaction sent: ${getShorterAddress(tx.hash, 6)}`);
         await createTransaction.mutateAsync({
           amount: paymentAmount,
           currency: paymentCurrency.currency,
           address: address!,
-          adaReceiveAddress: sessionData?.user.address || '',
+          adaReceiveAddress: userAdaAddress || sessionData?.user.address || '',
           exchangeRate: exchangeRate,
           blockchain: paymentCurrency.blockchain,
           txId: tx.hash,
           contributionId: contributionRoundId
         });
 
+        const receipt = await tx.wait();
+
+        setStatus(`${paymentCurrency.currency} Transaction confirmed in block ${receipt?.blockNumber}`);
+
         addAlert('success', `Transaction successful: ${tx.hash}`);
+        setStatus("Transaction Successful!");
         onSuccess();
       }
     } catch (error) {
       console.error('Payment error:', error);
-      addAlert('error', `Payment failed: ${error instanceof Error ? error.message : String(error)}`);
+      if (error instanceof Error && error.message.includes('rejected')) {
+        addAlert('error', `User rejected payment`);
+      }
+      else addAlert('error', `Payment failed: ${error instanceof Error ? error.message : String(error)}`);
+      setStatus("Payment error, please try again.");
     }
   };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-      <Button disabled={!paymentCurrency || !blockchain} variant="contained" color="secondary" onClick={handlePayment} fullWidth>
+      <Button disabled={
+        !paymentCurrency
+        || !blockchain
+        || !userAdaAddress
+      } variant="contained" color="secondary" onClick={handlePayment} fullWidth>
         {`Submit with ${paymentCurrency?.currency} on ${blockchain}`}
       </Button>
       {status && <Typography sx={{ textAlign: 'center' }}>{status}</Typography>}
     </Box>
   );
+
 };
 
 export default EvmPayment;
