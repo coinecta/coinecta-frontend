@@ -103,7 +103,7 @@ const Apply = () => {
 			...formData,
 
 			// Trimming any whitespace
-			[e.target.name]: e.target.name === 'projectName' ? 'Coinecta ' + e.target.value.trim() : e.target.value.trim()
+			[e.target.name]: e.target.value.trim()
 		});
 	};
 
