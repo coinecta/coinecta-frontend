@@ -24,7 +24,7 @@ export const AddWallet: FC = () => {
   const { addAlert } = useAlert()
   const { connect, wallet, connected, name } = useWallet()
   const [openAddWallet, setOpenAddWallet] = useState(false)
-  const [walletSelected, setWalletSelected] = useState(true) // true to use a "false" trigger when a wallet is selected
+  const [walletSelected, setWalletSelected] = useState(false)
   const [openManageWallets, setOpenManageWallets] = useState(false)
   const [shouldRefetch, setShouldRefetch] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -33,9 +33,8 @@ export const AddWallet: FC = () => {
   const getWallets = trpc.user.getWallets.useQuery()
 
   useEffect(() => {
-    if (connected && !walletSelected) {
+    if (connected && walletSelected) {
       addNewWallet()
-      setWalletSelected(true)
     }
     else { console.log('not connected') }
   }, [connected, walletSelected]);
@@ -64,7 +63,7 @@ export const AddWallet: FC = () => {
       console.error(e);
       const errorMessage = e instanceof TRPCClientError ? e.message : 'Failed to add wallet.';
       addAlert('error', errorMessage);
-    } finally { setWalletSelected(true) }
+    } finally { setWalletSelected(false) }
   }
 
   const handleOpenAddWallet = () => {
@@ -129,7 +128,7 @@ export const AddWallet: FC = () => {
         onClick={() => handleOpenAddWallet()}
       />
       <Collapse in={openAddWallet}>
-        <WalletList setOpen={setWalletSelected} setLoading={setLoading} />
+        <WalletList setConnectedCallback={setWalletSelected} setLoading={setLoading} />
       </Collapse>
       <Button
         endIcon={<ExpandMoreIcon sx={{ transform: openManageWallets ? 'rotate(180deg)' : null }} />}

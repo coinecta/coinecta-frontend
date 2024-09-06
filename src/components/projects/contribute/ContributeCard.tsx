@@ -115,16 +115,15 @@ const ContributeCard: FC<IContributeCardProps> = ({
           <Button
             variant="contained"
             color="secondary"
-            // TODO: turn disabled scenarios back on
-            // disabled={
-            //   !termsCheck ||
-            //   !whitelisted ||
-            //   !live ||
-            //   // !recipientAddress ||
-            //   Number(inputValue) === 0 ||
-            //   sessionData == null ||
-            //   !allowed
-            // }
+            disabled={
+              !termsCheck ||
+              !whitelisted ||
+              !live ||
+              // !recipientAddress ||
+              Number(inputValue) === 0 ||
+              sessionData == null ||
+              !allowed
+            }
             sx={{
               textTransform: 'none',
               fontSize: '20px',

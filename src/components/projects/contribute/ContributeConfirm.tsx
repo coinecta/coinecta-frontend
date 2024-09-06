@@ -26,6 +26,8 @@ import { useAlert } from '@contexts/AlertContext';
 import { trpc } from '@lib/utils/trpc';
 import EvmPayment from '@components/ethereum-payments/EvmPayment';
 import { BLOCKCHAINS } from '@lib/currencies';
+import AddWallet from '@components/user/AddWallet';
+import CardanoWalletSelector from './CardanoWalletSelector';
 
 
 interface IContributeConfirmProps {
@@ -62,6 +64,8 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
   const [errorMessage, setErrorMessage] = useState(false)
   const [alternateWalletType, setAlternateWalletType] = useState<TWalletListItem | undefined>(undefined)
   const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined)
+  const [selectedCardanoAddress, setSelectedCardanoAddress] = useState<string | undefined>(undefined);
+
   const createTransaction = trpc.contributions.createTransaction.useMutation();
 
   const handleOpenAlternativeWallet = () => {
@@ -206,8 +210,10 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
   const installedWallets = filterInstalledWallets(wallets)
 
   const onSuccessEvm = () => {
-    // TODO: Add success message
-    console.log('evm success message')
+    // success message is already sent in EvmPayment
+    // Leaving this here in case its needed in the future. 
+    // Can add a callback to the parent to refetch data when they close this Dialog if necessary
+    // console.log('Success')
   }
 
   return (
@@ -314,9 +320,17 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
               </>
             }
           </>
-          : <>
-            <w3m-button />
-          </>
+          : <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', width: '100%' }}>
+            <Box sx={{ mb: 3 }}>
+              <w3m-button />
+            </Box>
+            <Box>
+              <CardanoWalletSelector
+                tokenName={receiveCurrency}
+                onAddressSelect={(address) => setSelectedCardanoAddress(address)}
+              />
+            </Box>
+          </Box>
         }
 
       </DialogContent>
@@ -332,6 +346,7 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
             blockchain={paymentCurrency?.blockchain || ''}
             recipientAddress={recipientAddress}
             contributionRoundId={contributionRoundId}
+            userAdaAddress={selectedCardanoAddress}
             onSuccess={onSuccessEvm}
           />
         }

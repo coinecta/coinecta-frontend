@@ -51,8 +51,6 @@ const UserMenu: FC<IUserMenuProps> = () => {
   const walletsList = useWalletList();
   const { clearSelectedAddresses } = useCardano();
 
-  console.log(walletsList)
-
   useEffect(() => {
     // console.log(`connected: ${connected}`)
     // console.log(`rewardAddress: ${rewardAddress}`)
