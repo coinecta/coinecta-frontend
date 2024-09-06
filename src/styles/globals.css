@@ -22,79 +22,85 @@ a {
 
 
 ::-webkit-scrollbar {
-  background: transparent!important;
-  width: 8px!important;
+  background: transparent !important;
+  width: 8px !important;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent!important;
+  background: transparent !important;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(100,100,100,0.3)!important;
+  background: rgba(100, 100, 100, 0.3) !important;
   border-radius: 20px;
   /* border: 1px solid rgba(100,100,100,0.5)!important; */
   background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(140,140,140,0.6)!important;
+  background: rgba(140, 140, 140, 0.6) !important;
   border-radius: 20px;
   border: 3px solid transparent;
   background-clip: content-box;
 }
 
-::-webkit-scrollbar-track-piece
-{
-   display:none;
+::-webkit-scrollbar-track-piece {
+  display: none;
 }
 
 .slick-track {
   display: flex;
-  align-items: stretch; 
+  align-items: stretch;
 }
 
-.slick-slide > div {
+.slick-slide>div {
   height: 100% !important;
 }
 
-.slick-slide > div > div {
+.slick-slide>div>div {
   height: 100% !important;
 }
 
 .slick-slide {
-  padding: 0 10px; /* Half of desired space between slides */
+  padding: 0 10px;
+  /* Half of desired space between slides */
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   height: 100%;
 }
 
-.slick-list, .slick-track {
+.slick-list,
+.slick-track {
   align-items: stretch;
   height: 100%;
 }
 
 .olStart {
-  counter-reset: section; /* Establish a new counter named 'section' */
-  list-style-type: none; /* Remove default list style */
+  counter-reset: section;
+  /* Establish a new counter named 'section' */
+  list-style-type: none;
+  /* Remove default list style */
   margin-left: 0;
   padding-left: 0;
 }
 
-.olStart > li {
-  counter-reset: subsection; /* Reset subsection counter at the start of a new li in the main list */
+.olStart>li {
+  counter-reset: subsection;
+  /* Reset subsection counter at the start of a new li in the main list */
   margin-bottom: 12px;
   font-weight: 700;
   font-size: 2rem;
 }
 
-.olStart > li:before {
-  content: counter(section) ". "; /* Use the 'section' counter for numbering */
-  counter-increment: section; /* Increment the 'section' counter */
+.olStart>li:before {
+  content: counter(section) ". ";
+  /* Use the 'section' counter for numbering */
+  counter-increment: section;
+  /* Increment the 'section' counter */
 }
 
-.olStart > li > ol,
-.olStart > li > ul {
+.olStart>li>ol,
+.olStart>li>ul {
   list-style-type: none;
   padding-left: 20px;
   margin-top: 12px;
@@ -102,37 +108,47 @@ a {
   font-size: 1.2rem;
 }
 
-.olStart > li > ol > li, 
-.olStart > li > ul > li {
-  position: relative; /* Positioning relative to the li for before content */
-  counter-reset: subsubsection; /* Reset subsubsection counter at the start of a new li in the second-level list */
+.olStart>li>ol>li,
+.olStart>li>ul>li {
+  position: relative;
+  /* Positioning relative to the li for before content */
+  counter-reset: subsubsection;
+  /* Reset subsubsection counter at the start of a new li in the second-level list */
   margin-bottom: 12px;
   padding-left: 20px;
 }
 
-.olStart > li > ol > li:before {
-  content: counter(section) "." counter(subsection) " "; /* Combine 'section' and 'subsection' counters */
-  counter-increment: subsection; /* Increment the 'subsection' counter */
+.olStart>li>ol>li:before {
+  content: counter(section) "." counter(subsection) " ";
+  /* Combine 'section' and 'subsection' counters */
+  counter-increment: subsection;
+  /* Increment the 'subsection' counter */
   position: absolute;
   margin-left: -40px;
 }
 
-.olStart ol ol, 
+.olStart ol ol,
 .olStart ul ol {
-  list-style-type: lower-alpha; /* Use lower-alpha for second-level nested lists */
+  list-style-type: lower-alpha;
+  /* Use lower-alpha for second-level nested lists */
   margin-top: 12px;
 }
 
-.olStart ol ol > li,
-.olStart ol ol ol > li,
-.olStart ul ol > li,
-.olStart ul ol ol > li {
+.olStart ol ol>li,
+.olStart ol ol ol>li,
+.olStart ul ol>li,
+.olStart ul ol ol>li {
   margin-bottom: 8px;
 }
 
 .olStart ol ol ol,
 .olStart ul ol ol {
-  list-style-type: lower-roman; /* Use lower-roman for third-level nested lists */
+  list-style-type: lower-roman;
+  /* Use lower-roman for third-level nested lists */
   padding-left: 20px;
   margin-top: 12px;
+}
+
+#nufi-widget {
+  z-index: 9999999 !important;
 }

@@ -184,3 +184,11 @@ interface AcceptedBlockchain {
   imageUrl: string;
   tokens: AcceptedToken[];
 }
+
+interface SendEmailParams {
+  from: string;
+  to: string | string[];
+  subject: string;
+  text: string;
+  html: string;
+}
