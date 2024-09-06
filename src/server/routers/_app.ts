@@ -1,5 +1,6 @@
 import { createTRPCRouter } from "@server/trpc";
 import { contributionRouter } from "./contributions";
+import { emailRouter } from "./email";
 import { ergoRouter } from "./ergo";
 import { evmRouter } from "./evm";
 import { fileRouter } from "./file";
@@ -33,7 +34,8 @@ export const appRouter = createTRPCRouter({
   tokens: tokensRouter,
   xerberus: xerberusRouter,
   sync: syncRouter,
-  evm: evmRouter
+  evm: evmRouter,
+  email: emailRouter
 });
 
 // export type definition of API

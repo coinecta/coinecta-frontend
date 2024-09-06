@@ -16,6 +16,8 @@ import {
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 import Snackbar from '@mui/material/Snackbar';
+import { trpc } from '@lib/utils/trpc';
+import { string } from 'zod';
 
 const initialFormData = {
 	projectName: '',
@@ -43,12 +45,10 @@ const emailRegex = /\S+@\S+\.\S+/;
 
 const Apply = () => {
 	const theme = useTheme()
+
 	const [formData, updateFormData] = useState(initialFormData);
-	// form error object, all booleans
 	const [formErrors, setFormErrors] = useState(initialFormErrors)
-	// loading spinner for submit button
 	const [isLoading, setLoading] = useState(false);
-	// set true to disable submit button
 	const [buttonDisabled, setbuttonDisabled] = useState(false)
 	// open error snackbar 
 	const [openError, setOpenError] = useState(false);
@@ -56,6 +56,8 @@ const Apply = () => {
 	const [openSuccess, setOpenSuccess] = useState(false);
 	// change error message for error snackbar
 	const [errorMessage, setErrorMessage] = useState('Please eliminate form errors and try again')
+
+	const sendEmailMutation = trpc.email.sendEmail.useMutation();
 
 	useEffect(() => {
 		if (isLoading) {
@@ -121,6 +123,72 @@ const Apply = () => {
 		setOpenSuccess(false);
 	};
 
+	const trySendMail = async ({ from, to, subject, text, html }: SendEmailParams): Promise<void> => {
+		try {
+			const result = await sendEmailMutation.mutateAsync({
+				from,
+				to,
+				subject,
+				text,
+				html,
+			});
+			console.log('Email sent:', result);
+			setLoading(false)
+			setOpenSuccess(true)
+		} catch (error) {
+			setErrorMessage('There was an API error. Please contact the team on Telegram or Discord')
+			setOpenError(true)
+			setLoading(false)
+			console.error('Failed to send email:', error);
+		}
+	}
+
+	interface ProjectFormData {
+		projectName: string;
+		description: string;
+		projectValue: string;
+		competitors: string;
+		pitchDeck: string;
+		whitePaper: string;
+		name: string;
+		email: string;
+		telegramHandle: string;
+		telegramGroup: string;
+		accelerator: boolean;
+	}
+
+	const createEmailContent = (formData: ProjectFormData) => {
+		const nl2br = (str: string) => str.replace(/\n/g, '<br>');
+		const htmlContent = `
+			<h2>Coinecta Project Application</h2>
+			<table>
+				 <table style="border-collapse: collapse; width: 100%;">
+        <tr><th style="text-align: left; padding: 8px;">Project Name:</th><td style="padding: 8px;">${formData.projectName}</td></tr>
+        <tr><th style="text-align: left; padding: 8px;">Description:</th><td style="padding: 8px;">${nl2br(formData.description)}</td></tr>
+        <tr><th style="text-align: left; padding: 8px;">Project Value:</th><td style="padding: 8px;">${formData.projectValue}</td></tr>
+        <tr><th style="text-align: left; padding: 8px;">Competitors:</th><td style="padding: 8px;">${formData.competitors}</td></tr>
+        <tr><th style="text-align: left; padding: 8px;">Pitch Deck:</th><td style="padding: 8px;">${formData.pitchDeck}</td></tr>
+        <tr><th style="text-align: left; padding: 8px;">White Paper:</th><td style="padding: 8px;">${formData.whitePaper}</td></tr>
+        <tr><th style="text-align: left; padding: 8px;">Applicant Name:</th><td style="padding: 8px;">${formData.name}</td></tr>
+        <tr><th style="text-align: left; padding: 8px;">Email:</th><td style="padding: 8px;">${formData.email}</td></tr>
+        <tr><th style="text-align: left; padding: 8px;">Telegram Handle:</th><td style="padding: 8px;">${formData.telegramHandle}</td></tr>
+        <tr><th style="text-align: left; padding: 8px;">Telegram Group:</th><td style="padding: 8px;">${formData.telegramGroup}</td></tr>
+      </table>
+			</table>
+		`;
+
+		const textContent = Object.entries(formData)
+			.map(([key, value]) => `${key}: ${value}`)
+			.join('\n');
+
+		return {
+			to: process.env.FORM_EMAIL || '',
+			subject: "Coinecta Project Application",
+			text: textContent,
+			html: htmlContent,
+		};
+	};
+
 	const handleSubmit = (e: any) => {
 		e.preventDefault();
 		setLoading(true)
@@ -128,38 +196,44 @@ const Apply = () => {
 
 		const errorCheck = Object.values(formErrors).every(v => v === false)
 
-		const defaultOptions = {
-			headers: {
-				'Content-Type': 'application/json',
-				// Authorization: auth?.accessToken ? `Bearer ${auth.accessToken}` : '',
-			},
-		};
+		// const defaultOptions = {
+		// 	headers: {
+		// 		'Content-Type': 'application/json',
+		// 		// Authorization: auth?.accessToken ? `Bearer ${auth.accessToken}` : '',
+		// 	},
+		// };
 
-		const form = {
-			to: process.env.FORM_EMAIL,
-			subject: "ErgoPad Project Application",
-			body: JSON.stringify(formData)
-		}
+		// const form = {
+		// 	to: process.env.FORM_EMAIL,
+		// 	subject: "Coinecta Project Application",
+		// 	body: JSON.stringify(formData)
+		// }
 
 		// console.log(emptyCheck)
 
 		if (errorCheck) {
-			axios.post(`${process.env.API_URL}/util/email`, { ...defaultOptions, ...form })
-				.then(res => {
-					console.log(res);
-					console.log(res.data);
-					setLoading(false)
+			const details = createEmailContent(formData)
+			trySendMail({
+				...details,
+				from: formData.email
+			})
 
-					// modal for success message
-					setOpenSuccess(true)
-				})
-				.catch(err => {
-					console.log(err)
-					// snackbar for error message
-					setErrorMessage('There was an API error. Please contact the team on Telegram or Discord')
-					setOpenError(true)
-					setLoading(false)
-				});
+			// axios.post(`${process.env.API_URL}/util/email`, { ...defaultOptions, ...form })
+			// 	.then(res => {
+			// 		console.log(res);
+			// 		console.log(res.data);
+			// 		setLoading(false)
+
+			// 		// modal for success message
+			// 		setOpenSuccess(true)
+			// 	})
+			// 	.catch(err => {
+			// 		console.log(err)
+			// 		// snackbar for error message
+			// 		setErrorMessage('There was an API error. Please contact the team on Telegram or Discord')
+			// 		setOpenError(true)
+			// 		setLoading(false)
+			// 	});
 		}
 		else {
 			let updateErrors = {}
