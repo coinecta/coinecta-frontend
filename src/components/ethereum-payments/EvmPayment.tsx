@@ -39,8 +39,6 @@ const EvmPayment: React.FC<EvmPaymentProps> = ({
   const createTransaction = trpc.contributions.createTransaction.useMutation();
   const { queryParams } = useQueryParams();
 
-  console.log(queryParams.ref)
-
   const NETWORK_CHAIN_IDS: Record<string, number> = {
     Ethereum: 1,
     Base: 8453
