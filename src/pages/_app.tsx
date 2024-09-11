@@ -17,6 +17,7 @@ import { AlertProvider } from '@contexts/AlertContext';
 import AlertComponent from '@components/Alert';
 import { DialogProvider } from "@contexts/DialogContext";
 import { Web3Modal } from "@contexts/Web3Modal";
+import { QueryParamsProvider } from "@contexts/QueryParamsContext";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [theme, setTheme] = useState(LightTheme);
@@ -42,21 +43,23 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         >
           <ThemeProvider theme={theme}>
             <ThemeContext.Provider value={{ theme, setTheme }}>
-              <AlertProvider>
-                <DialogProvider>
-                  <MeshProvider>
-                    <WalletProvider>
-                      <Web3Modal>
-                        <CssBaseline enableColorScheme />
-                        <Layout>
-                          <Component {...pageProps} />
-                        </Layout>
-                        <AlertComponent />
-                      </Web3Modal>
-                    </WalletProvider>
-                  </MeshProvider>
-                </DialogProvider>
-              </AlertProvider>
+              <QueryParamsProvider>
+                <AlertProvider>
+                  <DialogProvider>
+                    <MeshProvider>
+                      <WalletProvider>
+                        <Web3Modal>
+                          <CssBaseline enableColorScheme />
+                          <Layout>
+                            <Component {...pageProps} />
+                          </Layout>
+                          <AlertComponent />
+                        </Web3Modal>
+                      </WalletProvider>
+                    </MeshProvider>
+                  </DialogProvider>
+                </AlertProvider>
+              </QueryParamsProvider>
             </ThemeContext.Provider>
           </ThemeProvider>
         </LocalizationProvider>

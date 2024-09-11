@@ -28,6 +28,7 @@ import EvmPayment from '@components/ethereum-payments/EvmPayment';
 import { BLOCKCHAINS } from '@lib/currencies';
 import AddWallet from '@components/user/AddWallet';
 import CardanoWalletSelector from './CardanoWalletSelector';
+import { useQueryParams } from '@contexts/QueryParamsContext';
 
 
 interface IContributeConfirmProps {
@@ -65,6 +66,7 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
   const [alternateWalletType, setAlternateWalletType] = useState<TWalletListItem | undefined>(undefined)
   const [changeAddress, setChangeAddress] = useState<string | undefined>(undefined)
   const [selectedCardanoAddress, setSelectedCardanoAddress] = useState<string | undefined>(undefined);
+  const { queryParams } = useQueryParams();
 
   const createTransaction = trpc.contributions.createTransaction.useMutation();
 
@@ -184,7 +186,8 @@ const ContributeConfirm: FC<IContributeConfirmProps> = ({
                   address: changeAddress || sessionData?.user.address!,
                   exchangeRate: exchangeRateToBaseCurrency,
                   txId: txHash,
-                  contributionId: contributionRoundId
+                  contributionId: contributionRoundId,
+                  referralCode: queryParams.ref
                 })
               } catch (e: any) {
                 console.log(e)
