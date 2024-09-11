@@ -55,6 +55,7 @@ model User {
   sumsubType     String?           @map("sumsub_type")
   sumsubResult   Json?             @map("sumsub_result")
   sumsubStatus   String?           @map("sumsub_status")
+  referralCode   String?           @map("referral_code")
   accounts       Account[]
   sessions       Session[]
   transactions   Transaction[]
@@ -114,6 +115,7 @@ model Transaction {
   updated_at        DateTime          @updatedAt
   user_id           String
   user              User              @relation(fields: [user_id], references: [id])
+  referralCode      String?           @map("referral_code")
   contribution_id   Int
   contributionRound ContributionRound @relation(fields: [contribution_id], references: [id])
 

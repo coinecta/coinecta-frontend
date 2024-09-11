@@ -3,6 +3,7 @@ import { deleteEmptyUser } from '@server/utils/deleteEmptyUser';
 import { generateNonceForLogin } from '@server/utils/nonce';
 import { TRPCError } from '@trpc/server';
 import crypto from 'crypto';
+import { nanoid } from 'nanoid';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -448,5 +449,26 @@ export const userRouter = createTRPCRouter({
         throw new Error("Error deleting user")
       }
       return { success: true }; // Return a success response or any other relevant data
-    })
+    }),
+  getOrGenerateReferralCode: protectedProcedure
+    .query(async ({ ctx }) => {
+      const userId = ctx.session.user.id;
+
+      let user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { referralCode: true }
+      });
+
+      if (!user?.referralCode) {
+        // Generate a new referral code if one doesn't exist
+        const newReferralCode = nanoid(10);
+        user = await prisma.user.update({
+          where: { id: userId },
+          data: { referralCode: newReferralCode },
+          select: { referralCode: true }
+        });
+      }
+
+      return user?.referralCode;
+    }),
 });

@@ -8,6 +8,7 @@ import { useAlert } from '@contexts/AlertContext';
 import { BLOCKCHAINS } from '@lib/currencies';
 import { useWalletContext } from '@contexts/WalletContext';
 import { getShorterAddress } from '@lib/utils/general';
+import { useQueryParams } from '@contexts/QueryParamsContext';
 
 interface EvmPaymentProps {
   paymentAmount: string;
@@ -36,6 +37,7 @@ const EvmPayment: React.FC<EvmPaymentProps> = ({
   const [status, setStatus] = useState<string>('');
   const { addAlert } = useAlert();
   const createTransaction = trpc.contributions.createTransaction.useMutation();
+  const { queryParams } = useQueryParams();
 
   const NETWORK_CHAIN_IDS: Record<string, number> = {
     Ethereum: 1,
@@ -96,7 +98,8 @@ const EvmPayment: React.FC<EvmPaymentProps> = ({
           blockchain: paymentCurrency.blockchain,
           address: address!,
           txId: tx.hash,
-          contributionId: contributionRoundId
+          contributionId: contributionRoundId,
+          referralCode: queryParams.ref
         });
 
         const receipt = await tx.wait();
@@ -124,7 +127,8 @@ const EvmPayment: React.FC<EvmPaymentProps> = ({
           exchangeRate: exchangeRate,
           blockchain: paymentCurrency.blockchain,
           txId: tx.hash,
-          contributionId: contributionRoundId
+          contributionId: contributionRoundId,
+          referralCode: queryParams.ref
         });
 
         const receipt = await tx.wait();
