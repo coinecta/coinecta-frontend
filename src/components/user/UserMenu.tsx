@@ -22,6 +22,7 @@ import { signIn, signOut } from "next-auth/react"
 import { useWalletContext } from '@contexts/WalletContext';
 import { useAlert } from '@contexts/AlertContext';
 import { useCardano } from '@lib/utils/cardano';
+import WorkspacesIcon from '@mui/icons-material/Workspaces';
 
 interface IWalletType {
   name: string;
@@ -300,12 +301,12 @@ const UserMenu: FC<IUserMenuProps> = () => {
                 <Settings fontSize="small" />
               </ListItemIcon>
               Edit Profile
-            </MenuItem>
-            <MenuItem onClick={() => setModalOpen(true)}>
+            </MenuItem>*/}
+            {/* <MenuItem onClick={() => router.push('/user/referral-code')}>
               <ListItemIcon>
-                <AccountBalanceWalletIcon fontSize="small" />
+                <WorkspacesIcon fontSize="small" />
               </ListItemIcon>
-              Change Wallet
+              Referral Codes
             </MenuItem> */}
             <MenuItem onClick={() => router.push('/user/connected-wallets')}>
               <ListItemIcon>
