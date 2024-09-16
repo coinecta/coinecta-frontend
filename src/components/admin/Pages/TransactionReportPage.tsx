@@ -93,8 +93,6 @@ const TransactionReport: FC = () => {
     { enabled: !!formRound }
   )
 
-  console.log(onchainTransactions.data)
-
   useEffect(() => {
     const round = roundQuery.data?.find(round => round.id === Number(selectedRound))
     if (round) {
