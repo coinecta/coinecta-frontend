@@ -25,16 +25,25 @@ const ContributeTab: FC<ContributeTabProps> = ({ projectName, projectIcon, proje
 
   useEffect(() => {
     if (rounds && rounds.length > 0) {
-      const roundId = Number(router.query.roundId);
-      const index = rounds.findIndex(round => round.id === roundId);
+      const roundIdFromUrl = Number(router.query.roundId);
+      const index = rounds.findIndex(round => round.id === roundIdFromUrl);
       if (index !== -1) {
         setTabValue(index);
       } else {
-        // If no roundId in URL or invalid roundId, set URL to first round
-        updateUrl(0);
+        const nearestIndex = findNearestRoundIndex(rounds);
+        updateUrl(nearestIndex);
       }
     }
   }, [rounds, router.query.roundId]);
+
+  const findNearestRoundIndex = (rounds: TContributionRound[]) => {
+    const now = new Date();
+    return rounds.reduce((nearestIndex, round, currentIndex, arr) => {
+      const nearestDiff = Math.abs(now.getTime() - new Date(arr[nearestIndex].startDate).getTime());
+      const currentDiff = Math.abs(now.getTime() - new Date(round.startDate).getTime());
+      return currentDiff < nearestDiff ? currentIndex : nearestIndex;
+    }, 0);
+  };
 
   const updateUrl = (index: number) => {
     if (rounds && rounds[index]) {

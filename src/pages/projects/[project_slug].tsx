@@ -85,8 +85,9 @@ const Project = () => {
     router.push({
       pathname: router.pathname,
       query: {
-        ...router.query,
-        tab: newValue
+        // ...router.query,
+        tab: newValue,
+        project_slug
       },
     },
       undefined,
