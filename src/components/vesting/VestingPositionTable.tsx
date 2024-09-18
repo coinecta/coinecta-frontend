@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import {
   Avatar,
   Box,
@@ -18,12 +18,17 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import DashboardCard from '@components/dashboard/DashboardCard';
+import { trpc } from '@lib/utils/trpc';
+import { ClaimEntriesResponse, ClaimTreasuryDataResponse } from '@server/services/vestingApi';
+import { ClaimEntry } from './pages/VestingDashboardPage';
+import WalletSelectDropdown from '@components/WalletSelectDropdown';
+import { useWallet } from '@meshsdk/react';
 
 interface IVestingPositionTableProps<T> {
   data: T[];
   isLoading: boolean;
-  selectedRows?: Set<T>;
-  setSelectedRows?: React.Dispatch<React.SetStateAction<Set<T>>>;
+  connectedAddress?: string;
+  walletName?: string;
 }
 
 const rowsPerPageOptions = [5, 10, 15];
@@ -31,13 +36,43 @@ const rowsPerPageOptions = [5, 10, 15];
 const VestingPositionTable = <T extends Record<string, any>>({
   data,
   isLoading,
-  selectedRows,
-  setSelectedRows,
+  connectedAddress,
+  walletName
 } : IVestingPositionTableProps<T>) => {
   const theme = useTheme();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
-  const [clicked,setClicked] = useState(false);
+  const { connected, name } = useWallet();
+  const [clicked, setClicked] = useState(false);
+  const [selectedRows, setSelectedRows] = useState<Set<any>>(new Set());
+  const [cborAddresses, setCborAddresses] = useState<string[] | undefined>(undefined);
+
+  const _connectedAddress = useMemo(() => connectedAddress, [connectedAddress]);
+  const _walletName = useMemo(() => walletName, [walletName]);
+
+  const createClaimTreasuryDataMutation = trpc.vesting.createClaimTreasuryData.useMutation();
+  const fetchClaimEntriesByAddressMutation = trpc.vesting.fetchClaimEntriesByAddress.useMutation();
+
+  useEffect(() => {
+    const execute = async () => {
+      if (connected) {
+        const api = await window.cardano[name.toLowerCase()].enable();
+
+        const addresses = await api.getUsedAddresses();
+        setCborAddresses(addresses);
+      }
+    }
+    execute();
+  }, [connected, name]);
+
+  const fetchClaimEntries = useCallback(async () => {
+    if (cborAddresses === undefined) return;
+    const _claimEntries: ClaimEntriesResponse[] = await fetchClaimEntriesByAddressMutation.mutateAsync({
+      addresses: cborAddresses
+    });
+
+    console.log('Claim Entries', _claimEntries);
+  }, [cborAddresses, fetchClaimEntriesByAddressMutation]);
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
@@ -63,24 +98,48 @@ const VestingPositionTable = <T extends Record<string, any>>({
     return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
   };
 
-  const isCheckboxDisabled = (item: T) => item.nextUnlockDate > new Date();
-
   const handleSelectRow = (item: T) => {
     if (setSelectedRows) {
       setSelectedRows((prevSelectedRows) => {
         const newSelectedRows = new Set(prevSelectedRows);
-        if(!isCheckboxDisabled(item)){
-          if(newSelectedRows.has(item)) {
-              newSelectedRows.delete(item);
-          }else{
-              newSelectedRows.add(item);
-          }
+        if(newSelectedRows.has(item)) {
+            newSelectedRows.delete(item);
+        } else {
+            newSelectedRows.add(item);
         }
         setClicked((newSelectedRows.size == 0) ? false : true);
         return newSelectedRows;
       });
     }
   };
+
+  const getRawUtxos = useCallback(async () => {
+    if (_walletName !== undefined) {
+      const api = await window.cardano[_walletName].enable();
+
+      const rawUtxos = await api.getUtxos();
+
+      if (rawUtxos === undefined) return;
+      return rawUtxos;
+    }
+  }, [_walletName]);
+
+  const handleOnRedeemClick = useCallback(async () => {
+    const rawUtxos = await getRawUtxos();
+
+    const rootHash: string = '617bb218ba8815fe5bd1ee82dddcc7dacda548837409c5963b74b9dce1e0d14d';
+    
+    if (rawUtxos === undefined) return;
+    console.log('Raw UTxOs', rawUtxos);
+
+    if (_connectedAddress === undefined) return;
+    const newTreasuryData: ClaimTreasuryDataResponse = await createClaimTreasuryDataMutation.mutateAsync({
+      ownerAddress: _connectedAddress,
+      rootHash: rootHash
+    });
+
+    console.log('New Treasury Data', newTreasuryData);
+  }, [getRawUtxos, _connectedAddress, createClaimTreasuryDataMutation]);
 
   return (
     <>
@@ -95,14 +154,12 @@ const VestingPositionTable = <T extends Record<string, any>>({
         <Typography variant="h5">
           Your Vesting Positions
         </Typography>
-        <Box>
-          <Button color="primary" sx={{ px: '50px', py: '5px', color: 'white'}} variant="contained" disabled={!clicked}>
-            Redeem
-          </Button>
+        <Box sx={{ minWidth: '250px', display: 'block' }}>
+          <WalletSelectDropdown />
         </Box>
       </Box>
       <Divider sx={{ mb: 2 }} />
-      <DashboardCard sx={{ padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+      <DashboardCard sx={{ padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2}}>
         {data.length > 0 ? (
         <Table>
           <TableHead>
@@ -139,7 +196,7 @@ const VestingPositionTable = <T extends Record<string, any>>({
                       checked={selectedRows?.has(item)}
                       onChange={() => handleSelectRow(item)}
                       color="secondary"
-                      disabled={isCheckboxDisabled(item)}
+                      disabled={false}
                   />
                   </TableCell>
                   {Object.keys(item).map((key, colIndex) => (
@@ -180,6 +237,16 @@ const VestingPositionTable = <T extends Record<string, any>>({
         </Box>
         )}
       </DashboardCard>
+      <Box sx={{ display: 'flex', justifyContent: 'end' }}>
+        <Button color="primary" 
+          sx={{ px: '50px', py: '5px', color: 'white'}} 
+          variant="contained" 
+          disabled={_connectedAddress === undefined}
+          onClick={fetchClaimEntries}
+        >
+          Redeem
+        </Button>
+      </Box>
     </>
   );
 };

@@ -1,91 +1,65 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import DashboardHeader from '@components/dashboard/DashboardHeader'
 import { Box, Container, Grid, Skeleton, Typography, useTheme } from '@mui/material'
 import VestingStatsTable from '../VestingStatsTable'
 import VestingPositionTable from '../VestingPositionTable'
 import DashboardCard from '@components/dashboard/DashboardCard'
+import { useWallet } from '@meshsdk/react'
+import { useWalletContext } from '@contexts/WalletContext'
+import { trpc } from '@lib/utils/trpc'
+import { ClaimEntriesResponse } from '@server/services/vestingApi'
+
+export type ClaimEntry = {
+  rootHash: string;
+  claimantPkh: string;
+  vestingValue: number;
+  directValue: number;
+  frequency: "NA";
+  nextUnlockDate: "NA";
+  endDate: "NA";
+  remainingPeriods: "NA";
+}
 
 const VestingDashboardPage = () => {
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedRows, setSelectedRows] = useState<Set<any>>(new Set());
+  const { wallet, connected, name } = useWallet();
+  const { sessionData } = useWalletContext();
+  const [connectedAddress, setConnectedAddress] = useState<string | undefined>(undefined);
+  const [walletName, setWalletName] = useState<string | undefined>(undefined);
+  const [claimEntriesData, setClaimEntriesData] = useState<ClaimEntry[] | undefined>(undefined);
+
+  useEffect(() => {
+    const execute = async () => {
+      if (connected) {
+        const api = await window.cardano[name.toLowerCase()].enable();
+
+        const changeAddress = await wallet.getChangeAddress();
+        setConnectedAddress(changeAddress);
+        setWalletName(name.toLowerCase());
+      }
+    };
+    execute();
+  }, [connected, connectedAddress, name, wallet]);
 
   return (
     <Container maxWidth="xl">
+
       <Box sx={{ my: 5 }}>
-        <Typography align='center' variant='h3' sx={{fontWeight: 'bold'}}>
+        <Typography align='center' variant='h3' sx={{ fontWeight: 'bold' }}>
           Vesting Dashboard
         </Typography>
       </Box>
+
       <Box sx={{ mb: 7 }}>
-        <DashboardHeader title="Vesting Global Stats" />
-        <Grid container sx={{ mb: 5 }}>
-          <Grid xs={12} md={4} pr={4}>
-            <DashboardCard center>
-              <Typography>
-                Total Number of Projects
-              </Typography>
-              <Typography variant="h5">
-                {isLoading ?
-                  <Skeleton animation='wave' width={160} />
-                  :
-                  <Box sx={{ mb: 1 }}>
-                    <Typography align='center' variant='h5'>3</Typography>
-                  </Box>
-                }
-              </Typography>
-            </DashboardCard>
-          </Grid>
-          <Grid xs={12} md={4} pr={4}>
-            <DashboardCard center>
-              <Typography>
-                Total Locked Assets <span style={{color:'gray'}}>(in USD)</span>
-              </Typography>
-              <Typography variant="h5">
-                {isLoading ?
-                  <>
-                    <Skeleton animation='wave' width={160} />
-                    <Skeleton animation='wave' width={160} />
-                  </> :
-                  <>
-                    <Box sx={{ mb: 1 }}>
-                      <Typography align='center' variant='h5'>$ 266,638.79</Typography>
-                    </Box>
-                  </>
-                }
-              </Typography>
-            </DashboardCard>
-          </Grid>
-          <Grid xs={12} md={4}>
-            <DashboardCard center>
-              <Typography>
-                Total Locked Assets <span style={{color:'gray'}}>(in ADA)</span>
-              </Typography>
-              <Typography variant="h5">
-                {isLoading ?
-                  <>
-                    <Skeleton animation='wave' width={160} />
-                  </> :
-                  <>
-                    <Box sx={{ mb: 1 }}>
-                      <Typography align='center' variant='h5'>₳ 9,950,466.91</Typography>
-                    </Box>
-                  </>
-                }
-              </Typography>
-            </DashboardCard>
-          </Grid>
-        </Grid>
-        <VestingStatsTable data={staticStatsData.data} isLoading={isLoading} />
-      </Box>
-      <Box sx={{ mb: 7 }}>
-        <VestingPositionTable 
-          data={staticPositionsData.data} 
-          selectedRows={selectedRows} 
-          setSelectedRows={setSelectedRows} 
-          isLoading={isLoading} 
+        <VestingPositionTable
+          data={staticPositionsData.data}
+          isLoading={isLoading}
+          connectedAddress={connectedAddress}
+          walletName={walletName}
         />
       </Box>
+
     </Container>
   )
 }
