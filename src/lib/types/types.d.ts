@@ -152,11 +152,15 @@ interface ITransactionDetails {
 
 interface CombinedTransactionInfo {
   address: string;
-  amountAda: number;
-  time?: number;
+  adaReceiveAddress?: string;
+  amount: number;
+  currency: string;
+  blockchain: string;
+  exchangeRate?: number;
   dbId?: string;
   txId?: string;
   userPoolWeight?: number;
+  time?: number;
 }
 
 interface Country {
