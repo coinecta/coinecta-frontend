@@ -110,20 +110,22 @@ export const contributionRouter = createTRPCRouter({
     }),
 
   createTransaction: protectedProcedure
-    .input(z.object({
-      description: z.string().optional(),
-      blockchain: z.string(),
-      adaReceiveAddress: z.string(),
-      exchangeRate: z.number(),
-      amount: z.string(),
-      currency: z.string(),
-      address: z.string(),
-      txId: z.string().optional(),
-      contributionId: z.number(),
-      referralCode: z.string().optional()
-    }))
+    .input(
+      z.object({
+        description: z.string().optional(),
+        blockchain: z.string(),
+        adaReceiveAddress: z.string(),
+        exchangeRate: z.number(),
+        amount: z.string(),
+        currency: z.string(),
+        address: z.string(),
+        txId: z.string().optional(),
+        contributionId: z.number(),
+        referralCode: z.string().optional(),
+      })
+    )
     .mutation(async ({ input, ctx }) => {
-      const userId = ctx.session.user.id
+      const userId = ctx.session.user.id;
       const {
         adaReceiveAddress,
         referralCode,
@@ -133,8 +135,8 @@ export const contributionRouter = createTRPCRouter({
         amount,
         description,
         txId,
-        exchangeRate
-      } = input
+        exchangeRate,
+      } = input;
 
       try {
         const newTransaction = await prisma.transaction.create({
@@ -149,7 +151,7 @@ export const contributionRouter = createTRPCRouter({
             txId,
             user_id: userId,
             contribution_id: input.contributionId,
-            referralCode
+            referralCode,
           },
         });
 
@@ -159,7 +161,7 @@ export const contributionRouter = createTRPCRouter({
           },
           data: {
             deposited: {
-              increment: (Number(amount) / exchangeRate),
+              increment: Number(amount) / exchangeRate,
             },
           },
         });
