@@ -381,17 +381,18 @@ export const contributionRouter = createTRPCRouter({
         stakeData.map((item) => [item.address, item])
       );
 
-      // BASE TX
       const acceptedCurrencies = await prisma.acceptedCurrency.findMany({
         where: {
           contributionRoundId: contributionId,
         },
       });
 
+      // BASE TX
       const baseTxMap = await Promise.all(
         acceptedCurrencies
           .filter((acc) => acc.blockchain === "Base")
           .map((acc) => acc.receiveAddress)
+          .filter((v, i, a) => a.indexOf(v) === i)
           .map((address) => getBaseTransactions(address))
       );
       const baseTxns = baseTxMap.flatMap((x) => x);
@@ -438,6 +439,7 @@ export const contributionRouter = createTRPCRouter({
               Math.pow(10, Number(txDetails.tokenDecimal)),
             currency: t.currency,
             blockchain: t.blockchain ?? "Base",
+            exchangeRate: Number(t.exchangeRate),
             txId: t.txId ?? "unavailable",
             userPoolWeight: stakeDataMap.get(txDetails.from)?.cummulativeWeight, // Assuming the input address is what we're checking pool weight against
           };
@@ -447,14 +449,15 @@ export const contributionRouter = createTRPCRouter({
 
       const adaAddresses = acceptedCurrencies
         .filter((acc) => acc.blockchain === "Cardano")
-        .map((acc) => acc.receiveAddress);
+        .map((acc) => acc.receiveAddress)
+        .filter((v, i, a) => a.indexOf(v) === i);
 
       if (adaAddresses.length >= 1) {
         try {
           // Fetch on-chain transactions
-          const allUtxos: IOnChainUtxo[] = [];
-          adaAddresses.forEach(async (address) => {
+          const allUtxos: IOnChainUtxo[] = (await Promise.all(adaAddresses.map(async (address) => {
             let page = 1;
+            const utxos = [];
             while (true) {
               const response = await axios.get<IOnChainUtxo[]>(
                 `https://cardano-mainnet.blockfrost.io/api/v0/addresses/${address}/utxos`,
@@ -470,13 +473,13 @@ export const contributionRouter = createTRPCRouter({
               );
 
               if (response.data.length === 0) {
-                break; // Exit the loop if no more data
+                return utxos;
               }
 
-              allUtxos.push(...response.data);
+              utxos.push(...response.data);
               page++;
             }
-          });
+          }))).flatMap(x => x);
 
           for (const utxo of allUtxos) {
             const dbTransaction = dbTransactionMap.get(utxo.tx_hash);
@@ -546,7 +549,7 @@ export const contributionRouter = createTRPCRouter({
                     0
                   )
               )
-              .reduce((a, c) => a + c, 0);
+              .reduce((a, c) => a + c, 0).toFixed(6);
 
             const totalUSDMOutputToAddress = txDetails.outputs
               .filter((output) => adaAddresses.includes(output.address))
@@ -555,23 +558,24 @@ export const contributionRouter = createTRPCRouter({
                   .filter(
                     (a) =>
                       a.unit ===
-                      "c48cbb3d5e57ed56e276bc45f99ab39abe94e6cd7ac39fb402da47ad0014df105553444d"
+                      "c48cbb3d5e57ed56e276bc45f99ab39abe94e6cd7ac39fb402da47ad0014df105553444d" // USDM
                   )
                   .reduce(
                     (sum, current) => sum + Number(current.quantity) * 0.000001,
                     0
                   )
               )
-              .reduce((a, c) => a + c, 0);
+              .reduce((a, c) => a + c, 0).toFixed(6);
 
-            if (totalAdaOutputToAddress > 0) {
+            if (Number(totalAdaOutputToAddress) > 0) {
               // Only consider transactions that have outputs to the specified address
               const combinedInfo = {
                 address: txDetails.inputs[0].address,
                 adaReceiveAddress: txDetails.inputs[0].address,
-                amount: totalAdaOutputToAddress,
-                currency: "ADA",
-                blockchain: "Cardano",
+                amount: Number(totalAdaOutputToAddress),
+                currency: dbTransactionMap.get(utxo.tx_hash)?.currency ?? "ADA",
+                exchangeRate: Number(dbTransactionMap.get(utxo.tx_hash)?.exchangeRate),
+                blockchain: dbTransactionMap.get(utxo.tx_hash)?.blockchain ?? "Cardano",
                 txId: utxo.tx_hash,
                 userPoolWeight: stakeDataMap.get(txDetails.inputs[0].address)
                   ?.cummulativeWeight, // Assuming the input address is what we're checking pool weight against
@@ -580,14 +584,15 @@ export const contributionRouter = createTRPCRouter({
               combinedTransactions.push(combinedInfo);
             }
 
-            if (totalUSDMOutputToAddress > 0) {
+            if (Number(totalUSDMOutputToAddress) > 0) {
               // Only consider transactions that have outputs to the specified address
               const combinedInfo = {
                 address: txDetails.inputs[0].address,
                 adaReceiveAddress: txDetails.inputs[0].address,
-                amount: totalUSDMOutputToAddress,
-                currency: "ADA",
-                blockchain: "Cardano",
+                amount: Number(totalUSDMOutputToAddress),
+                currency: dbTransactionMap.get(utxo.tx_hash)?.currency ?? "USDM",
+                exchangeRate: Number(dbTransactionMap.get(utxo.tx_hash)?.exchangeRate),
+                blockchain: dbTransactionMap.get(utxo.tx_hash)?.blockchain ?? "Cardano",
                 txId: utxo.tx_hash,
                 userPoolWeight: stakeDataMap.get(txDetails.inputs[0].address)
                   ?.cummulativeWeight, // Assuming the input address is what we're checking pool weight against
@@ -618,27 +623,6 @@ async function fetchAllStakeData() {
     }
   );
   return response.data.data as IPoolWeightDataItem[];
-}
-
-async function fetchTransactionDetails(
-  utxo: IOnChainUtxo,
-  dbTransactionMap: Map<string, any>
-) {
-  let txDetails: ITransactionDetails;
-  const dbTransaction = dbTransactionMap.get(utxo.tx_hash);
-  if (dbTransaction && dbTransaction.onChainTxData) {
-    txDetails = dbTransaction.onChainTxData as ITransactionDetails;
-  } else {
-    const response = await axios.get<ITransactionDetails>(
-      `https://cardano-mainnet.blockfrost.io/api/v0/txs/${utxo.tx_hash}/utxos`,
-      {
-        headers: { project_id: process.env.BLOCKFROST_PROJECT_ID },
-      }
-    );
-    txDetails = response.data;
-    // Optionally update the transaction with onChainTxData if needed
-  }
-  return txDetails;
 }
 
 interface IBaseTokenTransaction {

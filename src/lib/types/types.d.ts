@@ -156,6 +156,7 @@ interface CombinedTransactionInfo {
   amount: number;
   currency: string;
   blockchain: string;
+  exchangeRate?: number;
   dbId?: string;
   txId?: string;
   userPoolWeight?: number;

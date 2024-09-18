@@ -122,15 +122,15 @@ const TransactionReport: FC = () => {
   const getTableDataAsString = (transactions: CombinedTransactionInfo[]) => {
     // Header row
     let tableString =
-      "Address\tReceive Address\tAmount\tCurrency\tBlockChain\tTransaction Id\tPool Weight\n";
+      "Address\tReceive Address\tAmount\tCurrency\tExchange Rate\tBlockChain\tTransaction Id\tPool Weight\n";
 
     // Data rows
     transactions.forEach((item) => {
       tableString += `${item.address}\t${item.adaReceiveAddress ?? ""}\t${
         item.amount
-      }\t${item.currency}\t${item.blockchain}\t${item.txId}\t${
-        item.userPoolWeight ?? ""
-      }\n`;
+      }\t${item.currency}\t${item.exchangeRate}\t${item.blockchain}\t${
+        item.txId
+      }\t${item.userPoolWeight ?? ""}\n`;
     });
 
     return tableString;
@@ -292,6 +292,7 @@ const TransactionReport: FC = () => {
                   <TableCell>Address</TableCell>
                   <TableCell>Receive Address</TableCell>
                   <TableCell>Amount</TableCell>
+                  <TableCell>Exchange Rate</TableCell>
                   <TableCell>BlockChain</TableCell>
                   <TableCell>Transaction ID</TableCell>
                   <TableCell>User Pool Weight</TableCell>
@@ -322,6 +323,7 @@ const TransactionReport: FC = () => {
                         {item.adaReceiveAddress}
                       </TableCell>
                       <TableCell>{`${item.amount} ${item.currency}`}</TableCell>
+                      <TableCell>{`${item.exchangeRate}`}</TableCell>
                       <TableCell>{`${item.blockchain}`}</TableCell>
                       <TableCell
                         sx={{
