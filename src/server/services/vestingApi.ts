@@ -66,7 +66,7 @@ export const coinectaVestingApi = {
 }
 
 export const vestingApi = axios.create({
-  baseURL: process.env.COINECTA_SYNC_API,
+  baseURL: process.env.COINECTA_VESTING_API,
   headers: {
     "Content-type": "application/json;charset=utf-8",
   },
