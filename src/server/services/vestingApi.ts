@@ -7,6 +7,7 @@ export type ClaimEntriesRequest = {
 }
 
 export type ClaimEntriesResponse = {
+  id: string;
   rootHash: string;
   claimantPkh: string;
   vestingValue?: {

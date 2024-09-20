@@ -31,6 +31,7 @@ interface IVestingPositionTableProps {
 }
 
 type ClaimEntry = {
+  id: string;
   rootHash: string;
   token: string;
   total: number | string;
@@ -73,6 +74,7 @@ const mapClaimEntriesResponseToClaimEntries = (claimEntriesResponsesWithWalletTy
       : "N/A";
 
     return {
+      id: entry.claimEntry.id,
       rootHash: entry.claimEntry.rootHash,
       token: "CNCT",  // Assuming claimantPkh is used as a token here
       total: typeof total === 'number' ? total : "N/A",
@@ -251,7 +253,7 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
               <TableCell></TableCell>
               <TableCell padding="checkbox"></TableCell>
               {Object.keys(claimEntries[0])
-                .filter(key => key !== 'rootHash' && key !== 'ownerAddress' && key !== 'walletType')
+                .filter(key => key !== 'id' && key !== 'rootHash' && key !== 'ownerAddress' && key !== 'walletType')
                 .map((column) => (
                   <TableCell key={String(column)} sx={{ color: theme.palette.mode === 'dark' ? '#ffffff' : 'black' }}>
                     {camelCaseToTitle(String(column))}
@@ -284,7 +286,7 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
                   />
                   </TableCell>
                   {Object.keys(item)
-                    .filter(key => key !== 'rootHash' && key !== 'ownerAddress' && key !== 'walletType')
+                    .filter(key => key !== 'id' && key !== 'rootHash' && key !== 'ownerAddress' && key !== 'walletType')
                     .map((key, colIndex) => (
                       <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none', color: theme.palette.mode === 'dark' ? '#ffffff' : '#424242', textAlign: 'center' }}>
                         {
