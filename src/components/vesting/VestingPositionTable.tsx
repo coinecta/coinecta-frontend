@@ -22,6 +22,7 @@ import { trpc } from '@lib/utils/trpc';
 import { ClaimEntriesResponse, ClaimTreasuryDataResponse } from '@server/services/vestingApi';
 import WalletSelectDropdown from '@components/WalletSelectDropdown';
 import { useWallet } from '@meshsdk/react';
+import { walletDataByName } from '@lib/walletsList';
 
 interface IVestingPositionTableProps {
   isLoading: boolean;
@@ -30,6 +31,7 @@ interface IVestingPositionTableProps {
 }
 
 type ClaimEntry = {
+  rootHash: string;
   token: string;
   total: number | string;
   claimable: number | string;
@@ -37,10 +39,13 @@ type ClaimEntry = {
   nextUnlockDate: string;
   endDate: string;
   remainingPeriods: string;
+  ownerAddress: string;
+  walletType: string;
 };
 
 type ClaimEntriesResponseWithWalletType = {
   claimEntry: ClaimEntriesResponse;
+  ownerAddress: string;
   walletType: string;
 }
 
@@ -57,24 +62,27 @@ export const shortenString = (input: string): string => {
   return `${start}...${end}`;
 }
 
-const mapClaimEntriesResponseToClaimEntries = (claimEntries: ClaimEntriesResponse[]): ClaimEntry[] => {
-  return claimEntries.map(entry => {
-    const total = entry.vestingValue 
-      ? Object.values(entry.vestingValue).reduce((acc, val) => acc + Object.values(val).reduce((sum, num) => sum + num, 0), 0)
+const mapClaimEntriesResponseToClaimEntries = (claimEntriesResponsesWithWalletType: ClaimEntriesResponseWithWalletType[]): ClaimEntry[] => {
+  return claimEntriesResponsesWithWalletType.map(entry => {
+    const total = entry.claimEntry.vestingValue 
+      ? Object.values(entry.claimEntry.vestingValue).reduce((acc, val) => acc + Object.values(val).reduce((sum, num) => sum + num, 0), 0)
       : "N/A";
 
-    const claimable = entry.directValue 
-      ? Object.values(entry.directValue).reduce((acc, val) => acc + Object.values(val).reduce((sum, num) => sum + num, 0), 0)
+    const claimable = entry.claimEntry.directValue 
+      ? Object.values(entry.claimEntry.directValue).reduce((acc, val) => acc + Object.values(val).reduce((sum, num) => sum + num, 0), 0)
       : "N/A";
 
     return {
+      rootHash: entry.claimEntry.rootHash,
       token: "CNCT",  // Assuming claimantPkh is used as a token here
       total: typeof total === 'number' ? total : "N/A",
       claimable: typeof claimable === 'number' ? claimable : "N/A",
       frequency: "N/A",
       nextUnlockDate: "N/A",
       endDate: "N/A",
-      remainingPeriods: "N/A"
+      remainingPeriods: "N/A",
+      ownerAddress: entry.ownerAddress,
+      walletType: entry.walletType
     };
   });
 };
@@ -100,6 +108,8 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
   const getWallets = trpc.user.getWallets.useQuery()
 
   const wallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
+
+  const walletByName = useCallback((name: string) => walletDataByName(name), []);
 
   const getWalletTypeOfAddress = useCallback((address: string) => {
     if (wallets === undefined || wallets === null) return;
@@ -180,30 +190,27 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
   }, [getRawUtxos, _connectedAddress, createClaimTreasuryDataMutation]);
 
   const fetchClaimEntries = useCallback(async (addresses: string[]) => {
-    // const claimEntriesResponsesWithWalletType: ClaimEntriesResponseWithWalletType[] = [];
+    const claimEntriesResponsesWithWalletType: ClaimEntriesResponseWithWalletType[] = [];
 
-    // for (const address of addresses) {
-    //   const _claimEntriesResponses: ClaimEntriesResponse[] = await fetchClaimEntriesByAddressMutation.mutateAsync({
-    //     addresses: [address]
-    //   });
+    for (const address of addresses) {
+      const _claimEntriesResponses: ClaimEntriesResponse[] = await fetchClaimEntriesByAddressMutation.mutateAsync({
+        addresses: [address]
+      });
 
-    //   const walletType = getWalletTypeOfAddress(address);
+      const walletType = getWalletTypeOfAddress(address);
 
-    //   const _claimEntriesResponsesWithWalletType: ClaimEntriesResponseWithWalletType[] = _claimEntriesResponses.map(
-    //     claimEntriesResponse => ({
-    //       claimEntry: claimEntriesResponse,
-    //       walletType: walletType !== undefined ? walletType : ''
-    //     })
-    //   );
+      const _claimEntriesResponsesWithWalletType: ClaimEntriesResponseWithWalletType[] = _claimEntriesResponses.map(
+        claimEntriesResponse => ({
+          claimEntry: claimEntriesResponse,
+          ownerAddress: address,
+          walletType: walletType !== undefined ? walletType : ''
+        })
+      );
 
-    //   claimEntriesResponsesWithWalletType.push(..._claimEntriesResponsesWithWalletType);
-    // }
+      claimEntriesResponsesWithWalletType.push(..._claimEntriesResponsesWithWalletType);
+    }
 
-    const claimEntriesResponse: ClaimEntriesResponse[] = await fetchClaimEntriesByAddressMutation.mutateAsync({
-      addresses
-    });
-
-    const mappedClaimEntries = mapClaimEntriesResponseToClaimEntries(claimEntriesResponse);
+    const mappedClaimEntries = mapClaimEntriesResponseToClaimEntries(claimEntriesResponsesWithWalletType);
 
     setClaimEntries(mappedClaimEntries)
 
@@ -243,11 +250,14 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
             }}>
               <TableCell></TableCell>
               <TableCell padding="checkbox"></TableCell>
-              {Object.keys(claimEntries[0]).map((column) => (
-                <TableCell key={String(column)} sx={{ color: theme.palette.mode === 'dark' ? '#ffffff' : 'black' }}>
-                  {camelCaseToTitle(String(column))}
-                </TableCell>
-              ))}
+              {Object.keys(claimEntries[0])
+                .filter(key => key !== 'rootHash' && key !== 'ownerAddress' && key !== 'walletType')
+                .map((column) => (
+                  <TableCell key={String(column)} sx={{ color: theme.palette.mode === 'dark' ? '#ffffff' : 'black' }}>
+                    {camelCaseToTitle(String(column))}
+                  </TableCell>
+                ))
+              }
             </TableRow>
           </TableHead>
           <TableBody>
@@ -259,7 +269,11 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
                   }}
                 >
                   <TableCell sx={{ borderBottom: 'none', width: '30px' }}>
-                    <Avatar variant='rounded' sx={{ width: '30px', height: '30px', marginLeft: '15px', marginRight: '10px' }} src={'https://i.imgur.com/0689zZr.png'}/>
+                    <Avatar 
+                      variant='square' 
+                      sx={{ width: '30px', height: '30px', marginLeft: '15px', marginRight: '10px' }} 
+                      src={theme.palette.mode === "dark" ? walletByName(item.walletType)?.iconDark : walletByName(item.walletType)?.icon}
+                    />
                   </TableCell>
                   <TableCell padding="checkbox" sx={{ borderBottom: 'none', paddingRight: '15px' }}>
                   <Checkbox
@@ -269,13 +283,16 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
                       disabled={false}
                   />
                   </TableCell>
-                  {Object.keys(item).map((key, colIndex) => (
-                  <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none', color: theme.palette.mode === 'dark' ? '#ffffff' : '#424242', textAlign: 'center' }}>
-                    {
-                      isLoading ? <Skeleton width={100} /> : formatData(item, key as keyof ClaimEntry)
-                    }
-                  </TableCell>
-                  ))}
+                  {Object.keys(item)
+                    .filter(key => key !== 'rootHash' && key !== 'ownerAddress' && key !== 'walletType')
+                    .map((key, colIndex) => (
+                      <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none', color: theme.palette.mode === 'dark' ? '#ffffff' : '#424242', textAlign: 'center' }}>
+                        {
+                          isLoading ? <Skeleton width={100} /> : formatData(item, key as keyof ClaimEntry)
+                        }
+                      </TableCell>
+                    ))
+                  }
                 </TableRow>
             ))}
           </TableBody>
