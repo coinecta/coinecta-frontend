@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback, FC } from 'react';
 import {
   Avatar,
   Box,
@@ -20,32 +20,76 @@ import dayjs from 'dayjs';
 import DashboardCard from '@components/dashboard/DashboardCard';
 import { trpc } from '@lib/utils/trpc';
 import { ClaimEntriesResponse, ClaimTreasuryDataResponse } from '@server/services/vestingApi';
-import { ClaimEntry } from './pages/VestingDashboardPage';
 import WalletSelectDropdown from '@components/WalletSelectDropdown';
 import { useWallet } from '@meshsdk/react';
 
-interface IVestingPositionTableProps<T> {
-  data: T[];
+interface IVestingPositionTableProps {
   isLoading: boolean;
   connectedAddress?: string;
   walletName?: string;
 }
 
+type ClaimEntry = {
+  token: string;
+  total: number | string;
+  claimable: number | string;
+  frequency: string;
+  nextUnlockDate: string;
+  endDate: string;
+  remainingPeriods: string;
+};
+
+type ClaimEntriesResponseWithWalletType = {
+  claimEntry: ClaimEntriesResponse;
+  walletType: string;
+}
+
 const rowsPerPageOptions = [5, 10, 15];
 
-const VestingPositionTable = <T extends Record<string, any>>({
-  data,
+export const shortenString = (input: string): string => {
+  if (input.length <= 11) {
+    return input;
+  }
+
+  const start = input.slice(0, 7);
+  const end = input.slice(-4);
+
+  return `${start}...${end}`;
+}
+
+const mapClaimEntriesResponseToClaimEntries = (claimEntries: ClaimEntriesResponse[]): ClaimEntry[] => {
+  return claimEntries.map(entry => {
+    const total = entry.vestingValue 
+      ? Object.values(entry.vestingValue).reduce((acc, val) => acc + Object.values(val).reduce((sum, num) => sum + num, 0), 0)
+      : "N/A";
+
+    const claimable = entry.directValue 
+      ? Object.values(entry.directValue).reduce((acc, val) => acc + Object.values(val).reduce((sum, num) => sum + num, 0), 0)
+      : "N/A";
+
+    return {
+      token: "CNCT",  // Assuming claimantPkh is used as a token here
+      total: typeof total === 'number' ? total : "N/A",
+      claimable: typeof claimable === 'number' ? claimable : "N/A",
+      frequency: "N/A",
+      nextUnlockDate: "N/A",
+      endDate: "N/A",
+      remainingPeriods: "N/A"
+    };
+  });
+};
+
+const VestingPositionTable: FC<IVestingPositionTableProps> = ({
   isLoading,
   connectedAddress,
   walletName
-} : IVestingPositionTableProps<T>) => {
+} : IVestingPositionTableProps) => {
   const theme = useTheme();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
-  const { connected, name } = useWallet();
   const [clicked, setClicked] = useState(false);
   const [selectedRows, setSelectedRows] = useState<Set<any>>(new Set());
-  const [cborAddresses, setCborAddresses] = useState<string[] | undefined>(undefined);
+  const [claimEntries, setClaimEntries] = useState<ClaimEntry[]>([]);
 
   const _connectedAddress = useMemo(() => connectedAddress, [connectedAddress]);
   const _walletName = useMemo(() => walletName, [walletName]);
@@ -53,26 +97,19 @@ const VestingPositionTable = <T extends Record<string, any>>({
   const createClaimTreasuryDataMutation = trpc.vesting.createClaimTreasuryData.useMutation();
   const fetchClaimEntriesByAddressMutation = trpc.vesting.fetchClaimEntriesByAddress.useMutation();
 
-  useEffect(() => {
-    const execute = async () => {
-      if (connected) {
-        const api = await window.cardano[name.toLowerCase()].enable();
+  const getWallets = trpc.user.getWallets.useQuery()
 
-        const addresses = await api.getUsedAddresses();
-        setCborAddresses(addresses);
-      }
-    }
-    execute();
-  }, [connected, name]);
+  const wallets = useMemo(() => getWallets.data && getWallets.data.wallets, [getWallets]);
 
-  const fetchClaimEntries = useCallback(async () => {
-    if (cborAddresses === undefined) return;
-    const _claimEntries: ClaimEntriesResponse[] = await fetchClaimEntriesByAddressMutation.mutateAsync({
-      addresses: cborAddresses
-    });
+  const getWalletTypeOfAddress = useCallback((address: string) => {
+    if (wallets === undefined || wallets === null) return;
 
-    console.log('Claim Entries', _claimEntries);
-  }, [cborAddresses, fetchClaimEntriesByAddressMutation]);
+    const wallet = wallets.find(wallet => wallet.changeAddress == address);
+
+    if (wallet === undefined) return;
+
+    return wallet.type;
+  }, [wallets]);
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
@@ -83,14 +120,15 @@ const VestingPositionTable = <T extends Record<string, any>>({
     setPage(0);
   };
 
-  const formatData = <T,>(data: T, key: keyof T): string => {
+  const formatData = <ClaimEntry,>(data: ClaimEntry, key: keyof ClaimEntry): string => {
     const value = data[key];
+
     if (typeof value === 'number') {
       return value.toLocaleString();
     } else if (value instanceof Date) {
       return dayjs(value).format('YYYY/MM/DD');
     }
-    return String(value);
+    return shortenString(String(value));
   };
 
   const camelCaseToTitle = (camelCase: string) => {
@@ -98,7 +136,7 @@ const VestingPositionTable = <T extends Record<string, any>>({
     return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
   };
 
-  const handleSelectRow = (item: T) => {
+  const handleSelectRow = (item: ClaimEntry) => {
     if (setSelectedRows) {
       setSelectedRows((prevSelectedRows) => {
         const newSelectedRows = new Set(prevSelectedRows);
@@ -141,6 +179,37 @@ const VestingPositionTable = <T extends Record<string, any>>({
     console.log('New Treasury Data', newTreasuryData);
   }, [getRawUtxos, _connectedAddress, createClaimTreasuryDataMutation]);
 
+  const fetchClaimEntries = useCallback(async (addresses: string[]) => {
+    // const claimEntriesResponsesWithWalletType: ClaimEntriesResponseWithWalletType[] = [];
+
+    // for (const address of addresses) {
+    //   const _claimEntriesResponses: ClaimEntriesResponse[] = await fetchClaimEntriesByAddressMutation.mutateAsync({
+    //     addresses: [address]
+    //   });
+
+    //   const walletType = getWalletTypeOfAddress(address);
+
+    //   const _claimEntriesResponsesWithWalletType: ClaimEntriesResponseWithWalletType[] = _claimEntriesResponses.map(
+    //     claimEntriesResponse => ({
+    //       claimEntry: claimEntriesResponse,
+    //       walletType: walletType !== undefined ? walletType : ''
+    //     })
+    //   );
+
+    //   claimEntriesResponsesWithWalletType.push(..._claimEntriesResponsesWithWalletType);
+    // }
+
+    const claimEntriesResponse: ClaimEntriesResponse[] = await fetchClaimEntriesByAddressMutation.mutateAsync({
+      addresses
+    });
+
+    const mappedClaimEntries = mapClaimEntriesResponseToClaimEntries(claimEntriesResponse);
+
+    setClaimEntries(mappedClaimEntries)
+
+    console.log('Claim Entries', mappedClaimEntries);
+  }, [fetchClaimEntriesByAddressMutation]);
+
   return (
     <>
       <Box sx={{
@@ -155,12 +224,12 @@ const VestingPositionTable = <T extends Record<string, any>>({
           Your Vesting Positions
         </Typography>
         <Box sx={{ minWidth: '250px', display: 'block' }}>
-          <WalletSelectDropdown />
+          <WalletSelectDropdown onWalletDropDownUpdate={fetchClaimEntries}/>
         </Box>
       </Box>
       <Divider sx={{ mb: 2 }} />
       <DashboardCard sx={{ padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2}}>
-        {data.length > 0 ? (
+        {claimEntries.length > 0 ? (
         <Table>
           <TableHead>
             <TableRow sx={{
@@ -169,11 +238,12 @@ const VestingPositionTable = <T extends Record<string, any>>({
                 top: '71px',
                 zIndex: 2,
                 background: theme.palette.background.paper,
+                textAlign: 'center'
               }
             }}>
               <TableCell></TableCell>
               <TableCell padding="checkbox"></TableCell>
-              {Object.keys(data[0]).map((column) => (
+              {Object.keys(claimEntries[0]).map((column) => (
                 <TableCell key={String(column)} sx={{ color: theme.palette.mode === 'dark' ? '#ffffff' : 'black' }}>
                   {camelCaseToTitle(String(column))}
                 </TableCell>
@@ -181,7 +251,7 @@ const VestingPositionTable = <T extends Record<string, any>>({
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
+            {claimEntries.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
                 <TableRow key={index}
                   sx={{
                     '&:nth-of-type(odd)': { backgroundColor: theme.palette.mode === 'dark' ? 'rgba(205,205,235,0.05)' : 'rgba(0,0,0,0.05)' },
@@ -200,15 +270,10 @@ const VestingPositionTable = <T extends Record<string, any>>({
                   />
                   </TableCell>
                   {Object.keys(item).map((key, colIndex) => (
-                  <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none', color: theme.palette.mode === 'dark' ? '#ffffff' : '#424242' }}>
-                    {key === 'projectName' ? (
-                      <Box sx={{ display: 'flex', alignItems: 'center'}}>
-                          <Avatar variant='rounded' sx={{ width: '30px', height: '30px', marginRight: '10px', borderRadius: '9999px' }} src={'https://i.imgur.com/4KkO0mV.jpg'}/>
-                          {isLoading ? <Skeleton width={100} /> : formatData(item, key)}
-                      </Box>
-                    ) : (
-                      isLoading ? <Skeleton width={100} /> : formatData(item, key as keyof T)
-                    )}  
+                  <TableCell key={`${key}-${colIndex}`} sx={{ borderBottom: 'none', color: theme.palette.mode === 'dark' ? '#ffffff' : '#424242', textAlign: 'center' }}>
+                    {
+                      isLoading ? <Skeleton width={100} /> : formatData(item, key as keyof ClaimEntry)
+                    }
                   </TableCell>
                   ))}
                 </TableRow>
@@ -220,7 +285,7 @@ const VestingPositionTable = <T extends Record<string, any>>({
                 component="td"
                 rowsPerPageOptions={rowsPerPageOptions}
                 colSpan={9}
-                count={data.length}
+                count={claimEntries.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -242,7 +307,7 @@ const VestingPositionTable = <T extends Record<string, any>>({
           sx={{ px: '50px', py: '5px', color: 'white'}} 
           variant="contained" 
           disabled={_connectedAddress === undefined}
-          onClick={fetchClaimEntries}
+          onClick={handleOnRedeemClick}
         >
           Redeem
         </Button>

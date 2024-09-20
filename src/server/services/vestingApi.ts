@@ -9,8 +9,16 @@ export type ClaimEntriesRequest = {
 export type ClaimEntriesResponse = {
   rootHash: string;
   claimantPkh: string;
-  vestingValue: number;
-  directValue: number;
+  vestingValue?: {
+    [key: string]: { 
+      [key: string]: number 
+    } 
+  };
+  directValue?: { 
+    [key: string]: { 
+      [key: string]: number 
+    } 
+  };
 }
 
 export type ClaimTreasuryDataRequest = {

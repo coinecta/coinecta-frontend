@@ -9,17 +9,6 @@ import { useWalletContext } from '@contexts/WalletContext'
 import { trpc } from '@lib/utils/trpc'
 import { ClaimEntriesResponse } from '@server/services/vestingApi'
 
-export type ClaimEntry = {
-  rootHash: string;
-  claimantPkh: string;
-  vestingValue: number;
-  directValue: number;
-  frequency: "NA";
-  nextUnlockDate: "NA";
-  endDate: "NA";
-  remainingPeriods: "NA";
-}
-
 const VestingDashboardPage = () => {
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +16,6 @@ const VestingDashboardPage = () => {
   const { sessionData } = useWalletContext();
   const [connectedAddress, setConnectedAddress] = useState<string | undefined>(undefined);
   const [walletName, setWalletName] = useState<string | undefined>(undefined);
-  const [claimEntriesData, setClaimEntriesData] = useState<ClaimEntry[] | undefined>(undefined);
 
   useEffect(() => {
     const execute = async () => {
@@ -53,7 +41,6 @@ const VestingDashboardPage = () => {
 
       <Box sx={{ mb: 7 }}>
         <VestingPositionTable
-          data={staticPositionsData.data}
           isLoading={isLoading}
           connectedAddress={connectedAddress}
           walletName={walletName}
@@ -94,44 +81,6 @@ const staticStatsData = {
       frequency: "1 month",
       startDate: new Date(),
       cliffDate: new Date(),
-    },
-  ]
-}
-
-const futureDate = new Date();
-futureDate.setDate(futureDate.getDate() + 7);
-
-const staticPositionsData = {
-  data: [
-    {
-      projectName: 'Coinecta',
-      token: "CNCT",
-      total: "217.29",
-      claimable: "15.29",
-      frequency: "1 month",
-      nextUnlockDate: futureDate,
-      endDate: futureDate,
-      remainingPeriods: "3 periods"
-    },
-    {
-      projectName: 'SundaeSwap',
-      token: "CNCT",
-      total: "328.59",
-      claimable: "200.29",
-      frequency: "1 month",
-      nextUnlockDate: new Date(),
-      endDate: new Date(),
-      remainingPeriods: "1 period"
-    },
-    {
-      projectName: 'Coinecta',
-      token: "CNCT",
-      total: "117.19",
-      claimable: "16.79",
-      frequency: "1 month",
-      nextUnlockDate: new Date(),
-      endDate: new Date(),
-      remainingPeriods: "2 periods"
     },
   ]
 }
