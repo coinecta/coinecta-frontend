@@ -121,7 +121,7 @@ export const coinectaVestingApi = {
   ): Promise<ClaimEntriesResponse[]> {
     try {
       const response = await vestingApi.post(
-        "/api/v1/treasury/claimentries",
+        "/api/v1/treasury/claim/entries",
         request.addresses,
       );
       return response.data as ClaimEntriesResponse[];
