@@ -79,17 +79,21 @@ const mapClaimEntriesResponseToClaimEntries = (
 ): ClaimEntry[] => {
   return claimEntriesResponsesWithWalletType.map((entry) => {
     const total = entry.claimEntry.vestingValue
-      ? Object.values(entry.claimEntry.vestingValue).reduce(
-          (acc, val) =>
-            acc + Object.values(val).reduce((sum, num) => sum + num, 0),
+      ? Object.entries(entry.claimEntry.vestingValue)
+        .filter(([policyId]) => policyId.length > 0)
+        .reduce(
+          (acc, [, assets]) =>
+            acc + Object.values(assets).reduce((sum, num) => sum + num, 0),
           0,
         )
       : "N/A";
 
     const claimable = entry.claimEntry.directValue
-      ? Object.values(entry.claimEntry.directValue).reduce(
-          (acc, val) =>
-            acc + Object.values(val).reduce((sum, num) => sum + num, 0),
+      ? Object.entries(entry.claimEntry.directValue)
+        .filter(([policyId]) => policyId.length > 0)
+        .reduce(
+          (acc, [, assets]) =>
+            acc + Object.values(assets).reduce((sum, num) => sum + num, 0),
           0,
         )
       : "N/A";
@@ -98,9 +102,9 @@ const mapClaimEntriesResponseToClaimEntries = (
       id: entry.claimEntry.id,
       rootHash: entry.claimEntry.rootHash,
       ownerPkh: entry.claimEntry.claimantPkh,
-      token: "CNCT", // Assuming claimantPkh is used as a token here
-      total: typeof total === "number" ? total : "N/A",
-      claimable: typeof claimable === "number" ? claimable : "N/A",
+      token: "CNCT",
+      total: total,
+      claimable: claimable,
       frequency: "N/A",
       nextUnlockDate: "N/A",
       endDate: "N/A",
@@ -274,10 +278,8 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
       );
 
       setClaimEntries(mappedClaimEntries);
-
-      console.log("Claim Entries", mappedClaimEntries);
     },
-    [fetchClaimEntriesByAddressMutation],
+    [fetchClaimEntriesByAddressMutation, getWalletTypeOfAddress],
   );
 
   const handleOnRedeemClick = useCallback(

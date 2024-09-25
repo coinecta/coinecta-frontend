@@ -81,7 +81,7 @@ const WalletSelectDropdown: FC<IWalletSelectDropdown> = ({ onWalletDropDownUpdat
     if (onWalletDropDownUpdate !== undefined) {
       onWalletDropDownUpdate(selectedAddresses);
     }
-  }, [selectedAddresses])
+  }, [selectedAddresses, onWalletDropDownUpdate])
 
   useEffect(() => {
     const execute = async () => {
