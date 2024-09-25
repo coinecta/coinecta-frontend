@@ -33,6 +33,7 @@ import {
 import WalletSelectDropdown from "@components/WalletSelectDropdown";
 import { useWallet } from "@meshsdk/react";
 import { walletDataByName } from "@lib/walletsList";
+import VestingConfirm from "./VestingConfirm";
 
 interface IVestingPositionTableProps {
   isLoading: boolean;
@@ -60,6 +61,22 @@ type ClaimEntriesResponseWithWalletType = {
   ownerAddress: string;
   walletType: string;
 };
+
+function convertLovelaceToAda(lovelace: number | string | undefined): string {
+  if (!lovelace) {
+    return "0.000000";
+  }
+
+  const lovelaceValue =
+    typeof lovelace === "string" ? parseFloat(lovelace) : lovelace;
+
+  if (isNaN(lovelaceValue)) {
+    return "0.000000";
+  }
+
+  const ada = lovelaceValue / 1_000_000;
+  return ada.toFixed(6);
+}
 
 const rowsPerPageOptions = [5, 10, 15];
 
@@ -126,18 +143,14 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
   const [clicked, setClicked] = useState(false);
   const [selectedRows, setSelectedRows] = useState<Set<any>>(new Set());
   const [claimEntries, setClaimEntries] = useState<ClaimEntry[]>([]);
+  const [claimEntry, setClaimEntry] = useState<ClaimEntry | null>(null);
+  const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
 
   const _connectedAddress = useMemo(() => connectedAddress, [connectedAddress]);
   const _walletName = useMemo(() => walletName, [walletName]);
 
-  const finalizeTransaction = trpc.vesting.finalizeTransaction.useMutation();
-  const createClaimTreasuryDataMutation =
-    trpc.vesting.createClaimTreasuryData.useMutation();
   const fetchClaimEntriesByAddressMutation =
     trpc.vesting.fetchClaimEntriesByAddress.useMutation();
-  const claimTreasuryMutation = trpc.vesting.claimTreasury.useMutation();
-  const submitClaimTreasuryTransaction =
-    trpc.vesting.submitClaimTreasuryTransaction.useMutation();
 
   const getWallets = trpc.user.getWallets.useQuery();
 
@@ -212,47 +225,11 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
     }
   };
 
-  const getRawUtxos = useCallback(async () => {
-    if (_walletName !== undefined) {
-      const api = await window.cardano[_walletName].enable();
-
-      const rawUtxos = await api.getUtxos();
-
-      if (rawUtxos === undefined) return;
-      return rawUtxos;
-    }
-  }, [_walletName]);
-
-  const getRawCollateralUtxo = useCallback(async () => {
-    if (_walletName !== undefined) {
-      const api = await window.cardano[_walletName].enable();
-
-      const collateral = await api.experimental.getCollateral();
-
-      if (collateral === undefined) return;
-      return collateral[0];
-    }
-  }, [_walletName]);
-
-  const signTx = useCallback(
-    async (unsignedTx: string) => {
-      if (_walletName !== undefined) {
-        const api = await window.cardano[_walletName].enable();
-
-        const signedTx = await api.signTx(unsignedTx, true);
-
-        if (signedTx === undefined) return;
-        return signedTx;
-      }
-    },
-    [_walletName],
-  );
-
   const fetchClaimEntries = useCallback(
     async (addresses: string[]) => {
       const claimEntriesResponsesWithWalletType: ClaimEntriesResponseWithWalletType[] =
         [];
-
+      console.log(addresses);
       for (const address of addresses) {
         const _claimEntriesResponses: ClaimEntriesResponse[] =
           await fetchClaimEntriesByAddressMutation.mutateAsync({
@@ -260,6 +237,7 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
           });
 
         const walletType = getWalletTypeOfAddress(address);
+        console.log(walletType);
 
         const _claimEntriesResponsesWithWalletType: ClaimEntriesResponseWithWalletType[] =
           _claimEntriesResponses.map((claimEntriesResponse) => ({
@@ -277,66 +255,31 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
         claimEntriesResponsesWithWalletType,
       );
 
-      setClaimEntries(mappedClaimEntries);
+      const convertedClaimEntries = mappedClaimEntries.map((item) => {
+        return {
+          ...item,
+          claimable: convertLovelaceToAda(item.claimable),
+        };
+      });
+
+      setClaimEntries(convertedClaimEntries);
+
+      console.log("Claim Entries", convertedClaimEntries);
     },
     [fetchClaimEntriesByAddressMutation, getWalletTypeOfAddress],
   );
 
-  const handleOnRedeemClick = useCallback(
-    async (claimEntry: ClaimEntry) => {
-      const rawUtxos = await getRawUtxos();
-      const rawCollateralUtxo = await getRawCollateralUtxo();
-      if (rawUtxos === undefined || rawCollateralUtxo === undefined) return;
+  const handleOnRedeemClick = (claimEntry: ClaimEntry) => {
+    setClaimEntry(claimEntry);
+    setOpenConfirmationDialog(true);
+    console.log(claimEntry);
+  };
 
-      if (_connectedAddress === undefined) return;
-
-      const rootHash: string = claimEntry.rootHash;
-      const ownerAddress: string = claimEntry.ownerAddress;
-
-      const { updatedRootHash, rawProof, rawClaimEntry } =
-        await createClaimTreasuryDataMutation.mutateAsync({
-          rootHash,
-          ownerAddress,
-        });
-
-      const id: string = claimEntry.id;
-
-      const { unsignedTxRaw, treasuryUtxoRaw } =
-        await claimTreasuryMutation.mutateAsync({
-          id,
-          ownerAddress,
-          updatedRootHash,
-          rawProof,
-          rawClaimEntry,
-          rawCollateralUtxo,
-          rawUtxos,
-        });
-
-      const signedTx = await signTx(unsignedTxRaw);
-
-      if (signedTx === undefined) return;
-
-      const { txHash } = await finalizeTransaction.mutateAsync({
-        unsignedTxCbor: unsignedTxRaw,
-        txWitnessCbor: signedTx,
-      });
-
-      const ownerPkh = claimEntry.ownerPkh;
-
-      await submitClaimTreasuryTransaction.mutateAsync({
-        id,
-        ownerPkh,
-        utxoRaw: treasuryUtxoRaw,
-        txRaw: txHash,
-      });
-    },
-    [
-      getRawUtxos,
-      getRawCollateralUtxo,
-      _connectedAddress,
-      createClaimTreasuryDataMutation,
-    ],
-  );
+  const removeClaimEntry = (claimEntry: ClaimEntry) => {
+    setClaimEntries((prevEntries) =>
+      prevEntries.filter((entry) => entry.id !== claimEntry.id),
+    );
+  };
 
   return (
     <>
@@ -510,6 +453,12 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
           </Box>
         )}
       </DashboardCard>
+      <VestingConfirm
+        open={openConfirmationDialog}
+        setOpen={setOpenConfirmationDialog}
+        claimEntry={claimEntry}
+        // removeClaimEntry={removeClaimEntry}
+      />
     </>
   );
 };
