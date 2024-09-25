@@ -62,22 +62,6 @@ type ClaimEntriesResponseWithWalletType = {
   walletType: string;
 };
 
-function convertLovelaceToAda(lovelace: number | string | undefined): string {
-  if (!lovelace) {
-    return "0.000000";
-  }
-
-  const lovelaceValue =
-    typeof lovelace === "string" ? parseFloat(lovelace) : lovelace;
-
-  if (isNaN(lovelaceValue)) {
-    return "0.000000";
-  }
-
-  const ada = lovelaceValue / 1_000_000;
-  return ada.toFixed(6);
-}
-
 const rowsPerPageOptions = [5, 10, 15];
 
 export const shortenString = (input: string): string => {
@@ -255,16 +239,9 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
         claimEntriesResponsesWithWalletType,
       );
 
-      const convertedClaimEntries = mappedClaimEntries.map((item) => {
-        return {
-          ...item,
-          claimable: convertLovelaceToAda(item.claimable),
-        };
-      });
+      setClaimEntries(mappedClaimEntries);
 
-      setClaimEntries(convertedClaimEntries);
-
-      console.log("Claim Entries", convertedClaimEntries);
+      console.log("Claim Entries", mappedClaimEntries);
     },
     [fetchClaimEntriesByAddressMutation, getWalletTypeOfAddress],
   );
