@@ -1,16 +1,8 @@
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  useRef,
-  useCallback,
-  FC,
-} from "react";
+import React, { useState, useMemo, useCallback, FC } from "react";
 import {
   Avatar,
   Box,
   Button,
-  Checkbox,
   Divider,
   Skeleton,
   Table,
@@ -26,12 +18,8 @@ import {
 import dayjs from "dayjs";
 import DashboardCard from "@components/dashboard/DashboardCard";
 import { trpc } from "@lib/utils/trpc";
-import {
-  ClaimEntriesResponse,
-  ClaimTreasuryDataResponse,
-} from "@server/services/vestingApi";
+import { ClaimEntriesResponse } from "@server/services/vestingApi";
 import WalletSelectDropdown from "@components/WalletSelectDropdown";
-import { useWallet } from "@meshsdk/react";
 import { walletDataByName } from "@lib/walletsList";
 import VestingConfirm from "./VestingConfirm";
 
@@ -75,28 +63,48 @@ export const shortenString = (input: string): string => {
   return `${start}...${end}`;
 };
 
+const decimalConverter = (
+  value: number | string | undefined,
+  decimals: number | string | undefined,
+) => {
+  if (!value) return 0;
+  if (!decimals) return 0;
+
+  const actualValue = typeof value === "string" ? parseFloat(value) : value;
+  const decimalValue =
+    typeof decimals === "string" ? parseFloat(decimals) : decimals;
+
+  if (isNaN(actualValue)) return 0;
+  if (isNaN(decimalValue)) return 0;
+
+  const divisor = Math.pow(10, decimalValue);
+  const result = actualValue / divisor;
+
+  return result.toFixed(2);
+};
+
 const mapClaimEntriesResponseToClaimEntries = (
   claimEntriesResponsesWithWalletType: ClaimEntriesResponseWithWalletType[],
 ): ClaimEntry[] => {
   return claimEntriesResponsesWithWalletType.map((entry) => {
     const total = entry.claimEntry.vestingValue
       ? Object.entries(entry.claimEntry.vestingValue)
-        .filter(([policyId]) => policyId.length > 0)
-        .reduce(
-          (acc, [, assets]) =>
-            acc + Object.values(assets).reduce((sum, num) => sum + num, 0),
-          0,
-        )
+          .filter(([policyId]) => policyId.length > 0)
+          .reduce(
+            (acc, [, assets]) =>
+              acc + Object.values(assets).reduce((sum, num) => sum + num, 0),
+            0,
+          )
       : "N/A";
 
     const claimable = entry.claimEntry.directValue
       ? Object.entries(entry.claimEntry.directValue)
-        .filter(([policyId]) => policyId.length > 0)
-        .reduce(
-          (acc, [, assets]) =>
-            acc + Object.values(assets).reduce((sum, num) => sum + num, 0),
-          0,
-        )
+          .filter(([policyId]) => policyId.length > 0)
+          .reduce(
+            (acc, [, assets]) =>
+              acc + Object.values(assets).reduce((sum, num) => sum + num, 0),
+            0,
+          )
       : "N/A";
 
     return {
@@ -104,8 +112,8 @@ const mapClaimEntriesResponseToClaimEntries = (
       rootHash: entry.claimEntry.rootHash,
       ownerPkh: entry.claimEntry.claimantPkh,
       token: "CNCT",
-      total: total,
-      claimable: claimable,
+      total: decimalConverter(total, process.env.DEFAULT_CNCT_DECIMALS),
+      claimable: decimalConverter(claimable, process.env.DEFAULT_CNCT_DECIMALS),
       frequency: "N/A",
       nextUnlockDate: "N/A",
       endDate: "N/A",
@@ -119,19 +127,15 @@ const mapClaimEntriesResponseToClaimEntries = (
 const VestingPositionTable: FC<IVestingPositionTableProps> = ({
   isLoading,
   connectedAddress,
-  walletName,
 }: IVestingPositionTableProps) => {
   const theme = useTheme();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
-  const [clicked, setClicked] = useState(false);
-  const [selectedRows, setSelectedRows] = useState<Set<any>>(new Set());
   const [claimEntries, setClaimEntries] = useState<ClaimEntry[]>([]);
   const [claimEntry, setClaimEntry] = useState<ClaimEntry | null>(null);
   const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
 
   const _connectedAddress = useMemo(() => connectedAddress, [connectedAddress]);
-  const _walletName = useMemo(() => walletName, [walletName]);
 
   const fetchClaimEntriesByAddressMutation =
     trpc.vesting.fetchClaimEntriesByAddress.useMutation();
@@ -194,26 +198,10 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
     return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
   };
 
-  const handleSelectRow = (item: ClaimEntry) => {
-    if (setSelectedRows) {
-      setSelectedRows((prevSelectedRows) => {
-        const newSelectedRows = new Set(prevSelectedRows);
-        if (newSelectedRows.has(item)) {
-          newSelectedRows.delete(item);
-        } else {
-          newSelectedRows.add(item);
-        }
-        setClicked(newSelectedRows.size == 0 ? false : true);
-        return newSelectedRows;
-      });
-    }
-  };
-
   const fetchClaimEntries = useCallback(
     async (addresses: string[]) => {
       const claimEntriesResponsesWithWalletType: ClaimEntriesResponseWithWalletType[] =
         [];
-      console.log(addresses);
       for (const address of addresses) {
         const _claimEntriesResponses: ClaimEntriesResponse[] =
           await fetchClaimEntriesByAddressMutation.mutateAsync({
@@ -221,7 +209,6 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
           });
 
         const walletType = getWalletTypeOfAddress(address);
-        console.log(walletType);
 
         const _claimEntriesResponsesWithWalletType: ClaimEntriesResponseWithWalletType[] =
           _claimEntriesResponses.map((claimEntriesResponse) => ({
@@ -240,8 +227,6 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
       );
 
       setClaimEntries(mappedClaimEntries);
-
-      console.log("Claim Entries", mappedClaimEntries);
     },
     [fetchClaimEntriesByAddressMutation, getWalletTypeOfAddress],
   );
@@ -249,13 +234,6 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
   const handleOnRedeemClick = (claimEntry: ClaimEntry) => {
     setClaimEntry(claimEntry);
     setOpenConfirmationDialog(true);
-    console.log(claimEntry);
-  };
-
-  const removeClaimEntry = (claimEntry: ClaimEntry) => {
-    setClaimEntries((prevEntries) =>
-      prevEntries.filter((entry) => entry.id !== claimEntry.id),
-    );
   };
 
   return (
@@ -434,7 +412,6 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
         open={openConfirmationDialog}
         setOpen={setOpenConfirmationDialog}
         claimEntry={claimEntry}
-        // removeClaimEntry={removeClaimEntry}
       />
     </>
   );

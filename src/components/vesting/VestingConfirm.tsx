@@ -199,7 +199,10 @@ const VestingConfirm: FC<IVestingConfirmProps> = ({
         <DialogContent
           sx={{ minWidth: "350px", maxWidth: !fullScreen ? "460px" : null }}
         >
-          <DataSpread title="ADA" data={`${claimEntry?.claimable}`} />
+          <DataSpread
+            title={`${claimEntry?.token}`}
+            data={`${claimEntry?.claimable}`}
+          />
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", mb: 1 }}>
           <Button

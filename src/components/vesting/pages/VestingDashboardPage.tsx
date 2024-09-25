@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react'
-import { Box, Container, Typography, useTheme } from '@mui/material'
-import VestingPositionTable from '../VestingPositionTable'
-import { useWallet } from '@meshsdk/react'
-import { useWalletContext } from '@contexts/WalletContext'
+import React, { useEffect, useState } from "react";
+import { Box, Container, Typography, useTheme } from "@mui/material";
+import VestingPositionTable from "../VestingPositionTable";
+import { useWallet } from "@meshsdk/react";
+import { useWalletContext } from "@contexts/WalletContext";
 
 const VestingDashboardPage = () => {
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const { wallet, connected, name } = useWallet();
   const { sessionData } = useWalletContext();
-  const [connectedAddress, setConnectedAddress] = useState<string | undefined>(undefined);
+  const [connectedAddress, setConnectedAddress] = useState<string | undefined>(
+    undefined,
+  );
   const [walletName, setWalletName] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -27,9 +29,8 @@ const VestingDashboardPage = () => {
 
   return (
     <Container maxWidth="xl">
-
       <Box sx={{ my: 5 }}>
-        <Typography align='center' variant='h3' sx={{ fontWeight: 'bold' }}>
+        <Typography align="center" variant="h3" sx={{ fontWeight: "bold" }}>
           Vesting Dashboard
         </Typography>
       </Box>
@@ -38,12 +39,10 @@ const VestingDashboardPage = () => {
         <VestingPositionTable
           isLoading={isLoading}
           connectedAddress={connectedAddress}
-          walletName={walletName}
         />
       </Box>
-
     </Container>
-  )
-}
+  );
+};
 
 export default VestingDashboardPage;
