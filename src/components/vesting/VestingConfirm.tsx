@@ -35,14 +35,12 @@ interface IVestingConfirmProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   claimEntry: ClaimEntry | null;
-  // removeClaimEntry: (claimEntry: ClaimEntry) => void;
 }
 
 const VestingConfirm: FC<IVestingConfirmProps> = ({
   open,
   setOpen,
   claimEntry,
-  // removeClaimEntry
 }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -138,7 +136,6 @@ const VestingConfirm: FC<IVestingConfirmProps> = ({
       console.log(response);
       setOpen(false);
       addAlert("success", "Redeemed Treasury");
-      // removeClaimEntry(claimEntry);
     } catch (ex: any) {
       addAlert("error", "Error redeeming treasury");
       console.error("Error adding stake", ex);
@@ -155,7 +152,6 @@ const VestingConfirm: FC<IVestingConfirmProps> = ({
     claimEntry,
     addAlert,
     setOpen,
-    // removeClaimEntry
   ]);
 
   return (

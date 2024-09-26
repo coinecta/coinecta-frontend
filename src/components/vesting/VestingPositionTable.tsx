@@ -80,7 +80,7 @@ const decimalConverter = (
   const divisor = Math.pow(10, decimalValue);
   const result = actualValue / divisor;
 
-  return result.toFixed(2);
+  return result.toFixed(decimalValue);
 };
 
 const mapClaimEntriesResponseToClaimEntries = (
