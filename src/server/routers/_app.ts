@@ -14,6 +14,7 @@ import { tokensRouter } from "./tokens";
 import { userRouter } from "./user";
 import { whitelistRouter } from "./whitelist";
 import { xerberusRouter } from "./xerberus";
+import { vestingRouter } from "./vesting";
 
 /**
  * This is the primary router for the server.
@@ -34,6 +35,7 @@ export const appRouter = createTRPCRouter({
   tokens: tokensRouter,
   xerberus: xerberusRouter,
   sync: syncRouter,
+  vesting: vestingRouter,
   evm: evmRouter,
   email: emailRouter
 });

@@ -43,6 +43,10 @@ const Header: FC = () => {
     {
       name: "Staking",
       link: "/staking"
+    },
+    {
+      name: "Vesting",
+      link: "/vesting"
     }
   ];
 
@@ -53,6 +57,10 @@ const Header: FC = () => {
     let temp = theme === LightTheme ? "dark" : "light";
     localStorage.setItem('darkToggle', temp);
   };
+
+  function getBaseUrl(pathname: string) {
+    return `/${pathname.split('/')[1]}`; 
+  }
 
   const NavigationListItem: React.FC<INavItemProps> = ({ size, fontWeight, page }) => {
     return (
@@ -69,7 +77,7 @@ const Header: FC = () => {
               mt: '0',
               borderRadius: '10px',
               height: (fontWeight && fontWeight > 500) || (size && size > 20) ? '3px' : '2px',
-              background: router.pathname === page.link ? theme.palette.primary.main : '',
+              background: getBaseUrl(router.pathname) === page.link ? theme.palette.primary.main : '',
               width: '100%',
             },
           }}

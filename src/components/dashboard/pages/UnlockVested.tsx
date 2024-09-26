@@ -1,8 +1,6 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import {
   Box,
-  Button,
-  Divider,
   Typography,
 } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid/Grid';
