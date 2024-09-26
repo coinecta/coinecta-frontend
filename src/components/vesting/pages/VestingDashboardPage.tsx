@@ -5,14 +5,12 @@ import { useWallet } from "@meshsdk/react";
 import { useWalletContext } from "@contexts/WalletContext";
 
 const VestingDashboardPage = () => {
-  const theme = useTheme();
-  const [isLoading, setIsLoading] = useState(false);
   const { wallet, connected, name } = useWallet();
-  const { sessionData } = useWalletContext();
+  useWalletContext();
   const [connectedAddress, setConnectedAddress] = useState<string | undefined>(
     undefined,
   );
-  const [walletName, setWalletName] = useState<string | undefined>(undefined);
+  const [, setWalletName] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const execute = async () => {
@@ -37,7 +35,6 @@ const VestingDashboardPage = () => {
 
       <Box sx={{ mb: 7 }}>
         <VestingPositionTable
-          isLoading={isLoading}
           connectedAddress={connectedAddress}
         />
       </Box>

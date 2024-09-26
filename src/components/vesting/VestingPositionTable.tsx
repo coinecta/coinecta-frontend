@@ -24,7 +24,6 @@ import { walletDataByName } from "@lib/walletsList";
 import VestingConfirm from "./VestingConfirm";
 
 interface IVestingPositionTableProps {
-  isLoading: boolean;
   connectedAddress?: string;
   walletName?: string;
 }
@@ -89,22 +88,22 @@ const mapClaimEntriesResponseToClaimEntries = (
   return claimEntriesResponsesWithWalletType.map((entry) => {
     const total = entry.claimEntry.vestingValue
       ? Object.entries(entry.claimEntry.vestingValue)
-          .filter(([policyId]) => policyId.length > 0)
-          .reduce(
-            (acc, [, assets]) =>
-              acc + Object.values(assets).reduce((sum, num) => sum + num, 0),
-            0,
-          )
+        .filter(([policyId]) => policyId.length > 0)
+        .reduce(
+          (acc, [, assets]) =>
+            acc + Object.values(assets).reduce((sum, num) => sum + num, 0),
+          0,
+        )
       : "N/A";
 
     const claimable = entry.claimEntry.directValue
       ? Object.entries(entry.claimEntry.directValue)
-          .filter(([policyId]) => policyId.length > 0)
-          .reduce(
-            (acc, [, assets]) =>
-              acc + Object.values(assets).reduce((sum, num) => sum + num, 0),
-            0,
-          )
+        .filter(([policyId]) => policyId.length > 0)
+        .reduce(
+          (acc, [, assets]) =>
+            acc + Object.values(assets).reduce((sum, num) => sum + num, 0),
+          0,
+        )
       : "N/A";
 
     return {
@@ -125,7 +124,6 @@ const mapClaimEntriesResponseToClaimEntries = (
 };
 
 const VestingPositionTable: FC<IVestingPositionTableProps> = ({
-  isLoading,
   connectedAddress,
 }: IVestingPositionTableProps) => {
   const theme = useTheme();
@@ -139,6 +137,8 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
 
   const fetchClaimEntriesByAddressMutation =
     trpc.vesting.fetchClaimEntriesByAddress.useMutation();
+
+  const isLoading = useMemo(() => fetchClaimEntriesByAddressMutation.isLoading, [fetchClaimEntriesByAddressMutation.isLoading]);
 
   const getWallets = trpc.user.getWallets.useQuery();
 
@@ -285,6 +285,7 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
                       key !== "ownerPkh" &&
                       key !== "rootHash" &&
                       key !== "ownerAddress" &&
+                      key !== "total" &&
                       key !== "walletType",
                   )
                   .map((column) => (
@@ -344,6 +345,7 @@ const VestingPositionTable: FC<IVestingPositionTableProps> = ({
                           key !== "ownerPkh" &&
                           key !== "rootHash" &&
                           key !== "ownerAddress" &&
+                          key !== "total" &&
                           key !== "walletType",
                       )
                       .map((key, colIndex) => (
