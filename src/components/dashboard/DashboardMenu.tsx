@@ -14,7 +14,6 @@ import {
   Zoom,
   Typography
 } from '@mui/material';
-import HomeIcon from '@mui/icons-material/Home';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import { useRouter } from 'next/router';
 
@@ -42,6 +41,19 @@ const links = {
     {
       name: 'Manage Positions',
       link: '/staking/manage-stake'
+    }
+  ]
+}
+
+const linksVesting = {
+  Other: [
+    {
+      name: 'Overview',
+      link: '/vesting'
+    },
+    {
+      name: 'Vesting Positions',
+      link: '/vesting/manage-vesting'
     }
   ]
 }
@@ -78,7 +90,7 @@ const DashboardMenu: FC<IDashboardMenuProps> = ({ children }) => {
 
   const drawer = (
     <div>
-      {Object.entries(links).map(([category, linkItems], categoryIndex) => (
+      {Object.entries((router.asPath.startsWith('/staking') ? links : linksVesting)).map(([category, linkItems], categoryIndex) => (
         <div key={category + categoryIndex}>
           {category !== "Other" && <Typography variant="overline">
             {category}

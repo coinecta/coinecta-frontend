@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import ErrorPage from '@components/ErrorPage';

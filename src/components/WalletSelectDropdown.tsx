@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Select,
   MenuItem,
@@ -19,7 +19,11 @@ import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import { walletDataByName } from '@lib/walletsList';
 import { useCardano } from '@lib/utils/cardano';
 
-const WalletSelectDropdown = () => {
+interface IWalletSelectDropdown {
+  onWalletDropDownUpdate?: (addresses: string[]) => void;
+}
+
+const WalletSelectDropdown: FC<IWalletSelectDropdown> = ({ onWalletDropDownUpdate }) => {
   const theme = useTheme()
   const router = useRouter()
   const { isWalletConnected: _isWalletConnected, setSelectedAddresses: _setSelectedAddresses, getSelectedAddresses: _getSelectedAddresses } = useCardano()
@@ -40,9 +44,17 @@ const WalletSelectDropdown = () => {
       const localStorageSelectedAddresses = getSelectedAddresses()
       if (localStorageSelectedAddresses.length > 0) {
         setSelectedAddress(localStorageSelectedAddresses)
+        
+        if (onWalletDropDownUpdate !== undefined) {
+          onWalletDropDownUpdate(localStorageSelectedAddresses)
+        }
       } else {
         setSelectedAddress(wallets.map((wallet) => wallet.changeAddress))
         setSelectedAddresses(wallets.map((wallet) => wallet.changeAddress))
+
+        if (onWalletDropDownUpdate !== undefined) {
+          onWalletDropDownUpdate(wallets.map((wallet) => wallet.changeAddress))
+        }
       }
       setWalletAddresses(wallets.map((wallet) => wallet.changeAddress))
     }
@@ -64,6 +76,12 @@ const WalletSelectDropdown = () => {
   const handleAddWallet = () => {
     router.push('/user/connected-wallets')
   };
+
+  const handleOnWalletDropDownClose = useCallback(() => {
+    if (onWalletDropDownUpdate !== undefined) {
+      onWalletDropDownUpdate(selectedAddresses);
+    }
+  }, [selectedAddresses, onWalletDropDownUpdate])
 
   useEffect(() => {
     const execute = async () => {
@@ -87,6 +105,7 @@ const WalletSelectDropdown = () => {
         variant="filled"
         value={selectedAddresses}
         onChange={handleChange}
+        onClose={handleOnWalletDropDownClose}
         renderValue={() => selectedAddresses.length === 0 ? 'No wallet selected' : 'Select displayed wallets'}
         MenuProps={{
           PaperProps: {
@@ -132,7 +151,7 @@ const WalletSelectDropdown = () => {
           <MenuItem key={item} value={item} disabled={!isConnectedByWallets[item]}>
             <Avatar variant='square' sx={{ width: '22px', height: '22px' }} src={theme.palette.mode === "dark" ? walletByName(wallets![i].type)?.iconDark : walletByName(wallets![i].type)?.icon} />
             <Checkbox checked={selectedAddresses.indexOf(item) > -1} disabled={!isConnectedByWallets[item]} />
-            <ListItemText primary={getShorterAddress(item, 6)} />
+            <ListItemText primary={getShorterAddress(item, 6)} />    
             {!isConnectedByWallets[item] && <>
               <Tooltip title='This wallet is not connected'>
                 <WarningAmberOutlinedIcon fontSize='small' color='error' />
