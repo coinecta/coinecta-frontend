@@ -1,7 +1,8 @@
 import DataSpread from "@components/DataSpread";
 import { useAlert } from "@contexts/AlertContext";
 import { trpc } from "@lib/utils/trpc";
-import { useWallet } from "@meshsdk/react";
+import { BrowserWallet } from "@meshsdk/core";
+import { useWallet, useWalletList } from "@meshsdk/react";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Button,
@@ -14,7 +15,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { FC, useState, useCallback } from "react";
+import React, { FC, useState, useCallback, useEffect } from "react";
 
 type ClaimEntry = {
   id: string;
@@ -55,6 +56,22 @@ const VestingConfirm: FC<IVestingConfirmProps> = ({
   const submitClaimTreasuryTransaction =
     trpc.vesting.submitClaimTreasuryTransaction.useMutation();
 
+  const getStakeAddress = useCallback(async (walletType: string) => {
+    const wallet = await BrowserWallet.enable(walletType);
+
+    const addresses = await wallet.getRewardAddresses();
+
+    return addresses[0];
+  }, []);
+
+  const getPaymentAddress = useCallback(async (walletType: string) => {
+    const wallet = await BrowserWallet.enable(walletType);
+
+    const addresses = await wallet.getUsedAddresses();
+
+    return addresses[0];
+  }, []);
+
   const getRawUtxos = useCallback(async (walletType: string) => {
     const api = await window.cardano[walletType].enable();
 
@@ -84,7 +101,7 @@ const VestingConfirm: FC<IVestingConfirmProps> = ({
 
   const handleClose = () => setOpen(false);
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = async () => {
     setIsSigning(true);
     try {
       if (claimEntry === null) return;
@@ -95,12 +112,16 @@ const VestingConfirm: FC<IVestingConfirmProps> = ({
       if (rawUtxos === undefined || rawCollateralUtxo === undefined) return;
 
       const rootHash: string = claimEntry.rootHash;
-      const ownerAddress: string = claimEntry.ownerAddress;
 
+      const paymentAddress = await getPaymentAddress(walletType);
+      const stakeAddress = await getStakeAddress(walletType);
+
+      if (stakeAddress === undefined) return;
+      
       const { updatedRootHash, rawProof, rawClaimEntry } =
         await createClaimTreasuryDataMutation.mutateAsync({
           rootHash,
-          ownerAddress,
+          ownerAddress: stakeAddress,
         });
 
       const id: string = claimEntry.id;
@@ -108,7 +129,7 @@ const VestingConfirm: FC<IVestingConfirmProps> = ({
       const { unsignedTxRaw, treasuryUtxoRaw } =
         await claimTreasuryMutation.mutateAsync({
           id,
-          ownerAddress,
+          ownerAddress: paymentAddress,
           updatedRootHash,
           rawProof,
           rawClaimEntry,
@@ -141,18 +162,7 @@ const VestingConfirm: FC<IVestingConfirmProps> = ({
       console.error("Error adding stake", ex);
     }
     setIsSigning(false);
-  }, [
-    getRawUtxos,
-    getRawCollateralUtxo,
-    createClaimTreasuryDataMutation,
-    signTx,
-    finalizeTransaction,
-    claimTreasuryMutation,
-    submitClaimTreasuryTransaction,
-    claimEntry,
-    addAlert,
-    setOpen,
-  ]);
+  };
 
   return (
     <>
