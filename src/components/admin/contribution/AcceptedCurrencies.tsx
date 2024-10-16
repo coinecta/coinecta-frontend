@@ -77,7 +77,7 @@ const AcceptedCurrencies: FC<Props> = ({ contributionRound, setForm, setRefetchB
       acceptedCurrencies: prev.acceptedCurrencies.filter(item => item.id !== id)
     }));
     addAlert('success', 'Currency removed successfully');
-    setRefetchBool(prev => !prev);
+    // setRefetchBool(prev => !prev);
   };
 
   const handleEdit = (currency: TAcceptedCurrency) => {
@@ -98,7 +98,6 @@ const AcceptedCurrencies: FC<Props> = ({ contributionRound, setForm, setRefetchB
       }));
       setEditingCurrency(null);
       addAlert('success', 'Currency updated successfully');
-      setRefetchBool(prev => !prev);
     }
   };
 

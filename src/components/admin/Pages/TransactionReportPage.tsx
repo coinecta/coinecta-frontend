@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, useEffect, useState } from 'react';
+import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -12,14 +12,14 @@ import {
   TableRow,
   TextField,
   Typography,
-} from '@mui/material';
-import { trpc } from '@lib/utils/trpc';
-import { useAlert } from '@contexts/AlertContext';
-import SelectContributionRound from '@components/admin/contribution/SelectContributionRound';
-import SelectProject from '@components/admin/SelectProject';
-import AdminMenu from '../AdminMenu';
-import { Prisma } from '@prisma/client';
-import { getSymbol } from '@lib/utils/currencies';
+} from "@mui/material";
+import { trpc } from "@lib/utils/trpc";
+import { useAlert } from "@contexts/AlertContext";
+import SelectContributionRound from "@components/admin/contribution/SelectContributionRound";
+import SelectProject from "@components/admin/SelectProject";
+import AdminMenu from "../AdminMenu";
+import { Prisma } from "@prisma/client";
+import { getSymbol } from "@lib/utils/currencies";
 
 type TransactionDetails = {
   userDefaultAddress: string | null;
@@ -40,17 +40,21 @@ type TransactionDetails = {
   updated_at: Date;
   user_id: string;
   contribution_id: number;
-}
+};
 
-const aggregateTransactions = (transactions: TransactionDetails[]): TransactionDetails[] => {
+const aggregateTransactions = (
+  transactions: TransactionDetails[]
+): TransactionDetails[] => {
   const aggregationMap = new Map<string, TransactionDetails>();
 
-  transactions.forEach(transaction => {
+  transactions.forEach((transaction) => {
     const existingEntry = aggregationMap.get(transaction.address);
 
     if (existingEntry) {
       // Convert string amounts to numbers for summation
-      existingEntry.amount = (parseFloat(existingEntry.amount) + parseFloat(transaction.amount)).toString();
+      existingEntry.amount = (
+        parseFloat(existingEntry.amount) + parseFloat(transaction.amount)
+      ).toString();
     } else {
       // Clone the transaction object to avoid mutating the original array
       aggregationMap.set(transaction.address, { ...transaction });
@@ -62,71 +66,81 @@ const aggregateTransactions = (transactions: TransactionDetails[]): TransactionD
 
 const TransactionReport: FC = () => {
   const { addAlert } = useAlert();
-  const [formRound, setFormRound] = useState<TContributionRound | undefined>(undefined);
+  const [formRound, setFormRound] = useState<TContributionRound | undefined>(
+    undefined
+  );
   const [selectedRound, setSelectedRound] = useState<number | null>(null);
-  const [selectedProject, setSelectedProject] = useState<string | null>(null)
-  const [aggregatedTransactions, setAggregatedTransactions] = useState<TransactionDetails[]>([])
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [aggregatedTransactions, setAggregatedTransactions] = useState<
+    TransactionDetails[]
+  >([]);
   const [minUsdValue, setMinUsdValue] = useState<number | null>(null);
   const [maxUsdValue, setMaxUsdValue] = useState<number | null>(null);
   const { data: projectList } = trpc.project.getProjectList.useQuery({});
-  const roundQuery = trpc.contributions.getContributionRoundsByProjectSlug.useQuery(
-    { projectSlug: selectedProject || '' },
-    { enabled: !!selectedProject }
-  );
-  const transactionQuery = trpc.contributions.listTransactionsByContribution.useQuery(
-    { contributionId: formRound?.id || 0 },
-    { enabled: !!formRound }
-  );
+  const roundQuery =
+    trpc.contributions.getContributionRoundsByProjectSlug.useQuery(
+      { projectSlug: selectedProject || "" },
+      { enabled: !!selectedProject }
+    );
+  const transactionQuery =
+    trpc.contributions.listTransactionsByContribution.useQuery(
+      { contributionId: formRound?.id || 0 },
+      { enabled: !!formRound }
+    );
   const priceHistory = trpc.price.getCardanoPriceHistory.useQuery(
     {
       startDate: formRound?.startDate || new Date(0),
-      endDate: formRound?.endDate || new Date(0)
+      endDate: formRound?.endDate || new Date(0),
     },
     { enabled: !!formRound }
-  )
+  );
 
-  const onchainTransactions = trpc.contributions.getOnchainTransactions.useQuery(
-    {
-      address: formRound?.recipientAddress || '',
-      contributionId: formRound?.id || 0
-    },
-    { enabled: !!formRound }
-  )
-
-  console.log(onchainTransactions.data)
+  const onchainTransactions =
+    trpc.contributions.getOnchainTransactions.useQuery(
+      {
+        contributionId: formRound?.id || 0,
+      },
+      { enabled: !!formRound }
+    );
 
   useEffect(() => {
-    const round = roundQuery.data?.find(round => round.id === Number(selectedRound))
+    const round = roundQuery.data?.find(
+      (round) => round.id === Number(selectedRound)
+    );
     if (round) {
-      setFormRound(round)
-    }
-    else setFormRound(undefined)
-  }, [selectedRound, roundQuery.data])
+      setFormRound(round);
+    } else setFormRound(undefined);
+  }, [selectedRound, roundQuery.data]);
 
   useEffect(() => {
     if (transactionQuery.data) {
-      const aggregated = aggregateTransactions(transactionQuery.data)
-      setAggregatedTransactions(aggregated)
+      const aggregated = aggregateTransactions(transactionQuery.data);
+      setAggregatedTransactions(aggregated);
     }
-  }, [transactionQuery.data])
+  }, [transactionQuery.data]);
 
   const getTableDataAsString = (transactions: CombinedTransactionInfo[]) => {
     // Header row
-    let tableString = 'Address\tContribution\tTx ID\tPool Weight\n';
+    let tableString =
+      "Address\tReceive Address\tAmount\tCurrency\tExchange Rate\tBlockChain\tTransaction Id\tPool Weight\n";
 
     // Data rows
-    transactions.forEach(item => {
-      const token = item.amountAda
-      tableString += `${item.address}\t${token}\t${item.txId}\t${item.userPoolWeight ?? ''}\n`;
+    transactions.forEach((item) => {
+      tableString += `${item.address}\t${item.adaReceiveAddress ?? ""}\t${
+        item.amount
+      }\t${item.currency}\t${item.exchangeRate}\t${item.blockchain}\t${
+        item.txId
+      }\t${item.userPoolWeight ?? ""}\n`;
     });
 
     return tableString;
   };
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-      .then(() => console.log('Table copied to clipboard'))
-      .catch(err => console.error('Failed to copy: ', err));
+    navigator.clipboard
+      .writeText(text)
+      .then(() => console.log("Table copied to clipboard"))
+      .catch((err) => console.error("Failed to copy: ", err));
   };
 
   const handleCopy = () => {
@@ -139,10 +153,17 @@ const TransactionReport: FC = () => {
     price: number;
   };
 
-  const findClosestExchangeRate = (transactionDate: Date, exchangeRates: ExchangeRate[]): number => {
+  const findClosestExchangeRate = (
+    transactionDate: Date,
+    exchangeRates: ExchangeRate[]
+  ): number => {
     const closestRate = exchangeRates.reduce((closest, current) => {
-      const currentDiff = Math.abs(current.date.getTime() - transactionDate.getTime());
-      const closestDiff = Math.abs(closest.date.getTime() - transactionDate.getTime());
+      const currentDiff = Math.abs(
+        current.date.getTime() - transactionDate.getTime()
+      );
+      const closestDiff = Math.abs(
+        closest.date.getTime() - transactionDate.getTime()
+      );
 
       return currentDiff < closestDiff ? current : closest;
     });
@@ -151,16 +172,23 @@ const TransactionReport: FC = () => {
   };
 
   const filterTransactionsByUsdValue = (transactions: TransactionDetails[]) => {
-    return transactions.filter(item => {
-      if (item.currency !== 'ADA' || !priceHistory.data) {
+    return transactions.filter((item) => {
+      if (item.currency !== "ADA" || !priceHistory.data) {
         return false;
       }
-      const usdValue = parseFloat(item.amount) * findClosestExchangeRate(item.created_at, priceHistory.data);
-      return (!minUsdValue || usdValue >= minUsdValue) && (!maxUsdValue || usdValue <= maxUsdValue);
+      const usdValue =
+        parseFloat(item.amount) *
+        findClosestExchangeRate(item.created_at, priceHistory.data);
+      return (
+        (!minUsdValue || usdValue >= minUsdValue) &&
+        (!maxUsdValue || usdValue <= maxUsdValue)
+      );
     });
   };
 
-  const filteredTransactions = filterTransactionsByUsdValue(aggregatedTransactions);
+  const filteredTransactions = filterTransactionsByUsdValue(
+    aggregatedTransactions
+  );
 
   return (
     <AdminMenu>
@@ -172,26 +200,38 @@ const TransactionReport: FC = () => {
           <Typography variant="h6" sx={{ mb: 2 }}>
             Select a project
           </Typography>
-          <Box sx={{ maxWidth: '350px' }}>
-            <SelectProject selectedProject={selectedProject} setSelectedProject={setSelectedProject} projectList={projectList} />
+          <Box sx={{ maxWidth: "350px" }}>
+            <SelectProject
+              selectedProject={selectedProject}
+              setSelectedProject={setSelectedProject}
+              projectList={projectList}
+            />
           </Box>
         </Box>
-        <Box sx={{ mb: 1, maxWidth: '350px' }}>
-          <SelectContributionRound roundData={roundQuery.data} selectedRound={selectedRound} setSelectedRound={setSelectedRound} />
+        <Box sx={{ mb: 1, maxWidth: "350px" }}>
+          <SelectContributionRound
+            roundData={roundQuery.data}
+            selectedRound={selectedRound}
+            setSelectedRound={setSelectedRound}
+          />
         </Box>
         <Box sx={{ mb: 2 }}>
           <TextField
             label="Min USD Value"
             type="number"
-            value={minUsdValue ?? ''}
-            onChange={(e) => setMinUsdValue(e.target.value ? parseFloat(e.target.value) : null)}
+            value={minUsdValue ?? ""}
+            onChange={(e) =>
+              setMinUsdValue(e.target.value ? parseFloat(e.target.value) : null)
+            }
             sx={{ mr: 1 }}
           />
           <TextField
             label="Max USD Value"
             type="number"
-            value={maxUsdValue ?? ''}
-            onChange={(e) => setMaxUsdValue(e.target.value ? parseFloat(e.target.value) : null)}
+            value={maxUsdValue ?? ""}
+            onChange={(e) =>
+              setMaxUsdValue(e.target.value ? parseFloat(e.target.value) : null)
+            }
           />
         </Box>
         <Button onClick={handleCopy}>Copy Table</Button>
@@ -240,49 +280,69 @@ const TransactionReport: FC = () => {
             </TableContainer>
           )
         } */}
-        {
-          onchainTransactions.isLoading ? (
-            <Typography>Loading...</Typography>
-          ) : onchainTransactions.isError ? (
-            <Typography>Error fetching.</Typography>
-          ) : (
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Address</TableCell>
-                    <TableCell>Contribution</TableCell>
-
-                    <TableCell>Tx ID</TableCell>
-                    <TableCell>User pool weight</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {onchainTransactions.data.map((item, index) => {
-                    return (
-                      <TableRow key={index}>
-                        <TableCell
-                          sx={{
-                            maxWidth: '200px',
-                            textOverflow: 'ellipsis',
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap'
-                          }}
-                        >
-                          {item.address}
-                        </TableCell>
-                        <TableCell>{`${item.amountAda} ${getSymbol('ada')}`}</TableCell>
-
-                        <TableCell>{item.txId}</TableCell>
-                        <TableCell>{item.userPoolWeight}</TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )
-        }
+        {onchainTransactions.isLoading ? (
+          <Typography>Loading...</Typography>
+        ) : onchainTransactions.isError ? (
+          <Typography>Error fetching.</Typography>
+        ) : (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Address</TableCell>
+                  <TableCell>Receive Address</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>Exchange Rate</TableCell>
+                  <TableCell>BlockChain</TableCell>
+                  <TableCell>Transaction ID</TableCell>
+                  <TableCell>User Pool Weight</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {onchainTransactions.data.map((item, index) => {
+                  return (
+                    <TableRow key={index}>
+                      <TableCell
+                        sx={{
+                          maxWidth: "200px",
+                          textOverflow: "ellipsis",
+                          overflow: "hidden",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {item.address}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          maxWidth: "200px",
+                          textOverflow: "ellipsis",
+                          overflow: "hidden",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {item.adaReceiveAddress}
+                      </TableCell>
+                      <TableCell>{`${item.amount} ${item.currency}`}</TableCell>
+                      <TableCell>{`${item.exchangeRate}`}</TableCell>
+                      <TableCell>{`${item.blockchain}`}</TableCell>
+                      <TableCell
+                        sx={{
+                          maxWidth: "200px",
+                          textOverflow: "ellipsis",
+                          overflow: "hidden",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {item.txId}
+                      </TableCell>
+                      <TableCell>{item.userPoolWeight}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Box>
     </AdminMenu>
   );
