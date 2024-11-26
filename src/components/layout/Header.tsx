@@ -1,6 +1,6 @@
-import React, { FC, useContext } from 'react';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
+import React, { FC, useContext } from "react";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 import AppBar from "@mui/material/AppBar";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import Grid from "@mui/material/Grid";
@@ -8,15 +8,15 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { DarkTheme, LightTheme } from "@styles/theme";
-import { Theme, Fade, Divider, Avatar, Button } from '@mui/material';
+import { Theme, Fade, Divider, Avatar, Button } from "@mui/material";
 import Box from "@mui/material/Box";
-import Link from '@components/Link'
+import Link from "@components/Link";
 import { ThemeContext } from "@contexts/ThemeContext";
-import { useRouter } from 'next/router';
-import Logo from '@components/svgs/Logo';
-import UserMenu from '@components/user/UserMenu';
-import SocialGrid from './SocialGrid';
-import HistoryIcon from '@mui/icons-material/History';
+import { useRouter } from "next/router";
+import Logo from "@components/svgs/Logo";
+import UserMenu from "@components/user/UserMenu";
+import SocialGrid from "./SocialGrid";
+import HistoryIcon from "@mui/icons-material/History";
 
 interface INavItemProps {
   size?: number;
@@ -36,41 +36,51 @@ const Header: FC = () => {
       name: "Home",
       link: "/",
     },
-    {
-      name: "Projects",
-      link: "/projects"
-    },
+    // {
+    //   name: "Projects",
+    //   link: "/projects"
+    // },
     {
       name: "Staking",
-      link: "/staking"
-    }
+      link: "/staking",
+    },
   ];
 
   const router = useRouter();
 
   const toggleTheme = () => {
-    setTheme((prevTheme: Theme) => (prevTheme === LightTheme ? DarkTheme : LightTheme));
+    setTheme((prevTheme: Theme) =>
+      prevTheme === LightTheme ? DarkTheme : LightTheme
+    );
     let temp = theme === LightTheme ? "dark" : "light";
-    localStorage.setItem('darkToggle', temp);
+    localStorage.setItem("darkToggle", temp);
   };
 
-  const NavigationListItem: React.FC<INavItemProps> = ({ size, fontWeight, page }) => {
+  const NavigationListItem: React.FC<INavItemProps> = ({
+    size,
+    fontWeight,
+    page,
+  }) => {
     return (
       <Grid item>
         <Box
           sx={{
-            display: 'inline-block',
-            position: 'relative',
+            display: "inline-block",
+            position: "relative",
             "&::after": {
               content: '""',
-              position: 'absolute',
-              bottom: '-4px',
-              display: 'block',
-              mt: '0',
-              borderRadius: '10px',
-              height: (fontWeight && fontWeight > 500) || (size && size > 20) ? '3px' : '2px',
-              background: router.pathname === page.link ? theme.palette.primary.main : '',
-              width: '100%',
+              position: "absolute",
+              bottom: "-4px",
+              display: "block",
+              mt: "0",
+              borderRadius: "10px",
+              height:
+                (fontWeight && fontWeight > 500) || (size && size > 20)
+                  ? "3px"
+                  : "2px",
+              background:
+                router.pathname === page.link ? theme.palette.primary.main : "",
+              width: "100%",
             },
           }}
         >
@@ -78,23 +88,24 @@ const Header: FC = () => {
             <Typography
               sx={{
                 color: theme.palette.text.secondary,
-                fontSize: size ? size.toString() + 'px' : '16px',
+                fontSize: size ? size.toString() + "px" : "16px",
                 textDecoration: "none",
-                fontWeight: fontWeight ? fontWeight : '500',
-                px: '8px',
-                mb: 0
+                fontWeight: fontWeight ? fontWeight : "500",
+                px: "8px",
+                mb: 0,
               }}
             >
               {page.name}
             </Typography>
           ) : (
-            <Box
-              onClick={() => setNavbarOpen(false)}
-            >
+            <Box onClick={() => setNavbarOpen(false)}>
               <Link
                 href={page.link}
                 sx={{
-                  color: router.pathname === page.link ? theme.palette.primary.main : theme.palette.text.primary,
+                  color:
+                    router.pathname === page.link
+                      ? theme.palette.primary.main
+                      : theme.palette.text.primary,
                   "&:hover": {
                     color: theme.palette.primary.main,
                   },
@@ -102,10 +113,10 @@ const Header: FC = () => {
               >
                 <Typography
                   sx={{
-                    fontSize: size ? size.toString() + 'px' : '16px',
+                    fontSize: size ? size.toString() + "px" : "16px",
                     textDecoration: "none",
-                    fontWeight: fontWeight ? fontWeight : '500',
-                    px: '8px',
+                    fontWeight: fontWeight ? fontWeight : "500",
+                    px: "8px",
                   }}
                 >
                   {page.name}
@@ -130,9 +141,9 @@ const Header: FC = () => {
         elevation={0}
         sx={{
           zIndex: 101,
-          border: 'none',
-          borderBottom: trigger ? `1px solid ${theme.palette.divider}` : 'none',
-          borderRadius: '0px',
+          border: "none",
+          borderBottom: trigger ? `1px solid ${theme.palette.divider}` : "none",
+          borderRadius: "0px",
           background: theme.palette.background.default,
         }}
       >
@@ -143,33 +154,30 @@ const Header: FC = () => {
             alignItems="center"
             sx={{
               height: "70px",
-              transition: 'height 200ms linear'
+              transition: "height 200ms linear",
             }}
           >
-            <Grid
-              item
-              alignItems="center"
-            >
+            <Grid item alignItems="center">
               <Link
                 href="/"
                 sx={{
-                  display: 'block',
-                  '&:hover': {
-                    '& span': {
-                      color: theme.palette.primary.main
+                  display: "block",
+                  "&:hover": {
+                    "& span": {
+                      color: theme.palette.primary.main,
                     },
-                    '& .MuiSvgIcon-root': {
-                      color: theme.palette.primary.main
-                    }
-                  }
+                    "& .MuiSvgIcon-root": {
+                      color: theme.palette.primary.main,
+                    },
+                  },
                 }}
               >
                 <Logo
                   sx={{
-                    display: 'inline-block',
-                    verticalAlign: 'middle',
-                    mr: '3px',
-                    fontSize: '34px',
+                    display: "inline-block",
+                    verticalAlign: "middle",
+                    mr: "3px",
+                    fontSize: "34px",
                     color: theme.palette.text.primary,
                   }}
                 />
@@ -177,11 +185,11 @@ const Header: FC = () => {
                   component="span"
                   sx={{
                     color: theme.palette.text.primary,
-                    fontSize: '2rem!important',
-                    fontWeight: '700',
+                    fontSize: "2rem!important",
+                    fontWeight: "700",
                     lineHeight: 1,
-                    verticalAlign: 'bottom',
-                    display: { xs: 'none', sm: 'inline-block' }
+                    verticalAlign: "bottom",
+                    display: { xs: "none", sm: "inline-block" },
                   }}
                 >
                   Coinecta
@@ -197,27 +205,32 @@ const Header: FC = () => {
                 spacing={{ xs: 1, md: 2 }}
               >
                 <Grid item sx={{ display: { xs: "none", md: "flex" } }}>
-                  <Grid
-                    container
-                    spacing={2}
-                  >
+                  <Grid container spacing={2}>
                     {pages.map((page, i) => (
                       <NavigationListItem size={13} key={i} page={page} />
                     ))}
                   </Grid>
                 </Grid>
                 <Grid item>
-                  <IconButton onClick={toggleTheme} sx={{ color: theme.palette.text.primary }}>
-                    {(theme === DarkTheme) ? <Brightness7Icon /> : <Brightness4Icon />}
+                  <IconButton
+                    onClick={toggleTheme}
+                    sx={{ color: theme.palette.text.primary }}
+                  >
+                    {theme === DarkTheme ? (
+                      <Brightness7Icon />
+                    ) : (
+                      <Brightness4Icon />
+                    )}
                   </IconButton>
                 </Grid>
-                <Grid
-                  item
-                >
+                <Grid item>
                   <UserMenu />
                 </Grid>
                 <Grid item>
-                  <IconButton onClick={() => router.push("/transaction-history")} sx={{ color: theme.palette.text.primary }}>
+                  <IconButton
+                    onClick={() => router.push("/transaction-history")}
+                    sx={{ color: theme.palette.text.primary }}
+                  >
                     <HistoryIcon />
                   </IconButton>
                 </Grid>
@@ -239,7 +252,7 @@ const Header: FC = () => {
                         transform: "translate(-50%, -50%)",
                         left: "50%",
                         top: "50%",
-                        mt: '-2px'
+                        mt: "-2px",
                       }}
                     >
                       <Box
@@ -250,8 +263,9 @@ const Header: FC = () => {
                           borderRadius: "4px",
                           background: theme.palette.text.primary,
                           transition: "transform 100ms ease-in-out",
-                          transform: `${navbarOpen ? "rotate(45deg)" : "translateY(6px)"
-                            }`,
+                          transform: `${
+                            navbarOpen ? "rotate(45deg)" : "translateY(6px)"
+                          }`,
                         }}
                       ></Box>
                       <Box
@@ -262,8 +276,9 @@ const Header: FC = () => {
                           borderRadius: "4px",
                           background: theme.palette.text.primary,
                           transition: "transform 100ms ease-in-out",
-                          transform: `${navbarOpen ? "rotate(-45deg)" : "translateY(-6px)"
-                            }`,
+                          transform: `${
+                            navbarOpen ? "rotate(-45deg)" : "translateY(-6px)"
+                          }`,
                         }}
                       ></Box>
                     </Box>
@@ -294,7 +309,7 @@ const Header: FC = () => {
               transform: "translate(-50%, -50%)",
               left: "50%",
               top: "50%",
-              mt: '-2px'
+              mt: "-2px",
             }}
           >
             <Box
@@ -305,8 +320,9 @@ const Header: FC = () => {
                 borderRadius: "2px",
                 background: theme.palette.text.primary,
                 transition: "transform 100ms ease-in-out",
-                transform: `${navbarOpen ? "rotate(45deg)" : "translateY(6px)"
-                  }`,
+                transform: `${
+                  navbarOpen ? "rotate(45deg)" : "translateY(6px)"
+                }`,
               }}
             ></Box>
             <Box
@@ -317,8 +333,9 @@ const Header: FC = () => {
                 borderRadius: "2px",
                 background: theme.palette.text.primary,
                 transition: "transform 100ms ease-in-out",
-                transform: `${navbarOpen ? "rotate(-45deg)" : "translateY(-6px)"
-                  }`,
+                transform: `${
+                  navbarOpen ? "rotate(-45deg)" : "translateY(-6px)"
+                }`,
               }}
             ></Box>
           </Box>
@@ -353,25 +370,26 @@ const Header: FC = () => {
                 direction="column"
                 justifyContent="flex-end"
                 alignItems="flex-start"
-                sx={{
-
-                }}
+                sx={{}}
               >
                 {pages.map((page) => (
                   <NavigationListItem size={32} key={page.name} page={page} />
                 ))}
               </Grid>
-
             </Grid>
-            <Grid item width={'100%'}>
+            <Grid item width={"100%"}>
               <Divider />
             </Grid>
             <Grid item>
-
               <Typography variant="h5" gutterBottom>
                 Follow our socials
               </Typography>
-              <Grid container direction="row" spacing={3} sx={{ fontSize: '26px' }}>
+              <Grid
+                container
+                direction="row"
+                spacing={3}
+                sx={{ fontSize: "26px" }}
+              >
                 <SocialGrid
                   telegram="https://t.me/coinecta"
                   discord="https://discord.gg/EuFdWye8yw"

@@ -4,39 +4,41 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ProjectCard from "@components/projects/ProjectCard";
 import SearchBar from "@components/SearchBar";
-import { trpc } from '@lib/utils/trpc';
+import { trpc } from "@lib/utils/trpc";
 
 const Projects = () => {
-  const theme = useTheme()
+  const theme = useTheme();
   // loading spinner for submit button
   const [projects, setProjects] = useState<IProjectDetails[]>([]);
-  const [searchString, setSearchString] = useState('')
+  const [searchString, setSearchString] = useState("");
   const { data: projectList } = trpc.project.getProjectList.useQuery({});
 
   useEffect(() => {
     if (projectList) {
       setProjects(
-        projectList.filter(project => !project.isDraft).sort((a, b) => {
-          // First, sort by launch status
-          if (a.isLaunched === b.isLaunched) {
-            // If the launch status is the same, sort by updatedAt
-            return a.updated_at.getTime() - b.updated_at.getTime() // Last updated come last
-          }
-          return a.isLaunched ? 1 : -1; // Not launched (upcoming) projects come before launched (complete) projects
-        }).map((item) => {
-          const details: IProjectDetails = {
-            title: item.name,
-            slug: item.slug,
-            tagline: item.shortDescription,
-            category: '',
-            imageUrl: item.bannerImgUrl,
-            status: item.isLaunched
-              ? "Complete"
-              : "Upcoming", // 'In Progress', 'Complete'
-            blockchains: item.blockchains
-          }
-          return (details)
-        }))
+        projectList
+          .filter((project) => !project.isDraft)
+          .sort((a, b) => {
+            // First, sort by launch status
+            if (a.isLaunched === b.isLaunched) {
+              // If the launch status is the same, sort by updatedAt
+              return a.updated_at.getTime() - b.updated_at.getTime(); // Last updated come last
+            }
+            return a.isLaunched ? 1 : -1; // Not launched (upcoming) projects come before launched (complete) projects
+          })
+          .map((item) => {
+            const details: IProjectDetails = {
+              title: item.name,
+              slug: item.slug,
+              tagline: item.shortDescription,
+              category: "",
+              imageUrl: item.bannerImgUrl,
+              status: item.isLaunched ? "Complete" : "Upcoming", // 'In Progress', 'Complete'
+              blockchains: item.blockchains,
+            };
+            return details;
+          })
+      );
     }
   }, [projectList]);
 
@@ -57,11 +59,14 @@ const Projects = () => {
           Projects on Coinecta
         </Typography> */}
         <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
-          <SearchBar searchString={searchString} setSearchString={setSearchString} />
+          <SearchBar
+            searchString={searchString}
+            setSearchString={setSearchString}
+          />
         </Box>
       </Container>
       <Container sx={{ mt: 1 }}>
-
+        {/* 
         {upcomingProjects.length > 0 &&
           <>
             <Typography variant="h4" sx={{ fontWeight: "800", mb: 4 }}>
@@ -93,7 +98,7 @@ const Projects = () => {
               })}
             </Grid>
           </>
-        }
+        } */}
       </Container>
     </>
   );
