@@ -1,134 +1,141 @@
-import React, { useState } from 'react';
-import type { NextPage } from 'next'
+import React from // { useState }
+"react";
+import type { NextPage } from "next";
 import {
   Container,
-  Typography,
+  // Typography,
   useTheme,
-  useMediaQuery,
-  Grid,
-  Button,
+  // useMediaQuery,
+  // Grid,
+  // Button,
   Box,
-  IconButton,
-  Paper,
-  Grow,
-  Slide,
-  useScrollTrigger,
-  Card
-} from '@mui/material'
-import ErgopadLogo from '@components/svgs/ErgopadLogo';
-import PaideiaLogo from '@components/svgs/PaideiaLogo';
-import Projects from '@components/landing/Projects';
-import DiscordIcon from '@components/svgs/DiscordIcon';
-import TelegramIcon from '@components/svgs/TelegramIcon';
-import { useInView } from 'react-intersection-observer';
+  // IconButton,
+  // Paper,
+  // Grow,
+  // Slide,
+  // useScrollTrigger,
+  // Card,
+} from "@mui/material";
+// import ErgopadLogo from "@components/svgs/ErgopadLogo";
+// import PaideiaLogo from "@components/svgs/PaideiaLogo";
+// import Projects from "@components/landing/Projects";
+// import DiscordIcon from "@components/svgs/DiscordIcon";
+// import TelegramIcon from "@components/svgs/TelegramIcon";
+// import { useInView } from "react-intersection-observer";
 import wideBg from "@public/wide.jpg";
 import wideBgLight from "@public/wide-light.jpg";
-import bottomBg from "@public/bottom.jpg";
-import Link from '@components/Link'
-import bannerBg from '@public/banner.jpg'
-import HeroSlider from '@components/landing/HeroSlider';
-import CrciLogo from '@components/svgs/CrciLogo';
-import XerberusLogo from '@components/svgs/XerberusLogo';
-import DexhunterLogo from '@components/svgs/DexhunterLogo';
-import DexhunterDialog from '@components/projects/DexhunterDialog';
-import { trpc } from '@lib/utils/trpc';
-import DexhunterLogomark from '@components/svgs/DexhunterLogomark';
-import ButtonLink from '@components/ButtonLink';
+// import bottomBg from "@public/bottom.jpg";
+// import Link from "@components/Link";
+// import bannerBg from "@public/banner.jpg";
+import HeroSlider from "@components/landing/HeroSlider";
+// import CrciLogo from "@components/svgs/CrciLogo";
+// import XerberusLogo from "@components/svgs/XerberusLogo";
+// import DexhunterLogo from "@components/svgs/DexhunterLogo";
+// import DexhunterDialog from "@components/projects/DexhunterDialog";
+// import { trpc } from "@lib/utils/trpc";
+// import DexhunterLogomark from "@components/svgs/DexhunterLogomark";
+// import ButtonLink from "@components/ButtonLink";
 
 const inViewOptions = {
   threshold: 1,
-  triggerOnce: true
-}
+  triggerOnce: true,
+};
 
 const Home: NextPage = () => {
-  const theme = useTheme()
+  const theme = useTheme();
   // const upMd = useMediaQuery(theme.breakpoints.up('md'))
   // const trigger = useScrollTrigger({ threshold: 800 });
-  const [ref1, inView1] = useInView(inViewOptions);
-  const [ref2, inView2] = useInView(inViewOptions);
-  const [ref3, inView3] = useInView(inViewOptions);
-  const [ref4, inView4] = useInView({ ...inViewOptions, threshold: 0.5 });
-  const [ref5, inView5] = useInView(inViewOptions);
-  const [ref6, inView6] = useInView({ ...inViewOptions, threshold: 0.3 });
+  // const [ref1, inView1] = useInView(inViewOptions);
+  // const [ref2, inView2] = useInView(inViewOptions);
+  // const [ref3, inView3] = useInView(inViewOptions);
+  // const [ref4, inView4] = useInView({ ...inViewOptions, threshold: 0.5 });
+  // const [ref5, inView5] = useInView(inViewOptions);
+  // const [ref6, inView6] = useInView({ ...inViewOptions, threshold: 0.3 });
 
-  const logoLinkSx = {
-    display: 'block',
-    textAlign: 'center',
-    color: theme.palette.text.primary,
-    '&:hover': {
-      '& .MuiSvgIcon-root': {
-        color: theme.palette.primary.main,
-      }
-    }
-  }
+  // const logoLinkSx = {
+  //   display: "block",
+  //   textAlign: "center",
+  //   color: theme.palette.text.primary,
+  //   "&:hover": {
+  //     "& .MuiSvgIcon-root": {
+  //       color: theme.palette.primary.main,
+  //     },
+  //   },
+  // };
 
-  const [dexhunterModal, setDexhunterModal] = useState(false)
-  const coinectaData = trpc.project.getProject.useQuery(
-    { slug: 'coinecta' },
-    { enabled: true, retry: 0 }
-  )
+  // const [dexhunterModal, setDexhunterModal] = useState(false);
+  // const coinectaData = trpc.project.getProject.useQuery(
+  //   { slug: "coinecta" },
+  //   { enabled: true, retry: 0 }
+  // );
 
-  const cardSx = {
-    p: 4, height: '100%'
-  }
+  // const cardSx = {
+  //   p: 4,
+  //   height: "100%",
+  // };
 
   return (
-    <Box sx={{ overflowX: 'hidden' }}>
+    <Box sx={{ overflowX: "hidden" }}>
       {/* Hero section */}
-      <Box sx={{
-        backgroundColor: 'rgba(255,255,255,1)',
-        color: 'rgba(23,21,21,1)',
-        mb: 12
-      }}>
-        <Box sx={{ position: 'relative' }}>
-          <Box sx={{ position: 'relative' }}>
+      <Box
+        sx={{
+          backgroundColor: "rgba(255,255,255,1)",
+          color: "rgba(23,21,21,1)",
+          mb: 12,
+        }}
+      >
+        <Box sx={{ position: "relative" }}>
+          <Box sx={{ position: "relative" }}>
             <Container>
-              <Box sx={{
-                zIndex: 5,
-                position: 'relative',
-                pb: 6
-              }}>
+              <Box
+                sx={{
+                  zIndex: 5,
+                  position: "relative",
+                  pb: 6,
+                }}
+              >
                 <HeroSlider />
               </Box>
             </Container>
-            <Box sx={{
-              width: '3440px',
-              height: '430px',
-              backgroundImage: theme.palette.mode === 'dark' ? `url(${wideBg.src})` : `url(${wideBgLight.src})`,
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              position: 'absolute',
-              bottom: 0,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 1
-            }}
+            <Box
+              sx={{
+                width: "3440px",
+                height: "430px",
+                backgroundImage:
+                  theme.palette.mode === "dark"
+                    ? `url(${wideBg.src})`
+                    : `url(${wideBgLight.src})`,
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                position: "absolute",
+                bottom: 0,
+                left: "50%",
+                transform: "translateX(-50%)",
+                zIndex: 1,
+              }}
             />
           </Box>
-
         </Box>
       </Box>
       {/* End hero section */}
 
       {/* <Grow in={inView4} {...(inView4 ? { timeout: 250 } : {})}> */}
       {/* <Box ref={ref4}> */}
-      <Projects />
+      {/* <Projects /> */}
       {/* </Box> */}
       {/* </Grow > */}
 
       {/* How it works */}
-      <Box sx={{
-        mb: 24
-      }}>
+      {/* <Box
+        sx={{
+          mb: 24,
+        }}
+      >
         <Container>
-          <Grid container sx={{ mb: 3 }} >
+          <Grid container sx={{ mb: 3 }}>
             <Grid item md={1}></Grid>
             <Grid item md={5}>
-              <Typography
-                variant="h2"
-                fontWeight={600}
-                gutterBottom
-              >
+              <Typography variant="h2" fontWeight={600} gutterBottom>
                 How it works
               </Typography>
             </Grid>
@@ -138,8 +145,16 @@ const Home: NextPage = () => {
             <Grid container sx={{ mb: 6 }} ref={ref1}>
               <Grid item md={2}></Grid>
               <Grid item md={5}>
-                <Typography variant="h4" fontWeight={600}>Crowd-funding With Benefits</Typography>
-                <Typography variant="subtitle1">Rather than being backed by a few VCs, we believe blockchain projects should be funded by the community, and the community should profit from their successes. By investing in IDOs, you get in before the token is listed and receive preferential pricing as appreciation for your faith in the project. </Typography>
+                <Typography variant="h4" fontWeight={600}>
+                  Crowd-funding With Benefits
+                </Typography>
+                <Typography variant="subtitle1">
+                  Rather than being backed by a few VCs, we believe blockchain
+                  projects should be funded by the community, and the community
+                  should profit from their successes. By investing in IDOs, you
+                  get in before the token is listed and receive preferential
+                  pricing as appreciation for your faith in the project.{" "}
+                </Typography>
               </Grid>
               <Grid item md={5}></Grid>
             </Grid>
@@ -148,20 +163,32 @@ const Home: NextPage = () => {
             <Grid item md={1}></Grid>
             <Grid item md={10}>
               <Grid container spacing={3} alignItems="stretch">
-                <Grow
-                  in={inView2}
-                  {...(inView2 ? { timeout: 800 } : {})}
-                >
+                <Grow in={inView2} {...(inView2 ? { timeout: 800 } : {})}>
                   <Grid item md={5} ref={ref2}>
                     <Card sx={cardSx}>
-                      <Typography variant="h5" fontWeight={600}>1. Stake The Token</Typography>
-                      <Typography variant="body2">To participate, first you have to get the Coinecta Finance token and stake it to reach a staking tier. Your tier will represent your pool weight in IDOs. </Typography>
+                      <Typography variant="h5" fontWeight={600}>
+                        1. Stake The Token
+                      </Typography>
+                      <Typography variant="body2">
+                        To participate, first you have to get the Coinecta
+                        Finance token and stake it to reach a staking tier. Your
+                        tier will represent your pool weight in IDOs.{" "}
+                      </Typography>
                       <Grid container spacing={3}>
                         <Grid item>
                           <Button
                             variant="contained"
                             color="secondary"
-                            startIcon={<DexhunterLogomark sx={{ width: '16px', height: '16px', mr: -1, ml: 1 }} />}
+                            startIcon={
+                              <DexhunterLogomark
+                                sx={{
+                                  width: "16px",
+                                  height: "16px",
+                                  mr: -1,
+                                  ml: 1,
+                                }}
+                              />
+                            }
                             onClick={() => setDexhunterModal(true)}
                             aria-label={`CNCT DexHunter Swap`}
                           >
@@ -172,7 +199,6 @@ const Home: NextPage = () => {
                           <ButtonLink
                             variant="outlined"
                             color="secondary"
-
                             href="/staking/add"
                           >
                             Stake Now
@@ -184,25 +210,41 @@ const Home: NextPage = () => {
                 </Grow>
                 <Grow
                   in={inView2}
-                  style={{ transformOrigin: '0 0 0' }}
+                  style={{ transformOrigin: "0 0 0" }}
                   {...(inView2 ? { timeout: 1200 } : {})}
                 >
                   <Grid item md={7}>
                     <Card sx={cardSx}>
-                      <Typography variant="h5" fontWeight={600}>2. Research projects</Typography>
-                      <Typography variant="body2">Research upcoming project launches and get ready for their upcoming token sales. Keep an eye on discord announcements and this website for more info. </Typography>
-                      <Button variant="contained" color="secondary" href="/projects">View Projects</Button>
+                      <Typography variant="h5" fontWeight={600}>
+                        2. Research projects
+                      </Typography>
+                      <Typography variant="body2">
+                        Research upcoming project launches and get ready for
+                        their upcoming token sales. Keep an eye on discord
+                        announcements and this website for more info.{" "}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        href="/projects"
+                      >
+                        View Projects
+                      </Button>
                     </Card>
                   </Grid>
                 </Grow>
-                <Grow
-                  in={inView3}
-                  {...(inView3 ? { timeout: 800 } : {})}
-                >
+                <Grow in={inView3} {...(inView3 ? { timeout: 800 } : {})}>
                   <Grid item md={7} ref={ref3}>
                     <Card sx={cardSx}>
-                      <Typography variant="h5" fontWeight={600}>3. Contribute</Typography>
-                      <Typography variant="body2">Once the contribute form opens, send ADA to reserve your tokens. Each project will have specific distribution details and we will post a place for you to claim your tokens. </Typography>
+                      <Typography variant="h5" fontWeight={600}>
+                        3. Contribute
+                      </Typography>
+                      <Typography variant="body2">
+                        Once the contribute form opens, send ADA to reserve your
+                        tokens. Each project will have specific distribution
+                        details and we will post a place for you to claim your
+                        tokens.{" "}
+                      </Typography>
                       <Button
                         variant="contained"
                         color="secondary"
@@ -215,18 +257,21 @@ const Home: NextPage = () => {
                 </Grow>
                 <Grow
                   in={inView3}
-                  style={{ transformOrigin: '0 0 0' }}
+                  style={{ transformOrigin: "0 0 0" }}
                   {...(inView3 ? { timeout: 1200 } : {})}
                 >
                   <Grid item md={5}>
                     <Card sx={cardSx}>
-                      <Typography variant="h5" fontWeight={600}>4. Redeem or Claim</Typography>
-                      <Typography variant="body2">If there is a vesting period, you will be sent a vesting NFT which contains your locked tokens which you can redeem over time. Otherwise, claim any reserved tokens on your Dashboard. </Typography>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        disabled
-                      >
+                      <Typography variant="h5" fontWeight={600}>
+                        4. Redeem or Claim
+                      </Typography>
+                      <Typography variant="body2">
+                        If there is a vesting period, you will be sent a vesting
+                        NFT which contains your locked tokens which you can
+                        redeem over time. Otherwise, claim any reserved tokens
+                        on your Dashboard.{" "}
+                      </Typography>
+                      <Button variant="contained" color="secondary" disabled>
                         Redeem Now
                       </Button>
                     </Card>
@@ -236,8 +281,8 @@ const Home: NextPage = () => {
             </Grid>
             <Grid item md={1}></Grid>
           </Grid>
-        </Container >
-      </Box>
+        </Container>
+      </Box> */}
       {/* END How it works */}
 
       {/* Whos it for? */}
@@ -309,91 +354,81 @@ const Home: NextPage = () => {
           <Grid item md={1}></Grid>
         </Grid>
       </Container> */}
-      <Container>
-        <Box sx={{ position: 'realtive', pb: 12 }}>
+      {/* <Container>
+        <Box sx={{ position: "realtive", pb: 12 }}>
           <Box
-            maxWidth='lg'
+            maxWidth="lg"
             sx={{
-              mx: 'auto',
+              mx: "auto",
               zIndex: 5,
-              mb: theme.palette.mode === 'dark' ? 12 : 0
+              mb: theme.palette.mode === "dark" ? 12 : 0,
             }}
           >
             <Typography
               variant="body1"
-              sx={{ pt: 4, textTransform: 'uppercase', color: theme.palette.text.primary, }}
+              sx={{
+                pt: 4,
+                textTransform: "uppercase",
+                color: theme.palette.text.primary,
+              }}
               align="center"
               color="text.secondary"
               paragraph
             >
               Our partners:
             </Typography>
-            <Grid container alignItems="center" justifyContent="space-around" spacing={2} sx={{ px: 2, mb: 4 }}>
+            <Grid
+              container
+              alignItems="center"
+              justifyContent="space-around"
+              spacing={2}
+              sx={{ px: 2, mb: 4 }}
+            >
               <Grid item xs={12} sm={6} md={4}>
-                <Link
-                  href="https://www.xerberus.io/"
-                  sx={logoLinkSx}
-                >
-                  <XerberusLogo sx={{ fontSize: '160px', height: '80px' }} />
+                <Link href="https://www.xerberus.io/" sx={logoLinkSx}>
+                  <XerberusLogo sx={{ fontSize: "160px", height: "80px" }} />
                 </Link>
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                <Link
-                  href="https://www.dexhunter.io/"
-                  sx={logoLinkSx}
-                >
-                  <DexhunterLogo sx={{ fontSize: '160px', height: '80px' }} />
+                <Link href="https://www.dexhunter.io/" sx={logoLinkSx}>
+                  <DexhunterLogo sx={{ fontSize: "160px", height: "80px" }} />
                 </Link>
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                <Link
-                  href="https://www.crci.review/"
-                  sx={logoLinkSx}
-                >
-                  <CrciLogo sx={{ fontSize: '160px', height: '80px' }} />
+                <Link href="https://www.crci.review/" sx={logoLinkSx}>
+                  <CrciLogo sx={{ fontSize: "160px", height: "80px" }} />
                 </Link>
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                <Link
-                  href="https://www.ergopad.io"
-                  sx={logoLinkSx}
-                >
-                  <ErgopadLogo sx={{ fontSize: '160px', height: '80px' }} />
+                <Link href="https://www.ergopad.io" sx={logoLinkSx}>
+                  <ErgopadLogo sx={{ fontSize: "160px", height: "80px" }} />
                 </Link>
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                <Link
-                  href="https://www.paideia.im"
-                  sx={logoLinkSx}
-                >
-                  <PaideiaLogo sx={{ fontSize: '140px', height: '80px' }} />
+                <Link href="https://www.paideia.im" sx={logoLinkSx}>
+                  <PaideiaLogo sx={{ fontSize: "140px", height: "80px" }} />
                 </Link>
               </Grid>
-
-
             </Grid>
           </Box>
         </Box>
       </Container>
-      <Container
-        maxWidth="lg"
-        sx={{ mb: 12 }}
-      >
+      <Container maxWidth="lg" sx={{ mb: 12 }}>
         <Paper
           sx={{
-            textAlign: 'center',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            minHeight: '160px',
-            backgroundImage: `url(${bannerBg.src})`
+            textAlign: "center",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+            minHeight: "160px",
+            backgroundImage: `url(${bannerBg.src})`,
           }}
         >
           <Typography
             sx={{
-              fontSize: '1.6rem!important',
-              color: 'rgba(23,21,21,1)',
+              fontSize: "1.6rem!important",
+              color: "rgba(23,21,21,1)",
               lineHeight: 1.2,
               fontWeight: "600",
               mb: "12px",
@@ -432,17 +467,16 @@ const Home: NextPage = () => {
           </Box>
         </Paper>
       </Container>
-      {coinectaData.data?.tokenomics && coinectaData.data.tokenomics.tokenPolicyId.length > 0 &&
-        <DexhunterDialog
-          open={dexhunterModal}
-          setOpen={setDexhunterModal}
-          projectData={coinectaData.data}
-        />
-      }
+      {coinectaData.data?.tokenomics &&
+        coinectaData.data.tokenomics.tokenPolicyId.length > 0 && (
+          <DexhunterDialog
+            open={dexhunterModal}
+            setOpen={setDexhunterModal}
+            projectData={coinectaData.data}
+          />
+        )} */}
     </Box>
-  )
-}
+  );
+};
 
-export default Home
-
-
+export default Home;
