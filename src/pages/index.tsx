@@ -1,5 +1,4 @@
-import React from // { useState }
-"react";
+import React from "react"; // { useState }
 import type { NextPage } from "next";
 import {
   Container,
@@ -75,9 +74,21 @@ const Home: NextPage = () => {
   // };
 
   return (
-    <Box sx={{ overflowX: "hidden" }}>
+    <Box sx={{ overflowX: "hidden", mx: 4 }}>
+      <p>
+        Coinecta is no longer operating. Please unstake using the staking panel.
+      </p>
+      <p>
+        If you get an error, first make sure your wallet has collateral.
+        Otherwise, we will restart the server once a week on Monday. If you
+        still have trouble, leave a message in Telegram.{" "}
+      </p>
+      <p>
+        All the services are open source. If you don&apos;t want to wait, you
+        can find them on GitHub.{" "}
+      </p>
       {/* Hero section */}
-      <Box
+      {/* <Box
         sx={{
           backgroundColor: "rgba(255,255,255,1)",
           color: "rgba(23,21,21,1)",
@@ -116,7 +127,7 @@ const Home: NextPage = () => {
             />
           </Box>
         </Box>
-      </Box>
+      </Box> */}
       {/* End hero section */}
 
       {/* <Grow in={inView4} {...(inView4 ? { timeout: 250 } : {})}> */}
