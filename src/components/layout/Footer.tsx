@@ -87,6 +87,7 @@ const Footer: FC = () => {
           sx={{
             pt: 3,
             pb: 1,
+            mb: 5,
           }}
         >
           <Grid item xs={12} md={5}>
@@ -137,7 +138,7 @@ const Footer: FC = () => {
               sx={{ flexWrap: "wrap" }}
             >
               {firstPages.links.length !== 0 && <LinkList {...firstPages} />}
-              {secondPages.links.length !== 0 && <LinkList {...secondPages} />}
+              {/* {secondPages.links.length !== 0 && <LinkList {...secondPages} />} */}
               {thirdPages.links.length !== 0 && <LinkList {...thirdPages} />}
               {sessionStatus === "authenticated" &&
                 fourthPages.links.length !== 0 && <LinkList {...fourthPages} />}
@@ -153,7 +154,6 @@ const Footer: FC = () => {
                 >
                   <SocialGrid
                     telegram="https://t.me/coinecta"
-                    discord="https://discord.gg/EuFdWye8yw"
                     github="https://github.com/coinecta"
                   />
                 </Grid>
@@ -161,7 +161,7 @@ const Footer: FC = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid
+        {/* <Grid
           container
           direction={upMd ? "row" : "column-reverse"}
           justifyContent="space-between"
@@ -210,7 +210,7 @@ const Footer: FC = () => {
               Privacy Policy
             </Link>
           </Grid>
-        </Grid>
+        </Grid> */}
       </Container>
     </Box>
   );
